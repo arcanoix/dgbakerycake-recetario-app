@@ -47,17 +47,14 @@ function BillingContent() {
 
   if (cargando) {
     return (
-      <ProtectedRoute>
-        <div className="container mx-auto p-6">
-          <p className="text-center">Cargando...</p>
-        </div>
-      </ProtectedRoute>
+      <div className="container mx-auto p-6">
+        <p className="text-center">Cargando...</p>
+      </div>
     );
   }
 
   return (
-    <ProtectedRoute>
-      <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto p-6 space-y-6">
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold">Facturación y Suscripción</h1>

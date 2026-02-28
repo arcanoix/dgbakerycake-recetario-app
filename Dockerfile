@@ -1,5 +1,5 @@
 # Dockerfile para desarrollo local
-FROM node:20-alpine
+FROM node:24-alpine
 
 # Instalar dependencias del sistema
 RUN apk add --no-cache git

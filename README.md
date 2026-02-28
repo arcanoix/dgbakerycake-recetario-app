@@ -89,15 +89,15 @@ Sistema web para calcular y gestionar costos de recetas de repostería y pastele
   - [x] Precio de venta sugerido
 
 ### Fase 6: UI/UX
-- [ ] **6.1** Crear interfaz de usuario moderna
-  - [ ] Dashboard principal
-  - [ ] Navegación principal (Navbar/Sidebar)
-  - [ ] Página de productos
-  - [ ] Página de recetas
-  - [ ] Página de configuración
-  - [ ] Componentes reutilizables con shadcn/ui
-  - [ ] Diseño responsive (mobile, tablet, desktop)
-  - [ ] Integrar iconos con Lucide React
+- [x] **6.1** Crear interfaz de usuario moderna
+  - [x] Dashboard principal
+  - [x] Navegación principal (Navbar/Sidebar)
+  - [x] Página de productos
+  - [x] Página de recetas
+  - [x] Página de configuración
+  - [x] Componentes reutilizables con shadcn/ui
+  - [x] Diseño responsive (mobile, tablet, desktop)
+  - [x] Integrar iconos con Lucide React
   - [ ] Temas (light/dark) - opcional
 
 ### Fase 7: Persistencia de Datos

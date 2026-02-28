@@ -176,7 +176,7 @@ export const obtenerConfiguracion = async (): Promise<ConfiguracionGlobal | null
     .from('configuracion')
     .select('*')
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error('Error al obtener configuración:', error);
@@ -194,7 +194,7 @@ export const guardarConfiguracion = async (config: ConfiguracionGlobal) => {
     .from('configuracion')
     .select('id')
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (existing) {
     // Actualizar la existente

@@ -10,6 +10,7 @@ import {
   generarId,
 } from "@/lib/storageSupabase";
 import { calcularPrecioPorUnidad } from "@/lib/calculations";
+import { verificarLimite } from "@/lib/subscriptionStorage";
 
 export const useProductos = () => {
   const [productos, setProductos] = useState<Producto[]>([]);
@@ -41,6 +42,13 @@ export const useProductos = () => {
 
   const crearProducto = async (datos: ProductoFormData): Promise<boolean> => {
     try {
+      // Verificar límite de productos según el plan
+      const verificacion = await verificarLimite('productos', productos.length);
+      if (!verificacion.permitido) {
+        setError(verificacion.mensaje || "Has alcanzado el límite de productos de tu plan");
+        return false;
+      }
+
       const precioPorUnidad = calcularPrecioPorUnidad(
         datos.precioTotal,
         datos.cantidadTotal

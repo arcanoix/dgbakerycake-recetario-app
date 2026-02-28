@@ -17,6 +17,7 @@ import {
   calcularCostoTotalReceta,
   calcularPrecioVentaSugerido,
 } from "@/lib/calculations";
+import { verificarLimite } from "@/lib/subscriptionStorage";
 
 export const useRecetas = () => {
   const [recetas, setRecetas] = useState<Receta[]>([]);
@@ -71,6 +72,13 @@ export const useRecetas = () => {
     materiales: MaterialReceta[]
   ): Promise<boolean> => {
     try {
+      // Verificar límite de recetas según el plan
+      const verificacion = await verificarLimite('recetas', recetas.length);
+      if (!verificacion.permitido) {
+        setError(verificacion.mensaje || "Has alcanzado el límite de recetas de tu plan");
+        return false;
+      }
+
       const costos = calcularCostosReceta(
         materiales,
         datos.tiempoPreparacion,

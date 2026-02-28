@@ -4,17 +4,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRole } from "@/hooks/useRole";
 import { Button } from "@/components/ui/button";
 
 export const Navbar = () => {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const { isAdmin } = useRole();
 
   const navItems = [
     { href: "/", label: "Inicio", icon: "🏠" },
     { href: "/productos", label: "Productos", icon: "📦" },
     { href: "/recetas", label: "Recetas", icon: "📝" },
+    { href: "/pricing", label: "Planes", icon: "💎" },
+    { href: "/billing", label: "Facturación", icon: "💳" },
     { href: "/configuracion", label: "Configuración", icon: "⚙️" },
   ];
 
@@ -53,6 +57,21 @@ export const Navbar = () => {
                   {item.label}
                 </Link>
               ))}
+              
+              {/* Admin Link */}
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    isActive("/admin")
+                      ? "bg-red-600 text-white"
+                      : "text-red-600 hover:bg-red-50"
+                  }`}
+                >
+                  <span className="mr-2">👑</span>
+                  Admin
+                </Link>
+              )}
               
               {/* User Info & Logout */}
               <div className="flex items-center space-x-2 ml-4 border-l pl-4">

@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { OPCIONES_UNIDADES, CATEGORIAS_PRODUCTOS } from "@/lib/constants";
 import { calcularPrecioPorUnidad } from "@/lib/calculations";
 import { formatearMoneda } from "@/lib/constants";
+import { useConfiguracion } from "@/hooks/useConfiguracion";
 
 interface ProductoFormProps {
   producto?: Producto;
@@ -19,6 +20,7 @@ interface ProductoFormProps {
 }
 
 export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps) => {
+  const { configuracion } = useConfiguracion();
   const [formData, setFormData] = useState<ProductoFormData>({
     nombre: "",
     precioTotal: 0,
@@ -178,7 +180,7 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
             <div className="p-4 bg-muted rounded-lg">
               <p className="text-sm font-medium">Precio por Unidad (Calculado)</p>
               <p className="text-2xl font-bold text-primary">
-                {formatearMoneda(precioPorUnidad, "USD")}
+                {formatearMoneda(precioPorUnidad, configuracion?.moneda)}
               </p>
             </div>
           )}

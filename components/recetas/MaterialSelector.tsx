@@ -9,6 +9,7 @@ import { Select } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatearMoneda, formatearNumero } from "@/lib/constants";
 import { obtenerSimboloUnidad } from "@/lib/conversiones";
+import { useConfiguracion } from "@/hooks/useConfiguracion";
 
 interface MaterialSelectorProps {
   productos: Producto[];
@@ -23,6 +24,7 @@ export const MaterialSelector = ({
   onAgregarMaterial,
   onEliminarMaterial,
 }: MaterialSelectorProps) => {
+  const { configuracion } = useConfiguracion();
   const [productoSeleccionado, setProductoSeleccionado] = useState("");
   const [cantidad, setCantidad] = useState<number>(0);
 
@@ -93,7 +95,7 @@ export const MaterialSelector = ({
             <div className="p-3 bg-muted rounded-lg">
               <p className="text-sm text-muted-foreground">Costo estimado:</p>
               <p className="text-lg font-bold text-primary">
-                {formatearMoneda(costoEstimado, "USD")}
+                {formatearMoneda(costoEstimado, configuracion?.moneda)}
               </p>
             </div>
           )}
@@ -128,7 +130,7 @@ export const MaterialSelector = ({
                     <p className="text-sm text-muted-foreground">
                       {formatearNumero(material.cantidadUtilizada)}{" "}
                       {obtenerSimboloUnidad(material.unidadMedida)} •{" "}
-                      {formatearMoneda(material.costoMaterial, "USD")}
+                      {formatearMoneda(material.costoMaterial, configuracion?.moneda)}
                     </p>
                   </div>
                   <Button
@@ -148,7 +150,7 @@ export const MaterialSelector = ({
                 <span className="text-lg font-bold text-primary">
                   {formatearMoneda(
                     materiales.reduce((sum, m) => sum + m.costoMaterial, 0),
-                    "USD"
+                    configuracion?.moneda
                   )}
                 </span>
               </div>

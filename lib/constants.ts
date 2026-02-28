@@ -32,12 +32,8 @@ export const OPCIONES_UNIDADES: OpcionSelect[] = [
 ];
 
 export const OPCIONES_MONEDA: OpcionSelect[] = [
+  { value: 'VES', label: 'Bolívar (Bs)' },
   { value: 'USD', label: 'Dólar (USD)' },
-  { value: 'MXN', label: 'Peso Mexicano (MXN)' },
-  { value: 'EUR', label: 'Euro (EUR)' },
-  { value: 'COP', label: 'Peso Colombiano (COP)' },
-  { value: 'ARS', label: 'Peso Argentino (ARS)' },
-  { value: 'CLP', label: 'Peso Chileno (CLP)' },
 ];
 
 // ============================================
@@ -46,7 +42,7 @@ export const OPCIONES_MONEDA: OpcionSelect[] = [
 
 export const CONFIGURACION_DEFECTO = {
   costoPorHoraDefecto: 10,
-  moneda: 'USD',
+  moneda: 'VES',
   margenGananciaDefecto: 30,
 };
 
@@ -104,8 +100,8 @@ export const VALIDACION = {
 // FORMATOS
 // ============================================
 
-export const formatearMoneda = (valor: number, moneda: string = 'USD'): string => {
-  return new Intl.NumberFormat('es-ES', {
+export const formatearMoneda = (valor: number, moneda: string = 'VES'): string => {
+  return new Intl.NumberFormat('es-VE', {
     style: 'currency',
     currency: moneda,
     minimumFractionDigits: 2,

@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { formatearMoneda, formatearNumero } from "@/lib/constants";
 import { obtenerSimboloUnidad } from "@/lib/conversiones";
+import { useConfiguracion } from "@/hooks/useConfiguracion";
 
 interface ProductoListProps {
   productos: Producto[];
@@ -13,6 +14,7 @@ interface ProductoListProps {
 }
 
 export const ProductoList = ({ productos, onEdit, onDelete }: ProductoListProps) => {
+  const { configuracion } = useConfiguracion();
   if (productos.length === 0) {
     return (
       <Card>
@@ -43,8 +45,8 @@ export const ProductoList = ({ productos, onEdit, onDelete }: ProductoListProps)
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Precio Total:</span>
-                <span className="font-semibold">
-                  {formatearMoneda(producto.precioTotal, "USD")}
+                <span className="font-bold text-lg">
+                  {formatearMoneda(producto.precioTotal, configuracion?.moneda)}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
@@ -55,8 +57,8 @@ export const ProductoList = ({ productos, onEdit, onDelete }: ProductoListProps)
               </div>
               <div className="flex justify-between text-sm border-t pt-2">
                 <span className="text-muted-foreground">Precio por Unidad:</span>
-                <span className="font-bold text-primary">
-                  {formatearMoneda(producto.precioPorUnidad, "USD")}/{obtenerSimboloUnidad(producto.unidadMedida)}
+                <span className="font-bold text-primary text-lg">
+                  {formatearMoneda(producto.precioPorUnidad, configuracion?.moneda)}
                 </span>
               </div>
             </div>

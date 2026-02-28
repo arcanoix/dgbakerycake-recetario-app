@@ -66,12 +66,12 @@ Sistema web para calcular y gestionar costos de recetas de repostería y pastele
   - [x] Cálculo automático de precio por unidad
 
 ### Fase 4: Sistema de Mano de Obra
-- [ ] **4.1** Implementar sistema de costo de mano de obra configurable
-  - [ ] Crear componente ConfiguracionForm
-  - [ ] Configuración global de costo por hora
-  - [ ] Configuración de moneda
-  - [ ] Persistencia de configuración
-  - [ ] Componente CostoManoObraInput para recetas
+- [x] **4.1** Implementar sistema de costo de mano de obra configurable
+  - [x] Crear componente ConfiguracionForm
+  - [x] Configuración global de costo por hora
+  - [x] Configuración de moneda
+  - [x] Persistencia de configuración
+  - [x] Componente CostoManoObraInput para recetas
 
 ### Fase 5: Gestión de Recetas
 - [ ] **5.1** Implementar sistema de gestión de recetas

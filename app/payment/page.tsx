@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PaymentRequestForm } from "@/components/subscription/PaymentRequestForm";
 import { SubscriptionPlan } from "@/types/subscription";
 import { obtenerPlanPorId } from "@/lib/subscriptionStorage";
 
-export default function PaymentPage() {
+function PaymentContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const planId = searchParams.get("plan");
@@ -45,11 +45,9 @@ export default function PaymentPage() {
 
   if (cargando) {
     return (
-      <ProtectedRoute>
-        <div className="container mx-auto p-6">
-          <p className="text-center">Cargando...</p>
-        </div>
-      </ProtectedRoute>
+      <div className="container mx-auto p-6">
+        <p className="text-center">Cargando...</p>
+      </div>
     );
   }
 
@@ -58,14 +56,26 @@ export default function PaymentPage() {
   }
 
   return (
+    <div className="container mx-auto p-6 max-w-3xl">
+      <PaymentRequestForm
+        plan={plan}
+        onSuccess={handleSuccess}
+        onCancel={handleCancel}
+      />
+    </div>
+  );
+}
+
+export default function PaymentPage() {
+  return (
     <ProtectedRoute>
-      <div className="container mx-auto p-6 max-w-3xl">
-        <PaymentRequestForm
-          plan={plan}
-          onSuccess={handleSuccess}
-          onCancel={handleCancel}
-        />
-      </div>
+      <Suspense fallback={
+        <div className="container mx-auto p-6">
+          <p className="text-center">Cargando...</p>
+        </div>
+      }>
+        <PaymentContent />
+      </Suspense>
     </ProtectedRoute>
   );
 }

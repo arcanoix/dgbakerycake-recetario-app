@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
@@ -8,7 +8,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-export default function BillingPage() {
+function BillingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const success = searchParams.get("success");
@@ -191,6 +191,19 @@ export default function BillingPage() {
           </CardContent>
         </Card>
       </div>
+    );
+}
+
+export default function BillingPage() {
+  return (
+    <ProtectedRoute>
+      <Suspense fallback={
+        <div className="container mx-auto p-6">
+          <p className="text-center">Cargando...</p>
+        </div>
+      }>
+        <BillingContent />
+      </Suspense>
     </ProtectedRoute>
   );
 }

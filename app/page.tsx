@@ -7,7 +7,8 @@ import { StatsCard } from "@/components/dashboard/StatsCard";
 import { CostosChart } from "@/components/dashboard/CostosChart";
 import { ProductosChart } from "@/components/dashboard/ProductosChart";
 import { RecetasRentablesTable } from "@/components/dashboard/RecetasRentablesTable";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { LandingPage } from "@/components/landing/LandingPage";
+import { useAuth } from "@/contexts/AuthContext";
 import { useProductos } from "@/hooks/useProductos";
 import { useRecetas } from "@/hooks/useRecetas";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
@@ -15,10 +16,16 @@ import { calcularEstadisticas, calcularValorInventario } from "@/lib/estadistica
 import { formatearMoneda } from "@/lib/constants";
 
 export default function Home() {
+  const { user, loading: authLoading } = useAuth();
   const { productos, cargando: cargandoProductos } = useProductos();
   const { recetas, cargando: cargandoRecetas } = useRecetas();
   const { configuracion } = useConfiguracion();
   const [mounted, setMounted] = useState(false);
+
+  // Si no hay usuario autenticado, mostrar landing page
+  if (!authLoading && !user) {
+    return <LandingPage />;
+  }
 
   useEffect(() => {
     setMounted(true);
@@ -44,8 +51,7 @@ export default function Home() {
   const costoTotalRecetas = recetas.reduce((sum, r) => sum + r.costoTotal, 0);
 
   return (
-    <ProtectedRoute>
-      <main className="min-h-screen p-8 bg-gray-50">
+    <main className="min-h-screen p-8 bg-gray-50">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -169,7 +175,6 @@ export default function Home() {
           </div>
         )}
       </div>
-      </main>
-    </ProtectedRoute>
+    </main>
   );
 }

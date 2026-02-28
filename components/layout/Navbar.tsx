@@ -3,10 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 
 export const Navbar = () => {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   const navItems = [
     { href: "/", label: "Inicio", icon: "🏠" },
@@ -49,6 +52,18 @@ export const Navbar = () => {
                 {item.label}
               </Link>
             ))}
+            
+            {/* User Info & Logout */}
+            {user && (
+              <div className="flex items-center space-x-2 ml-4 border-l pl-4">
+                <span className="text-sm text-muted-foreground">
+                  {user.email}
+                </span>
+                <Button onClick={signOut} variant="outline" size="sm">
+                  Cerrar Sesión
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -100,6 +115,18 @@ export const Navbar = () => {
                 {item.label}
               </Link>
             ))}
+            
+            {/* User Info & Logout Mobile */}
+            {user && (
+              <div className="border-t pt-4 mt-4">
+                <div className="px-4 py-2 text-sm text-muted-foreground">
+                  {user.email}
+                </div>
+                <Button onClick={signOut} variant="outline" className="w-full">
+                  Cerrar Sesión
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -8,7 +8,7 @@ import {
   guardarProducto,
   eliminarProducto,
   generarId,
-} from "@/lib/storage";
+} from "@/lib/storageSupabase";
 import { calcularPrecioPorUnidad } from "@/lib/calculations";
 
 export const useProductos = () => {
@@ -21,10 +21,10 @@ export const useProductos = () => {
     cargarProductos();
   }, []);
 
-  const cargarProductos = () => {
+  const cargarProductos = async () => {
     try {
       setCargando(true);
-      const productosStorage = obtenerProductos();
+      const productosStorage = await obtenerProductos();
       setProductos(productosStorage);
       setError(null);
     } catch (err) {
@@ -35,11 +35,11 @@ export const useProductos = () => {
     }
   };
 
-  const obtenerProducto = (id: string): Producto | null => {
-    return obtenerProductoPorId(id);
+  const obtenerProducto = async (id: string): Promise<Producto | null> => {
+    return await obtenerProductoPorId(id);
   };
 
-  const crearProducto = (datos: ProductoFormData): boolean => {
+  const crearProducto = async (datos: ProductoFormData): Promise<boolean> => {
     try {
       const precioPorUnidad = calcularPrecioPorUnidad(
         datos.precioTotal,
@@ -60,10 +60,10 @@ export const useProductos = () => {
         fechaActualizacion: new Date(),
       };
 
-      const respuesta = guardarProducto(nuevoProducto);
+      const respuesta = await guardarProducto(nuevoProducto);
 
       if (respuesta.exitoso) {
-        cargarProductos();
+        await cargarProductos();
         return true;
       } else {
         setError(respuesta.error || "Error al crear el producto");
@@ -76,9 +76,9 @@ export const useProductos = () => {
     }
   };
 
-  const actualizarProducto = (id: string, datos: ProductoFormData): boolean => {
+  const actualizarProducto = async (id: string, datos: ProductoFormData): Promise<boolean> => {
     try {
-      const productoExistente = obtenerProductoPorId(id);
+      const productoExistente = await obtenerProductoPorId(id);
       if (!productoExistente) {
         setError("Producto no encontrado");
         return false;
@@ -102,10 +102,10 @@ export const useProductos = () => {
         fechaActualizacion: new Date(),
       };
 
-      const respuesta = guardarProducto(productoActualizado);
+      const respuesta = await guardarProducto(productoActualizado);
 
       if (respuesta.exitoso) {
-        cargarProductos();
+        await cargarProductos();
         return true;
       } else {
         setError(respuesta.error || "Error al actualizar el producto");
@@ -118,12 +118,12 @@ export const useProductos = () => {
     }
   };
 
-  const eliminar = (id: string): boolean => {
+  const eliminar = async (id: string): Promise<boolean> => {
     try {
-      const respuesta = eliminarProducto(id);
+      const respuesta = await eliminarProducto(id);
 
       if (respuesta.exitoso) {
-        cargarProductos();
+        await cargarProductos();
         return true;
       } else {
         setError(respuesta.error || "Error al eliminar el producto");

@@ -9,7 +9,7 @@ import {
   eliminarReceta,
   generarId,
   obtenerProductoPorId,
-} from "@/lib/storage";
+} from "@/lib/storageSupabase";
 import {
   calcularCostoMaterial,
   calcularCostoTotalMateriales,
@@ -27,10 +27,10 @@ export const useRecetas = () => {
     cargarRecetas();
   }, []);
 
-  const cargarRecetas = () => {
+  const cargarRecetas = async () => {
     try {
       setCargando(true);
-      const recetasStorage = obtenerRecetas();
+      const recetasStorage = await obtenerRecetas();
       setRecetas(recetasStorage);
       setError(null);
     } catch (err) {
@@ -41,8 +41,8 @@ export const useRecetas = () => {
     }
   };
 
-  const obtenerReceta = (id: string): Receta | null => {
-    return obtenerRecetaPorId(id);
+  const obtenerReceta = async (id: string): Promise<Receta | null> => {
+    return await obtenerRecetaPorId(id);
   };
 
   const calcularCostosReceta = (
@@ -66,10 +66,10 @@ export const useRecetas = () => {
     };
   };
 
-  const crearReceta = (
+  const crearReceta = async (
     datos: RecetaFormData,
     materiales: MaterialReceta[]
-  ): boolean => {
+  ): Promise<boolean> => {
     try {
       const costos = calcularCostosReceta(
         materiales,
@@ -99,10 +99,10 @@ export const useRecetas = () => {
         fechaActualizacion: new Date(),
       };
 
-      const respuesta = guardarReceta(nuevaReceta);
+      const respuesta = await guardarReceta(nuevaReceta);
 
       if (respuesta.exitoso) {
-        cargarRecetas();
+        await cargarRecetas();
         return true;
       } else {
         setError(respuesta.error || "Error al crear la receta");
@@ -115,13 +115,13 @@ export const useRecetas = () => {
     }
   };
 
-  const actualizarReceta = (
+  const actualizarReceta = async (
     id: string,
     datos: RecetaFormData,
     materiales: MaterialReceta[]
-  ): boolean => {
+  ): Promise<boolean> => {
     try {
-      const recetaExistente = obtenerRecetaPorId(id);
+      const recetaExistente = await obtenerRecetaPorId(id);
       if (!recetaExistente) {
         setError("Receta no encontrada");
         return false;
@@ -154,10 +154,10 @@ export const useRecetas = () => {
         fechaActualizacion: new Date(),
       };
 
-      const respuesta = guardarReceta(recetaActualizada);
+      const respuesta = await guardarReceta(recetaActualizada);
 
       if (respuesta.exitoso) {
-        cargarRecetas();
+        await cargarRecetas();
         return true;
       } else {
         setError(respuesta.error || "Error al actualizar la receta");
@@ -170,12 +170,12 @@ export const useRecetas = () => {
     }
   };
 
-  const eliminar = (id: string): boolean => {
+  const eliminar = async (id: string): Promise<boolean> => {
     try {
-      const respuesta = eliminarReceta(id);
+      const respuesta = await eliminarReceta(id);
 
       if (respuesta.exitoso) {
-        cargarRecetas();
+        await cargarRecetas();
         return true;
       } else {
         setError(respuesta.error || "Error al eliminar la receta");
@@ -188,12 +188,12 @@ export const useRecetas = () => {
     }
   };
 
-  const agregarMaterial = (
+  const agregarMaterial = async (
     productoId: string,
     cantidadUtilizada: number
-  ): MaterialReceta | null => {
+  ): Promise<MaterialReceta | null> => {
     try {
-      const producto = obtenerProductoPorId(productoId);
+      const producto = await obtenerProductoPorId(productoId);
       if (!producto) {
         setError("Producto no encontrado");
         return null;

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ConfiguracionGlobal, ConfiguracionFormData } from "@/types";
-import { obtenerConfiguracion, guardarConfiguracion } from "@/lib/storage";
+import { obtenerConfiguracion, guardarConfiguracion } from "@/lib/storageSupabase";
 
 export const useConfiguracion = () => {
   const [configuracion, setConfiguracion] = useState<ConfiguracionGlobal | null>(null);
@@ -13,10 +13,10 @@ export const useConfiguracion = () => {
     cargarConfiguracion();
   }, []);
 
-  const cargarConfiguracion = () => {
+  const cargarConfiguracion = async () => {
     try {
       setCargando(true);
-      const config = obtenerConfiguracion();
+      const config = await obtenerConfiguracion();
       setConfiguracion(config);
       setError(null);
     } catch (err) {
@@ -27,7 +27,7 @@ export const useConfiguracion = () => {
     }
   };
 
-  const actualizar = (datos: ConfiguracionFormData): boolean => {
+  const actualizar = async (datos: ConfiguracionFormData): Promise<boolean> => {
     try {
       if (!configuracion) return false;
 
@@ -38,10 +38,10 @@ export const useConfiguracion = () => {
         margenGananciaDefecto: datos.margenGananciaDefecto,
       };
 
-      const respuesta = guardarConfiguracion(configActualizada);
+      const respuesta = await guardarConfiguracion(configActualizada);
 
       if (respuesta.exitoso) {
-        cargarConfiguracion();
+        await cargarConfiguracion();
         return true;
       } else {
         setError(respuesta.error || "Error al guardar la configuración");

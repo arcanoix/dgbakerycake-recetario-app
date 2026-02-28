@@ -5,9 +5,10 @@ import { Receta, MaterialReceta } from "@/types";
 import { useRecetas } from "@/hooks/useRecetas";
 import { useProductos } from "@/hooks/useProductos";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
-import { RecetaList } from "@/components/recetas/RecetaList";
 import { MaterialSelector } from "@/components/recetas/MaterialSelector";
 import { DesgloseCostos } from "@/components/recetas/DesgloseCostos";
+import { RecetaList } from "@/components/recetas/RecetaList";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,9 +17,8 @@ import { Select } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CATEGORIAS_RECETAS } from "@/lib/constants";
 import { generarDesgloseCostos } from "@/lib/calculations";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
-function RecetasPageContent() {
+export default function RecetasPage() {
   const { recetas, cargando, error, crearReceta, actualizarReceta, eliminar, agregarMaterial } = useRecetas();
   const { productos } = useProductos();
   const { configuracion } = useConfiguracion();
@@ -115,7 +115,8 @@ function RecetasPageContent() {
   if (cargando) return <div className="container mx-auto p-6">Cargando...</div>;
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <ProtectedRoute>
+      <div className="container mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Recetas</h1>
@@ -191,6 +192,7 @@ function RecetasPageContent() {
           <RecetaList recetas={recetasFiltradas} onEdit={handleEdit} onDelete={eliminar} />
         </>
       )}
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }

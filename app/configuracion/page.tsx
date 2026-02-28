@@ -7,14 +7,6 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function ConfiguracionPage() {
-  return (
-    <ProtectedRoute>
-      <ConfiguracionPageContent />
-    </ProtectedRoute>
-  );
-}
-
-function ConfiguracionPageContent() {
   const { configuracion, cargando, error, actualizar } = useConfiguracion();
 
   const handleSubmit = async (datos: ConfiguracionFormData) => {
@@ -42,7 +34,8 @@ function ConfiguracionPageContent() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <ProtectedRoute>
+      <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold">Configuración</h1>
@@ -83,6 +76,7 @@ function ConfiguracionPageContent() {
           </ul>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }

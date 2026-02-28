@@ -15,14 +15,6 @@ import { calcularEstadisticas, calcularValorInventario } from "@/lib/estadistica
 import { formatearMoneda } from "@/lib/constants";
 
 export default function Home() {
-  return (
-    <ProtectedRoute>
-      <HomePage />
-    </ProtectedRoute>
-  );
-}
-
-function HomePage() {
   const { productos, cargando: cargandoProductos } = useProductos();
   const { recetas, cargando: cargandoRecetas } = useRecetas();
   const { configuracion } = useConfiguracion();
@@ -52,7 +44,8 @@ function HomePage() {
   const costoTotalRecetas = recetas.reduce((sum, r) => sum + r.costoTotal, 0);
 
   return (
-    <main className="min-h-screen p-8 bg-gray-50">
+    <ProtectedRoute>
+      <main className="min-h-screen p-8 bg-gray-50">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -176,6 +169,7 @@ function HomePage() {
           </div>
         )}
       </div>
-    </main>
+      </main>
+    </ProtectedRoute>
   );
 }

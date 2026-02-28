@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 
-function ProductosPageContent() {
+export default function ProductosPage() {
   const {
     productos,
     cargando,
@@ -68,7 +68,8 @@ function ProductosPageContent() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <ProtectedRoute>
+      <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -151,6 +152,7 @@ function ProductosPageContent() {
           onDelete={eliminar}
         />
       )}
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }

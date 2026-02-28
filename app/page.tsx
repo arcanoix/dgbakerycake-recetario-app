@@ -7,6 +7,7 @@ import { StatsCard } from "@/components/dashboard/StatsCard";
 import { CostosChart } from "@/components/dashboard/CostosChart";
 import { ProductosChart } from "@/components/dashboard/ProductosChart";
 import { RecetasRentablesTable } from "@/components/dashboard/RecetasRentablesTable";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { useProductos } from "@/hooks/useProductos";
 import { useRecetas } from "@/hooks/useRecetas";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
@@ -14,6 +15,14 @@ import { calcularEstadisticas, calcularValorInventario } from "@/lib/estadistica
 import { formatearMoneda } from "@/lib/constants";
 
 export default function Home() {
+  return (
+    <ProtectedRoute>
+      <HomePage />
+    </ProtectedRoute>
+  );
+}
+
+function HomePage() {
   const { productos, cargando: cargandoProductos } = useProductos();
   const { recetas, cargando: cargandoRecetas } = useRecetas();
   const { configuracion } = useConfiguracion();

@@ -5,11 +5,12 @@ import { Producto, ProductoFormData } from "@/types";
 import { useProductos } from "@/hooks/useProductos";
 import { ProductoForm } from "@/components/productos/ProductoForm";
 import { ProductoList } from "@/components/productos/ProductoList";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 
-export default function ProductosPage() {
+function ProductosPageContent() {
   const {
     productos,
     cargando,

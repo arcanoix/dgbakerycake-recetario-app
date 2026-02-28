@@ -16,8 +16,9 @@ import { Select } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CATEGORIAS_RECETAS } from "@/lib/constants";
 import { generarDesgloseCostos } from "@/lib/calculations";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
-export default function RecetasPage() {
+function RecetasPageContent() {
   const { recetas, cargando, error, crearReceta, actualizarReceta, eliminar, agregarMaterial } = useRecetas();
   const { productos } = useProductos();
   const { configuracion } = useConfiguracion();

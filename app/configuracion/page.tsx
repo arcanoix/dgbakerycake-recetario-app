@@ -3,9 +3,18 @@
 import { ConfiguracionFormData } from "@/types";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
 import { ConfiguracionForm } from "@/components/configuracion/ConfiguracionForm";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function ConfiguracionPage() {
+  return (
+    <ProtectedRoute>
+      <ConfiguracionPageContent />
+    </ProtectedRoute>
+  );
+}
+
+function ConfiguracionPageContent() {
   const { configuracion, cargando, error, actualizar } = useConfiguracion();
 
   const handleSubmit = async (datos: ConfiguracionFormData) => {

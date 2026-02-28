@@ -101,20 +101,21 @@ Sistema web para calcular y gestionar costos de recetas de repostería y pastele
   - [ ] Temas (light/dark) - opcional
 
 ### Fase 7: Persistencia de Datos
-- [ ] **7.1** Implementar almacenamiento de datos
-  - [ ] Implementar localStorage para productos
-  - [ ] Implementar localStorage para recetas
-  - [ ] Implementar localStorage para configuración
-  - [ ] Hooks personalizados (useProductos, useRecetas)
-  - [ ] Manejo de errores y validaciones
+- [x] **7.1** Implementar almacenamiento de datos
+  - [x] Implementar localStorage para productos
+  - [x] Implementar localStorage para recetas
+  - [x] Implementar localStorage para configuración
+  - [x] Hooks personalizados (useProductos, useRecetas)
+  - [x] Manejo de errores y validaciones
   - [ ] Sistema de backup/export (opcional)
 
 ### Fase 8: Despliegue
-- [ ] **8.1** Configurar despliegue en Vercel
-  - [ ] Configurar proyecto en Vercel
-  - [ ] Configurar variables de entorno
-  - [ ] Configurar dominio (opcional)
-  - [ ] CI/CD con GitHub Actions
+- [x] **8.1** Configurar despliegue en Vercel
+  - [x] Configurar proyecto en Vercel
+  - [x] Configurar variables de entorno
+  - [x] Documentación de despliegue
+  - [x] CI/CD automático con Vercel
+  - [ ] Configurar dominio personalizado (opcional)
   - [ ] Testing en producción
 
 ### Fase 9: Testing y Ajustes
@@ -310,7 +311,31 @@ npm start
 
 ---
 
-## 📝 Notas de Desarrollo
+## � Despliegue en Vercel
+
+### Opción 1: Desde la Web de Vercel
+
+1. Ve a [vercel.com](https://vercel.com) e inicia sesión
+2. Click en **"Add New Project"**
+3. Importa el repositorio: `dgbakerycake-recetario-app`
+4. Vercel detectará automáticamente Next.js
+5. Click en **"Deploy"**
+
+### Opción 2: Usando Vercel CLI
+
+```bash
+# Instalar Vercel CLI
+npm install -g vercel
+
+# Desplegar
+vercel
+```
+
+**📖 Guía completa**: Ver [DEPLOYMENT.md](./DEPLOYMENT.md)
+
+---
+
+## �📝 Notas de Desarrollo
 
 ### Unidades de Medida Soportadas
 - **Peso**: gramos (g), kilogramos (kg), onzas (oz)

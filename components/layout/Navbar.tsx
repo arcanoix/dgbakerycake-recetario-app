@@ -37,24 +37,24 @@ export const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  isActive(item.href)
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                }`}
-              >
-                <span className="mr-2">{item.icon}</span>
-                {item.label}
-              </Link>
-            ))}
-            
-            {/* User Info & Logout */}
-            {user && (
+          {user && (
+            <div className="hidden md:flex items-center space-x-1">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    isActive(item.href)
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  }`}
+                >
+                  <span className="mr-2">{item.icon}</span>
+                  {item.label}
+                </Link>
+              ))}
+              
+              {/* User Info & Logout */}
               <div className="flex items-center space-x-2 ml-4 border-l pl-4">
                 <span className="text-sm text-muted-foreground">
                   {user.email}
@@ -63,15 +63,16 @@ export const Navbar = () => {
                   Cerrar Sesión
                 </Button>
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-muted"
-            aria-label="Toggle menu"
-          >
+          {user && (
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg hover:bg-muted"
+              aria-label="Toggle menu"
+            >
             <svg
               className="w-6 h-6"
               fill="none"
@@ -94,11 +95,12 @@ export const Navbar = () => {
                 />
               )}
             </svg>
-          </button>
+            </button>
+          )}
         </div>
 
         {/* Mobile Navigation */}
-        {mobileMenuOpen && (
+        {user && mobileMenuOpen && (
           <div className="md:hidden py-4 space-y-2">
             {navItems.map((item) => (
               <Link
@@ -117,16 +119,14 @@ export const Navbar = () => {
             ))}
             
             {/* User Info & Logout Mobile */}
-            {user && (
-              <div className="border-t pt-4 mt-4">
-                <div className="px-4 py-2 text-sm text-muted-foreground">
-                  {user.email}
-                </div>
-                <Button onClick={signOut} variant="outline" className="w-full">
-                  Cerrar Sesión
-                </Button>
+            <div className="border-t pt-4 mt-4">
+              <div className="px-4 py-2 text-sm text-muted-foreground">
+                {user.email}
               </div>
-            )}
+              <Button onClick={signOut} variant="outline" className="w-full">
+                Cerrar Sesión
+              </Button>
+            </div>
           </div>
         )}
       </div>

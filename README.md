@@ -56,14 +56,14 @@ Sistema web para calcular y gestionar costos de recetas de repostería y pastele
   - [x] Cálculo de precio de venta sugerido
 
 ### Fase 3: Gestión de Productos/Insumos
-- [ ] **3.1** Implementar sistema de gestión de productos
-  - [ ] Crear componente ProductoForm
-  - [ ] Crear componente ProductoList
-  - [ ] Implementar CRUD de productos
-  - [ ] Validaciones de formulario
-  - [ ] Búsqueda y filtrado de productos
-  - [ ] Soporte para múltiples unidades de medida
-  - [ ] Cálculo automático de precio por unidad
+- [x] **3.1** Implementar sistema de gestión de productos
+  - [x] Crear componente ProductoForm
+  - [x] Crear componente ProductoList
+  - [x] Implementar CRUD de productos
+  - [x] Validaciones de formulario
+  - [x] Búsqueda y filtrado de productos
+  - [x] Soporte para múltiples unidades de medida
+  - [x] Cálculo automático de precio por unidad
 
 ### Fase 4: Sistema de Mano de Obra
 - [ ] **4.1** Implementar sistema de costo de mano de obra configurable

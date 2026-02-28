@@ -17,15 +17,33 @@ import { formatearMoneda } from "@/lib/constants";
 
 export default function Home() {
   const { user, loading: authLoading } = useAuth();
+
+  // Mostrar loading mientras se verifica autenticación
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-4">⏳</div>
+          <p className="text-muted-foreground">Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Si no hay usuario autenticado, mostrar landing page
+  if (!user) {
+    return <LandingPage />;
+  }
+
+  // Si hay usuario, mostrar dashboard
+  return <Dashboard />;
+}
+
+function Dashboard() {
   const { productos, cargando: cargandoProductos } = useProductos();
   const { recetas, cargando: cargandoRecetas } = useRecetas();
   const { configuracion } = useConfiguracion();
   const [mounted, setMounted] = useState(false);
-
-  // Si no hay usuario autenticado, mostrar landing page
-  if (!authLoading && !user) {
-    return <LandingPage />;
-  }
 
   useEffect(() => {
     setMounted(true);

@@ -38,8 +38,8 @@ export default function RecetasPage() {
     ? recetas.filter(r => r.nombre.toLowerCase().includes(terminoBusqueda.toLowerCase()))
     : recetas;
 
-  const handleAgregarMaterial = (productoId: string, cantidad: number) => {
-    const material = agregarMaterial(productoId, cantidad);
+  const handleAgregarMaterial = async (productoId: string, cantidad: number) => {
+    const material = await agregarMaterial(productoId, cantidad);
     if (material) {
       setMateriales([...materiales, material]);
     }
@@ -49,7 +49,7 @@ export default function RecetasPage() {
     setMateriales(materiales.filter(m => m.id !== materialId));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const datos = {
       nombre,
@@ -62,9 +62,9 @@ export default function RecetasPage() {
 
     let exito = false;
     if (recetaEditando) {
-      exito = actualizarReceta(recetaEditando.id, datos, materiales);
+      exito = await actualizarReceta(recetaEditando.id, datos, materiales);
     } else {
-      exito = crearReceta(datos, materiales);
+      exito = await crearReceta(datos, materiales);
     }
 
     if (exito) {

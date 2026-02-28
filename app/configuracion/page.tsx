@@ -8,8 +8,8 @@ import { Card, CardContent } from "@/components/ui/card";
 export default function ConfiguracionPage() {
   const { configuracion, cargando, error, actualizar } = useConfiguracion();
 
-  const handleSubmit = (datos: ConfiguracionFormData) => {
-    actualizar(datos);
+  const handleSubmit = async (datos: ConfiguracionFormData) => {
+    await actualizar(datos);
   };
 
   if (cargando) {

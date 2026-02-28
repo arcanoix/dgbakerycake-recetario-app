@@ -28,13 +28,13 @@ export default function ProductosPage() {
     ? buscarProductos(terminoBusqueda)
     : productos;
 
-  const handleSubmit = (datos: ProductoFormData) => {
+  const handleSubmit = async (datos: ProductoFormData) => {
     let exito = false;
 
     if (productoEditando) {
-      exito = actualizarProducto(productoEditando.id, datos);
+      exito = await actualizarProducto(productoEditando.id, datos);
     } else {
-      exito = crearProducto(datos);
+      exito = await crearProducto(datos);
     }
 
     if (exito) {

@@ -202,24 +202,24 @@ export const actualizarEstadoPago = async (
 };
 
 export const obtenerEstadisticasAdmin = async () => {
-  const { data: solicitudesPendientes } = await supabase
+  const { count: solicitudesPendientes } = await supabase
     .from('payment_requests')
-    .select('id', { count: 'exact', head: true })
+    .select('*', { count: 'exact', head: true })
     .eq('status', 'pending');
 
-  const { data: solicitudesAprobadas } = await supabase
+  const { count: solicitudesAprobadas } = await supabase
     .from('payment_requests')
-    .select('id', { count: 'exact', head: true })
+    .select('*', { count: 'exact', head: true })
     .eq('status', 'approved');
 
-  const { data: totalUsuarios } = await supabase
+  const { count: totalUsuarios } = await supabase
     .from('user_roles')
-    .select('id', { count: 'exact', head: true })
+    .select('*', { count: 'exact', head: true })
     .eq('role', 'cliente');
 
-  const { data: suscripcionesActivas } = await supabase
+  const { count: suscripcionesActivas } = await supabase
     .from('user_subscriptions')
-    .select('id', { count: 'exact', head: true })
+    .select('*', { count: 'exact', head: true })
     .eq('status', 'active')
     .neq('plan_id', (await supabase.from('subscription_plans').select('id').eq('name', 'free').single()).data?.id);
 

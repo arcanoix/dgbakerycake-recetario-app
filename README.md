@@ -31,29 +31,29 @@ Sistema web para calcular y gestionar costos de recetas de repostería y pastele
   - [x] Configurar variables de entorno
   - [x] Documentar comandos Docker
 
-- [ ] **1.3** Inicializar repositorio Git y configurar GitHub (privado)
-  - [ ] Inicializar Git
-  - [ ] Crear repositorio privado en GitHub
-  - [ ] Configurar .gitignore
-  - [ ] Primer commit y push
+- [x] **1.3** Inicializar repositorio Git y configurar GitHub (privado)
+  - [x] Inicializar Git
+  - [x] Crear repositorio privado en GitHub
+  - [x] Configurar .gitignore
+  - [x] Primer commit y push
   - [ ] Configurar ramas (main, develop)
 
 ### Fase 2: Fundamentos y Modelo de Datos
-- [ ] **2.1** Diseñar modelo de datos
-  - [ ] Definir tipos TypeScript para Productos
-  - [ ] Definir tipos TypeScript para Recetas
-  - [ ] Definir tipos TypeScript para Materiales
-  - [ ] Definir tipos TypeScript para Unidades de Medida
-  - [ ] Definir tipos TypeScript para Configuración de Mano de Obra
-  - [ ] Crear enums y constantes
+- [x] **2.1** Diseñar modelo de datos
+  - [x] Definir tipos TypeScript para Productos
+  - [x] Definir tipos TypeScript para Recetas
+  - [x] Definir tipos TypeScript para Materiales
+  - [x] Definir tipos TypeScript para Unidades de Medida
+  - [x] Definir tipos TypeScript para Configuración de Mano de Obra
+  - [x] Crear enums y constantes
 
-- [ ] **2.2** Implementar lógica de cálculos
-  - [ ] Sistema de conversión de unidades (gramos, litros, onzas, unidad)
-  - [ ] Cálculo de costo por material
-  - [ ] Cálculo de costo total de materiales
-  - [ ] Cálculo de costo de mano de obra
-  - [ ] Cálculo de costo total de receta
-  - [ ] Cálculo de precio de venta sugerido
+- [x] **2.2** Implementar lógica de cálculos
+  - [x] Sistema de conversión de unidades (gramos, litros, onzas, unidad)
+  - [x] Cálculo de costo por material
+  - [x] Cálculo de costo total de materiales
+  - [x] Cálculo de costo de mano de obra
+  - [x] Cálculo de costo total de receta
+  - [x] Cálculo de precio de venta sugerido
 
 ### Fase 3: Gestión de Productos/Insumos
 - [ ] **3.1** Implementar sistema de gestión de productos

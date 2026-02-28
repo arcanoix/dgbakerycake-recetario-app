@@ -1,0 +1,99 @@
+"use client";
+
+import { DesgloseCostos as DesgloseCostosType } from "@/types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatearMoneda, formatearNumero } from "@/lib/constants";
+import { obtenerSimboloUnidad } from "@/lib/conversiones";
+
+interface DesgloseCostosProps {
+  desglose: DesgloseCostosType;
+}
+
+export const DesgloseCostos = ({ desglose }: DesgloseCostosProps) => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>💰 Desglose de Costos</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Resumen de Costos */}
+        <div className="space-y-3">
+          <div className="flex justify-between items-center py-2 border-b">
+            <span className="text-muted-foreground">Costo de Materiales:</span>
+            <span className="font-semibold">
+              {formatearMoneda(desglose.costoMateriales, "USD")}
+            </span>
+          </div>
+          <div className="flex justify-between items-center py-2 border-b">
+            <span className="text-muted-foreground">Costo de Mano de Obra:</span>
+            <span className="font-semibold">
+              {formatearMoneda(desglose.costoManoObra, "USD")}
+            </span>
+          </div>
+          <div className="flex justify-between items-center py-3 bg-muted rounded-lg px-4">
+            <span className="font-bold text-lg">Costo Total:</span>
+            <span className="font-bold text-2xl text-primary">
+              {formatearMoneda(desglose.costoTotal, "USD")}
+            </span>
+          </div>
+        </div>
+
+        {/* Precio de Venta */}
+        {desglose.precioVentaSugerido && desglose.margenGanancia && (
+          <div className="space-y-3 pt-4 border-t">
+            <div className="flex justify-between items-center py-2">
+              <span className="text-muted-foreground">
+                Margen de Ganancia ({desglose.margenGanancia}%):
+              </span>
+              <span className="font-semibold text-green-600">
+                {formatearMoneda(
+                  desglose.precioVentaSugerido - desglose.costoTotal,
+                  "USD"
+                )}
+              </span>
+            </div>
+            <div className="flex justify-between items-center py-3 bg-green-50 border border-green-200 rounded-lg px-4">
+              <span className="font-bold text-lg text-green-800">
+                Precio de Venta Sugerido:
+              </span>
+              <span className="font-bold text-2xl text-green-600">
+                {formatearMoneda(desglose.precioVentaSugerido, "USD")}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Detalle de Materiales */}
+        {desglose.detallesMateriales.length > 0 && (
+          <div className="pt-4 border-t">
+            <h4 className="font-semibold mb-3">Detalle de Materiales</h4>
+            <div className="space-y-2">
+              {desglose.detallesMateriales.map((detalle, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-2 rounded hover:bg-muted/50"
+                >
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{detalle.nombreProducto}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {formatearNumero(detalle.cantidad)}{" "}
+                      {obtenerSimboloUnidad(detalle.unidad)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-semibold">
+                      {formatearMoneda(detalle.costo, "USD")}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {formatearNumero(detalle.porcentaje, 1)}%
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};

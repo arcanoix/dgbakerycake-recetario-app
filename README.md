@@ -74,19 +74,19 @@ Sistema web para calcular y gestionar costos de recetas de repostería y pastele
   - [x] Componente CostoManoObraInput para recetas
 
 ### Fase 5: Gestión de Recetas
-- [ ] **5.1** Implementar sistema de gestión de recetas
-  - [ ] Crear componente RecetaForm
-  - [ ] Crear componente RecetaList
-  - [ ] Crear componente MaterialSelector
-  - [ ] Crear componente DesgloseCostos
-  - [ ] Implementar CRUD de recetas
-  - [ ] Selector de materiales/insumos
-  - [ ] Input de tiempo de preparación
-  - [ ] Cálculo automático de costos (materiales + mano de obra)
-  - [ ] Conversión automática de unidades
-  - [ ] Desglose visual de costos
-  - [ ] Cálculo de margen de ganancia
-  - [ ] Precio de venta sugerido
+- [x] **5.1** Implementar sistema de gestión de recetas
+  - [x] Crear componente RecetaForm
+  - [x] Crear componente RecetaList
+  - [x] Crear componente MaterialSelector
+  - [x] Crear componente DesgloseCostos
+  - [x] Implementar CRUD de recetas
+  - [x] Selector de materiales/insumos
+  - [x] Input de tiempo de preparación
+  - [x] Cálculo automático de costos (materiales + mano de obra)
+  - [x] Cálculo de precio de venta sugerido
+  - [x] Búsqueda y filtrado de recetas
+  - [x] Cálculo de margen de ganancia
+  - [x] Precio de venta sugerido
 
 ### Fase 6: UI/UX
 - [ ] **6.1** Crear interfaz de usuario moderna

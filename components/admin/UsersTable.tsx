@@ -13,13 +13,17 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { suspenderUsuario, reactivarUsuario, cambiarRolUsuario } from "@/lib/subscriptionStorage";
 
 interface UsersTableProps {
   usuarios: UserData[];
+  onUpdate?: () => void;
 }
 
-export const UsersTable = ({ usuarios }: UsersTableProps) => {
+export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
   const [busqueda, setBusqueda] = useState("");
+  const [cargandoAccion, setCargandoAccion] = useState<string | null>(null);
 
   const usuariosFiltrados = usuarios.filter((usuario) =>
     usuario.email.toLowerCase().includes(busqueda.toLowerCase())
@@ -56,6 +60,54 @@ export const UsersTable = ({ usuarios }: UsersTableProps) => {
     });
   };
 
+  const handleSuspenderUsuario = async (userId: string, email: string) => {
+    if (!confirm(`¿Estás seguro de suspender al usuario ${email}?`)) return;
+    
+    setCargandoAccion(userId);
+    const resultado = await suspenderUsuario(userId, "Suspendido por administrador");
+    setCargandoAccion(null);
+    
+    if (resultado.exitoso) {
+      alert("Usuario suspendido exitosamente");
+      onUpdate?.();
+    } else {
+      alert(`Error al suspender usuario: ${resultado.error}`);
+    }
+  };
+
+  const handleReactivarUsuario = async (userId: string, email: string) => {
+    if (!confirm(`¿Estás seguro de reactivar al usuario ${email}?`)) return;
+    
+    setCargandoAccion(userId);
+    // Nota: Necesitarás el plan_id del usuario para reactivar
+    // Por ahora usaremos el plan free como fallback
+    const resultado = await reactivarUsuario(userId, "plan-free-id");
+    setCargandoAccion(null);
+    
+    if (resultado.exitoso) {
+      alert("Usuario reactivado exitosamente");
+      onUpdate?.();
+    } else {
+      alert(`Error al reactivar usuario: ${resultado.error}`);
+    }
+  };
+
+  const handleCambiarRol = async (userId: string, email: string, rolActual?: string) => {
+    const nuevoRol = rolActual === "admin" ? "cliente" : "admin";
+    if (!confirm(`¿Cambiar rol de ${email} a ${nuevoRol}?`)) return;
+    
+    setCargandoAccion(userId);
+    const resultado = await cambiarRolUsuario(userId, nuevoRol);
+    setCargandoAccion(null);
+    
+    if (resultado.exitoso) {
+      alert(`Rol cambiado a ${nuevoRol} exitosamente`);
+      onUpdate?.();
+    } else {
+      alert(`Error al cambiar rol: ${resultado.error}`);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -83,12 +135,13 @@ export const UsersTable = ({ usuarios }: UsersTableProps) => {
                 <TableHead className="text-center">Recetas</TableHead>
                 <TableHead>Inicio</TableHead>
                 <TableHead>Vencimiento</TableHead>
+                <TableHead className="text-right">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {usuariosFiltrados.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center text-muted-foreground">
+                  <TableCell colSpan={9} className="text-center text-muted-foreground">
                     No se encontraron usuarios
                   </TableCell>
                 </TableRow>
@@ -127,6 +180,37 @@ export const UsersTable = ({ usuarios }: UsersTableProps) => {
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {formatDate(usuario.end_date)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex gap-2 justify-end">
+                        {usuario.subscription_status === "active" ? (
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleSuspenderUsuario(usuario.id, usuario.email)}
+                            disabled={cargandoAccion === usuario.id}
+                          >
+                            {cargandoAccion === usuario.id ? "..." : "Suspender"}
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="default"
+                            onClick={() => handleReactivarUsuario(usuario.id, usuario.email)}
+                            disabled={cargandoAccion === usuario.id}
+                          >
+                            {cargandoAccion === usuario.id ? "..." : "Reactivar"}
+                          </Button>
+                        )}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleCambiarRol(usuario.id, usuario.email, usuario.role)}
+                          disabled={cargandoAccion === usuario.id}
+                        >
+                          {usuario.role === "admin" ? "→ Cliente" : "→ Admin"}
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))

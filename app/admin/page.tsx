@@ -255,7 +255,7 @@ export default function AdminPage() {
             />
           </>
         ) : (
-          <UsersTable usuarios={usuarios} />
+          <UsersTable usuarios={usuarios} onUpdate={cargarDatos} />
         )}
       </div>
     </ProtectedRoute>

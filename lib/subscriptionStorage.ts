@@ -310,6 +310,120 @@ export const obtenerEstadisticasUsuarios = async () => {
 };
 
 // ============================================
+// ADMINISTRACIÓN DE USUARIOS
+// ============================================
+
+export const cambiarEstadoUsuario = async (
+  userId: string,
+  nuevoEstado: 'active' | 'canceled'
+): Promise<{ exitoso: boolean; error?: string }> => {
+  try {
+    // Actualizar el estado de la suscripción del usuario
+    const { error } = await supabase
+      .from('user_subscriptions')
+      .update({ 
+        status: nuevoEstado,
+        updated_at: new Date().toISOString()
+      })
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Error al cambiar estado del usuario:', error);
+      return { exitoso: false, error: error.message };
+    }
+
+    return { exitoso: true };
+  } catch (err) {
+    console.error('Error al cambiar estado del usuario:', err);
+    return { exitoso: false, error: 'Error inesperado al cambiar estado' };
+  }
+};
+
+export const cambiarRolUsuario = async (
+  userId: string,
+  nuevoRol: 'admin' | 'cliente'
+): Promise<{ exitoso: boolean; error?: string }> => {
+  try {
+    const { error } = await supabase
+      .from('user_roles')
+      .update({ 
+        role: nuevoRol,
+        updated_at: new Date().toISOString()
+      })
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Error al cambiar rol del usuario:', error);
+      return { exitoso: false, error: error.message };
+    }
+
+    return { exitoso: true };
+  } catch (err) {
+    console.error('Error al cambiar rol del usuario:', err);
+    return { exitoso: false, error: 'Error inesperado al cambiar rol' };
+  }
+};
+
+export const suspenderUsuario = async (
+  userId: string,
+  motivo?: string
+): Promise<{ exitoso: boolean; error?: string }> => {
+  try {
+    // Cancelar todas las suscripciones activas del usuario
+    const { error: errorSuscripcion } = await supabase
+      .from('user_subscriptions')
+      .update({ 
+        status: 'canceled',
+        updated_at: new Date().toISOString()
+      })
+      .eq('user_id', userId)
+      .eq('status', 'active');
+
+    if (errorSuscripcion) {
+      console.error('Error al suspender usuario:', errorSuscripcion);
+      return { exitoso: false, error: errorSuscripcion.message };
+    }
+
+    // Opcional: Registrar el motivo de la suspensión
+    if (motivo) {
+      console.log(`Usuario ${userId} suspendido. Motivo: ${motivo}`);
+    }
+
+    return { exitoso: true };
+  } catch (err) {
+    console.error('Error al suspender usuario:', err);
+    return { exitoso: false, error: 'Error inesperado al suspender usuario' };
+  }
+};
+
+export const reactivarUsuario = async (
+  userId: string,
+  planId: string
+): Promise<{ exitoso: boolean; error?: string }> => {
+  try {
+    // Reactivar la suscripción del usuario
+    const { error } = await supabase
+      .from('user_subscriptions')
+      .update({ 
+        status: 'active',
+        updated_at: new Date().toISOString()
+      })
+      .eq('user_id', userId)
+      .eq('plan_id', planId);
+
+    if (error) {
+      console.error('Error al reactivar usuario:', error);
+      return { exitoso: false, error: error.message };
+    }
+
+    return { exitoso: true };
+  } catch (err) {
+    console.error('Error al reactivar usuario:', err);
+    return { exitoso: false, error: 'Error inesperado al reactivar usuario' };
+  }
+};
+
+// ============================================
 // VERIFICACIÓN DE LÍMITES
 // ============================================
 

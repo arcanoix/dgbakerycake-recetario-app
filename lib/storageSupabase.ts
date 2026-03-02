@@ -183,7 +183,31 @@ export const obtenerConfiguracion = async (): Promise<ConfiguracionGlobal | null
     return null;
   }
 
-  return data ? mapConfiguracionFromDB(data) : null;
+  // Si no existe configuración, crear una por defecto
+  if (!data) {
+    console.log('No se encontró configuración, creando una por defecto...');
+    const configPorDefecto = {
+      costo_por_hora_defecto: 10,
+      moneda: 'VES',
+      margen_ganancia_defecto: 30,
+      tasa_cambio_usd: 50,
+    };
+
+    const { data: nuevaConfig, error: errorCrear } = await supabase
+      .from('configuracion')
+      .insert([configPorDefecto])
+      .select()
+      .single();
+
+    if (errorCrear) {
+      console.error('Error al crear configuración por defecto:', errorCrear);
+      return null;
+    }
+
+    return nuevaConfig ? mapConfiguracionFromDB(nuevaConfig) : null;
+  }
+
+  return mapConfiguracionFromDB(data);
 };
 
 export const guardarConfiguracion = async (config: ConfiguracionGlobal) => {
@@ -310,6 +334,7 @@ function mapConfiguracionFromDB(data: any): ConfiguracionGlobal {
     costoPorHoraDefecto: parseFloat(data.costo_por_hora_defecto),
     moneda: data.moneda,
     margenGananciaDefecto: parseFloat(data.margen_ganancia_defecto),
+    tasaCambioUSD: data.tasa_cambio_usd ? parseFloat(data.tasa_cambio_usd) : undefined,
     ultimaActualizacion: new Date(data.updated_at),
   };
 }
@@ -319,6 +344,7 @@ function mapConfiguracionToDB(config: ConfiguracionGlobal) {
     costo_por_hora_defecto: config.costoPorHoraDefecto,
     moneda: config.moneda,
     margen_ganancia_defecto: config.margenGananciaDefecto,
+    tasa_cambio_usd: config.tasaCambioUSD || null,
   };
 }
 

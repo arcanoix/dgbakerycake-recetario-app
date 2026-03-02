@@ -42,14 +42,26 @@ export default function Home() {
 function Dashboard() {
   const { productos, cargando: cargandoProductos } = useProductos();
   const { recetas, cargando: cargandoRecetas } = useRecetas();
-  const { configuracion } = useConfiguracion();
+  const { configuracion, cargando: cargandoConfiguracion } = useConfiguracion();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted || cargandoProductos || cargandoRecetas || !configuracion) {
+  useEffect(() => {
+    console.log('Dashboard Debug:', {
+      mounted,
+      cargandoProductos,
+      cargandoRecetas,
+      cargandoConfiguracion,
+      configuracion,
+      productos: productos.length,
+      recetas: recetas.length
+    });
+  }, [mounted, cargandoProductos, cargandoRecetas, cargandoConfiguracion, configuracion, productos, recetas]);
+
+  if (!mounted || cargandoProductos || cargandoRecetas || cargandoConfiguracion) {
     return (
       <main className="min-h-screen p-8">
         <div className="max-w-7xl mx-auto">
@@ -57,6 +69,24 @@ function Dashboard() {
             <div className="text-center">
               <div className="text-4xl mb-4">⏳</div>
               <p className="text-muted-foreground">Cargando dashboard...</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (!configuracion) {
+    return (
+      <main className="min-h-screen p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="text-4xl mb-4">⚠️</div>
+              <p className="text-muted-foreground mb-4">No se encontró configuración</p>
+              <Link href="/configuracion">
+                <Button>Ir a Configuración</Button>
+              </Link>
             </div>
           </div>
         </div>

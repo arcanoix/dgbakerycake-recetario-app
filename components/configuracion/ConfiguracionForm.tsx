@@ -19,6 +19,7 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
     costoPorHoraDefecto: 0,
     moneda: "USD",
     margenGananciaDefecto: 0,
+    tasaCambioUSD: 0,
   });
 
   const [guardado, setGuardado] = useState(false);
@@ -29,6 +30,7 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
         costoPorHoraDefecto: configuracion.costoPorHoraDefecto,
         moneda: configuracion.moneda,
         margenGananciaDefecto: configuracion.margenGananciaDefecto || 0,
+        tasaCambioUSD: configuracion.tasaCambioUSD || 0,
       });
     }
   }, [configuracion]);
@@ -46,7 +48,7 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "costoPorHoraDefecto" || name === "margenGananciaDefecto"
+      [name]: name === "costoPorHoraDefecto" || name === "margenGananciaDefecto" || name === "tasaCambioUSD"
         ? parseFloat(value) || 0
         : value,
     }));
@@ -108,6 +110,25 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
               </Select>
               <p className="text-xs text-muted-foreground">
                 Moneda utilizada para mostrar precios y costos
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="tasaCambioUSD">
+                Tasa de Cambio USD (BCV)
+              </Label>
+              <Input
+                id="tasaCambioUSD"
+                name="tasaCambioUSD"
+                type="number"
+                step="0.01"
+                min="0"
+                value={formData.tasaCambioUSD || ""}
+                onChange={handleChange}
+                placeholder="50.00"
+              />
+              <p className="text-xs text-muted-foreground">
+                Tasa de cambio oficial del Banco Central de Venezuela (VES por USD)
               </p>
             </div>
           </div>

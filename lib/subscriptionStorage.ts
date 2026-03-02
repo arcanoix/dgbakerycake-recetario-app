@@ -149,8 +149,7 @@ export const obtenerTodasLasSolicitudes = async (): Promise<PaymentRequest[]> =>
     .from('payment_requests')
     .select(`
       *,
-      plan:subscription_plans(*),
-      user:auth.users(email)
+      plan:subscription_plans(*)
     `)
     .order('created_at', { ascending: false });
 
@@ -159,11 +158,7 @@ export const obtenerTodasLasSolicitudes = async (): Promise<PaymentRequest[]> =>
     return [];
   }
 
-  // Mapear para incluir el email del usuario
-  return (data || []).map((item: any) => ({
-    ...item,
-    user_email: item.user?.email,
-  }));
+  return data || [];
 };
 
 export const actualizarEstadoPago = async (

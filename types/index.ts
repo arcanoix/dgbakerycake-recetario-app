@@ -128,6 +128,7 @@ export interface ConfiguracionGlobal {
   costoPorHoraDefecto: number;
   moneda: string;
   margenGananciaDefecto?: number;
+  tasaCambioUSD?: number;
   ultimaActualizacion: Date;
 }
 
@@ -135,6 +136,7 @@ export interface ConfiguracionFormData {
   costoPorHoraDefecto: number;
   moneda: string;
   margenGananciaDefecto?: number;
+  tasaCambioUSD?: number;
 }
 
 // ============================================

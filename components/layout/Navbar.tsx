@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRole } from "@/hooks/useRole";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/ui/logo";
 
 export const Navbar = () => {
   const pathname = usePathname();
@@ -32,13 +33,7 @@ export const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-2xl">🍰</span>
-            <div className="flex flex-col">
-              <span className="font-bold text-lg text-primary">DG Bakery</span>
-              <span className="text-xs text-muted-foreground">Gestión de Costos</span>
-            </div>
-          </Link>
+          <Logo size="md" showText={false} href="/" />
 
           {/* Desktop Navigation */}
           {user && (

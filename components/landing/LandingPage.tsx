@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Logo } from "@/components/ui/logo";
 
 export const LandingPage = () => {
   return (
@@ -10,7 +11,9 @@ export const LandingPage = () => {
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 text-center">
         <div className="max-w-4xl mx-auto">
-          <div className="text-6xl mb-6 animate-bounce">🍰</div>
+          <div className="flex justify-center mb-6">
+            <Logo size="lg" showText={false} href={undefined} />
+          </div>
           <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             DG Bakery Cake
           </h1>

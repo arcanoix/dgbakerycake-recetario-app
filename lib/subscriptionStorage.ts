@@ -227,6 +227,89 @@ export const obtenerEstadisticasAdmin = async () => {
 };
 
 // ============================================
+// GESTIÓN DE USUARIOS (ADMIN)
+// ============================================
+
+export const obtenerTodosLosUsuarios = async () => {
+  // Obtener información de usuarios desde user_subscription_info
+  const { data: usuarios, error } = await supabase
+    .from('user_subscription_info')
+    .select('*')
+    .order('email', { ascending: true });
+
+  if (error) {
+    console.error('Error al obtener usuarios:', error);
+    return [];
+  }
+
+  // Obtener conteos de productos y recetas por usuario
+  const usuariosConConteos = await Promise.all(
+    (usuarios || []).map(async (usuario) => {
+      const [{ count: productosCount }, { count: recetasCount }] = await Promise.all([
+        supabase
+          .from('productos')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', usuario.user_id),
+        supabase
+          .from('recetas')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', usuario.user_id),
+      ]);
+
+      return {
+        id: usuario.user_id,
+        email: usuario.email,
+        role: usuario.role,
+        plan_name: usuario.plan_name,
+        plan_display_name: usuario.plan_display_name,
+        subscription_status: usuario.subscription_status,
+        start_date: usuario.start_date,
+        end_date: usuario.end_date,
+        productos_count: productosCount || 0,
+        recetas_count: recetasCount || 0,
+        is_active: usuario.is_active,
+      };
+    })
+  );
+
+  return usuariosConConteos;
+};
+
+export const obtenerEstadisticasUsuarios = async () => {
+  const { count: totalUsuarios } = await supabase
+    .from('user_subscription_info')
+    .select('*', { count: 'exact', head: true });
+
+  const { count: usuariosActivos } = await supabase
+    .from('user_subscription_info')
+    .select('*', { count: 'exact', head: true })
+    .eq('is_active', true);
+
+  const { count: usuariosConPlanPago } = await supabase
+    .from('user_subscription_info')
+    .select('*', { count: 'exact', head: true })
+    .neq('plan_name', 'free')
+    .eq('subscription_status', 'active');
+
+  // Usuarios nuevos este mes
+  const inicioMes = new Date();
+  inicioMes.setDate(1);
+  inicioMes.setHours(0, 0, 0, 0);
+
+  const { count: usuariosNuevosEsteMes } = await supabase
+    .from('user_roles')
+    .select('*', { count: 'exact', head: true })
+    .gte('created_at', inicioMes.toISOString());
+
+  return {
+    totalUsuarios: totalUsuarios || 0,
+    usuariosActivos: usuariosActivos || 0,
+    usuariosConPlanPago: usuariosConPlanPago || 0,
+    usuariosNuevosEsteMes: usuariosNuevosEsteMes || 0,
+  };
+};
+
+// ============================================
 // VERIFICACIÓN DE LÍMITES
 // ============================================
 

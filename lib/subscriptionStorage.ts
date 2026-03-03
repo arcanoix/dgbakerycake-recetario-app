@@ -423,6 +423,95 @@ export const reactivarUsuario = async (
   }
 };
 
+export const eliminarUsuario = async (
+  userId: string
+): Promise<{ exitoso: boolean; error?: string }> => {
+  try {
+    // IMPORTANTE: Esta operación eliminará todos los datos del usuario
+    // Orden de eliminación para respetar las foreign keys:
+    
+    // 1. Eliminar recetas del usuario
+    const { error: errorRecetas } = await supabase
+      .from('recetas')
+      .delete()
+      .eq('user_id', userId);
+
+    if (errorRecetas) {
+      console.error('Error al eliminar recetas:', errorRecetas);
+      return { exitoso: false, error: `Error al eliminar recetas: ${errorRecetas.message}` };
+    }
+
+    // 2. Eliminar productos del usuario
+    const { error: errorProductos } = await supabase
+      .from('productos')
+      .delete()
+      .eq('user_id', userId);
+
+    if (errorProductos) {
+      console.error('Error al eliminar productos:', errorProductos);
+      return { exitoso: false, error: `Error al eliminar productos: ${errorProductos.message}` };
+    }
+
+    // 3. Eliminar configuración del usuario
+    const { error: errorConfig } = await supabase
+      .from('configuracion')
+      .delete()
+      .eq('user_id', userId);
+
+    if (errorConfig) {
+      console.error('Error al eliminar configuración:', errorConfig);
+      return { exitoso: false, error: `Error al eliminar configuración: ${errorConfig.message}` };
+    }
+
+    // 4. Eliminar solicitudes de pago del usuario
+    const { error: errorSolicitudes } = await supabase
+      .from('payment_requests')
+      .delete()
+      .eq('user_id', userId);
+
+    if (errorSolicitudes) {
+      console.error('Error al eliminar solicitudes de pago:', errorSolicitudes);
+      return { exitoso: false, error: `Error al eliminar solicitudes: ${errorSolicitudes.message}` };
+    }
+
+    // 5. Eliminar suscripciones del usuario
+    const { error: errorSuscripciones } = await supabase
+      .from('user_subscriptions')
+      .delete()
+      .eq('user_id', userId);
+
+    if (errorSuscripciones) {
+      console.error('Error al eliminar suscripciones:', errorSuscripciones);
+      return { exitoso: false, error: `Error al eliminar suscripciones: ${errorSuscripciones.message}` };
+    }
+
+    // 6. Eliminar rol del usuario
+    const { error: errorRol } = await supabase
+      .from('user_roles')
+      .delete()
+      .eq('user_id', userId);
+
+    if (errorRol) {
+      console.error('Error al eliminar rol:', errorRol);
+      return { exitoso: false, error: `Error al eliminar rol: ${errorRol.message}` };
+    }
+
+    // 7. Finalmente, eliminar el usuario de auth.users
+    // Nota: Esto requiere privilegios de admin en Supabase
+    const { error: errorAuth } = await supabase.auth.admin.deleteUser(userId);
+
+    if (errorAuth) {
+      console.error('Error al eliminar usuario de auth:', errorAuth);
+      return { exitoso: false, error: `Error al eliminar usuario: ${errorAuth.message}` };
+    }
+
+    return { exitoso: true };
+  } catch (err) {
+    console.error('Error al eliminar usuario:', err);
+    return { exitoso: false, error: 'Error inesperado al eliminar usuario' };
+  }
+};
+
 // ============================================
 // VERIFICACIÓN DE LÍMITES
 // ============================================

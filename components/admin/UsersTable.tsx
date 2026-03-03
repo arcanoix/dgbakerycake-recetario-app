@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { suspenderUsuario, reactivarUsuario, cambiarRolUsuario } from "@/lib/subscriptionStorage";
+import { suspenderUsuario, reactivarUsuario, cambiarRolUsuario, eliminarUsuario } from "@/lib/subscriptionStorage";
 
 interface UsersTableProps {
   usuarios: UserData[];
@@ -105,6 +105,40 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
       onUpdate?.();
     } else {
       alert(`Error al cambiar rol: ${resultado.error}`);
+    }
+  };
+
+  const handleEliminarUsuario = async (userId: string, email: string) => {
+    const confirmacion1 = confirm(
+      `⚠️ ADVERTENCIA: Estás a punto de eliminar permanentemente al usuario ${email}.\n\n` +
+      `Esta acción eliminará:\n` +
+      `- Todos sus productos\n` +
+      `- Todas sus recetas\n` +
+      `- Su configuración\n` +
+      `- Sus suscripciones\n` +
+      `- Su cuenta de usuario\n\n` +
+      `Esta acción NO se puede deshacer.\n\n` +
+      `¿Estás seguro de que deseas continuar?`
+    );
+    
+    if (!confirmacion1) return;
+    
+    const confirmacion2 = confirm(
+      `⚠️ ÚLTIMA CONFIRMACIÓN\n\n` +
+      `¿Confirmas que deseas eliminar permanentemente a ${email}?`
+    );
+    
+    if (!confirmacion2) return;
+    
+    setCargandoAccion(userId);
+    const resultado = await eliminarUsuario(userId);
+    setCargandoAccion(null);
+    
+    if (resultado.exitoso) {
+      alert(`Usuario ${email} eliminado exitosamente`);
+      onUpdate?.();
+    } else {
+      alert(`Error al eliminar usuario: ${resultado.error}`);
     }
   };
 
@@ -209,6 +243,15 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
                           disabled={cargandoAccion === usuario.id}
                         >
                           {usuario.role === "admin" ? "→ Cliente" : "→ Admin"}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleEliminarUsuario(usuario.id, usuario.email)}
+                          disabled={cargandoAccion === usuario.id}
+                          className="bg-red-700 hover:bg-red-800"
+                        >
+                          {cargandoAccion === usuario.id ? "..." : "🗑️ Eliminar"}
                         </Button>
                       </div>
                     </TableCell>

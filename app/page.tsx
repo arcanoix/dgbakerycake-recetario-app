@@ -13,7 +13,7 @@ import { useProductos } from "@/hooks/useProductos";
 import { useRecetas } from "@/hooks/useRecetas";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
 import { calcularEstadisticas, calcularValorInventario } from "@/lib/estadisticas";
-import { formatearMoneda } from "@/lib/constants";
+import { formatearDualMoneda } from "@/lib/currency";
 
 export default function Home() {
   const { user, loading: authLoading } = useAuth();
@@ -127,13 +127,13 @@ function Dashboard() {
           />
           <StatsCard
             title="Valor Inventario"
-            value={formatearMoneda(valorInventario, configuracion.moneda)}
+            value={formatearDualMoneda(valorInventario, configuracion.tasaCambioUSD || 50, true)}
             icon="💰"
             description="Inversión total en productos"
           />
           <StatsCard
             title="Costo Promedio Receta"
-            value={formatearMoneda(estadisticas.costoPromedioReceta, configuracion.moneda)}
+            value={formatearDualMoneda(estadisticas.costoPromedioReceta, configuracion.tasaCambioUSD || 50, true)}
             icon="📊"
             description="Promedio de todas las recetas"
           />
@@ -207,7 +207,7 @@ function Dashboard() {
               <h4 className="font-bold text-red-800 mb-2">🔴 Receta Más Costosa</h4>
               <p className="text-2xl font-bold text-red-900">{estadisticas.recetaMasCostosa.nombre}</p>
               <p className="text-red-700 mt-2">
-                {formatearMoneda(estadisticas.recetaMasCostosa.costoTotal, configuracion.moneda)}
+                {formatearDualMoneda(estadisticas.recetaMasCostosa.costoTotal, configuracion.tasaCambioUSD || 50, true)}
               </p>
             </div>
             
@@ -216,7 +216,7 @@ function Dashboard() {
                 <h4 className="font-bold text-green-800 mb-2">🟢 Receta Más Económica</h4>
                 <p className="text-2xl font-bold text-green-900">{estadisticas.recetaMasEconomica.nombre}</p>
                 <p className="text-green-700 mt-2">
-                  {formatearMoneda(estadisticas.recetaMasEconomica.costoTotal, configuracion.moneda)}
+                  {formatearDualMoneda(estadisticas.recetaMasEconomica.costoTotal, configuracion.tasaCambioUSD || 50, true)}
                 </p>
               </div>
             )}

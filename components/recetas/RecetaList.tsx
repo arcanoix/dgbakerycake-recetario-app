@@ -3,8 +3,9 @@
 import { Receta } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { formatearMoneda, formatearTiempo } from "@/lib/constants";
+import { formatearTiempo } from "@/lib/constants";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
+import { PrecioDual } from "@/components/ui/precio-dual";
 
 interface RecetaListProps {
   recetas: Receta[];
@@ -59,28 +60,36 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProp
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Costo Materiales:</span>
-                <span className="font-semibold">
-                  {formatearMoneda(receta.costoMateriales, configuracion?.moneda)}
-                </span>
+                <PrecioDual 
+                  valorUSD={receta.costoMateriales} 
+                  tasaCambio={configuracion?.tasaCambioUSD || 50}
+                  className="text-sm"
+                />
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Costo Mano Obra:</span>
-                <span className="font-semibold">
-                  {formatearMoneda(receta.costoManoObra, configuracion?.moneda)}
-                </span>
+                <PrecioDual 
+                  valorUSD={receta.costoManoObra} 
+                  tasaCambio={configuracion?.tasaCambioUSD || 50}
+                  className="text-sm"
+                />
               </div>
               <div className="flex justify-between text-sm border-t pt-2">
                 <span className="font-bold">Costo Total:</span>
-                <span className="font-bold text-primary text-lg">
-                  {formatearMoneda(receta.costoTotal, configuracion?.moneda)}
-                </span>
+                <PrecioDual 
+                  valorUSD={receta.costoTotal} 
+                  tasaCambio={configuracion?.tasaCambioUSD || 50}
+                  className="text-sm font-bold"
+                />
               </div>
               {receta.precioVentaSugerido && (
                 <div className="flex justify-between text-sm bg-green-50 p-2 rounded">
                   <span className="text-green-800 font-semibold">Precio Venta:</span>
-                  <span className="text-green-600 font-bold">
-                    {formatearMoneda(receta.precioVentaSugerido, configuracion?.moneda)}
-                  </span>
+                  <PrecioDual 
+                    valorUSD={receta.precioVentaSugerido} 
+                    tasaCambio={configuracion?.tasaCambioUSD || 50}
+                    className="text-sm font-bold text-green-600"
+                  />
                 </div>
               )}
             </div>

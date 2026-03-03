@@ -3,9 +3,10 @@
 import { Producto } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { formatearMoneda, formatearNumero } from "@/lib/constants";
+import { formatearNumero } from "@/lib/constants";
 import { obtenerSimboloUnidad } from "@/lib/conversiones";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
+import { PrecioDual } from "@/components/ui/precio-dual";
 
 interface ProductoListProps {
   productos: Producto[];
@@ -45,9 +46,11 @@ export const ProductoList = ({ productos, onEdit, onDelete }: ProductoListProps)
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Precio Total:</span>
-                <span className="font-bold text-lg">
-                  {formatearMoneda(producto.precioTotal, configuracion?.moneda)}
-                </span>
+                <PrecioDual 
+                  valorUSD={producto.precioTotal} 
+                  tasaCambio={configuracion?.tasaCambioUSD || 50}
+                  className="text-sm"
+                />
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Cantidad:</span>
@@ -57,9 +60,11 @@ export const ProductoList = ({ productos, onEdit, onDelete }: ProductoListProps)
               </div>
               <div className="flex justify-between text-sm border-t pt-2">
                 <span className="text-muted-foreground">Precio por Unidad:</span>
-                <span className="font-bold text-primary text-lg">
-                  {formatearMoneda(producto.precioPorUnidad, configuracion?.moneda)}
-                </span>
+                <PrecioDual 
+                  valorUSD={producto.precioPorUnidad} 
+                  tasaCambio={configuracion?.tasaCambioUSD || 50}
+                  className="text-sm font-bold"
+                />
               </div>
             </div>
 

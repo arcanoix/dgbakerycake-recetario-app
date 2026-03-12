@@ -189,7 +189,9 @@ export default function RecetasPage() {
           <div className="flex gap-4">
             <Input placeholder="Buscar recetas..." value={terminoBusqueda} onChange={(e) => setTerminoBusqueda(e.target.value)} className="max-w-md" />
           </div>
-          <RecetaList recetas={recetasFiltradas} onEdit={handleEdit} onDelete={eliminar} />
+          <RecetaList recetas={recetasFiltradas} onEdit={handleEdit} onDelete={async (id: string) => {
+            await eliminar(id);
+          }} />
         </>
       )}
       </div>

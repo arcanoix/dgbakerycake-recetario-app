@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Receta } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,12 +11,26 @@ import { PrecioDual } from "@/components/ui/precio-dual";
 interface RecetaListProps {
   recetas: Receta[];
   onEdit: (receta: Receta) => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: string) => Promise<void>;
   onView?: (receta: Receta) => void;
 }
 
 export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProps) => {
   const { configuracion } = useConfiguracion();
+  const [eliminando, setEliminando] = useState<string | null>(null);
+  const [cargando, setCargando] = useState(false);
+
+  const handleDelete = async (id: string) => {
+    setEliminando(id);
+    try {
+      setCargando(true);
+      await onDelete(id);
+    } finally {
+      setEliminando(null);
+      setCargando(false);
+    }
+  };
+
   if (recetas.length === 0) {
     return (
       <Card>
@@ -63,6 +78,7 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProp
                 <PrecioDual 
                   valorUSD={receta.costoMateriales} 
                   tasaCambio={configuracion?.tasaCambioUSD || 50}
+                  monedaPorDefecto={configuracion?.moneda || 'VES'}
                   className="text-sm"
                 />
               </div>
@@ -71,6 +87,7 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProp
                 <PrecioDual 
                   valorUSD={receta.costoManoObra} 
                   tasaCambio={configuracion?.tasaCambioUSD || 50}
+                  monedaPorDefecto={configuracion?.moneda || 'VES'}
                   className="text-sm"
                 />
               </div>
@@ -79,6 +96,7 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProp
                 <PrecioDual 
                   valorUSD={receta.costoTotal} 
                   tasaCambio={configuracion?.tasaCambioUSD || 50}
+                  monedaPorDefecto={configuracion?.moneda || 'VES'}
                   className="text-sm font-bold"
                 />
               </div>
@@ -88,6 +106,7 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProp
                   <PrecioDual 
                     valorUSD={receta.precioVentaSugerido} 
                     tasaCambio={configuracion?.tasaCambioUSD || 50}
+                    monedaPorDefecto={configuracion?.moneda || 'VES'}
                     className="text-sm font-bold text-green-600"
                   />
                 </div>
@@ -101,6 +120,7 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProp
                   size="sm"
                   className="flex-1"
                   onClick={() => onView(receta)}
+                  disabled={eliminando === receta.id}
                 >
                   Ver
                 </Button>
@@ -110,6 +130,7 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProp
                 size="sm"
                 className="flex-1"
                 onClick={() => onEdit(receta)}
+                disabled={eliminando === receta.id}
               >
                 Editar
               </Button>
@@ -118,11 +139,16 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProp
                 size="sm"
                 onClick={() => {
                   if (confirm(`¿Estás seguro de eliminar "${receta.nombre}"?`)) {
-                    onDelete(receta.id);
+                    handleDelete(receta.id);
                   }
                 }}
+                disabled={eliminando === receta.id}
               >
-                ×
+                {eliminando === receta.id ? (
+                  <span className="animate-spin">⏳</span>
+                ) : (
+                  '×'
+                )}
               </Button>
             </div>
           </CardContent>

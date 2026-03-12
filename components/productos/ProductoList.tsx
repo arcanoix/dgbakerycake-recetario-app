@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Producto } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,11 +12,22 @@ import { PrecioDual } from "@/components/ui/precio-dual";
 interface ProductoListProps {
   productos: Producto[];
   onEdit: (producto: Producto) => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: string) => Promise<void>;
 }
 
 export const ProductoList = ({ productos, onEdit, onDelete }: ProductoListProps) => {
   const { configuracion } = useConfiguracion();
+  const [eliminando, setEliminando] = useState<string | null>(null);
+
+  const handleDelete = async (id: string) => {
+    setEliminando(id);
+    try {
+      await onDelete(id);
+    } finally {
+      setEliminando(null);
+    }
+  };
+
   if (productos.length === 0) {
     return (
       <Card>
@@ -49,20 +61,48 @@ export const ProductoList = ({ productos, onEdit, onDelete }: ProductoListProps)
                 <PrecioDual 
                   valorUSD={producto.precioTotal} 
                   tasaCambio={configuracion?.tasaCambioUSD || 50}
+                  monedaPorDefecto={configuracion?.moneda || 'VES'}
                   className="text-sm"
                 />
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Cantidad:</span>
-                <span className="font-semibold">
-                  {formatearNumero(producto.cantidadTotal)} {obtenerSimboloUnidad(producto.unidadMedida)}
-                </span>
+              
+              <div className="bg-blue-50 rounded p-2 space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span className="text-blue-700">Presentación:</span>
+                  <span className="font-semibold text-blue-900">
+                    {formatearNumero(producto.tamañoPresentacion)} {obtenerSimboloUnidad(producto.unidadMedida)}
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-blue-700">Cantidad:</span>
+                  <span className="font-semibold text-blue-900">
+                    {producto.cantidadPresentaciones} {producto.cantidadPresentaciones === 1 ? 'unidad' : 'unidades'}
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs border-t border-blue-200 pt-1">
+                  <span className="text-blue-700">Total:</span>
+                  <span className="font-bold text-blue-900">
+                    {formatearNumero(producto.cantidadTotal)} {obtenerSimboloUnidad(producto.unidadMedida)}
+                  </span>
+                </div>
               </div>
+              
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Precio/Presentación:</span>
+                <PrecioDual 
+                  valorUSD={producto.precioPorPresentacion} 
+                  tasaCambio={configuracion?.tasaCambioUSD || 50}
+                  monedaPorDefecto={configuracion?.moneda || 'VES'}
+                  className="text-sm font-semibold"
+                />
+              </div>
+              
               <div className="flex justify-between text-sm border-t pt-2">
-                <span className="text-muted-foreground">Precio por Unidad:</span>
+                <span className="text-muted-foreground">Precio por {obtenerSimboloUnidad(producto.unidadMedida)}:</span>
                 <PrecioDual 
                   valorUSD={producto.precioPorUnidad} 
                   tasaCambio={configuracion?.tasaCambioUSD || 50}
+                  monedaPorDefecto={configuracion?.moneda || 'VES'}
                   className="text-sm font-bold"
                 />
               </div>
@@ -86,6 +126,7 @@ export const ProductoList = ({ productos, onEdit, onDelete }: ProductoListProps)
                 size="sm"
                 className="flex-1"
                 onClick={() => onEdit(producto)}
+                disabled={eliminando === producto.id}
               >
                 Editar
               </Button>
@@ -95,11 +136,19 @@ export const ProductoList = ({ productos, onEdit, onDelete }: ProductoListProps)
                 className="flex-1"
                 onClick={() => {
                   if (confirm(`¿Estás seguro de eliminar "${producto.nombre}"?`)) {
-                    onDelete(producto.id);
+                    handleDelete(producto.id);
                   }
                 }}
+                disabled={eliminando === producto.id}
               >
-                Eliminar
+                {eliminando === producto.id ? (
+                  <span className="flex items-center gap-2">
+                    <span className="animate-spin">⏳</span>
+                    Eliminando...
+                  </span>
+                ) : (
+                  'Eliminar'
+                )}
               </Button>
             </div>
           </CardContent>

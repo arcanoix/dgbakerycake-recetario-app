@@ -29,7 +29,7 @@ export default function ProductosPage() {
     ? buscarProductos(terminoBusqueda)
     : productos;
 
-  const handleSubmit = async (datos: ProductoFormData) => {
+  const handleSubmit = async (datos: ProductoFormData): Promise<void> => {
     let exito = false;
 
     if (productoEditando) {
@@ -149,7 +149,9 @@ export default function ProductosPage() {
         <ProductoList
           productos={productosFiltrados}
           onEdit={handleEdit}
-          onDelete={eliminar}
+          onDelete={async (id: string) => {
+            await eliminar(id);
+          }}
         />
       )}
       </div>

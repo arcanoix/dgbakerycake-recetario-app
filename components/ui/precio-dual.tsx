@@ -3,23 +3,22 @@ import { formatearUSD, formatearBS, convertirUSDaBS } from "@/lib/currency";
 interface PrecioDualProps {
   valorUSD: number;
   tasaCambio: number;
-  mostrarUSDPrimero?: boolean;
+  monedaPorDefecto?: string; // 'USD' o 'VES' (Bolívares)
   className?: string;
-  destacarBS?: boolean;
 }
 
 export const PrecioDual = ({ 
   valorUSD, 
   tasaCambio, 
-  mostrarUSDPrimero = false,
-  className = "",
-  destacarBS = true
+  monedaPorDefecto = 'VES',
+  className = ""
 }: PrecioDualProps) => {
   const valorBS = convertirUSDaBS(valorUSD, tasaCambio);
   const usdFormateado = formatearUSD(valorUSD);
   const bsFormateado = formatearBS(valorBS);
 
-  if (mostrarUSDPrimero) {
+  // Si la moneda por defecto es USD, mostrar USD grande
+  if (monedaPorDefecto === 'USD') {
     return (
       <span className={`flex flex-col gap-0.5 ${className}`}>
         <span className="font-bold text-gray-900">
@@ -32,6 +31,7 @@ export const PrecioDual = ({
     );
   }
 
+  // Si la moneda por defecto es VES (Bolívares), mostrar BS grande
   return (
     <span className={`flex flex-col gap-0.5 ${className}`}>
       <span className="font-semibold text-green-600">

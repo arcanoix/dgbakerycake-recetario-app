@@ -116,7 +116,7 @@ function Dashboard() {
           <StatsCard
             title="Total Productos"
             value={estadisticas.totalProductos}
-            icon="📦"
+            icon="🛒"
             description="Insumos registrados"
           />
           <StatsCard
@@ -127,13 +127,13 @@ function Dashboard() {
           />
           <StatsCard
             title="Valor Inventario"
-            value={formatearDualMoneda(valorInventario, configuracion.tasaCambioUSD || 50, true)}
+            value={formatearDualMoneda(valorInventario, configuracion.tasaCambioUSD || 50, configuracion.moneda === 'USD')}
             icon="💰"
             description="Inversión total en productos"
           />
           <StatsCard
             title="Costo Promedio Receta"
-            value={formatearDualMoneda(estadisticas.costoPromedioReceta, configuracion.tasaCambioUSD || 50, true)}
+            value={formatearDualMoneda(estadisticas.costoPromedioReceta, configuracion.tasaCambioUSD || 50, configuracion.moneda === 'USD')}
             icon="📊"
             description="Promedio de todas las recetas"
           />
@@ -160,7 +160,7 @@ function Dashboard() {
           ) : (
             <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 flex items-center justify-center h-[400px]">
               <div className="text-center">
-                <p className="text-4xl mb-4">�</p>
+                <p className="text-4xl mb-4">🛒</p>
                 <p className="text-muted-foreground mb-4">No hay productos aún</p>
                 <Link href="/productos">
                   <Button>Agregar Productos</Button>
@@ -207,7 +207,7 @@ function Dashboard() {
               <h4 className="font-bold text-red-800 mb-2">🔴 Receta Más Costosa</h4>
               <p className="text-2xl font-bold text-red-900">{estadisticas.recetaMasCostosa.nombre}</p>
               <p className="text-red-700 mt-2">
-                {formatearDualMoneda(estadisticas.recetaMasCostosa.costoTotal, configuracion.tasaCambioUSD || 50, true)}
+                {formatearDualMoneda(estadisticas.recetaMasCostosa.costoTotal, configuracion.tasaCambioUSD || 50, configuracion.moneda === 'USD')}
               </p>
             </div>
             
@@ -216,7 +216,7 @@ function Dashboard() {
                 <h4 className="font-bold text-green-800 mb-2">🟢 Receta Más Económica</h4>
                 <p className="text-2xl font-bold text-green-900">{estadisticas.recetaMasEconomica.nombre}</p>
                 <p className="text-green-700 mt-2">
-                  {formatearDualMoneda(estadisticas.recetaMasEconomica.costoTotal, configuracion.tasaCambioUSD || 50, true)}
+                  {formatearDualMoneda(estadisticas.recetaMasEconomica.costoTotal, configuracion.tasaCambioUSD || 50, configuracion.moneda === 'USD')}
                 </p>
               </div>
             )}

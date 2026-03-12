@@ -32,9 +32,17 @@ export interface Producto {
   id: string;
   nombre: string;
   precioTotal: number;
-  cantidadTotal: number;
-  unidadMedida: UnidadMedida;
-  precioPorUnidad: number; // Calculado automáticamente
+  
+  // Presentación individual del producto
+  tamañoPresentacion: number; // Ej: 900 (para una bolsa de 900g)
+  unidadMedida: UnidadMedida; // Ej: gramos
+  cantidadPresentaciones: number; // Ej: 3 (tres bolsas)
+  
+  // Calculados automáticamente
+  cantidadTotal: number; // Total = tamañoPresentacion * cantidadPresentaciones
+  precioPorUnidad: number; // Precio por unidad base (ej: por gramo)
+  precioPorPresentacion: number; // Precio por presentación individual
+  
   categoria?: string;
   proveedor?: string;
   notas?: string;
@@ -45,8 +53,9 @@ export interface Producto {
 export interface ProductoFormData {
   nombre: string;
   precioTotal: number;
-  cantidadTotal: number;
+  tamañoPresentacion: number;
   unidadMedida: UnidadMedida;
+  cantidadPresentaciones: number;
   categoria?: string;
   proveedor?: string;
   notas?: string;

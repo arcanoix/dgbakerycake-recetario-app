@@ -15,7 +15,7 @@ import { useConfiguracion } from "@/hooks/useConfiguracion";
 
 interface ProductoFormProps {
   producto?: Producto;
-  onSubmit: (datos: ProductoFormData) => void;
+  onSubmit: (datos: ProductoFormData) => Promise<void>;
   onCancel?: () => void;
 }
 
@@ -24,7 +24,8 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
   const [formData, setFormData] = useState<ProductoFormData>({
     nombre: "",
     precioTotal: 0,
-    cantidadTotal: 0,
+    tamañoPresentacion: 0,
+    cantidadPresentaciones: 0,
     unidadMedida: UnidadMedida.GRAMOS,
     categoria: "",
     proveedor: "",
@@ -32,13 +33,17 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
   });
 
   const [precioPorUnidad, setPrecioPorUnidad] = useState(0);
+  const [precioPorPresentacion, setPrecioPorPresentacion] = useState(0);
+  const [cantidadTotal, setCantidadTotal] = useState(0);
+  const [guardando, setGuardando] = useState(false);
 
   useEffect(() => {
     if (producto) {
       setFormData({
         nombre: producto.nombre,
         precioTotal: producto.precioTotal,
-        cantidadTotal: producto.cantidadTotal,
+        tamañoPresentacion: producto.tamañoPresentacion,
+        cantidadPresentaciones: producto.cantidadPresentaciones,
         unidadMedida: producto.unidadMedida,
         categoria: producto.categoria,
         proveedor: producto.proveedor,
@@ -47,18 +52,42 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
     }
   }, [producto]);
 
+  // Calcular valores automáticamente
   useEffect(() => {
-    if (formData.precioTotal > 0 && formData.cantidadTotal > 0) {
-      const precio = calcularPrecioPorUnidad(formData.precioTotal, formData.cantidadTotal);
-      setPrecioPorUnidad(precio);
+    const { tamañoPresentacion, cantidadPresentaciones, precioTotal } = formData;
+    
+    if (tamañoPresentacion > 0 && cantidadPresentaciones > 0) {
+      // Calcular cantidad total
+      const total = tamañoPresentacion * cantidadPresentaciones;
+      setCantidadTotal(total);
+      
+      if (precioTotal > 0) {
+        // Calcular precio por unidad base
+        const precioUnidad = precioTotal / total;
+        setPrecioPorUnidad(precioUnidad);
+        
+        // Calcular precio por presentación
+        const precioPresentacion = precioTotal / cantidadPresentaciones;
+        setPrecioPorPresentacion(precioPresentacion);
+      } else {
+        setPrecioPorUnidad(0);
+        setPrecioPorPresentacion(0);
+      }
     } else {
+      setCantidadTotal(0);
       setPrecioPorUnidad(0);
+      setPrecioPorPresentacion(0);
     }
-  }, [formData.precioTotal, formData.cantidadTotal]);
+  }, [formData.tamañoPresentacion, formData.cantidadPresentaciones, formData.precioTotal]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    setGuardando(true);
+    try {
+      await onSubmit(formData);
+    } finally {
+      setGuardando(false);
+    }
   };
 
   const handleChange = (
@@ -67,7 +96,7 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "precioTotal" || name === "cantidadTotal" 
+      [name]: name === "precioTotal" || name === "tamañoPresentacion" || name === "cantidadPresentaciones"
         ? parseFloat(value) || 0 
         : value,
     }));
@@ -128,20 +157,42 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
               />
             </div>
 
-            {/* Cantidad Total */}
+            {/* Tamaño de Presentación */}
             <div className="space-y-2">
-              <Label htmlFor="cantidadTotal">Cantidad Total *</Label>
+              <Label htmlFor="tamañoPresentacion">Tamaño de Presentación *</Label>
               <Input
-                id="cantidadTotal"
-                name="cantidadTotal"
+                id="tamañoPresentacion"
+                name="tamañoPresentacion"
                 type="number"
                 step="0.01"
                 min="0.01"
-                value={formData.cantidadTotal || ""}
+                value={formData.tamañoPresentacion || ""}
                 onChange={handleChange}
-                placeholder="0.00"
+                placeholder="Ej: 900 (para 900g)"
                 required
               />
+              <p className="text-xs text-muted-foreground">
+                Tamaño de una unidad/paquete individual
+              </p>
+            </div>
+
+            {/* Cantidad de Presentaciones */}
+            <div className="space-y-2">
+              <Label htmlFor="cantidadPresentaciones">Cantidad de Presentaciones *</Label>
+              <Input
+                id="cantidadPresentaciones"
+                name="cantidadPresentaciones"
+                type="number"
+                step="1"
+                min="1"
+                value={formData.cantidadPresentaciones || ""}
+                onChange={handleChange}
+                placeholder="Ej: 3 (tres bolsas)"
+                required
+              />
+              <p className="text-xs text-muted-foreground">
+                Número de unidades/paquetes comprados
+              </p>
             </div>
 
             {/* Unidad de Medida */}
@@ -175,13 +226,38 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
             </div>
           </div>
 
-          {/* Precio por Unidad (Calculado) */}
-          {precioPorUnidad > 0 && (
-            <div className="p-4 bg-muted rounded-lg">
-              <p className="text-sm font-medium">Precio por Unidad (Calculado)</p>
-              <p className="text-2xl font-bold text-primary">
-                {formatearMoneda(precioPorUnidad, configuracion?.moneda)}
-              </p>
+          {/* Valores Calculados */}
+          {cantidadTotal > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-sm font-medium text-blue-800">Cantidad Total</p>
+                <p className="text-2xl font-bold text-blue-900">
+                  {cantidadTotal.toFixed(2)}
+                </p>
+                <p className="text-xs text-blue-600 mt-1">
+                  {formData.tamañoPresentacion} × {formData.cantidadPresentaciones}
+                </p>
+              </div>
+              
+              <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                <p className="text-sm font-medium text-green-800">Precio por Presentación</p>
+                <p className="text-2xl font-bold text-green-900">
+                  {formatearMoneda(precioPorPresentacion, configuracion?.moneda)}
+                </p>
+                <p className="text-xs text-green-600 mt-1">
+                  Por unidad/paquete
+                </p>
+              </div>
+              
+              <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                <p className="text-sm font-medium text-purple-800">Precio por Unidad Base</p>
+                <p className="text-2xl font-bold text-purple-900">
+                  {formatearMoneda(precioPorUnidad, configuracion?.moneda)}
+                </p>
+                <p className="text-xs text-purple-600 mt-1">
+                  Por {formData.unidadMedida}
+                </p>
+              </div>
             </div>
           )}
 
@@ -201,12 +277,19 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
           {/* Botones */}
           <div className="flex gap-2 justify-end">
             {onCancel && (
-              <Button type="button" variant="outline" onClick={onCancel}>
+              <Button type="button" variant="outline" onClick={onCancel} disabled={guardando}>
                 Cancelar
               </Button>
             )}
-            <Button type="submit">
-              {producto ? "Actualizar" : "Crear"} Producto
+            <Button type="submit" disabled={guardando}>
+              {guardando ? (
+                <span className="flex items-center gap-2">
+                  <span className="animate-spin">⏳</span>
+                  {producto ? "Actualizando..." : "Creando..."}
+                </span>
+              ) : (
+                `${producto ? "Actualizar" : "Crear"} Producto`
+              )}
             </Button>
           </div>
         </form>

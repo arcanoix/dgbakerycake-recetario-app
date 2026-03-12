@@ -49,18 +49,21 @@ export const useProductos = () => {
         return false;
       }
 
-      const precioPorUnidad = calcularPrecioPorUnidad(
-        datos.precioTotal,
-        datos.cantidadTotal
-      );
+      // Calcular valores automáticamente
+      const cantidadTotal = datos.tamañoPresentacion * datos.cantidadPresentaciones;
+      const precioPorUnidad = datos.precioTotal / cantidadTotal;
+      const precioPorPresentacion = datos.precioTotal / datos.cantidadPresentaciones;
 
       const nuevoProducto: Producto = {
         id: generarId("prod"),
         nombre: datos.nombre,
         precioTotal: datos.precioTotal,
-        cantidadTotal: datos.cantidadTotal,
+        tamañoPresentacion: datos.tamañoPresentacion,
+        cantidadPresentaciones: datos.cantidadPresentaciones,
+        cantidadTotal,
         unidadMedida: datos.unidadMedida,
         precioPorUnidad,
+        precioPorPresentacion,
         categoria: datos.categoria,
         proveedor: datos.proveedor,
         notas: datos.notas,
@@ -92,18 +95,21 @@ export const useProductos = () => {
         return false;
       }
 
-      const precioPorUnidad = calcularPrecioPorUnidad(
-        datos.precioTotal,
-        datos.cantidadTotal
-      );
+      // Calcular valores automáticamente
+      const cantidadTotal = datos.tamañoPresentacion * datos.cantidadPresentaciones;
+      const precioPorUnidad = datos.precioTotal / cantidadTotal;
+      const precioPorPresentacion = datos.precioTotal / datos.cantidadPresentaciones;
 
       const productoActualizado: Producto = {
         ...productoExistente,
         nombre: datos.nombre,
         precioTotal: datos.precioTotal,
-        cantidadTotal: datos.cantidadTotal,
+        tamañoPresentacion: datos.tamañoPresentacion,
+        cantidadPresentaciones: datos.cantidadPresentaciones,
+        cantidadTotal,
         unidadMedida: datos.unidadMedida,
         precioPorUnidad,
+        precioPorPresentacion,
         categoria: datos.categoria,
         proveedor: datos.proveedor,
         notas: datos.notas,

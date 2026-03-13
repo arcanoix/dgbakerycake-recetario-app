@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { UnidadMedidaAdmin } from "@/types";
+import { UnidadMedidaAdmin, UnidadMedidaFormData } from "@/types";
 import { useUnidades } from "@/hooks/useUnidades";
 import { UnidadForm } from "@/components/unidades/UnidadForm";
 import { UnidadList } from "@/components/unidades/UnidadList";
@@ -35,7 +35,7 @@ export default function UnidadesPage() {
     return coincideBusqueda && coincideTipo && coincideEstado;
   });
 
-  const handleSubmit = async (datos: any) => {
+  const handleSubmit = async (datos: UnidadMedidaFormData) => {
     let exito = false;
     if (unidadEditando) {
       exito = await actualizarUnidad(unidadEditando.id, datos);

@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { Producto, Receta, ConfiguracionGlobal, UnidadMedidaAdmin } from '@/types';
+import { Producto, Receta, ConfiguracionGlobal, UnidadMedidaAdmin, CategoriaAdmin } from '@/types';
 
 // ============================================
 // PRODUCTOS
@@ -459,6 +459,126 @@ function mapUnidadToDB(unidad: UnidadMedidaAdmin) {
     activo: unidad.activo,
     created_at: unidad.fechaCreacion.toISOString(),
     updated_at: unidad.fechaActualizacion.toISOString(),
+  };
+}
+
+// ============================================
+// CATEGORÍAS
+// ============================================
+
+export const obtenerCategorias = async (): Promise<CategoriaAdmin[]> => {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Usuario no autenticado");
+  }
+
+  const { data, error } = await supabase
+    .from("categorias")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("nombre", { ascending: true });
+
+  if (error) {
+    console.error("Error al obtener categorías:", error);
+    throw error;
+  }
+
+  return (data || []).map(mapCategoriaDesdeBD);
+};
+
+export const obtenerCategoriaPorId = async (id: string): Promise<CategoriaAdmin | null> => {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Usuario no autenticado");
+  }
+
+  const { data, error } = await supabase
+    .from("categorias")
+    .select("*")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .single();
+
+  if (error) {
+    console.error("Error al obtener categoría:", error);
+    return null;
+  }
+
+  return data ? mapCategoriaDesdeBD(data) : null;
+};
+
+export const guardarCategoria = async (categoria: CategoriaAdmin): Promise<RespuestaOperacion> => {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { exitoso: false, error: "Usuario no autenticado" };
+  }
+
+  const categoriaDB = mapCategoriaHaciaBD(categoria, user.id);
+
+  const { error } = await supabase
+    .from("categorias")
+    .upsert(categoriaDB);
+
+  if (error) {
+    console.error("Error al guardar categoría:", error);
+    return { exitoso: false, error: error.message };
+  }
+
+  return { exitoso: true };
+};
+
+export const eliminarCategoria = async (id: string): Promise<RespuestaOperacion> => {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { exitoso: false, error: "Usuario no autenticado" };
+  }
+
+  const { error } = await supabase
+    .from("categorias")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.error("Error al eliminar categoría:", error);
+    return { exitoso: false, error: error.message };
+  }
+
+  return { exitoso: true };
+};
+
+function mapCategoriaDesdeBD(data: any): CategoriaAdmin {
+  return {
+    id: data.id,
+    nombre: data.nombre,
+    tipo: data.tipo,
+    descripcion: data.descripcion,
+    color: data.color,
+    activo: data.activo,
+    fechaCreacion: new Date(data.created_at),
+    fechaActualizacion: new Date(data.updated_at),
+  };
+}
+
+function mapCategoriaHaciaBD(categoria: CategoriaAdmin, userId: string): any {
+  return {
+    id: categoria.id,
+    user_id: userId,
+    nombre: categoria.nombre,
+    tipo: categoria.tipo,
+    descripcion: categoria.descripcion,
+    color: categoria.color,
+    activo: categoria.activo,
+    created_at: categoria.fechaCreacion.toISOString(),
+    updated_at: categoria.fechaActualizacion.toISOString(),
   };
 }
 

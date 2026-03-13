@@ -149,3 +149,27 @@ export const UNIDADES_DEFECTO: Omit<UnidadMedidaAdmin, 'id' | 'fechaCreacion' | 
   { nombre: 'paquete', simbolo: 'paq', tipo: 'cantidad', activo: true },
   { nombre: 'caja', simbolo: 'cj', tipo: 'cantidad', activo: true },
 ];
+
+// ============================================
+// CATEGORÍAS POR DEFECTO
+// ============================================
+
+export const CATEGORIAS_DEFECTO = [
+  // Categorías de Productos
+  { nombre: 'Lácteos', tipo: 'producto', descripcion: 'Leche, mantequilla, queso, crema', color: '#60A5FA', activo: true },
+  { nombre: 'Harinas', tipo: 'producto', descripcion: 'Harina de trigo, maíz, almendra', color: '#F59E0B', activo: true },
+  { nombre: 'Azúcares', tipo: 'producto', descripcion: 'Azúcar blanca, morena, glas', color: '#EC4899', activo: true },
+  { nombre: 'Grasas', tipo: 'producto', descripcion: 'Aceites, manteca, margarina', color: '#FBBF24', activo: true },
+  { nombre: 'Huevos', tipo: 'producto', descripcion: 'Huevos frescos y derivados', color: '#FCD34D', activo: true },
+  { nombre: 'Saborizantes', tipo: 'producto', descripcion: 'Vainilla, esencias, extractos', color: '#A78BFA', activo: true },
+  { nombre: 'Decoración', tipo: 'producto', descripcion: 'Sprinkles, fondant, colorantes', color: '#F472B6', activo: true },
+  { nombre: 'Otros', tipo: 'producto', descripcion: 'Ingredientes varios', color: '#9CA3AF', activo: true },
+  
+  // Categorías de Recetas
+  { nombre: 'Tortas', tipo: 'receta', descripcion: 'Tortas y pasteles', color: '#EF4444', activo: true },
+  { nombre: 'Cupcakes', tipo: 'receta', descripcion: 'Cupcakes y muffins', color: '#10B981', activo: true },
+  { nombre: 'Galletas', tipo: 'receta', descripcion: 'Galletas y cookies', color: '#F59E0B', activo: true },
+  { nombre: 'Postres', tipo: 'receta', descripcion: 'Postres y dulces', color: '#8B5CF6', activo: true },
+  { nombre: 'Panes', tipo: 'receta', descripcion: 'Panes dulces y salados', color: '#D97706', activo: true },
+  { nombre: 'Otros', tipo: 'receta', descripcion: 'Otras recetas', color: '#6B7280', activo: true },
+];

@@ -476,7 +476,6 @@ function mapUnidadToDB(unidad: UnidadMedidaAdmin) {
 // ============================================
 
 export const obtenerCategorias = async (): Promise<CategoriaAdmin[]> => {
-  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -498,7 +497,6 @@ export const obtenerCategorias = async (): Promise<CategoriaAdmin[]> => {
 };
 
 export const obtenerCategoriaPorId = async (id: string): Promise<CategoriaAdmin | null> => {
-  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -523,7 +521,6 @@ export const obtenerCategoriaPorId = async (id: string): Promise<CategoriaAdmin 
 };
 
 export const guardarCategoria = async (categoria: CategoriaAdmin): Promise<RespuestaOperacion> => {
-  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -545,7 +542,6 @@ export const guardarCategoria = async (categoria: CategoriaAdmin): Promise<Respu
 };
 
 export const eliminarCategoria = async (id: string): Promise<RespuestaOperacion> => {
-  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {

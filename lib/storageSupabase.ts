@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { Producto, Receta, ConfiguracionGlobal } from '@/types';
+import { Producto, Receta, ConfiguracionGlobal, UnidadMedidaAdmin } from '@/types';
 
 // ============================================
 // PRODUCTOS
@@ -351,6 +351,114 @@ function mapConfiguracionToDB(config: ConfiguracionGlobal) {
     moneda: config.moneda,
     margen_ganancia_defecto: config.margenGananciaDefecto,
     tasa_cambio_usd: config.tasaCambioUSD || null,
+  };
+}
+
+// ============================================
+// UNIDADES DE MEDIDA
+// ============================================
+
+export const obtenerUnidades = async (): Promise<UnidadMedidaAdmin[]> => {
+  const { data, error } = await supabase
+    .from('unidades_medida')
+    .select('*')
+    .order('nombre', { ascending: true });
+
+  if (error) {
+    console.error('Error al obtener unidades:', error);
+    return [];
+  }
+
+  return (data || []).map(mapUnidadFromDB);
+};
+
+export const obtenerUnidadPorId = async (id: string): Promise<UnidadMedidaAdmin | null> => {
+  const { data, error } = await supabase
+    .from('unidades_medida')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Error al obtener unidad:', error);
+    return null;
+  }
+
+  return data ? mapUnidadFromDB(data) : null;
+};
+
+export const guardarUnidad = async (unidad: UnidadMedidaAdmin) => {
+  const unidadData = mapUnidadToDB(unidad);
+
+  const { data: existing } = await supabase
+    .from('unidades_medida')
+    .select('id')
+    .eq('id', unidad.id)
+    .single();
+
+  if (existing) {
+    const { error } = await supabase
+      .from('unidades_medida')
+      .update(unidadData)
+      .eq('id', unidad.id);
+
+    if (error) {
+      console.error('Error al actualizar unidad:', error);
+      return { exitoso: false, error: error.message };
+    }
+  } else {
+    const { error } = await supabase
+      .from('unidades_medida')
+      .insert([unidadData]);
+
+    if (error) {
+      console.error('Error al crear unidad:', error);
+      return { exitoso: false, error: error.message };
+    }
+  }
+
+  return { exitoso: true };
+};
+
+export const eliminarUnidad = async (id: string) => {
+  const { error } = await supabase
+    .from('unidades_medida')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error al eliminar unidad:', error);
+    return { exitoso: false, error: error.message };
+  }
+
+  return { exitoso: true };
+};
+
+function mapUnidadFromDB(data: any): UnidadMedidaAdmin {
+  return {
+    id: data.id,
+    nombre: data.nombre,
+    simbolo: data.simbolo,
+    tipo: data.tipo,
+    factorConversionBase: data.factor_conversion_base ? parseFloat(data.factor_conversion_base) : undefined,
+    unidadBase: data.unidad_base || undefined,
+    activo: data.activo ?? true,
+    fechaCreacion: new Date(data.created_at),
+    fechaActualizacion: new Date(data.updated_at),
+  };
+}
+
+function mapUnidadToDB(unidad: UnidadMedidaAdmin) {
+  return {
+    id: unidad.id,
+    nombre: unidad.nombre,
+    simbolo: unidad.simbolo,
+    tipo: unidad.tipo,
+    factor_conversion_base: unidad.factorConversionBase || null,
+    unidad_base: unidad.unidadBase || null,
+    activo: unidad.activo,
+    created_at: unidad.fechaCreacion.toISOString(),
+    updated_at: unidad.fechaActualizacion.toISOString(),
   };
 }
 

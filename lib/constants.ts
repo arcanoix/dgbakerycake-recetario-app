@@ -1,4 +1,4 @@
-import { UnidadMedida, OpcionSelect } from "@/types";
+import { UnidadMedida, OpcionSelect, UnidadMedidaAdmin } from "@/types";
 
 // ============================================
 // FACTORES DE CONVERSIÓN
@@ -124,3 +124,28 @@ export const formatearTiempo = (minutos: number): string => {
   const mins = minutos % 60;
   return mins > 0 ? `${horas}h ${mins}min` : `${horas}h`;
 };
+
+// ============================================
+// UNIDADES DE MEDIDA POR DEFECTO
+// ============================================
+
+export const UNIDADES_DEFECTO: Omit<UnidadMedidaAdmin, 'id' | 'fechaCreacion' | 'fechaActualizacion'>[] = [
+  // Peso
+  { nombre: 'gramos', simbolo: 'g', tipo: 'peso', factorConversionBase: 1, unidadBase: 'gramos', activo: true },
+  { nombre: 'kilogramos', simbolo: 'kg', tipo: 'peso', factorConversionBase: 1000, unidadBase: 'gramos', activo: true },
+  { nombre: 'onzas', simbolo: 'oz', tipo: 'peso', factorConversionBase: 28.3495, unidadBase: 'gramos', activo: true },
+  { nombre: 'libras', simbolo: 'lb', tipo: 'peso', factorConversionBase: 453.592, unidadBase: 'gramos', activo: true },
+  
+  // Volumen
+  { nombre: 'mililitros', simbolo: 'ml', tipo: 'volumen', factorConversionBase: 1, unidadBase: 'mililitros', activo: true },
+  { nombre: 'litros', simbolo: 'L', tipo: 'volumen', factorConversionBase: 1000, unidadBase: 'mililitros', activo: true },
+  { nombre: 'tazas', simbolo: 'tza', tipo: 'volumen', factorConversionBase: 240, unidadBase: 'mililitros', activo: true },
+  { nombre: 'cucharadas', simbolo: 'cdas', tipo: 'volumen', factorConversionBase: 15, unidadBase: 'mililitros', activo: true },
+  { nombre: 'cucharaditas', simbolo: 'cdtas', tipo: 'volumen', factorConversionBase: 5, unidadBase: 'mililitros', activo: true },
+  
+  // Cantidad
+  { nombre: 'unidad', simbolo: 'u', tipo: 'cantidad', activo: true },
+  { nombre: 'docena', simbolo: 'dz', tipo: 'cantidad', factorConversionBase: 12, unidadBase: 'unidad', activo: true },
+  { nombre: 'paquete', simbolo: 'paq', tipo: 'cantidad', activo: true },
+  { nombre: 'caja', simbolo: 'cj', tipo: 'cantidad', activo: true },
+];

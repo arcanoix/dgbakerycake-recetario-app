@@ -2,6 +2,7 @@
 // ENUMS Y CONSTANTES
 // ============================================
 
+// Enum mantenido por compatibilidad pero deprecado
 export enum UnidadMedida {
   GRAMOS = 'gramos',
   KILOGRAMOS = 'kilogramos',
@@ -25,6 +26,32 @@ export const UNIDADES_VOLUMEN = [
 export const UNIDADES_CANTIDAD = [UnidadMedida.UNIDAD];
 
 // ============================================
+// TIPOS DE UNIDADES ADMINISTRABLES
+// ============================================
+
+export type TipoUnidad = 'peso' | 'volumen' | 'cantidad' | 'otro';
+
+export interface UnidadMedidaAdmin {
+  id: string;
+  nombre: string; // Ej: "gramos", "litros", "docenas"
+  simbolo: string; // Ej: "g", "L", "dz"
+  tipo: TipoUnidad;
+  factorConversionBase?: number; // Factor de conversión a unidad base del tipo
+  unidadBase?: string; // ID de la unidad base para conversión
+  activo: boolean;
+  fechaCreacion: Date;
+  fechaActualizacion: Date;
+}
+
+export interface UnidadMedidaFormData {
+  nombre: string;
+  simbolo: string;
+  tipo: TipoUnidad;
+  factorConversionBase?: number;
+  unidadBase?: string;
+}
+
+// ============================================
 // TIPOS DE PRODUCTOS/INSUMOS
 // ============================================
 
@@ -35,7 +62,9 @@ export interface Producto {
   
   // Presentación individual del producto
   tamañoPresentacion: number; // Ej: 900 (para una bolsa de 900g)
-  unidadMedida: UnidadMedida; // Ej: gramos
+  unidadMedida: string; // ID de la unidad de medida
+  unidadMedidaNombre?: string; // Nombre de la unidad (para mostrar)
+  unidadMedidaSimbolo?: string; // Símbolo de la unidad (para mostrar)
   cantidadPresentaciones: number; // Ej: 3 (tres bolsas)
   
   // Calculados automáticamente
@@ -54,7 +83,7 @@ export interface ProductoFormData {
   nombre: string;
   precioTotal: number;
   tamañoPresentacion: number;
-  unidadMedida: UnidadMedida;
+  unidadMedida: string; // ID de la unidad de medida
   cantidadPresentaciones: number;
   categoria?: string;
   proveedor?: string;
@@ -70,7 +99,9 @@ export interface MaterialReceta {
   productoId: string;
   nombreProducto: string;
   cantidadUtilizada: number;
-  unidadMedida: UnidadMedida;
+  unidadMedida: string; // ID de la unidad de medida
+  unidadMedidaNombre?: string; // Nombre de la unidad (para mostrar)
+  unidadMedidaSimbolo?: string; // Símbolo de la unidad (para mostrar)
   costoUnitario: number; // Precio por unidad del producto
   costoMaterial: number; // Costo calculado para esta cantidad
 }
@@ -94,14 +125,14 @@ export interface Receta {
   rendimiento?: number;
   unidadRendimiento?: string;
   
-  // Mano de Obra
-  tiempoPreparacion: number; // en minutos
-  costoPorHora: number;
-  costoManoObra: number; // Calculado: (tiempoPreparacion / 60) * costoPorHora
+  // Mano de Obra (campos mantenidos por compatibilidad, siempre en 0)
+  tiempoPreparacion: number; // Siempre 0 - no se usa
+  costoPorHora: number; // Siempre 0 - no se usa
+  costoManoObra: number; // Siempre 0 - no se calcula
   
   // Costos
   costoMateriales: number; // Calculado: suma de todos los costoMaterial
-  costoTotal: number; // Calculado: costoMateriales + costoManoObra
+  costoTotal: number; // Igual a costoMateriales (no incluye mano de obra)
   
   // Precio de Venta
   margenGanancia?: number; // Porcentaje
@@ -120,8 +151,6 @@ export interface RecetaFormData {
   descripcion: string;
   rendimiento?: number;
   unidadRendimiento?: string;
-  tiempoPreparacion: number;
-  costoPorHora?: number; // Si no se proporciona, usa el valor global
   margenGanancia?: number;
   categoria?: string;
   imagen?: string;
@@ -157,7 +186,7 @@ export interface CalculoCostoMaterial {
   nombreProducto: string;
   precioProducto: number;
   cantidadTotalProducto: number;
-  unidadMedidaProducto: UnidadMedida;
+  unidadMedidaProducto: string;
   cantidadUtilizada: number;
   costoCalculado: number;
 }
@@ -171,7 +200,9 @@ export interface DesgloseCostos {
   detallesMateriales: {
     nombreProducto: string;
     cantidad: number;
-    unidad: UnidadMedida;
+    unidad: string; // ID de la unidad
+    unidadNombre?: string; // Nombre de la unidad
+    unidadSimbolo?: string; // Símbolo de la unidad
     costo: number;
     porcentaje: number;
   }[];
@@ -205,7 +236,7 @@ export interface OpcionSelect {
 export interface FiltrosProductos {
   busqueda?: string;
   categoria?: string;
-  unidadMedida?: UnidadMedida;
+  unidadMedida?: string;
 }
 
 export interface FiltrosRecetas {

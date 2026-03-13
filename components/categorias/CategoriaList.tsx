@@ -8,8 +8,8 @@ import { Button } from "@/components/ui/button";
 interface CategoriaListProps {
   categorias: CategoriaAdmin[];
   onEdit: (categoria: CategoriaAdmin) => void;
-  onDelete: (id: string) => Promise<void>;
-  onToggleEstado: (categoria: CategoriaAdmin) => Promise<void>;
+  onDelete: (id: string) => Promise<boolean>;
+  onToggleEstado: (categoria: CategoriaAdmin) => Promise<boolean>;
 }
 
 export const CategoriaList = ({ categorias, onEdit, onDelete, onToggleEstado }: CategoriaListProps) => {

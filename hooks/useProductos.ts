@@ -178,8 +178,8 @@ export const useProductos = () => {
     return productos.filter((producto) => producto.categoria === categoria);
   };
 
-  const filtrarPorUnidad = (unidad: UnidadMedida): Producto[] => {
-    return productos.filter((producto) => producto.unidadMedida === unidad);
+  const filtrarPorUnidad = (unidadId: string): Producto[] => {
+    return productos.filter((producto) => producto.unidadMedida === unidadId);
   };
 
   return {

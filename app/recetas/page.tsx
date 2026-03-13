@@ -106,6 +106,9 @@ export default function RecetasPage() {
 
   if (cargando) return <div className="container mx-auto p-6">Cargando...</div>;
 
+  // Validar que existan productos antes de permitir crear recetas
+  const hayProductos = productos.length > 0;
+
   return (
     <ProtectedRoute>
       <div className="container mx-auto p-6 space-y-6">
@@ -114,14 +117,41 @@ export default function RecetasPage() {
           <h1 className="text-3xl font-bold">Recetas</h1>
           <p className="text-muted-foreground">Gestiona tus recetas y calcula costos</p>
         </div>
-        <Button onClick={() => setMostrarFormulario(!mostrarFormulario)} size="lg">
+        <Button 
+          onClick={() => setMostrarFormulario(!mostrarFormulario)} 
+          size="lg"
+          disabled={!hayProductos && !mostrarFormulario}
+        >
           {mostrarFormulario ? "Cancelar" : "+ Nueva Receta"}
         </Button>
       </div>
 
+      {!hayProductos && (
+        <Card className="border-amber-500 bg-amber-50">
+          <CardContent className="py-6">
+            <div className="flex items-start gap-4">
+              <div className="text-4xl">⚠️</div>
+              <div className="flex-1">
+                <h3 className="font-bold text-amber-900 mb-2">No hay productos registrados</h3>
+                <p className="text-amber-800 mb-4">
+                  Para poder crear recetas, primero debes registrar al menos un producto en tu inventario.
+                  Los productos son los ingredientes o materiales que utilizarás en tus recetas.
+                </p>
+                <a href="/productos">
+                  <Button variant="default" className="bg-amber-600 hover:bg-amber-700">
+                    <span className="mr-2">📦</span>
+                    Ir a Productos
+                  </Button>
+                </a>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {error && <Card className="border-destructive"><CardContent className="py-4"><p className="text-destructive">{error}</p></CardContent></Card>}
 
-      {mostrarFormulario ? (
+      {mostrarFormulario && hayProductos ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-6">
             <Card>

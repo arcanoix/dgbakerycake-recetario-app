@@ -148,9 +148,20 @@ function Dashboard() {
               <div className="text-center">
                 <p className="text-4xl mb-4">📝</p>
                 <p className="text-muted-foreground mb-4">No hay recetas aún</p>
-                <Link href="/recetas">
-                  <Button>Crear Primera Receta</Button>
-                </Link>
+                {productos.length === 0 ? (
+                  <>
+                    <p className="text-sm text-amber-600 mb-4 max-w-xs mx-auto">
+                      ⚠️ Primero debes registrar al menos un producto para poder crear recetas
+                    </p>
+                    <Link href="/productos">
+                      <Button variant="default">Agregar Productos Primero</Button>
+                    </Link>
+                  </>
+                ) : (
+                  <Link href="/recetas">
+                    <Button>Crear Primera Receta</Button>
+                  </Link>
+                )}
               </div>
             </div>
           )}
@@ -185,12 +196,24 @@ function Dashboard() {
                 Gestionar Productos
               </Button>
             </Link>
-            <Link href="/recetas">
-              <Button className="w-full" variant="outline">
-                <span className="mr-2">📝</span>
-                Gestionar Recetas
-              </Button>
-            </Link>
+            {productos.length === 0 ? (
+              <div className="relative">
+                <Button className="w-full" variant="outline" disabled>
+                  <span className="mr-2">📝</span>
+                  Gestionar Recetas
+                </Button>
+                <p className="text-xs text-amber-600 mt-1 text-center">
+                  Requiere productos
+                </p>
+              </div>
+            ) : (
+              <Link href="/recetas">
+                <Button className="w-full" variant="outline">
+                  <span className="mr-2">📝</span>
+                  Gestionar Recetas
+                </Button>
+              </Link>
+            )}
             <Link href="/configuracion">
               <Button className="w-full" variant="outline">
                 <span className="mr-2">⚙️</span>

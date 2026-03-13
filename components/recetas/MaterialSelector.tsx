@@ -8,8 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatearMoneda, formatearNumero } from "@/lib/constants";
-import { obtenerSimboloUnidad } from "@/lib/conversiones";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
+import { useUnidades } from "@/hooks/useUnidades";
 
 interface MaterialSelectorProps {
   productos: Producto[];
@@ -25,8 +25,14 @@ export const MaterialSelector = ({
   onEliminarMaterial,
 }: MaterialSelectorProps) => {
   const { configuracion } = useConfiguracion();
+  const { unidades } = useUnidades();
   const [productoSeleccionado, setProductoSeleccionado] = useState("");
   const [cantidad, setCantidad] = useState<number>(0);
+  
+  const obtenerSimboloUnidad = (unidadId: string): string => {
+    const unidad = unidades.find(u => u.id === unidadId);
+    return unidad?.simbolo || unidadId;
+  };
 
   const handleAgregar = () => {
     if (productoSeleccionado && cantidad > 0) {

@@ -54,11 +54,11 @@ export default function CategoriasPage() {
     setCategoriaEditando(undefined);
   };
 
-  const handleToggleEstado = async (categoria: CategoriaAdmin) => {
+  const handleToggleEstado = async (categoria: CategoriaAdmin): Promise<boolean> => {
     if (categoria.activo) {
-      await desactivarCategoria(categoria.id);
+      return await desactivarCategoria(categoria.id);
     } else {
-      await activarCategoria(categoria.id);
+      return await activarCategoria(categoria.id);
     }
   };
 

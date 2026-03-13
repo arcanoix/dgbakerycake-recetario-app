@@ -27,7 +27,10 @@ export const obtenerProductoPorId = async (id: string): Promise<Producto | null>
     .single();
 
   if (error) {
-    console.error('Error al obtener producto:', error);
+    // PGRST116 es esperado cuando no se encuentra el registro
+    if (error.code !== 'PGRST116') {
+      console.error('Error al obtener producto:', error);
+    }
     return null;
   }
 
@@ -110,7 +113,10 @@ export const obtenerRecetaPorId = async (id: string): Promise<Receta | null> => 
     .single();
 
   if (error) {
-    console.error('Error al obtener receta:', error);
+    // PGRST116 es esperado cuando no se encuentra el registro
+    if (error.code !== 'PGRST116') {
+      console.error('Error al obtener receta:', error);
+    }
     return null;
   }
 
@@ -380,7 +386,10 @@ export const obtenerUnidadPorId = async (id: string): Promise<UnidadMedidaAdmin 
     .single();
 
   if (error) {
-    console.error('Error al obtener unidad:', error);
+    // PGRST116 es esperado cuando no se encuentra el registro
+    if (error.code !== 'PGRST116') {
+      console.error('Error al obtener unidad:', error);
+    }
     return null;
   }
 
@@ -504,7 +513,9 @@ export const obtenerCategoriaPorId = async (id: string): Promise<CategoriaAdmin 
     .single();
 
   if (error) {
-    console.error("Error al obtener categoría:", error);
+    if (error.code !== 'PGRST116') {
+      console.error("Error al obtener categoría:", error);
+    }
     return null;
   }
 

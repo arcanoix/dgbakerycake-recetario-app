@@ -31,6 +31,30 @@ export const UNIDADES_CANTIDAD = [UnidadMedida.UNIDAD];
 
 export type TipoUnidad = 'peso' | 'volumen' | 'cantidad' | 'otro';
 
+// ============================================
+// TIPOS DE CATEGORÍAS ADMINISTRABLES
+// ============================================
+
+export type TipoCategoria = 'producto' | 'receta';
+
+export interface CategoriaAdmin {
+  id: string;
+  nombre: string;
+  tipo: TipoCategoria; // Para productos o recetas
+  descripcion?: string;
+  color?: string; // Color hex para visualización
+  activo: boolean;
+  fechaCreacion: Date;
+  fechaActualizacion: Date;
+}
+
+export interface CategoriaFormData {
+  nombre: string;
+  tipo: TipoCategoria;
+  descripcion?: string;
+  color?: string;
+}
+
 export interface UnidadMedidaAdmin {
   id: string;
   nombre: string; // Ej: "gramos", "litros", "docenas"

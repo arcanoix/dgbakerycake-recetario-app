@@ -8,20 +8,54 @@ import { useRole } from "@/hooks/useRole";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
 
+interface NavSection {
+  label: string;
+  icon: string;
+  items: { href: string; label: string; icon: string }[];
+}
+
+interface NavItem {
+  href: string;
+  label: string;
+  icon: string;
+}
+
 export const Navbar = () => {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const { user, signOut } = useAuth();
   const { isAdmin } = useRole();
 
-  const navItems = [
+  const navSections: NavSection[] = [
+    {
+      label: "Gestión",
+      icon: "📊",
+      items: [
+        { href: "/productos", label: "Productos", icon: "📦" },
+        { href: "/recetas", label: "Recetas", icon: "📝" },
+      ],
+    },
+    {
+      label: "Configuración",
+      icon: "⚙️",
+      items: [
+        { href: "/unidades", label: "Unidades", icon: "�" },
+        { href: "/categorias", label: "Categorías", icon: "🏷️" },
+        { href: "/configuracion", label: "General", icon: "⚙️" },
+      ],
+    },
+  ];
+
+  const topNavItems: NavItem[] = [
     { href: "/", label: "Inicio", icon: "🏠" },
-    { href: "/productos", label: "Productos", icon: "📦" },
-    { href: "/recetas", label: "Recetas", icon: "📝" },
     { href: "/pricing", label: "Planes", icon: "💎" },
     { href: "/billing", label: "Facturación", icon: "💳" },
-    { href: "/configuracion", label: "Configuración", icon: "⚙️" },
   ];
+
+  const toggleSection = (label: string) => {
+    setOpenSections(prev => ({ ...prev, [label]: !prev[label] }));
+  };
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -41,7 +75,7 @@ export const Navbar = () => {
           {user && (
             <div className="hidden md:flex items-center flex-1 justify-center">
               <div className="flex items-center space-x-1 bg-gray-50/50 rounded-full px-2 py-1.5">
-                {navItems.map((item) => (
+                {topNavItems.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
@@ -61,6 +95,44 @@ export const Navbar = () => {
                     </span>
                   </Link>
                 ))}
+
+                {/* Dropdown Sections */}
+                {navSections.map((section) => {
+                  const hasActiveItem = section.items.some(item => isActive(item.href));
+                  return (
+                    <div key={section.label} className="relative group">
+                      <button
+                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                          hasActiveItem
+                            ? "bg-white text-gray-900 shadow-sm"
+                            : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <span className="text-base">{section.icon}</span>
+                          <span className="hidden lg:inline">{section.label}</span>
+                          <span className="text-xs">▼</span>
+                        </span>
+                      </button>
+                      <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        {section.items.map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className={`block px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${
+                              isActive(item.href)
+                                ? "bg-gray-100 text-gray-900 font-medium"
+                                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                            }`}
+                          >
+                            <span className="mr-2">{item.icon}</span>
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
                 
                 {/* Admin Link */}
                 {isAdmin && (
@@ -142,7 +214,7 @@ export const Navbar = () => {
         {/* Mobile Navigation */}
         {user && mobileMenuOpen && (
           <div className="md:hidden py-4 space-y-2">
-            {navItems.map((item) => (
+            {topNavItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -156,6 +228,43 @@ export const Navbar = () => {
                 <span className="mr-2">{item.icon}</span>
                 {item.label}
               </Link>
+            ))}
+
+            {/* Collapsible Sections Mobile */}
+            {navSections.map((section) => (
+              <div key={section.label} className="space-y-1">
+                <button
+                  onClick={() => toggleSection(section.label)}
+                  className="w-full flex items-center justify-between px-4 py-3 rounded-lg font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                >
+                  <span>
+                    <span className="mr-2">{section.icon}</span>
+                    {section.label}
+                  </span>
+                  <span className={`text-xs transition-transform ${
+                    openSections[section.label] ? "rotate-180" : ""
+                  }`}>▼</span>
+                </button>
+                {openSections[section.label] && (
+                  <div className="ml-4 space-y-1">
+                    {section.items.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`block px-4 py-2.5 rounded-lg text-sm transition-colors ${
+                          isActive(item.href)
+                            ? "bg-primary text-primary-foreground"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        }`}
+                      >
+                        <span className="mr-2">{item.icon}</span>
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
             
             {/* User Info & Logout Mobile */}

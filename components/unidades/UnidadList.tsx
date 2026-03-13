@@ -93,11 +93,11 @@ export const UnidadList = ({ unidades, onEdit, onDelete, onToggleEstado }: Unida
               )}
             </div>
 
-            <div className="flex flex-row gap-2 pt-2">
+            <div className="flex flex-nowrap gap-2 pt-2">
               <Button
                 variant="outline"
                 size="sm"
-                className="flex-1 min-w-0"
+                className="flex-1"
                 onClick={() => onEdit(unidad)}
                 disabled={eliminando === unidad.id}
               >
@@ -106,7 +106,7 @@ export const UnidadList = ({ unidades, onEdit, onDelete, onToggleEstado }: Unida
               <Button
                 variant={unidad.activo ? "outline" : "default"}
                 size="sm"
-                className="flex-1 min-w-0"
+                className="flex-1 whitespace-nowrap"
                 onClick={() => onToggleEstado(unidad)}
                 disabled={eliminando === unidad.id}
               >
@@ -115,7 +115,7 @@ export const UnidadList = ({ unidades, onEdit, onDelete, onToggleEstado }: Unida
               <Button
                 variant="destructive"
                 size="sm"
-                className="shrink-0"
+                className="w-10 flex-shrink-0"
                 onClick={() => handleDelete(unidad.id, unidad.nombre)}
                 disabled={eliminando === unidad.id}
               >

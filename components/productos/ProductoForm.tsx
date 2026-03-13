@@ -56,11 +56,20 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
         notas: producto.notas,
       });
       setUnidadSeleccionada(producto.unidadMedida);
-    } else if (unidadesActivas.length > 0 && !formData.unidadMedida) {
-      // Establecer primera unidad activa como predeterminada
-      const primeraUnidad = unidadesActivas[0];
-      setFormData(prev => ({ ...prev, unidadMedida: primeraUnidad.id }));
-      setUnidadSeleccionada(primeraUnidad.id);
+    } else {
+      // Resetear formulario cuando no hay producto (modo creación)
+      const primeraUnidad = unidadesActivas.length > 0 ? unidadesActivas[0].id : "";
+      setFormData({
+        nombre: "",
+        precioTotal: 0,
+        tamañoPresentacion: 0,
+        cantidadPresentaciones: 0,
+        unidadMedida: primeraUnidad,
+        categoria: "",
+        proveedor: "",
+        notas: "",
+      });
+      setUnidadSeleccionada(primeraUnidad);
     }
   }, [producto, unidadesActivas]);
 

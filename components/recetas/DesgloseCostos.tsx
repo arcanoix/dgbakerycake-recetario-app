@@ -3,8 +3,8 @@
 import { DesgloseCostos as DesgloseCostosType } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatearMoneda, formatearNumero } from "@/lib/constants";
-import { obtenerSimboloUnidad } from "@/lib/conversiones";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
+import { useUnidades } from "@/hooks/useUnidades";
 
 interface DesgloseCostosProps {
   desglose: DesgloseCostosType;
@@ -12,6 +12,12 @@ interface DesgloseCostosProps {
 
 export const DesgloseCostos = ({ desglose }: DesgloseCostosProps) => {
   const { configuracion } = useConfiguracion();
+  const { unidades } = useUnidades();
+  
+  const obtenerSimboloUnidad = (unidadId: string): string => {
+    const unidad = unidades.find(u => u.id === unidadId);
+    return unidad?.simbolo || unidadId;
+  };
   return (
     <Card>
       <CardHeader>

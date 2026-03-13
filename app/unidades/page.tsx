@@ -58,11 +58,11 @@ export default function UnidadesPage() {
     setMostrarFormulario(true);
   };
 
-  const handleToggleEstado = async (unidad: UnidadMedidaAdmin) => {
+  const handleToggleEstado = async (unidad: UnidadMedidaAdmin): Promise<boolean> => {
     if (unidad.activo) {
-      await desactivarUnidad(unidad.id);
+      return await desactivarUnidad(unidad.id);
     } else {
-      await activarUnidad(unidad.id);
+      return await activarUnidad(unidad.id);
     }
   };
 

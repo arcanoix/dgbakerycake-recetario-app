@@ -8,8 +8,8 @@ import { Button } from "@/components/ui/button";
 interface UnidadListProps {
   unidades: UnidadMedidaAdmin[];
   onEdit: (unidad: UnidadMedidaAdmin) => void;
-  onDelete: (id: string) => Promise<void>;
-  onToggleEstado: (unidad: UnidadMedidaAdmin) => Promise<void>;
+  onDelete: (id: string) => Promise<boolean>;
+  onToggleEstado: (unidad: UnidadMedidaAdmin) => Promise<boolean>;
 }
 
 export const UnidadList = ({ unidades, onEdit, onDelete, onToggleEstado }: UnidadListProps) => {

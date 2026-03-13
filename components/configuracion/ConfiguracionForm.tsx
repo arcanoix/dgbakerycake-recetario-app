@@ -64,31 +64,6 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Sección: Mano de Obra */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold border-b pb-2">Mano de Obra</h3>
-            
-            <div className="space-y-2">
-              <Label htmlFor="costoPorHoraDefecto">
-                Costo por Hora (Defecto) *
-              </Label>
-              <Input
-                id="costoPorHoraDefecto"
-                name="costoPorHoraDefecto"
-                type="number"
-                step="0.01"
-                min="0.01"
-                value={formData.costoPorHoraDefecto || ""}
-                onChange={handleChange}
-                placeholder="10.00"
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                Este valor se usará por defecto al crear nuevas recetas
-              </p>
-            </div>
-          </div>
-
           {/* Sección: Moneda */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold border-b pb-2">Moneda</h3>

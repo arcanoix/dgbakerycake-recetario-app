@@ -48,13 +48,11 @@ export const useRecetas = () => {
 
   const calcularCostosReceta = (
     materiales: MaterialReceta[],
-    tiempoPreparacion: number,
-    costoPorHora: number,
     margenGanancia?: number
   ) => {
     const costoMateriales = calcularCostoTotalMateriales(materiales);
-    const costoManoObra = calcularCostoManoObra(tiempoPreparacion, costoPorHora);
-    const costoTotal = calcularCostoTotalReceta(costoMateriales, costoManoObra);
+    const costoManoObra = 0;
+    const costoTotal = costoMateriales;
     const precioVentaSugerido = margenGanancia
       ? calcularPrecioVentaSugerido(costoTotal, margenGanancia)
       : undefined;
@@ -81,8 +79,6 @@ export const useRecetas = () => {
 
       const costos = calcularCostosReceta(
         materiales,
-        datos.tiempoPreparacion,
-        datos.costoPorHora || 0,
         datos.margenGanancia
       );
 
@@ -93,9 +89,9 @@ export const useRecetas = () => {
         materiales,
         rendimiento: datos.rendimiento,
         unidadRendimiento: datos.unidadRendimiento,
-        tiempoPreparacion: datos.tiempoPreparacion,
-        costoPorHora: datos.costoPorHora || 0,
-        costoManoObra: costos.costoManoObra,
+        tiempoPreparacion: 0,
+        costoPorHora: 0,
+        costoManoObra: 0,
         costoMateriales: costos.costoMateriales,
         costoTotal: costos.costoTotal,
         margenGanancia: datos.margenGanancia,
@@ -137,8 +133,6 @@ export const useRecetas = () => {
 
       const costos = calcularCostosReceta(
         materiales,
-        datos.tiempoPreparacion,
-        datos.costoPorHora || 0,
         datos.margenGanancia
       );
 
@@ -149,9 +143,9 @@ export const useRecetas = () => {
         materiales,
         rendimiento: datos.rendimiento,
         unidadRendimiento: datos.unidadRendimiento,
-        tiempoPreparacion: datos.tiempoPreparacion,
-        costoPorHora: datos.costoPorHora || 0,
-        costoManoObra: costos.costoManoObra,
+        tiempoPreparacion: 0,
+        costoPorHora: 0,
+        costoManoObra: 0,
         costoMateriales: costos.costoMateriales,
         costoTotal: costos.costoTotal,
         margenGanancia: datos.margenGanancia,

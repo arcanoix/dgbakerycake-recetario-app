@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Receta } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { formatearTiempo } from "@/lib/constants";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
 import { PrecioDual } from "@/components/ui/precio-dual";
 
@@ -68,24 +67,9 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProp
                 <span className="font-semibold">{receta.materiales.length}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Tiempo:</span>
-                <span className="font-semibold">
-                  {formatearTiempo(receta.tiempoPreparacion)}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Costo Materiales:</span>
                 <PrecioDual 
                   valorUSD={receta.costoMateriales} 
-                  tasaCambio={configuracion?.tasaCambioUSD || 50}
-                  monedaPorDefecto={configuracion?.moneda || 'VES'}
-                  className="text-sm"
-                />
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Costo Mano Obra:</span>
-                <PrecioDual 
-                  valorUSD={receta.costoManoObra} 
                   tasaCambio={configuracion?.tasaCambioUSD || 50}
                   monedaPorDefecto={configuracion?.moneda || 'VES'}
                   className="text-sm"

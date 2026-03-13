@@ -15,7 +15,6 @@ export const CostosChart = ({ recetas, moneda }: CostosChartProps) => {
     .map(receta => ({
       nombre: receta.nombre.length > 15 ? receta.nombre.substring(0, 15) + '...' : receta.nombre,
       materiales: receta.costoMateriales,
-      manoObra: receta.costoManoObra,
       total: receta.costoTotal,
     }));
 
@@ -27,11 +26,8 @@ export const CostosChart = ({ recetas, moneda }: CostosChartProps) => {
           <p className="text-sm text-blue-600">
             Materiales: {formatearMoneda(payload[0].value, moneda)}
           </p>
-          <p className="text-sm text-green-600">
-            Mano de Obra: {formatearMoneda(payload[1].value, moneda)}
-          </p>
           <p className="text-sm font-bold text-purple-600">
-            Total: {formatearMoneda(payload[2].value, moneda)}
+            Total: {formatearMoneda(payload[1].value, moneda)}
           </p>
         </div>
       );
@@ -50,7 +46,6 @@ export const CostosChart = ({ recetas, moneda }: CostosChartProps) => {
           <Tooltip content={<CustomTooltip />} />
           <Legend />
           <Bar dataKey="materiales" fill="#3b82f6" name="Materiales" />
-          <Bar dataKey="manoObra" fill="#10b981" name="Mano de Obra" />
           <Bar dataKey="total" fill="#8b5cf6" name="Total" />
         </BarChart>
       </ResponsiveContainer>

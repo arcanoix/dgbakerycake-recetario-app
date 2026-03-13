@@ -26,12 +26,6 @@ export const DesgloseCostos = ({ desglose }: DesgloseCostosProps) => {
               {formatearMoneda(desglose.costoMateriales, configuracion?.moneda)}
             </span>
           </div>
-          <div className="flex justify-between items-center py-2 border-b">
-            <span className="text-muted-foreground">Costo de Mano de Obra:</span>
-            <span className="font-semibold">
-              {formatearMoneda(desglose.costoManoObra, configuracion?.moneda)}
-            </span>
-          </div>
           <div className="flex justify-between items-center py-3 bg-muted rounded-lg px-4">
             <span className="font-bold text-lg">Costo Total:</span>
             <span className="font-bold text-2xl text-primary">

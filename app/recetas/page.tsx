@@ -30,8 +30,6 @@ export default function RecetasPage() {
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [categoria, setCategoria] = useState("");
-  const [tiempoPreparacion, setTiempoPreparacion] = useState(60);
-  const [costoPorHora, setCostoPorHora] = useState(configuracion?.costoPorHoraDefecto || 10);
   const [margenGanancia, setMargenGanancia] = useState(configuracion?.margenGananciaDefecto || 30);
   const [materiales, setMateriales] = useState<MaterialReceta[]>([]);
 
@@ -56,8 +54,6 @@ export default function RecetasPage() {
       nombre,
       descripcion,
       categoria,
-      tiempoPreparacion,
-      costoPorHora,
       margenGanancia,
     };
 
@@ -77,8 +73,6 @@ export default function RecetasPage() {
     setNombre("");
     setDescripcion("");
     setCategoria("");
-    setTiempoPreparacion(60);
-    setCostoPorHora(configuracion?.costoPorHoraDefecto || 10);
     setMargenGanancia(configuracion?.margenGananciaDefecto || 30);
     setMateriales([]);
     setMostrarFormulario(false);
@@ -90,8 +84,6 @@ export default function RecetasPage() {
     setNombre(receta.nombre);
     setDescripcion(receta.descripcion);
     setCategoria(receta.categoria || "");
-    setTiempoPreparacion(receta.tiempoPreparacion);
-    setCostoPorHora(receta.costoPorHora);
     setMargenGanancia(receta.margenGanancia || 0);
     setMateriales(receta.materiales);
     setMostrarFormulario(true);
@@ -102,8 +94,8 @@ export default function RecetasPage() {
     nombre,
     descripcion,
     materiales,
-    tiempoPreparacion,
-    costoPorHora,
+    tiempoPreparacion: 0,
+    costoPorHora: 0,
     costoManoObra: 0,
     costoMateriales: 0,
     costoTotal: 0,
@@ -151,16 +143,6 @@ export default function RecetasPage() {
                         <option value="">Seleccionar</option>
                         {CATEGORIAS_RECETAS.map(c => <option key={c} value={c}>{c}</option>)}
                       </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="tiempo">Tiempo (min) *</Label>
-                      <Input id="tiempo" type="number" value={tiempoPreparacion} onChange={(e) => setTiempoPreparacion(parseInt(e.target.value))} required />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="costoHora">Costo/Hora *</Label>
-                      <Input id="costoHora" type="number" step="0.01" value={costoPorHora} onChange={(e) => setCostoPorHora(parseFloat(e.target.value))} required />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="margen">Margen (%)</Label>

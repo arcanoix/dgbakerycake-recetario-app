@@ -139,11 +139,8 @@ export const calcularPrecioVentaPorPorcion = (
  */
 export const generarDesgloseCostos = (receta: Receta): DesgloseCostos => {
   const costoMateriales = calcularCostoTotalMateriales(receta.materiales);
-  const costoManoObra = calcularCostoManoObra(
-    receta.tiempoPreparacion,
-    receta.costoPorHora
-  );
-  const costoTotal = calcularCostoTotalReceta(costoMateriales, costoManoObra);
+  const costoManoObra = 0;
+  const costoTotal = costoMateriales;
   
   const precioVentaSugerido = receta.margenGanancia
     ? calcularPrecioVentaSugerido(costoTotal, receta.margenGanancia)

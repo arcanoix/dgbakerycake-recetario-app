@@ -1,17 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Producto, ProductoFormData, UnidadMedida } from "@/types";
+import { Producto, ProductoFormData } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { OPCIONES_UNIDADES, CATEGORIAS_PRODUCTOS } from "@/lib/constants";
+import { CATEGORIAS_PRODUCTOS } from "@/lib/constants";
 import { calcularPrecioPorUnidad } from "@/lib/calculations";
 import { formatearMoneda } from "@/lib/constants";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
+import { useUnidades } from "@/hooks/useUnidades";
 
 interface ProductoFormProps {
   producto?: Producto;
@@ -21,16 +22,21 @@ interface ProductoFormProps {
 
 export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps) => {
   const { configuracion } = useConfiguracion();
+  const { unidades, obtenerUnidadesActivas } = useUnidades();
+  const unidadesActivas = obtenerUnidadesActivas();
+  
   const [formData, setFormData] = useState<ProductoFormData>({
     nombre: "",
     precioTotal: 0,
     tamañoPresentacion: 0,
     cantidadPresentaciones: 0,
-    unidadMedida: UnidadMedida.GRAMOS,
+    unidadMedida: "",
     categoria: "",
     proveedor: "",
     notas: "",
   });
+  
+  const [unidadSeleccionada, setUnidadSeleccionada] = useState<string>("");
 
   const [precioPorUnidad, setPrecioPorUnidad] = useState(0);
   const [precioPorPresentacion, setPrecioPorPresentacion] = useState(0);
@@ -49,8 +55,14 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
         proveedor: producto.proveedor,
         notas: producto.notas,
       });
+      setUnidadSeleccionada(producto.unidadMedida);
+    } else if (unidadesActivas.length > 0 && !formData.unidadMedida) {
+      // Establecer primera unidad activa como predeterminada
+      const primeraUnidad = unidadesActivas[0];
+      setFormData(prev => ({ ...prev, unidadMedida: primeraUnidad.id }));
+      setUnidadSeleccionada(primeraUnidad.id);
     }
-  }, [producto]);
+  }, [producto, unidadesActivas]);
 
   // Calcular valores automáticamente
   useEffect(() => {
@@ -202,15 +214,24 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
                 id="unidadMedida"
                 name="unidadMedida"
                 value={formData.unidadMedida}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e);
+                  setUnidadSeleccionada(e.target.value);
+                }}
                 required
               >
-                {OPCIONES_UNIDADES.map((opcion) => (
-                  <option key={opcion.value} value={opcion.value}>
-                    {opcion.label}
+                <option value="">Seleccionar unidad...</option>
+                {unidadesActivas.map((unidad) => (
+                  <option key={unidad.id} value={unidad.id}>
+                    {unidad.nombre} ({unidad.simbolo})
                   </option>
                 ))}
               </Select>
+              {unidadesActivas.length === 0 && (
+                <p className="text-xs text-destructive">
+                  No hay unidades disponibles. Por favor, crea al menos una unidad primero.
+                </p>
+              )}
             </div>
 
             {/* Proveedor */}
@@ -255,7 +276,7 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
                   {formatearMoneda(precioPorUnidad, configuracion?.moneda)}
                 </p>
                 <p className="text-xs text-purple-600 mt-1">
-                  Por {formData.unidadMedida}
+                  Por {unidadesActivas.find(u => u.id === unidadSeleccionada)?.simbolo || 'unidad'}
                 </p>
               </div>
             </div>

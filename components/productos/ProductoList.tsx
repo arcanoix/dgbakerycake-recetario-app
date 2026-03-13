@@ -5,7 +5,6 @@ import { Producto } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { formatearNumero } from "@/lib/constants";
-import { obtenerSimboloUnidad } from "@/lib/conversiones";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
 import { PrecioDual } from "@/components/ui/precio-dual";
 
@@ -70,7 +69,7 @@ export const ProductoList = ({ productos, onEdit, onDelete }: ProductoListProps)
                 <div className="flex justify-between text-xs">
                   <span className="text-blue-700">Presentación:</span>
                   <span className="font-semibold text-blue-900">
-                    {formatearNumero(producto.tamañoPresentacion)} {obtenerSimboloUnidad(producto.unidadMedida)}
+                    {formatearNumero(producto.tamañoPresentacion)} {producto.unidadMedidaSimbolo || 'u'}
                   </span>
                 </div>
                 <div className="flex justify-between text-xs">
@@ -82,7 +81,7 @@ export const ProductoList = ({ productos, onEdit, onDelete }: ProductoListProps)
                 <div className="flex justify-between text-xs border-t border-blue-200 pt-1">
                   <span className="text-blue-700">Total:</span>
                   <span className="font-bold text-blue-900">
-                    {formatearNumero(producto.cantidadTotal)} {obtenerSimboloUnidad(producto.unidadMedida)}
+                    {formatearNumero(producto.cantidadTotal)} {producto.unidadMedidaSimbolo || 'u'}
                   </span>
                 </div>
               </div>
@@ -98,7 +97,7 @@ export const ProductoList = ({ productos, onEdit, onDelete }: ProductoListProps)
               </div>
               
               <div className="flex justify-between text-sm border-t pt-2">
-                <span className="text-muted-foreground">Precio por {obtenerSimboloUnidad(producto.unidadMedida)}:</span>
+                <span className="text-muted-foreground">Precio por {producto.unidadMedidaSimbolo || 'unidad'}:</span>
                 <PrecioDual 
                   valorUSD={producto.precioPorUnidad} 
                   tasaCambio={configuracion?.tasaCambioUSD || 50}

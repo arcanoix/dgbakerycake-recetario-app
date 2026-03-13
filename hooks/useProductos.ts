@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Producto, ProductoFormData, UnidadMedida } from "@/types";
+import { Producto, ProductoFormData } from "@/types";
 import {
   obtenerProductos,
   obtenerProductoPorId,
   guardarProducto,
   eliminarProducto,
   generarId,
+  obtenerUnidadPorId,
 } from "@/lib/storageSupabase";
 import { calcularPrecioPorUnidad } from "@/lib/calculations";
 import { verificarLimite } from "@/lib/subscriptionStorage";
@@ -49,6 +50,9 @@ export const useProductos = () => {
         return false;
       }
 
+      // Obtener información de la unidad de medida
+      const unidad = await obtenerUnidadPorId(datos.unidadMedida);
+      
       // Calcular valores automáticamente
       const cantidadTotal = datos.tamañoPresentacion * datos.cantidadPresentaciones;
       const precioPorUnidad = datos.precioTotal / cantidadTotal;
@@ -62,6 +66,8 @@ export const useProductos = () => {
         cantidadPresentaciones: datos.cantidadPresentaciones,
         cantidadTotal,
         unidadMedida: datos.unidadMedida,
+        unidadMedidaNombre: unidad?.nombre,
+        unidadMedidaSimbolo: unidad?.simbolo,
         precioPorUnidad,
         precioPorPresentacion,
         categoria: datos.categoria,
@@ -95,6 +101,9 @@ export const useProductos = () => {
         return false;
       }
 
+      // Obtener información de la unidad de medida
+      const unidad = await obtenerUnidadPorId(datos.unidadMedida);
+      
       // Calcular valores automáticamente
       const cantidadTotal = datos.tamañoPresentacion * datos.cantidadPresentaciones;
       const precioPorUnidad = datos.precioTotal / cantidadTotal;
@@ -108,6 +117,8 @@ export const useProductos = () => {
         cantidadPresentaciones: datos.cantidadPresentaciones,
         cantidadTotal,
         unidadMedida: datos.unidadMedida,
+        unidadMedidaNombre: unidad?.nombre,
+        unidadMedidaSimbolo: unidad?.simbolo,
         precioPorUnidad,
         precioPorPresentacion,
         categoria: datos.categoria,

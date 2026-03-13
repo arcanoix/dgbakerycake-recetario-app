@@ -45,7 +45,7 @@ export const guardarProducto = async (producto: Producto) => {
     .from('productos')
     .select('id')
     .eq('id', producto.id)
-    .single();
+    .maybeSingle();
 
   if (existing) {
     // Actualizar
@@ -131,7 +131,7 @@ export const guardarReceta = async (receta: Receta) => {
     .from('recetas')
     .select('id')
     .eq('id', receta.id)
-    .single();
+    .maybeSingle();
 
   if (existing) {
     // Actualizar
@@ -403,7 +403,7 @@ export const guardarUnidad = async (unidad: UnidadMedidaAdmin) => {
     .from('unidades_medida')
     .select('id')
     .eq('id', unidad.id)
-    .single();
+    .maybeSingle();
 
   if (existing) {
     const { error } = await supabase

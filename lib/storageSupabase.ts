@@ -520,7 +520,7 @@ export const obtenerCategoriaPorId = async (id: string): Promise<CategoriaAdmin 
   return data ? mapCategoriaDesdeBD(data) : null;
 };
 
-export const guardarCategoria = async (categoria: CategoriaAdmin): Promise<RespuestaOperacion> => {
+export const guardarCategoria = async (categoria: CategoriaAdmin): Promise<{ exitoso: boolean; error?: string }> => {
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -541,7 +541,7 @@ export const guardarCategoria = async (categoria: CategoriaAdmin): Promise<Respu
   return { exitoso: true };
 };
 
-export const eliminarCategoria = async (id: string): Promise<RespuestaOperacion> => {
+export const eliminarCategoria = async (id: string): Promise<{ exitoso: boolean; error?: string }> => {
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {

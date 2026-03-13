@@ -71,7 +71,8 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
       });
       setUnidadSeleccionada(primeraUnidad);
     }
-  }, [producto, unidadesActivas]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [producto]);
 
   // Calcular valores automáticamente
   useEffect(() => {

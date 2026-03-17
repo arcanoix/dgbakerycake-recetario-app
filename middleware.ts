@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
+import { updateSession } from '@/utils/supabase/middleware';
 
 // Inicializa redis con Upstash (requiere URl y Token como ENV, manejara fallos gracefullment si no existen)
 const redis = new Redis({
@@ -38,17 +39,9 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Rutas públicas que no requieren autenticación
-  const publicPaths = ['/auth/login', '/auth/register', '/auth/forgot-password'];
-  
-  // Si la ruta es pública, permitir acceso
-  if (publicPaths.some(path => pathname.startsWith(path))) {
-    return NextResponse.next();
-  }
-
-  // Para otras rutas, verificar autenticación en el cliente
-  // Supabase maneja la sesión en el cliente, así que solo redirigimos si no hay sesión
-  return NextResponse.next();
+  // Procesamiento de autenticación con Supabase SSR
+  // Devolverá la redirección (ej: a login) o refrescará tokens automáticamente
+  return await updateSession(request);
 }
 
 export const config = {

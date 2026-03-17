@@ -37,8 +37,8 @@ export default function RecetasPage() {
     ? recetas.filter(r => r.nombre.toLowerCase().includes(terminoBusqueda.toLowerCase()))
     : recetas;
 
-  const handleAgregarMaterial = async (productoId: string, cantidad: number) => {
-    const material = await agregarMaterial(productoId, cantidad);
+  const handleAgregarMaterial = async (productoId: string, cantidad: number, unidadId: string) => {
+    const material = await agregarMaterial(productoId, cantidad, unidadId);
     if (material) {
       setMateriales([...materiales, material]);
     }

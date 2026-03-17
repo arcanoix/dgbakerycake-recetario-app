@@ -192,12 +192,39 @@ export const useRecetas = () => {
     }
   };
 
+  // ID especial para materiales personalizados (debe coincidir con MaterialSelector)
+  const PRODUCTO_OTRO_ID = "__OTRO__";
+
   const agregarMaterial = async (
     productoId: string,
     cantidadUtilizada: number,
-    unidadSeleccionadaId?: string
+    unidadSeleccionadaId?: string,
+    otroNombre?: string,
+    otroPrecio?: number
   ): Promise<MaterialReceta | null> => {
     try {
+      // ── Caso especial: producto personalizado ("Otro") ──────────────
+      if (productoId === PRODUCTO_OTRO_ID) {
+        if (!otroNombre || !otroPrecio || otroPrecio <= 0) {
+          setError("Debes ingresar nombre y precio para el ingrediente personalizado");
+          return null;
+        }
+        const costoMaterial = otroPrecio * cantidadUtilizada;
+        const material: MaterialReceta = {
+          id: generarId("material"),
+          productoId: PRODUCTO_OTRO_ID,
+          nombreProducto: otroNombre.trim(),
+          cantidadUtilizada,
+          unidadMedida: "u",
+          unidadMedidaNombre: "unidad",
+          unidadMedidaSimbolo: "u",
+          costoUnitario: otroPrecio,
+          costoMaterial,
+        };
+        return material;
+      }
+
+      // ── Caso normal: producto de la BD ─────────────────────────────
       const producto = await obtenerProductoPorId(productoId);
       if (!producto) {
         setError("Producto no encontrado");

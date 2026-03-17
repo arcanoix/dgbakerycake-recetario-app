@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MaterialReceta, Producto, UnidadMedidaAdmin } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,10 +12,19 @@ import { useConfiguracion } from "@/hooks/useConfiguracion";
 import { useUnidades } from "@/hooks/useUnidades";
 import { calcularCostoMaterialConConversion } from "@/lib/calculations";
 
+// ID especial que indica "producto personalizado"
+const PRODUCTO_OTRO_ID = "__OTRO__";
+
 interface MaterialSelectorProps {
   productos: Producto[];
   materiales: MaterialReceta[];
-  onAgregarMaterial: (productoId: string, cantidad: number, unidadId: string) => void;
+  onAgregarMaterial: (
+    productoId: string,
+    cantidad: number,
+    unidadId: string,
+    otroNombre?: string,
+    otroPrecio?: number
+  ) => void;
   onEliminarMaterial: (materialId: string) => void;
 }
 
@@ -27,19 +36,44 @@ export const MaterialSelector = ({
 }: MaterialSelectorProps) => {
   const { configuracion } = useConfiguracion();
   const { unidades } = useUnidades();
+
+  // ── Estado del Combobox buscable ──────────────────────────────────────
+  const [busqueda, setBusqueda] = useState("");
+  const [comboAbierto, setComboAbierto] = useState(false);
   const [productoSeleccionado, setProductoSeleccionado] = useState("");
+  const comboRef = useRef<HTMLDivElement>(null);
+
+  // ── Estado campos principales ─────────────────────────────────────────
   const [cantidad, setCantidad] = useState<number>(0);
   const [unidadSeleccionadaId, setUnidadSeleccionadaId] = useState("");
 
-  // Datos del producto seleccionado
-  const productoSeleccionadoData = productos.find(
-    (p) => p.id === productoSeleccionado
-  );
+  // ── Estado para "Otro" (producto personalizado) ───────────────────────
+  const [otroNombre, setOtroNombre] = useState("");
+  const [otroPrecio, setOtroPrecio] = useState<number>(0);
+
+  // ── Cerrar combo al hacer clic fuera ─────────────────────────────────
+  useEffect(() => {
+    const handleClickFuera = (e: MouseEvent) => {
+      if (comboRef.current && !comboRef.current.contains(e.target as Node)) {
+        setComboAbierto(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickFuera);
+    return () => document.removeEventListener("mousedown", handleClickFuera);
+  }, []);
+
+  // ── Productos filtrados por búsqueda ──────────────────────────────────
+  const productosFiltrados = busqueda.trim()
+    ? productos.filter((p) =>
+        p.nombre.toLowerCase().includes(busqueda.toLowerCase().trim())
+      )
+    : productos;
+
+  const esOtro = productoSeleccionado === PRODUCTO_OTRO_ID;
 
   /**
-   * Busca la unidad en la lista local por ID o por nombre/símbolo.
-   * Necesario porque productos viejos guardan el nombre ('unidad', 'gramos')
-   * mientras que los nuevos guardan el UUID.
+   * Busca la unidad en la lista local por ID, nombre o símbolo.
+   * Compatible con productos viejos (nombre de texto) y nuevos (UUID).
    */
   const buscarUnidad = (valor: string): UnidadMedidaAdmin | undefined => {
     if (!valor) return undefined;
@@ -50,38 +84,40 @@ export const MaterialSelector = ({
     );
   };
 
-  // Unidad base del producto seleccionado
+  // ── Datos derivados del producto seleccionado ─────────────────────────
+  const productoSeleccionadoData = productos.find(
+    (p) => p.id === productoSeleccionado
+  );
   const unidadProducto = productoSeleccionadoData
     ? buscarUnidad(productoSeleccionadoData.unidadMedida)
     : undefined;
 
-  // Unidades compatibles: mismo tipo que la unidad del producto
   const unidadesCompatibles: UnidadMedidaAdmin[] = unidadProducto
     ? unidades.filter((u) => u.activo && u.tipo === unidadProducto.tipo)
     : [];
-
-  // Cuando cambia el producto, setear la unidad por defecto a la del producto
-  useEffect(() => {
-    if (unidadProducto) {
-      setUnidadSeleccionadaId(unidadProducto.id);
-    } else {
-      setUnidadSeleccionadaId("");
-    }
-    setCantidad(0);
-  }, [productoSeleccionado, unidadProducto?.id]);
-
-  const obtenerSimboloUnidad = (unidadId: string): string => {
-    const unidad = buscarUnidad(unidadId);
-    return unidad?.simbolo || unidadId;
-  };
 
   const unidadSeleccionadaData = unidades.find(
     (u) => u.id === unidadSeleccionadaId
   );
 
-  // Costo estimado con conversión
+  // ── Resetear campos al cambiar de producto ────────────────────────────
+  useEffect(() => {
+    setCantidad(0);
+    setUnidadSeleccionadaId(unidadProducto?.id ?? "");
+    setOtroNombre("");
+    setOtroPrecio(0);
+  }, [productoSeleccionado, unidadProducto?.id]);
+
+  // ── Costo estimado ────────────────────────────────────────────────────
   const costoEstimado = (() => {
-    if (!productoSeleccionadoData || cantidad <= 0) return 0;
+    if (cantidad <= 0) return 0;
+
+    if (esOtro) {
+      // Para "Otro": precio ingresado × cantidad
+      return otroPrecio * cantidad;
+    }
+
+    if (!productoSeleccionadoData) return 0;
     const calculo = calcularCostoMaterialConConversion(
       productoSeleccionadoData,
       cantidad,
@@ -91,89 +127,197 @@ export const MaterialSelector = ({
     return calculo.costoCalculado;
   })();
 
+  // ── Seleccionar producto desde el combo ───────────────────────────────
+  const seleccionarProducto = (id: string, nombre: string) => {
+    setProductoSeleccionado(id);
+    setBusqueda(id === PRODUCTO_OTRO_ID ? "Otro (personalizado)" : nombre);
+    setComboAbierto(false);
+  };
+
+  // ── Obtener símbolo de unidad ─────────────────────────────────────────
+  const obtenerSimboloUnidad = (unidadId: string): string => {
+    const unidad = buscarUnidad(unidadId);
+    return unidad?.simbolo || unidadId;
+  };
+
+  // ── Validación para habilitar el botón ───────────────────────────────
+  const puedeAgregar = (() => {
+    if (cantidad <= 0) return false;
+    if (esOtro) return otroNombre.trim().length > 0 && otroPrecio > 0;
+    return productoSeleccionado !== "" && unidadSeleccionadaId !== "";
+  })();
+
+  // ── Agregar material ──────────────────────────────────────────────────
   const handleAgregar = () => {
-    if (productoSeleccionado && cantidad > 0 && unidadSeleccionadaId) {
-      onAgregarMaterial(productoSeleccionado, cantidad, unidadSeleccionadaId);
-      setProductoSeleccionado("");
-      setCantidad(0);
-      setUnidadSeleccionadaId("");
-    }
+    if (!puedeAgregar) return;
+    onAgregarMaterial(
+      esOtro ? PRODUCTO_OTRO_ID : productoSeleccionado,
+      cantidad,
+      esOtro ? "" : unidadSeleccionadaId,
+      esOtro ? otroNombre : undefined,
+      esOtro ? otroPrecio : undefined
+    );
+    // Reset
+    setProductoSeleccionado("");
+    setBusqueda("");
+    setCantidad(0);
+    setUnidadSeleccionadaId("");
+    setOtroNombre("");
+    setOtroPrecio(0);
   };
 
   return (
     <div className="space-y-4">
-      {/* Selector de Material */}
+      {/* ── Formulario ──────────────────────────────────────────────── */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Agregar Material/Insumo</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Fila 1: Producto */}
+
+          {/* Combobox buscable de producto */}
           <div className="space-y-2">
-            <Label htmlFor="producto">Producto *</Label>
-            <Select
-              id="producto"
-              value={productoSeleccionado}
-              onChange={(e) => setProductoSeleccionado(e.target.value)}
-            >
-              <option value="">Seleccionar producto</option>
-              {productos.map((producto) => (
-                <option key={producto.id} value={producto.id}>
-                  {producto.nombre}{" "}
-                  ({obtenerSimboloUnidad(producto.unidadMedida)})
-                </option>
-              ))}
-            </Select>
-          </div>
-
-          {/* Fila 2: Cantidad + Unidad (en la misma fila) */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label htmlFor="cantidad">Cantidad *</Label>
+            <Label htmlFor="busqueda-producto">Producto *</Label>
+            <div className="relative" ref={comboRef}>
               <Input
-                id="cantidad"
-                type="number"
-                step="0.01"
-                min="0.01"
-                value={cantidad || ""}
-                onChange={(e) => setCantidad(parseFloat(e.target.value) || 0)}
-                placeholder="0.00"
-                disabled={!productoSeleccionado}
+                id="busqueda-producto"
+                placeholder="Buscar producto..."
+                value={busqueda}
+                autoComplete="off"
+                onChange={(e) => {
+                  setBusqueda(e.target.value);
+                  setProductoSeleccionado("");
+                  setComboAbierto(true);
+                }}
+                onFocus={() => setComboAbierto(true)}
               />
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="unidad">
-                Unidad *
-                {unidadProducto && (
-                  <span className="text-xs text-muted-foreground ml-1">
-                    (base: {unidadProducto.simbolo})
-                  </span>
-                )}
-              </Label>
-              <Select
-                id="unidad"
-                value={unidadSeleccionadaId}
-                onChange={(e) => setUnidadSeleccionadaId(e.target.value)}
-                disabled={!productoSeleccionado || unidadesCompatibles.length === 0}
-              >
-                {!productoSeleccionado && (
-                  <option value="">— Seleccionar primero un producto —</option>
-                )}
-                {productoSeleccionado && unidadesCompatibles.length === 0 && (
-                  <option value="">— Sin unidades compatibles —</option>
-                )}
-                {unidadesCompatibles.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {u.nombre} ({u.simbolo})
-                  </option>
-                ))}
-              </Select>
+              {/* Dropdown de opciones */}
+              {comboAbierto && (
+                <div className="absolute z-50 mt-1 w-full rounded-md border border-input bg-background shadow-lg max-h-60 overflow-y-auto">
+                  {/* Opción: Otro */}
+                  <button
+                    type="button"
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors flex items-center gap-2 border-b border-dashed border-muted-foreground/30"
+                    onClick={() => seleccionarProducto(PRODUCTO_OTRO_ID, "Otro")}
+                  >
+                    <span className="text-base">✏️</span>
+                    <span className="font-medium">Otro (ingrediente personalizado)</span>
+                  </button>
+
+                  {/* Lista de productos filtrados */}
+                  {productosFiltrados.length === 0 ? (
+                    <div className="px-3 py-2 text-sm text-muted-foreground">
+                      No se encontraron productos
+                    </div>
+                  ) : (
+                    productosFiltrados.map((producto) => (
+                      <button
+                        key={producto.id}
+                        type="button"
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors"
+                        onClick={() => seleccionarProducto(producto.id, producto.nombre)}
+                      >
+                        <span className="font-medium">{producto.nombre}</span>
+                        <span className="ml-2 text-muted-foreground text-xs">
+                          ({obtenerSimboloUnidad(producto.unidadMedida)})
+                        </span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Indicador de conversión si aplica */}
+          {/* ── Campos para "Otro" ──────────────────────────────────── */}
+          {esOtro && (
+            <div className="grid grid-cols-2 gap-3 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg">
+              <div className="col-span-2 space-y-2">
+                <Label htmlFor="otro-nombre">
+                  ¿Qué ingrediente es? *
+                </Label>
+                <Input
+                  id="otro-nombre"
+                  placeholder="Ej: Fondant importado, Flores comestibles..."
+                  value={otroNombre}
+                  onChange={(e) => setOtroNombre(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="otro-precio">Precio *</Label>
+                <Input
+                  id="otro-precio"
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  placeholder="0.00"
+                  value={otroPrecio || ""}
+                  onChange={(e) => setOtroPrecio(parseFloat(e.target.value) || 0)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="otro-cantidad">Cantidad *</Label>
+                <Input
+                  id="otro-cantidad"
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  placeholder="1"
+                  value={cantidad || ""}
+                  onChange={(e) => setCantidad(parseFloat(e.target.value) || 0)}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* ── Campos para producto de BD ──────────────────────────── */}
+          {productoSeleccionado && !esOtro && (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label htmlFor="cantidad">Cantidad *</Label>
+                <Input
+                  id="cantidad"
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  value={cantidad || ""}
+                  onChange={(e) => setCantidad(parseFloat(e.target.value) || 0)}
+                  placeholder="0.00"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="unidad">
+                  Unidad *
+                  {unidadProducto && (
+                    <span className="text-xs text-muted-foreground ml-1">
+                      (base: {unidadProducto.simbolo})
+                    </span>
+                  )}
+                </Label>
+                <Select
+                  id="unidad"
+                  value={unidadSeleccionadaId}
+                  onChange={(e) => setUnidadSeleccionadaId(e.target.value)}
+                  disabled={unidadesCompatibles.length === 0}
+                >
+                  {unidadesCompatibles.length === 0 && (
+                    <option value="">— Sin unidades compatibles —</option>
+                  )}
+                  {unidadesCompatibles.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.nombre} ({u.simbolo})
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            </div>
+          )}
+
+          {/* Banner de conversión automática */}
           {productoSeleccionadoData &&
+            !esOtro &&
             unidadSeleccionadaData &&
             unidadProducto &&
             unidadSeleccionadaData.id !== unidadProducto.id &&
@@ -182,11 +326,8 @@ export const MaterialSelector = ({
                 <span className="font-medium">Conversión automática:</span>{" "}
                 {formatearNumero(cantidad, 2)} {unidadSeleccionadaData.simbolo} →{" "}
                 {formatearNumero(
-                  (() => {
-                    const f1 = unidadSeleccionadaData.factorConversionBase ?? 1;
-                    const f2 = unidadProducto.factorConversionBase ?? 1;
-                    return (cantidad * f1) / f2;
-                  })(),
+                  (cantidad * (unidadSeleccionadaData.factorConversionBase ?? 1)) /
+                    (unidadProducto.factorConversionBase ?? 1),
                   4
                 )}{" "}
                 {unidadProducto.simbolo}
@@ -205,7 +346,7 @@ export const MaterialSelector = ({
 
           <Button
             onClick={handleAgregar}
-            disabled={!productoSeleccionado || cantidad <= 0 || !unidadSeleccionadaId}
+            disabled={!puedeAgregar}
             className="w-full"
           >
             + Agregar Material
@@ -213,7 +354,7 @@ export const MaterialSelector = ({
         </CardContent>
       </Card>
 
-      {/* Lista de Materiales */}
+      {/* ── Lista de materiales agregados ────────────────────────────────── */}
       {materiales.length > 0 && (
         <Card>
           <CardHeader>
@@ -229,10 +370,22 @@ export const MaterialSelector = ({
                   className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
                 >
                   <div className="flex-1">
-                    <p className="font-medium">{material.nombreProducto}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium">{material.nombreProducto}</p>
+                      {material.productoId === PRODUCTO_OTRO_ID && (
+                        <span className="text-xs bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 px-1.5 py-0.5 rounded font-medium">
+                          personalizado
+                        </span>
+                      )}
+                    </div>
                     <p className="text-sm text-muted-foreground">
                       {formatearNumero(material.cantidadUtilizada)}{" "}
-                      {material.unidadMedidaSimbolo ?? obtenerSimboloUnidad(material.unidadMedida)} •{" "}
+                      {material.unidadMedidaSimbolo
+                        ? material.unidadMedidaSimbolo
+                        : material.productoId !== PRODUCTO_OTRO_ID
+                        ? obtenerSimboloUnidad(material.unidadMedida)
+                        : "u"}{" "}
+                      •{" "}
                       {formatearMoneda(material.costoMaterial, configuracion?.moneda)}
                     </p>
                   </div>

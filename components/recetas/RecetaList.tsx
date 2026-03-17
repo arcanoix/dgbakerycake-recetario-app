@@ -6,6 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
 import { PrecioDual } from "@/components/ui/precio-dual";
+import { Download } from "lucide-react";
+import { exportarRecetaPDF } from "@/lib/pdfExport";
 
 interface RecetaListProps {
   recetas: Receta[];
@@ -109,6 +111,15 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProp
                   Ver
                 </Button>
               )}
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1"
+                onClick={() => exportarRecetaPDF(receta, configuracion)}
+                title="Exportar a PDF"
+              >
+                <Download className="w-4 h-4" />
+              </Button>
               <Button
                 variant="outline"
                 size="sm"

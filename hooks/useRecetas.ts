@@ -9,9 +9,11 @@ import {
   eliminarReceta,
   generarId,
   obtenerProductoPorId,
+  obtenerUnidadPorId,
 } from "@/lib/storageSupabase";
 import {
   calcularCostoMaterial,
+  calcularCostoMaterialConConversion,
   calcularCostoTotalMateriales,
   calcularCostoManoObra,
   calcularCostoTotalReceta,
@@ -192,7 +194,8 @@ export const useRecetas = () => {
 
   const agregarMaterial = async (
     productoId: string,
-    cantidadUtilizada: number
+    cantidadUtilizada: number,
+    unidadSeleccionadaId?: string
   ): Promise<MaterialReceta | null> => {
     try {
       const producto = await obtenerProductoPorId(productoId);
@@ -201,14 +204,35 @@ export const useRecetas = () => {
         return null;
       }
 
-      const calculoCosto = calcularCostoMaterial(producto, cantidadUtilizada);
+      // Obtener la unidad seleccionada por el usuario (puede ser diferente a la del producto)
+      const unidadSeleccionada = unidadSeleccionadaId
+        ? await obtenerUnidadPorId(unidadSeleccionadaId)
+        : null;
+
+      // Obtener la unidad del producto para hacer conversión si es necesario
+      const unidadProducto = producto.unidadMedida
+        ? await obtenerUnidadPorId(producto.unidadMedida)
+        : null;
+
+      // Calcular costo con conversión de unidades
+      const calculoCosto = calcularCostoMaterialConConversion(
+        producto,
+        cantidadUtilizada,
+        unidadSeleccionada,
+        unidadProducto
+      );
+
+      // La unidad que se muestra en la receta es la que el usuario eligió
+      const unidadMostrando = unidadSeleccionada ?? unidadProducto;
 
       const material: MaterialReceta = {
         id: generarId("material"),
         productoId: producto.id,
         nombreProducto: producto.nombre,
         cantidadUtilizada,
-        unidadMedida: producto.unidadMedida,
+        unidadMedida: unidadMostrando?.id ?? producto.unidadMedida,
+        unidadMedidaNombre: unidadMostrando?.nombre,
+        unidadMedidaSimbolo: unidadMostrando?.simbolo,
         costoUnitario: producto.precioPorUnidad,
         costoMaterial: calculoCosto.costoCalculado,
       };

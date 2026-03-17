@@ -4,6 +4,7 @@ import {
   Receta,
   DesgloseCostos,
   CalculoCostoMaterial,
+  UnidadMedidaAdmin,
 } from "@/types";
 import { convertirUnidad } from "./conversiones";
 
@@ -40,6 +41,61 @@ export const calcularCostoMaterial = (
 
   // El costo es: (precio del producto / cantidad total) * cantidad utilizada
   const costoCalculado = precioPorUnidad * cantidadUtilizada;
+
+  return {
+    productoId: producto.id,
+    nombreProducto: producto.nombre,
+    precioProducto: producto.precioTotal,
+    cantidadTotalProducto: producto.cantidadTotal,
+    unidadMedidaProducto: producto.unidadMedida,
+    cantidadUtilizada,
+    costoCalculado,
+  };
+};
+
+/**
+ * Calcula el costo de un material con conversión de unidades.
+ * Si el usuario elige una unidad diferente a la del producto (ej: usa 200g 
+ * pero el producto está registrado en kg), convierte automáticamente.
+ *
+ * Lógica de conversión:
+ * - Cada unidad tiene `factorConversionBase` (cuántas unidades base equivalen a 1 de esta unidad)
+ *   Ej: kg tiene factor 1000 (1 kg = 1000 g base)
+ *       g tiene factor 1 (1 g = 1 g base)
+ *       L tiene factor 1000 (1 L = 1000 ml base)
+ *       ml tiene factor 1 (1 ml = 1 ml base)
+ * - Para convertir: cantidad_en_base = cantidad * factorConversionBase_seleccionada
+ * - Luego comparar con la unidad del producto: dividir por factorConversionBase_producto
+ * - Si las unidades son del mismo tipo, la conversión se hace en unidad base común
+ */
+export const calcularCostoMaterialConConversion = (
+  producto: Producto,
+  cantidadUtilizada: number,
+  unidadSeleccionada: UnidadMedidaAdmin | null,
+  unidadProducto: UnidadMedidaAdmin | null
+): CalculoCostoMaterial => {
+  const precioPorUnidad = calcularPrecioPorUnidad(
+    producto.precioTotal,
+    producto.cantidadTotal
+  );
+
+  let cantidadEnUnidadProducto = cantidadUtilizada;
+
+  // Si se especificaron ambas unidades y son del mismo tipo, convertir
+  if (
+    unidadSeleccionada &&
+    unidadProducto &&
+    unidadSeleccionada.tipo === unidadProducto.tipo &&
+    unidadSeleccionada.id !== unidadProducto.id
+  ) {
+    const factorSeleccionada = unidadSeleccionada.factorConversionBase ?? 1;
+    const factorProducto = unidadProducto.factorConversionBase ?? 1;
+    // Convertir a unidad base, luego a la unidad del producto
+    const cantidadEnBase = cantidadUtilizada * factorSeleccionada;
+    cantidadEnUnidadProducto = cantidadEnBase / factorProducto;
+  }
+
+  const costoCalculado = precioPorUnidad * cantidadEnUnidadProducto;
 
   return {
     productoId: producto.id,

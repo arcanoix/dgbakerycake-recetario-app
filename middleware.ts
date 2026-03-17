@@ -22,8 +22,8 @@ export async function middleware(request: NextRequest) {
 
   // Rate Limiting para APIs
   if (pathname.startsWith('/api/') && process.env.UPSTASH_REDIS_REST_URL) {
-    // Identificar usuario por su IP
-    const ip = request.ip ?? '127.0.0.1';
+    // Identificar usuario por su IP (de las cabeceras de proxy o del request)
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1';
     const { success, limit, reset, remaining } = await ratelimit.limit(ip);
     
     // Si excede

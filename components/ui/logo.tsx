@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 interface LogoProps {
@@ -18,13 +17,12 @@ export const Logo = ({ size = "md", showText = true, href = "/" }: LogoProps) =>
 
   const logoContent = (
     <div className="flex items-center gap-3">
-      <Image
-        src="/logo.png"
+      <img
+        src="/logo.jpg"
         alt="DG Bakery Cake"
         width={width}
         height={height}
-        className="rounded-full"
-        priority
+        className="rounded-full object-cover"
       />
       {showText && (
         <span className={`font-bold ${textSize} bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent`}>

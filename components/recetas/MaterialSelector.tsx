@@ -29,11 +29,11 @@ interface MaterialSelectorProps {
 }
 
 export const MaterialSelector = ({
+  productos,
   materiales,
   onAgregarMaterial,
   onEliminarMaterial,
 }: MaterialSelectorProps) => {
-  const { productos } = useProductos();
   const { configuracion } = useConfiguracion();
   const { unidades } = useUnidades();
   const tasaCambio = configuracion?.tasaCambioUSD || 50;

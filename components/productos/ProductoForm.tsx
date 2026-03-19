@@ -24,6 +24,7 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
   const { configuracion } = useConfiguracion();
   const { unidades, obtenerUnidadesActivas } = useUnidades();
   const unidadesActivas = obtenerUnidadesActivas();
+  const tasaCambio = configuracion?.tasaCambioUSD || 50;
   
   const [formData, setFormData] = useState<ProductoFormData>({
     nombre: "",
@@ -273,7 +274,7 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
               <div className="p-4 bg-green-50 rounded-lg border border-green-200">
                 <p className="text-sm font-medium text-green-800">Precio por Presentación</p>
                 <p className="text-2xl font-bold text-green-900">
-                  {formatearMoneda(precioPorPresentacion, configuracion?.moneda)}
+                  {formatearMoneda(precioPorPresentacion, configuracion?.moneda, tasaCambio)}
                 </p>
                 <p className="text-xs text-green-600 mt-1">
                   Por unidad/paquete
@@ -283,7 +284,7 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
               <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
                 <p className="text-sm font-medium text-purple-800">Precio por Unidad Base</p>
                 <p className="text-2xl font-bold text-purple-900">
-                  {formatearMoneda(precioPorUnidad, configuracion?.moneda)}
+                  {formatearMoneda(precioPorUnidad, configuracion?.moneda, tasaCambio)}
                 </p>
                 <p className="text-xs text-purple-600 mt-1">
                   Por {unidadesActivas.find(u => u.id === unidadSeleccionada)?.simbolo || 'unidad'}

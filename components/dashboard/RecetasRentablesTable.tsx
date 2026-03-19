@@ -2,6 +2,7 @@
 
 import { Receta } from '@/types';
 import { formatearMoneda } from '@/lib/constants';
+import { useConfiguracion } from '@/hooks/useConfiguracion';
 
 interface RecetasRentablesTableProps {
   recetas: Receta[];
@@ -9,6 +10,8 @@ interface RecetasRentablesTableProps {
 }
 
 export const RecetasRentablesTable = ({ recetas, moneda }: RecetasRentablesTableProps) => {
+  const { configuracion } = useConfiguracion();
+  const tasaCambio = configuracion?.tasaCambioUSD || 50;
   const recetasConMargen = recetas
     .filter(r => r.precioVentaSugerido && r.margenGanancia)
     .map(receta => ({
@@ -45,13 +48,13 @@ export const RecetasRentablesTable = ({ recetas, moneda }: RecetasRentablesTable
                   </div>
                 </td>
                 <td className="text-right py-3 px-2 text-sm">
-                  {formatearMoneda(receta.costoTotal, moneda)}
+                  {formatearMoneda(receta.costoTotal, moneda, tasaCambio)}
                 </td>
                 <td className="text-right py-3 px-2 text-sm font-semibold text-green-600">
-                  {formatearMoneda(receta.precioVentaSugerido || 0, moneda)}
+                  {formatearMoneda(receta.precioVentaSugerido || 0, moneda, tasaCambio)}
                 </td>
                 <td className="text-right py-3 px-2 text-sm font-bold text-blue-600">
-                  {formatearMoneda(receta.ganancia, moneda)}
+                  {formatearMoneda(receta.ganancia, moneda, tasaCambio)}
                 </td>
                 <td className="text-right py-3 px-2">
                   <span className="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded">

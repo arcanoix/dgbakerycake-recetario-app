@@ -13,6 +13,7 @@ interface DesgloseCostosProps {
 export const DesgloseCostos = ({ desglose }: DesgloseCostosProps) => {
   const { configuracion } = useConfiguracion();
   const { unidades } = useUnidades();
+  const tasaCambio = configuracion?.tasaCambioUSD || 50;
   
   const obtenerSimboloUnidad = (unidadId: string): string => {
     const unidad = unidades.find(u => u.id === unidadId);
@@ -29,13 +30,13 @@ export const DesgloseCostos = ({ desglose }: DesgloseCostosProps) => {
           <div className="flex justify-between items-center py-2 border-b">
             <span className="text-muted-foreground">Costo de Materiales:</span>
             <span className="font-semibold">
-              {formatearMoneda(desglose.costoMateriales, configuracion?.moneda)}
+              {formatearMoneda(desglose.costoMateriales, configuracion?.moneda, tasaCambio)}
             </span>
           </div>
           <div className="flex justify-between items-center py-3 bg-muted rounded-lg px-4">
             <span className="font-bold text-lg">Costo Total:</span>
             <span className="font-bold text-2xl text-primary">
-              {formatearMoneda(desglose.costoTotal, configuracion?.moneda)}
+              {formatearMoneda(desglose.costoTotal, configuracion?.moneda, tasaCambio)}
             </span>
           </div>
         </div>
@@ -50,7 +51,8 @@ export const DesgloseCostos = ({ desglose }: DesgloseCostosProps) => {
               <span className="font-semibold text-green-600">
                 {formatearMoneda(
                   desglose.precioVentaSugerido - desglose.costoTotal,
-                  configuracion?.moneda
+                  configuracion?.moneda,
+                  tasaCambio
                 )}
               </span>
             </div>
@@ -59,7 +61,7 @@ export const DesgloseCostos = ({ desglose }: DesgloseCostosProps) => {
                 Precio de Venta Sugerido:
               </span>
               <span className="font-bold text-2xl text-green-600">
-                {formatearMoneda(desglose.precioVentaSugerido, configuracion?.moneda)}
+                {formatearMoneda(desglose.precioVentaSugerido, configuracion?.moneda, tasaCambio)}
               </span>
             </div>
           </div>
@@ -84,7 +86,7 @@ export const DesgloseCostos = ({ desglose }: DesgloseCostosProps) => {
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold">
-                      {formatearMoneda(detalle.costo, configuracion?.moneda)}
+                      {formatearMoneda(detalle.costo, configuracion?.moneda, tasaCambio)}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {formatearNumero(detalle.porcentaje, 1)}%

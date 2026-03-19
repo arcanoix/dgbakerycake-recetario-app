@@ -3,6 +3,7 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Receta } from '@/types';
 import { formatearMoneda } from '@/lib/constants';
+import { useConfiguracion } from '@/hooks/useConfiguracion';
 
 interface CostosChartProps {
   recetas: Receta[];
@@ -10,6 +11,8 @@ interface CostosChartProps {
 }
 
 export const CostosChart = ({ recetas, moneda }: CostosChartProps) => {
+  const { configuracion } = useConfiguracion();
+  const tasaCambio = configuracion?.tasaCambioUSD || 50;
   const data = recetas
     .slice(0, 10)
     .map(receta => ({
@@ -24,10 +27,10 @@ export const CostosChart = ({ recetas, moneda }: CostosChartProps) => {
         <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg">
           <p className="font-semibold mb-2">{label}</p>
           <p className="text-sm text-blue-600">
-            Materiales: {formatearMoneda(payload[0].value, moneda)}
+            Materiales: {formatearMoneda(payload[0].value, moneda, tasaCambio)}
           </p>
           <p className="text-sm font-bold text-purple-600">
-            Total: {formatearMoneda(payload[1].value, moneda)}
+            Total: {formatearMoneda(payload[1].value, moneda, tasaCambio)}
           </p>
         </div>
       );

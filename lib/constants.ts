@@ -100,13 +100,29 @@ export const VALIDACION = {
 // FORMATOS
 // ============================================
 
-export const formatearMoneda = (valor: number, moneda: string = 'VES'): string => {
+/**
+ * Formatea un valor monetario. 
+ * IMPORTANTE: Los valores en la BD están en USD.
+ * Si la moneda es VES, se debe convertir usando la tasa de cambio.
+ * 
+ * @param valorUSD - Valor en USD (como se almacena en la BD)
+ * @param moneda - Moneda de visualización ('USD' o 'VES')
+ * @param tasaCambio - Tasa de cambio USD a VES (opcional, por defecto 50)
+ */
+export const formatearMoneda = (
+  valorUSD: number, 
+  moneda: string = 'VES',
+  tasaCambio: number = 50
+): string => {
+  // Si la moneda es VES, convertir de USD a VES
+  const valorFinal = moneda === 'VES' ? valorUSD * tasaCambio : valorUSD;
+  
   return new Intl.NumberFormat('es-VE', {
     style: 'currency',
     currency: moneda,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(valor);
+  }).format(valorFinal);
 };
 
 export const formatearNumero = (valor: number, decimales: number = 2): string => {

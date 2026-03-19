@@ -29,13 +29,14 @@ interface MaterialSelectorProps {
 }
 
 export const MaterialSelector = ({
-  productos,
   materiales,
   onAgregarMaterial,
   onEliminarMaterial,
 }: MaterialSelectorProps) => {
+  const { productos } = useProductos();
   const { configuracion } = useConfiguracion();
   const { unidades } = useUnidades();
+  const tasaCambio = configuracion?.tasaCambioUSD || 50;
 
   // ── Estado del Combobox buscable ──────────────────────────────────────
   const [busqueda, setBusqueda] = useState("");
@@ -339,7 +340,7 @@ export const MaterialSelector = ({
             <div className="p-3 bg-muted rounded-lg">
               <p className="text-sm text-muted-foreground">Costo estimado:</p>
               <p className="text-lg font-bold text-primary">
-                {formatearMoneda(costoEstimado, configuracion?.moneda)}
+                {formatearMoneda(costoEstimado, configuracion?.moneda, tasaCambio)}
               </p>
             </div>
           )}
@@ -386,7 +387,7 @@ export const MaterialSelector = ({
                         ? obtenerSimboloUnidad(material.unidadMedida)
                         : "u"}{" "}
                       •{" "}
-                      {formatearMoneda(material.costoMaterial, configuracion?.moneda)}
+                      {formatearMoneda(material.costoMaterial, configuracion?.moneda, tasaCambio)}
                     </p>
                   </div>
                   <Button
@@ -406,7 +407,8 @@ export const MaterialSelector = ({
                 <span className="text-lg font-bold text-primary">
                   {formatearMoneda(
                     materiales.reduce((sum, m) => sum + m.costoMaterial, 0),
-                    configuracion?.moneda
+                    configuracion?.moneda,
+                    tasaCambio
                   )}
                 </span>
               </div>

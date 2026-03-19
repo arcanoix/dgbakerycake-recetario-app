@@ -27,6 +27,11 @@ export const Navbar = () => {
   const { user, signOut } = useAuth();
   const { isAdmin } = useRole();
 
+  // Ocultar navbar en rutas de autenticación
+  if (pathname.startsWith('/auth/')) {
+    return null;
+  }
+
   const navSections: NavSection[] = [
     {
       label: "Gestión",

@@ -1,9 +1,8 @@
-import { createClient } from '@supabase/supabase-js';
+// Re-exportamos el cliente singleton de supabase-auth para evitar
+// múltiples instancias de GoTrueClient en el mismo browser context.
+// NUNCA crear un segundo createClient() aparte de supabase-auth.ts.
+export { supabaseAuth as supabase } from '@/lib/supabase-auth';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Tipos para las tablas de Supabase
 export type Database = {

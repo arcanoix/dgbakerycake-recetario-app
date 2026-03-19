@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Navbar } from "@/components/layout/Navbar";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { AppShell } from "@/components/layout/AppShell";
 
 export const metadata: Metadata = {
   title: "DG Bakery Cake - Gestión de Costos",
@@ -17,15 +17,7 @@ export default function RootLayout({
     <html lang="es">
       <body className="antialiased bg-gray-50">
         <AuthProvider>
-          <Navbar />
-          <main className="min-h-screen">
-            {children}
-          </main>
-          <footer className="bg-white border-t border-gray-200 py-6 mt-12">
-            <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-              <p>© 2026 DG Bakery Cake - Sistema de Gestión de Costos de Recetas</p>
-            </div>
-          </footer>
+          <AppShell>{children}</AppShell>
         </AuthProvider>
       </body>
     </html>

@@ -112,3 +112,28 @@ export const updatePassword = async (newPassword: string) => {
 
   return { success: true };
 };
+
+export interface ActualizarPerfilData {
+  nombre?: string;
+  email?: string;
+}
+
+export const actualizarPerfil = async (datos: ActualizarPerfilData) => {
+  const updates: Parameters<typeof supabaseAuth.auth.updateUser>[0] = {};
+
+  if (datos.nombre !== undefined) {
+    updates.data = { nombre: datos.nombre };
+  }
+
+  if (datos.email !== undefined) {
+    updates.email = datos.email;
+  }
+
+  const { data, error } = await supabaseAuth.auth.updateUser(updates);
+
+  if (error) {
+    return { success: false, error: error.message };
+  }
+
+  return { success: true, user: data.user };
+};

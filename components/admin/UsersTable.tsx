@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { suspenderUsuario, reactivarUsuario, cambiarRolUsuario, eliminarUsuario } from "@/lib/subscriptionStorage";
+import { EditUserModal } from "@/components/admin/EditUserModal";
 
 interface UsersTableProps {
   usuarios: UserData[];
@@ -24,6 +25,7 @@ interface UsersTableProps {
 export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
   const [busqueda, setBusqueda] = useState("");
   const [cargandoAccion, setCargandoAccion] = useState<string | null>(null);
+  const [usuarioEditando, setUsuarioEditando] = useState<UserData | null>(null);
 
   const usuariosFiltrados = usuarios.filter((usuario) =>
     usuario.email.toLowerCase().includes(busqueda.toLowerCase())
@@ -216,7 +218,15 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
                       {formatDate(usuario.end_date)}
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex gap-2 justify-end">
+                      <div className="flex gap-2 justify-end flex-wrap">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setUsuarioEditando(usuario)}
+                          disabled={cargandoAccion === usuario.id}
+                        >
+                          ✏️ Editar
+                        </Button>
                         {usuario.subscription_status === "active" ? (
                           <Button
                             size="sm"
@@ -268,6 +278,14 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
           </div>
         )}
       </CardContent>
+      <EditUserModal
+        usuario={usuarioEditando}
+        onClose={() => setUsuarioEditando(null)}
+        onUpdate={() => {
+          setUsuarioEditando(null);
+          onUpdate?.();
+        }}
+      />
     </Card>
   );
 };

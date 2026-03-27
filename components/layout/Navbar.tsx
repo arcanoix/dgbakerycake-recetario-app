@@ -56,6 +56,7 @@ export const Navbar = () => {
     { href: "/", label: "Inicio", icon: "🏠" },
     { href: "/pricing", label: "Planes", icon: "💎" },
     { href: "/billing", label: "Facturación", icon: "💳" },
+    { href: "/perfil", label: "Perfil", icon: "👤" },
   ];
 
   const toggleSection = (label: string) => {

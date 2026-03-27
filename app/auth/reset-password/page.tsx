@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -16,18 +16,39 @@ export default function ResetPasswordPage() {
   const [success, setSuccess] = useState(false);
   const [validSession, setValidSession] = useState(false);
 
+  const sessionFoundRef = useRef(false);
+
+  // Tiempo máximo de espera para que Supabase procese el token de recuperación
+  const TOKEN_PROCESSING_TIMEOUT_MS = 1500;
+
   useEffect(() => {
-    // Verificar si hay una sesión de recuperación válida
+    // Escuchar el evento PASSWORD_RECOVERY que Supabase emite al procesar el enlace
+    const { data: { subscription } } = supabaseAuth.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY' && session) {
+        sessionFoundRef.current = true;
+        setValidSession(true);
+      }
+    });
+
+    // También verificar si ya existe una sesión activa (token ya procesado)
     const checkSession = async () => {
       const { data: { session } } = await supabaseAuth.auth.getSession();
       if (session) {
+        sessionFoundRef.current = true;
         setValidSession(true);
       } else {
-        setError('Enlace de recuperación inválido o expirado');
+        // Esperar brevemente para que onAuthStateChange pueda procesar el token
+        setTimeout(() => {
+          if (!sessionFoundRef.current) {
+            setError('Enlace de recuperación inválido o expirado');
+          }
+        }, TOKEN_PROCESSING_TIMEOUT_MS);
       }
     };
 
     checkSession();
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,6 +76,8 @@ export default function ResetPasswordPage() {
         setError(error.message);
       } else {
         setSuccess(true);
+        // Cerrar sesión para que el usuario inicie sesión con la nueva contraseña
+        await supabaseAuth.auth.signOut();
         setTimeout(() => {
           router.push('/auth/login');
         }, 2000);

@@ -37,7 +37,7 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Rutas públicas que no requieren autenticación
-  const publicPaths = ['/auth/login', '/auth/register', '/auth/forgot-password']
+  const publicPaths = ['/auth/login', '/auth/register', '/auth/forgot-password', '/auth/reset-password']
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path))
 
   if (!user && !isPublicPath) {
@@ -47,8 +47,10 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  if (user && isPublicPath) {
-    // Si hay usuario y trata de ir al login, despachalo al dashboard
+  // No redirigir al dashboard si el usuario está en la página de reset-password,
+  // ya que puede tener una sesión de recuperación activa y necesita cambiar su contraseña.
+  if (user && isPublicPath && !pathname.startsWith('/auth/reset-password')) {
+    // Si hay usuario y trata de ir al login/registro, despachalo al dashboard
     const url = request.nextUrl.clone()
     url.pathname = '/' // O la ruta principal de tu app protegida
     return NextResponse.redirect(url)

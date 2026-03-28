@@ -8,40 +8,52 @@ interface LogoProps {
 }
 
 const sizeMap = {
-  sm: { width: 32, height: 32, textSize: "text-lg" },
-  md: { width: 40, height: 40, textSize: "text-xl" },
-  lg: { width: 120, height: 120, textSize: "text-3xl" },
+  sm: { textSize: "text-lg" },
+  md: { textSize: "text-xl" },
+  lg: { textSize: "text-3xl" },
 };
 
 export const Logo = ({ size = "md", showText = true, href = "/", variant = "icon" }: LogoProps) => {
-  const { width, height, textSize } = sizeMap[size];
-
+  const { textSize } = sizeMap[size];
+  
   const isFull = variant === "full";
-  const imgSrc = isFull ? "/logo-completo.png" : "/logo.png";
-  const imgClass = isFull ? "h-auto w-auto max-w-[180px]" : "rounded-full w-10 h-10";
+  const logoSrc = isFull ? "/logo-completo.png" : "/logo.png";
 
   const logoContent = (
     <div className="flex items-center gap-2">
-      {/* Logo image with fallback to text */}
-      <div className="relative flex items-center">
+      {/* Image container with forced display */}
+      <div className="flex-shrink-0">
         <img
-          src={imgSrc}
+          src={logoSrc}
           alt="DGcost"
-          width={isFull ? 180 : width}
-          height={isFull ? 50 : height}
-          className={imgClass}
+          width={isFull ? 180 : 40}
+          height={isFull ? 50 : 40}
+          className={isFull ? "h-12 w-auto" : "h-10 w-10 rounded-full"}
           onError={(e) => {
             const img = e.currentTarget;
             img.style.display = 'none';
+            const parent = img.parentElement;
+            if (parent) {
+              const textSpan = parent.querySelector('.logo-text-fallback') as HTMLElement;
+              if (textSpan) textSpan.style.display = 'inline';
+            }
           }}
         />
-        {/* Fallback: Show just text if image fails */}
+        {/* Fallback text - always rendered but hidden by default */}
         <span 
-          className={`font-bold ${textSize} bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent whitespace-nowrap`}
+          className={`logo-text-fallback font-bold ${textSize} bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent`}
+          style={{ display: 'none' }}
         >
           DGcost
         </span>
       </div>
+      
+      {/* Show text beside logo for icon variant */}
+      {variant === "icon" && showText && (
+        <span className={`font-bold ${textSize} bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent`}>
+          DGcost
+        </span>
+      )}
     </div>
   );
 

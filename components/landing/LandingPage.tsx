@@ -15,7 +15,7 @@ export const LandingPage = () => {
             <Logo size="lg" showText={false} href={undefined} />
           </div>
           <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            DG Bakery Cake
+            DGcost
           </h1>
           <p className="text-2xl md:text-3xl font-semibold text-gray-700 mb-4">
             Gestión Inteligente de Costos para Repostería
@@ -42,7 +42,7 @@ export const LandingPage = () => {
       {/* Features Section */}
       <section className="container mx-auto px-4 py-16">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-          ¿Por qué elegir DG Bakery Cake?
+          ¿Por qué elegir DGcost?
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {/* Feature 1 */}
@@ -203,12 +203,12 @@ export const LandingPage = () => {
       <footer className="bg-gray-900 text-white py-8">
         <div className="container mx-auto px-4 text-center">
           <div className="text-3xl mb-4">🍰</div>
-          <p className="text-lg font-semibold mb-2">DG Bakery Cake</p>
+          <p className="text-lg font-semibold mb-2">DGcost</p>
           <p className="text-gray-400 mb-4">
             Sistema de Gestión de Costos para Repostería
           </p>
           <p className="text-sm text-gray-500">
-            © 2026 DG Bakery Cake. Todos los derechos reservados.
+            © 2026 DGcost. Todos los derechos reservados.
           </p>
         </div>
       </footer>

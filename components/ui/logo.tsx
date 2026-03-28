@@ -19,14 +19,14 @@ export const Logo = ({ size = "md", showText = true, href = "/" }: LogoProps) =>
     <div className="flex items-center gap-3">
       <img
         src="/logo.jpg"
-        alt="DG Bakery Cake"
+        alt="DGcost"
         width={width}
         height={height}
         className="rounded-full object-cover"
       />
       {showText && (
         <span className={`font-bold ${textSize} bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent`}>
-          DG Bakery Cake
+          DGcost
         </span>
       )}
     </div>

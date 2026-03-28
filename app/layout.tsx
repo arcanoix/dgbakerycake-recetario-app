@@ -4,7 +4,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { AppShell } from "@/components/layout/AppShell";
 
 export const metadata: Metadata = {
-  title: "DG Bakery Cake - Gestión de Costos",
+  title: "DGcost - Gestión de Costos",
   description: "Sistema de gestión de costos de recetas de repostería y pastelería",
 };
 

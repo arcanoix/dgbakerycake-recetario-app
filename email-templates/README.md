@@ -1,4 +1,4 @@
-# Plantillas de Email para DG Bakery Cake
+# Plantillas de Email para DGcost
 
 Este directorio contiene las plantillas HTML personalizadas para los correos electrónicos de Supabase Auth.
 

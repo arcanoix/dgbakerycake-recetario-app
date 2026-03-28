@@ -65,7 +65,7 @@ export default function LoginPage() {
       <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-2">🍰</h1>
-          <h2 className="text-2xl font-bold text-gray-800">DG Bakery Cake</h2>
+          <h2 className="text-2xl font-bold text-gray-800">DGcost</h2>
           <p className="text-gray-600 mt-2">Inicia sesión en tu cuenta</p>
         </div>
 

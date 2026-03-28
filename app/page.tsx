@@ -104,7 +104,7 @@ function Dashboard() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">
-            🍰 Dashboard - DG Bakery Cake
+            🍰 Dashboard - DGcost
           </h1>
           <p className="text-muted-foreground">
             Resumen general de tu negocio de repostería

@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: dgbakery-app
+    container_name: dgcost-app
     ports:
       - "3000:3000"
     volumes:

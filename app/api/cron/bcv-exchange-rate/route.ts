@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-/** Valores por defecto usados al crear la primera fila de configuración */
-const CONFIG_POR_DEFECTO = {
-  costo_por_hora_defecto: 10,
-  moneda: 'VES',
-  margen_ganancia_defecto: 30,
-} as const;
+
 
 /**
  * Extrae la tasa de cambio USD del HTML de la página del BCV.
@@ -103,44 +98,17 @@ export async function GET(req: NextRequest) {
       { auth: { autoRefreshToken: false, persistSession: false } }
     );
 
-    // Obtener el registro de configuración existente
-    const { data: configExistente, error: errorLectura } = await supabase
+    // Actualizar la tasa de cambio en TODAS las filas existentes de configuración
+    // Usamos .not('id', 'is', null) como un filtro dummy para afectar a todas las filas
+    const { error: errorActualizar, count } = await supabase
       .from('configuracion')
-      .select('id')
-      .maybeSingle();
+      .update({ tasa_cambio_usd: tasaCambio })
+      .not('id', 'is', null);
 
-    if (errorLectura) {
-      throw new Error(`Error al leer la configuración: ${errorLectura.message}`);
-    }
-
-    if (configExistente) {
-      // Actualizar la tasa de cambio en la fila existente
-      const { error: errorActualizar } = await supabase
-        .from('configuracion')
-        .update({ tasa_cambio_usd: tasaCambio })
-        .eq('id', configExistente.id);
-
-      if (errorActualizar) {
-        throw new Error(
-          `Error al actualizar la configuración: ${errorActualizar.message}`
-        );
-      }
-    } else {
-      // Crear configuración con el valor obtenido si no existe ninguna fila
-      const { error: errorInsertar } = await supabase
-        .from('configuracion')
-        .insert([
-          {
-            ...CONFIG_POR_DEFECTO,
-            tasa_cambio_usd: tasaCambio,
-          },
-        ]);
-
-      if (errorInsertar) {
-        throw new Error(
-          `Error al crear la configuración: ${errorInsertar.message}`
-        );
-      }
+    if (errorActualizar) {
+      throw new Error(
+        `Error al actualizar configuraciones: ${errorActualizar.message}`
+      );
     }
 
     console.log(

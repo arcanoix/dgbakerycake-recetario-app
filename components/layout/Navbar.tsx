@@ -74,7 +74,7 @@ export const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Logo size="md" variant="full" href="/" />
+            <Logo size="md" variant="icon" href="/" />
           </div>
 
           {/* Desktop Navigation */}

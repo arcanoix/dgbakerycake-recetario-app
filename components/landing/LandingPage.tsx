@@ -28,7 +28,7 @@ const scaleIn = {
 function AnimatedSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  
+
   return (
     <motion.div
       ref={ref}
@@ -36,9 +36,9 @@ function AnimatedSection({ children, delay = 0 }: { children: React.ReactNode; d
       animate={isInView ? "visible" : "hidden"}
       variants={{
         hidden: { opacity: 0, y: 30 },
-        visible: { 
-          opacity: 1, 
-          y: 0, 
+        visible: {
+          opacity: 1,
+          y: 0,
           transition: { duration: 0.6, delay, ease: "easeOut" }
         }
       }}
@@ -133,7 +133,7 @@ export const LandingPage = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <motion.nav 
+      <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
@@ -163,23 +163,23 @@ export const LandingPage = () => {
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 relative overflow-hidden">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
-          className="absolute inset-0 bg-gradient-to-br from-violet-50 via-white to-fuchsia-50" 
+          className="absolute inset-0 bg-gradient-to-br from-violet-50 via-white to-fuchsia-50"
         />
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="absolute top-20 right-0 w-96 h-96 bg-violet-200 rounded-full blur-3xl opacity-20" 
+          className="absolute top-20 right-0 w-96 h-96 bg-violet-200 rounded-full blur-3xl opacity-20"
         />
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="absolute bottom-0 left-0 w-96 h-96 bg-fuchsia-200 rounded-full blur-3xl opacity-20" 
+          className="absolute bottom-0 left-0 w-96 h-96 bg-fuchsia-200 rounded-full blur-3xl opacity-20"
         />
 
         <div className="container mx-auto relative">
@@ -195,7 +195,7 @@ export const LandingPage = () => {
               </div>
             </motion.div>
 
-            <motion.h1 
+            <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -208,17 +208,17 @@ export const LandingPage = () => {
               <span className="text-gray-900">más ganancias</span>
             </motion.h1>
 
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
               className="text-xl md:text-2xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed"
             >
-              DGcost calcula automáticamente el costo de tus recetas. 
+              DGcost calcula automáticamente el costo de tus recetas.
               Deja de adivinar precios y empieza a ganar más con cada venta.
             </motion.p>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
@@ -245,7 +245,7 @@ export const LandingPage = () => {
               </Link>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
@@ -328,7 +328,7 @@ export const LandingPage = () => {
               La herramienta que todo repostero necesita
             </p>
 
-            <motion.div 
+            <motion.div
               variants={staggerContainer}
               initial="hidden"
               whileInView="visible"
@@ -339,7 +339,7 @@ export const LandingPage = () => {
                 <motion.div key={index} variants={scaleIn}>
                   <Card className="bg-white border-0 shadow-xl shadow-violet-100/50 hover:shadow-2xl hover:shadow-violet-100/50 transition-all duration-300 h-full">
                     <CardContent className="p-8">
-                      <motion.div 
+                      <motion.div
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         className="w-14 h-14 bg-gradient-to-br from-violet-100 to-fuchsia-100 rounded-2xl flex items-center justify-center text-2xl mb-6"
                       >
@@ -364,10 +364,10 @@ export const LandingPage = () => {
               Lo que dicen nuestros usuarios
             </h2>
             <p className="text-xl text-gray-600 text-center mb-16">
-              Repteros como tú ya están mejorando sus negocios
+              Reposteros como tú ya están mejorando sus negocios
             </p>
 
-            <motion.div 
+            <motion.div
               variants={staggerContainer}
               initial="hidden"
               whileInView="visible"
@@ -379,9 +379,9 @@ export const LandingPage = () => {
                   <Card className="bg-white border-0 shadow-xl h-full">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-4 mb-6">
-                        <motion.img 
+                        <motion.img
                           whileHover={{ scale: 1.1 }}
-                          src={testimonial.image} 
+                          src={testimonial.image}
                           alt={testimonial.name}
                           className="w-14 h-14 rounded-full object-cover"
                         />
@@ -452,8 +452,8 @@ export const LandingPage = () => {
                         ))}
                       </ul>
                       <Link href="/auth/register" className="block">
-                        <Button 
-                          className={`w-full ${plan.popular ? 'bg-gradient-to-r from-violet-600 to-fuchsia-600' : ''}`} 
+                        <Button
+                          className={`w-full ${plan.popular ? 'bg-gradient-to-r from-violet-600 to-fuchsia-600' : ''}`}
                           variant={plan.popular ? 'default' : 'outline'}
                         >
                           {plan.price === "$0" ? 'Comenzar Gratis' : 'Empezar Prueba'}
@@ -494,7 +494,7 @@ export const LandingPage = () => {
                     onClick={() => setOpenFaq(openFaq === index ? null : index)}
                   >
                     <span className="font-semibold text-gray-900">{faq.question}</span>
-                    <motion.span 
+                    <motion.span
                       animate={{ rotate: openFaq === index ? 180 : 0 }}
                       transition={{ duration: 0.3 }}
                       className="text-2xl"
@@ -504,7 +504,7 @@ export const LandingPage = () => {
                   </button>
                   <motion.div
                     initial={false}
-                    animate={{ 
+                    animate={{
                       height: openFaq === index ? "auto" : 0,
                       opacity: openFaq === index ? 1 : 0
                     }}
@@ -526,7 +526,7 @@ export const LandingPage = () => {
       <AnimatedSection>
         <section className="py-20 px-4">
           <div className="container mx-auto">
-            <motion.div 
+            <motion.div
               whileHover={{ scale: 1.02 }}
               className="max-w-3xl mx-auto text-center bg-gradient-to-br from-violet-600 to-fuchsia-600 rounded-3xl p-12 text-white"
             >

@@ -6,7 +6,7 @@ import { ConfiguracionForm } from "@/components/configuracion/ConfiguracionForm"
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "motion/react";
-import { Settings, AlertCircle, Clock, DollarSign, Percent, Globe } from "lucide-react";
+import { Settings, AlertCircle, DollarSign, Percent, Globe } from "lucide-react";
 
 export default function ConfiguracionPage() {
   const { configuracion, cargando, error, actualizar } = useConfiguracion();
@@ -112,17 +112,7 @@ export default function ConfiguracionPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-blue-50 dark:bg-blue-950/30 rounded-xl p-4 border border-blue-100 dark:border-blue-900">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">Costo por Hora</h4>
-                  </div>
-                  <p className="text-sm text-blue-700 dark:text-blue-300">
-                    Se utiliza para calcular el costo de mano de obra en las recetas
-                  </p>
-                </div>
-                
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-emerald-50 dark:bg-emerald-950/30 rounded-xl p-4 border border-emerald-100 dark:border-emerald-900">
                   <div className="flex items-center gap-2 mb-2">
                     <DollarSign className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />

@@ -2,12 +2,14 @@
 
 import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/layout/Navbar";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const AppShell = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
+  const { user } = useAuth();
   const isAuthRoute = pathname.startsWith("/auth/");
 
-  if (isAuthRoute) {
+  if (isAuthRoute || !user) {
     return <main className="min-h-screen">{children}</main>;
   }
 

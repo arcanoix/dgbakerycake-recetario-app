@@ -35,7 +35,8 @@ export const Navbar = () => {
   const { user, signOut } = useAuth();
   const { isAdmin } = useRole();
 
-  if (pathname.startsWith('/auth/')) {
+  // Don't show navbar for auth routes or if user is not logged in
+  if (pathname.startsWith('/auth/') || !user) {
     return null;
   }
 

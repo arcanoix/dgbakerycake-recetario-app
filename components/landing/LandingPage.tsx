@@ -228,19 +228,23 @@ export const LandingPage = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="text-lg px-8 py-6 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 shadow-lg shadow-violet-200 rounded-lg font-medium"
+                  className="h-14 text-lg px-8 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 shadow-lg shadow-violet-200 rounded-xl font-semibold flex items-center justify-center gap-2"
                 >
                   Comenzar Gratis
-                  <span className="ml-2">→</span>
+                  <span>→</span>
                 </motion.button>
               </Link>
               <Link href="/auth/login">
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1.05, backgroundColor: 'rgba(139, 92, 246, 0.1)' }}
                   whileTap={{ scale: 0.95 }}
-                  className="text-lg px-8 py-6 border-2 border-violet-200 text-gray-700 rounded-lg font-medium hover:bg-violet-50"
+                  className="h-14 text-lg px-8 border-2 border-violet-300 text-violet-700 rounded-xl font-semibold flex items-center justify-center gap-2 hover:border-violet-400 hover:shadow-md transition-all"
                 >
                   Ver demo
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                 </motion.button>
               </Link>
             </motion.div>

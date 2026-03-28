@@ -18,7 +18,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!authLoading && user) {
-      router.push('/');
+      router.push('/dashboard');
     }
   }, [user, authLoading, router]);
 
@@ -31,7 +31,7 @@ export default function LoginPage() {
       const result = await signIn({ email, password });
 
       if (result.success) {
-        router.push('/');
+        router.push('/dashboard');
         router.refresh();
       } else {
         setError(result.error || 'Error al iniciar sesión');

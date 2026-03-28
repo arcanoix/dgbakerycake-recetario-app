@@ -7,6 +7,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { motion } from "motion/react";
+import { Scale, Hash, Droplets, Box, ArrowRight, ArrowRightLeft, Calculator, Info } from "lucide-react";
+
+const TIPO_ICONS = {
+  peso: <Scale className="w-5 h-5" />,
+  volumen: <Droplets className="w-5 h-5" />,
+  cantidad: <Hash className="w-5 h-5" />,
+  otro: <Box className="w-5 h-5" />,
+};
+
+const TIPO_COLORS = {
+  peso: { bg: 'bg-blue-50 dark:bg-blue-950', text: 'text-blue-600 dark:text-blue-400', ring: 'focus:ring-blue-500' },
+  volumen: { bg: 'bg-emerald-50 dark:bg-emerald-950', text: 'text-emerald-600 dark:text-emerald-400', ring: 'focus:ring-emerald-500' },
+  cantidad: { bg: 'bg-violet-50 dark:bg-violet-950', text: 'text-violet-600 dark:text-violet-400', ring: 'focus:ring-violet-500' },
+  otro: { bg: 'bg-gray-50 dark:bg-gray-800', text: 'text-gray-600 dark:text-gray-400', ring: 'focus:ring-gray-500' },
+};
 
 interface UnidadFormProps {
   unidad?: UnidadMedidaAdmin;
@@ -24,6 +40,8 @@ export const UnidadForm = ({ unidad, unidades, onSubmit, onCancel }: UnidadFormP
     unidadBase: undefined,
   });
 
+  const [guardando, setGuardando] = useState(false);
+
   useEffect(() => {
     if (unidad) {
       setFormData({
@@ -36,9 +54,14 @@ export const UnidadForm = ({ unidad, unidades, onSubmit, onCancel }: UnidadFormP
     }
   }, [unidad]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    setGuardando(true);
+    try {
+      await onSubmit(formData);
+    } finally {
+      setGuardando(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -50,124 +73,189 @@ export const UnidadForm = ({ unidad, unidades, onSubmit, onCancel }: UnidadFormP
   };
 
   const unidadesDelMismoTipo = unidades.filter(u => u.tipo === formData.tipo && u.activo);
+  const tipoColor = TIPO_COLORS[formData.tipo as keyof typeof TIPO_COLORS] || TIPO_COLORS.otro;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{unidad ? "Editar" : "Nueva"} Unidad de Medida</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="nombre">Nombre *</Label>
-              <Input
-                id="nombre"
-                name="nombre"
-                value={formData.nombre}
-                onChange={handleChange}
-                placeholder="Ej: gramos, litros, docenas"
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                Nombre completo de la unidad
-              </p>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="max-w-2xl mx-auto"
+    >
+      <Card className="border-0 shadow-xl overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500" />
+        
+        <CardHeader className="pb-6 border-b border-gray-100 dark:border-gray-800">
+          <CardTitle className="text-2xl font-bold flex items-center gap-3">
+            <div className={`w-10 h-10 rounded-xl ${tipoColor.bg} ${tipoColor.text} flex items-center justify-center`}>
+              {TIPO_ICONS[formData.tipo as keyof typeof TIPO_ICONS] || TIPO_ICONS.otro}
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="simbolo">Símbolo *</Label>
-              <Input
-                id="simbolo"
-                name="simbolo"
-                value={formData.simbolo}
-                onChange={handleChange}
-                placeholder="Ej: g, L, dz"
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                Abreviatura o símbolo de la unidad
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="tipo">Tipo de Unidad *</Label>
-            <Select
-              id="tipo"
-              name="tipo"
-              value={formData.tipo}
-              onChange={handleChange}
-              required
-            >
-              <option value="peso">Peso</option>
-              <option value="volumen">Volumen</option>
-              <option value="cantidad">Cantidad</option>
-              <option value="otro">Otro</option>
-            </Select>
-            <p className="text-xs text-muted-foreground">
-              Categoría de la unidad de medida
-            </p>
-          </div>
-
-          <div className="border-t pt-4">
-            <h3 className="text-sm font-semibold mb-3">Conversión (Opcional)</h3>
-            <p className="text-xs text-muted-foreground mb-4">
-              Define cómo convertir esta unidad a una unidad base del mismo tipo.
-              Por ejemplo: 1 kilogramo = 1000 gramos (factor: 1000, base: gramos)
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {unidad ? "Editar Unidad de Medida" : "Nueva Unidad de Medida"}
+          </CardTitle>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">
+            {unidad ? "Actualiza los detalles de la unidad" : "Registra una nueva unidad de medida"}
+          </p>
+        </CardHeader>
+        
+        <CardContent className="pt-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="factorConversionBase">Factor de Conversión</Label>
+                <Label htmlFor="nombre" className="text-sm font-medium flex items-center gap-2">
+                  <Scale className="w-4 h-4 text-blue-500" />
+                  Nombre *
+                </Label>
                 <Input
-                  id="factorConversionBase"
-                  name="factorConversionBase"
-                  type="number"
-                  step="0.0001"
-                  value={formData.factorConversionBase || ""}
+                  id="nombre"
+                  name="nombre"
+                  value={formData.nombre}
                   onChange={handleChange}
-                  placeholder="Ej: 1000"
+                  placeholder="Ej: gramos, litros, docenas"
+                  required
+                  className="h-11 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
-                <p className="text-xs text-muted-foreground">
-                  Multiplicador para convertir a la unidad base
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Nombre completo de la unidad
                 </p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="unidadBase">Unidad Base</Label>
-                <Select
-                  id="unidadBase"
-                  name="unidadBase"
-                  value={formData.unidadBase || ""}
+                <Label htmlFor="simbolo" className="text-sm font-medium flex items-center gap-2">
+                  <Hash className="w-4 h-4 text-violet-500" />
+                  Símbolo *
+                </Label>
+                <Input
+                  id="simbolo"
+                  name="simbolo"
+                  value={formData.simbolo}
                   onChange={handleChange}
-                  disabled={unidadesDelMismoTipo.length === 0}
-                >
-                  <option value="">Seleccionar...</option>
-                  {unidadesDelMismoTipo.map((u) => (
-                    <option key={u.id} value={u.nombre}>
-                      {u.nombre} ({u.simbolo})
-                    </option>
-                  ))}
-                </Select>
-                <p className="text-xs text-muted-foreground">
-                  {unidadesDelMismoTipo.length === 0
-                    ? "No hay unidades del mismo tipo disponibles"
-                    : "Unidad de referencia para la conversión"}
+                  placeholder="Ej: g, L, dz"
+                  required
+                  className="h-11 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 font-mono"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Abreviatura o símbolo
                 </p>
               </div>
             </div>
-          </div>
 
-          <div className="flex gap-2 justify-end pt-4">
-            <Button type="button" variant="outline" onClick={onCancel}>
-              Cancelar
-            </Button>
-            <Button type="submit">
-              {unidad ? "Actualizar" : "Crear"} Unidad
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+            <div className="space-y-2">
+              <Label htmlFor="tipo" className="text-sm font-medium flex items-center gap-2">
+                <Box className="w-4 h-4 text-emerald-500" />
+                Tipo de Unidad *
+              </Label>
+              <Select
+                id="tipo"
+                name="tipo"
+                value={formData.tipo}
+                onChange={handleChange}
+                required
+                className="h-11"
+              >
+                <option value="peso">⚖️ Peso (g, kg, lb, oz)</option>
+                <option value="volumen">💧 Volumen (mL, L, gal)</option>
+                <option value="cantidad">🔢 Cantidad (pza, dz, cent)</option>
+                <option value="otro">📦 Otro</option>
+              </Select>
+            </div>
+
+            <div className="border-t border-gray-100 dark:border-gray-800 pt-6">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900 flex items-center justify-center">
+                  <ArrowRightLeft className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Conversión (Opcional)</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Define cómo convertir a una unidad base</p>
+                </div>
+              </div>
+              
+              <div className="bg-amber-50 dark:bg-amber-950/30 rounded-xl p-4 mb-4 border border-amber-100 dark:border-amber-900">
+                <div className="flex items-start gap-2">
+                  <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+                  <p className="text-xs text-amber-800 dark:text-amber-300">
+                    Ejemplo: 1 kilogramo = 1000 gramos (factor: 1000, base: gramos)
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="factorConversionBase" className="text-sm font-medium flex items-center gap-2">
+                    <Calculator className="w-4 h-4 text-amber-500" />
+                    Factor de Conversión
+                  </Label>
+                  <Input
+                    id="factorConversionBase"
+                    name="factorConversionBase"
+                    type="number"
+                    step="0.0001"
+                    value={formData.factorConversionBase || ""}
+                    onChange={handleChange}
+                    placeholder="Ej: 1000"
+                    className="h-11 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-amber-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="unidadBase" className="text-sm font-medium flex items-center gap-2">
+                    <Scale className="w-4 h-4 text-cyan-500" />
+                    Unidad Base
+                  </Label>
+                  <Select
+                    id="unidadBase"
+                    name="unidadBase"
+                    value={formData.unidadBase || ""}
+                    onChange={handleChange}
+                    disabled={unidadesDelMismoTipo.length === 0}
+                    className="h-11"
+                  >
+                    <option value="">Seleccionar...</option>
+                    {unidadesDelMismoTipo.map((u) => (
+                      <option key={u.id} value={u.nombre}>
+                        {u.nombre} ({u.simbolo})
+                      </option>
+                    ))}
+                  </Select>
+                  {unidadesDelMismoTipo.length === 0 && (
+                    <p className="text-xs text-amber-600 dark:text-amber-400">
+                      No hay unidades del mismo tipo
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 justify-end pt-4 border-t border-gray-100 dark:border-gray-800">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={onCancel}
+                disabled={guardando}
+                className="h-11 px-6"
+              >
+                Cancelar
+              </Button>
+              <Button 
+                type="submit"
+                disabled={guardando}
+                className="h-11 px-6 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white border-0 gap-2"
+              >
+                {guardando ? (
+                  <span className="flex items-center gap-2">
+                    <span className="animate-spin">⏳</span>
+                    {unidad ? "Actualizando..." : "Creando..."}
+                  </span>
+                ) : (
+                  <>
+                    {unidad ? "Actualizar" : "Crear"} Unidad
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 };

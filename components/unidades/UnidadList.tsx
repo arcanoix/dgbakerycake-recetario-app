@@ -4,6 +4,43 @@ import { useState } from "react";
 import { UnidadMedidaAdmin } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { motion } from "motion/react";
+import { Scale, Droplets, Hash, Box, Edit2, Trash2, ToggleLeft, ArrowRightLeft, Calendar } from "lucide-react";
+
+const TYPE_CONFIG: Record<string, { bg: string; text: string; border: string; icon: React.ReactNode; gradient: string }> = {
+  peso: { 
+    bg: 'bg-blue-50 dark:bg-blue-950', 
+    text: 'text-blue-700 dark:text-blue-300', 
+    border: 'border-blue-200 dark:border-blue-800',
+    icon: <Scale className="w-4 h-4" />,
+    gradient: 'from-blue-500 to-cyan-500'
+  },
+  volumen: { 
+    bg: 'bg-emerald-50 dark:bg-emerald-950', 
+    text: 'text-emerald-700 dark:text-emerald-300', 
+    border: 'border-emerald-200 dark:border-emerald-800',
+    icon: <Droplets className="w-4 h-4" />,
+    gradient: 'from-emerald-500 to-teal-500'
+  },
+  cantidad: { 
+    bg: 'bg-violet-50 dark:bg-violet-950', 
+    text: 'text-violet-700 dark:text-violet-300', 
+    border: 'border-violet-200 dark:border-violet-800',
+    icon: <Hash className="w-4 h-4" />,
+    gradient: 'from-violet-500 to-purple-500'
+  },
+  otro: { 
+    bg: 'bg-gray-50 dark:bg-gray-800', 
+    text: 'text-gray-700 dark:text-gray-300', 
+    border: 'border-gray-200 dark:border-gray-700',
+    icon: <Box className="w-4 h-4" />,
+    gradient: 'from-gray-500 to-slate-500'
+  },
+};
+
+const getTipoConfig = (tipo: string) => {
+  return TYPE_CONFIG[tipo] || TYPE_CONFIG['otro'];
+};
 
 interface UnidadListProps {
   unidades: UnidadMedidaAdmin[];
@@ -26,109 +63,122 @@ export const UnidadList = ({ unidades, onEdit, onDelete, onToggleEstado }: Unida
     }
   };
 
-  const getTipoBadgeColor = (tipo: string) => {
-    switch (tipo) {
-      case 'peso': return 'bg-blue-100 text-blue-800';
-      case 'volumen': return 'bg-green-100 text-green-800';
-      case 'cantidad': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   if (unidades.length === 0) {
     return (
-      <Card>
-        <CardContent className="py-8">
-          <p className="text-center text-muted-foreground">
-            No hay unidades que coincidan con los filtros seleccionados.
-          </p>
-        </CardContent>
-      </Card>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col items-center justify-center py-16 px-4"
+      >
+        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900 dark:to-cyan-900 flex items-center justify-center mb-4">
+          <Scale className="w-10 h-10 text-blue-500" />
+        </div>
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+          No hay unidades de medida
+        </h3>
+        <p className="text-gray-500 dark:text-gray-400 text-center max-w-md">
+          Crea tu primera unidad de medida para comenzar a gestionar tus productos
+        </p>
+      </motion.div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {unidades.map((unidad) => (
-        <Card 
-          key={unidad.id} 
-          className={`hover:shadow-lg transition-shadow ${!unidad.activo ? 'opacity-60' : ''}`}
-        >
-          <CardHeader>
-            <div className="flex justify-between items-start">
-              <div className="flex-1">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  {unidad.nombre}
-                  <span className="text-sm font-normal text-muted-foreground">
-                    ({unidad.simbolo})
-                  </span>
-                </CardTitle>
-                <div className="flex gap-2 mt-2">
-                  <span className={`inline-block px-2 py-1 text-xs rounded-full ${getTipoBadgeColor(unidad.tipo)}`}>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {unidades.map((unidad, index) => {
+        const tipoConfig = getTipoConfig(unidad.tipo);
+        
+        return (
+          <motion.div
+            key={unidad.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05, duration: 0.3 }}
+          >
+            <Card className={`group hover:shadow-xl transition-all duration-300 border-0 shadow-sm hover:-translate-y-1 bg-white dark:bg-gray-900 overflow-hidden ${!unidad.activo ? 'opacity-60' : ''}`}>
+              <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${tipoConfig.gradient}`} />
+              
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="text-lg font-bold text-gray-900 dark:text-gray-100 truncate flex items-center gap-2">
+                      <div className={`w-8 h-8 rounded-lg ${tipoConfig.bg} ${tipoConfig.text} flex items-center justify-center flex-shrink-0`}>
+                        {tipoConfig.icon}
+                      </div>
+                      <span className="truncate">{unidad.nombre}</span>
+                    </CardTitle>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-mono">
+                      {unidad.simbolo}
+                    </p>
+                  </div>
+                  <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${tipoConfig.bg} ${tipoConfig.text} border ${tipoConfig.border} flex-shrink-0`}>
                     {unidad.tipo.charAt(0).toUpperCase() + unidad.tipo.slice(1)}
                   </span>
-                  {!unidad.activo && (
-                    <span className="inline-block px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">
-                      Inactiva
-                    </span>
-                  )}
                 </div>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {unidad.factorConversionBase && unidad.unidadBase && (
-              <div className="text-sm bg-muted p-3 rounded">
-                <p className="font-semibold mb-1">Conversión:</p>
-                <p className="text-muted-foreground">
-                  1 {unidad.simbolo} = {unidad.factorConversionBase} {unidad.unidadBase}
-                </p>
-              </div>
-            )}
-
-            <div className="text-xs text-muted-foreground">
-              <p>Creada: {new Date(unidad.fechaCreacion).toLocaleDateString()}</p>
-              {unidad.fechaActualizacion && (
-                <p>Actualizada: {new Date(unidad.fechaActualizacion).toLocaleDateString()}</p>
-              )}
-            </div>
-
-            <div className="flex flex-nowrap gap-2 pt-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex-1"
-                onClick={() => onEdit(unidad)}
-                disabled={eliminando === unidad.id}
-              >
-                Editar
-              </Button>
-              <Button
-                variant={unidad.activo ? "outline" : "default"}
-                size="sm"
-                className="flex-1 whitespace-nowrap"
-                onClick={() => onToggleEstado(unidad)}
-                disabled={eliminando === unidad.id}
-              >
-                {unidad.activo ? "Desactivar" : "Activar"}
-              </Button>
-              <Button
-                variant="destructive"
-                size="sm"
-                className="w-10 flex-shrink-0"
-                onClick={() => handleDelete(unidad.id, unidad.nombre)}
-                disabled={eliminando === unidad.id}
-              >
-                {eliminando === unidad.id ? (
-                  <span className="animate-spin">⏳</span>
-                ) : (
-                  '×'
+              </CardHeader>
+              
+              <CardContent className="space-y-4">
+                {unidad.factorConversionBase && unidad.unidadBase && (
+                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-850 rounded-xl p-4 border border-gray-100 dark:border-gray-800">
+                    <div className="flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
+                      <ArrowRightLeft className="w-3.5 h-3.5" />
+                      Conversión
+                    </div>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      1 {unidad.simbolo} = {unidad.factorConversionBase} {unidad.unidadBase}
+                    </p>
+                  </div>
                 )}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+
+                <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500">
+                  <Calendar className="w-3.5 h-3.5" />
+                  <span>Creada: {new Date(unidad.fechaCreacion).toLocaleDateString()}</span>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 gap-1.5 hover:bg-blue-50 dark:hover:bg-blue-950 border-gray-200 dark:border-gray-700"
+                    onClick={() => onEdit(unidad)}
+                    disabled={eliminando === unidad.id}
+                  >
+                    <Edit2 className="w-3.5 h-3.5" />
+                    Editar
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={`gap-1.5 border-gray-200 dark:border-gray-700 ${
+                      unidad.activo 
+                        ? 'hover:bg-amber-50 dark:hover:bg-amber-950 text-amber-600 dark:text-amber-400' 
+                        : 'hover:bg-green-50 dark:hover:bg-green-950 text-green-600 dark:text-green-400'
+                    }`}
+                    onClick={() => onToggleEstado(unidad)}
+                    disabled={eliminando === unidad.id}
+                  >
+                    <ToggleLeft className="w-3.5 h-3.5" />
+                    {unidad.activo ? 'Desactivar' : 'Activar'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5 hover:bg-red-50 dark:hover:bg-red-950 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
+                    onClick={() => handleDelete(unidad.id, unidad.nombre)}
+                    disabled={eliminando === unidad.id}
+                  >
+                    {eliminando === unidad.id ? (
+                      <span className="animate-spin">⏳</span>
+                    ) : (
+                      <Trash2 className="w-3.5 h-3.5" />
+                    )}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        );
+      })}
     </div>
   );
 };

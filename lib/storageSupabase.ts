@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import { Producto, Receta, ConfiguracionGlobal, UnidadMedidaAdmin, CategoriaAdmin } from '@/types';
+import { registrarActividad } from './subscriptionStorage';
 
 // ============================================
 // PRODUCTOS
@@ -58,6 +59,7 @@ export const guardarProducto = async (producto: Producto) => {
       console.error('Error al actualizar producto:', error);
       return { exitoso: false, error: error.message };
     }
+    registrarActividad('update', 'productos', `Producto actualizado: ${producto.nombre}`, producto.id, producto.nombre);
   } else {
     // Insertar
     const { error } = await supabase
@@ -68,6 +70,7 @@ export const guardarProducto = async (producto: Producto) => {
       console.error('Error al crear producto:', error);
       return { exitoso: false, error: error.message };
     }
+    registrarActividad('create', 'productos', `Producto creado: ${producto.nombre}`, producto.id, producto.nombre);
   }
 
   return { exitoso: true };
@@ -84,6 +87,7 @@ export const eliminarProducto = async (id: string) => {
     return { exitoso: false, error: error.message };
   }
 
+  registrarActividad('delete', 'productos', `Producto eliminado: ${id}`, id);
   return { exitoso: true };
 };
 
@@ -144,6 +148,7 @@ export const guardarReceta = async (receta: Receta) => {
       console.error('Error al actualizar receta:', error);
       return { exitoso: false, error: error.message };
     }
+    registrarActividad('update', 'recetas', `Receta actualizada: ${receta.nombre}`, receta.id, receta.nombre);
   } else {
     // Insertar
     const { error } = await supabase
@@ -154,6 +159,7 @@ export const guardarReceta = async (receta: Receta) => {
       console.error('Error al crear receta:', error);
       return { exitoso: false, error: error.message };
     }
+    registrarActividad('create', 'recetas', `Receta creada: ${receta.nombre}`, receta.id, receta.nombre);
   }
 
   return { exitoso: true };
@@ -170,6 +176,7 @@ export const eliminarReceta = async (id: string) => {
     return { exitoso: false, error: error.message };
   }
 
+  registrarActividad('delete', 'recetas', `Receta eliminada: ${id}`, id);
   return { exitoso: true };
 };
 

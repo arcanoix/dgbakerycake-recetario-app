@@ -169,7 +169,8 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
                 <TableHead>Estado</TableHead>
                 <TableHead className="text-center">Productos</TableHead>
                 <TableHead className="text-center">Recetas</TableHead>
-                <TableHead>Inicio</TableHead>
+                <TableHead>Última conexión</TableHead>
+                <TableHead>IP / País</TableHead>
                 <TableHead>Vencimiento</TableHead>
                 <TableHead className="text-right">Acciones</TableHead>
               </TableRow>
@@ -177,7 +178,7 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
             <TableBody>
               {usuariosFiltrados.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center text-muted-foreground">
+                  <TableCell colSpan={10} className="text-center text-muted-foreground">
                     No se encontraron usuarios
                   </TableCell>
                 </TableRow>
@@ -211,8 +212,16 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
                         {usuario.recetas_count || 0}
                       </span>
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {formatDate(usuario.start_date)}
+                    <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                      {formatDate(usuario.last_sign_in_at) !== "N/A"
+                        ? formatDate(usuario.last_sign_in_at)
+                        : formatDate(usuario.start_date)}
+                    </TableCell>
+                    <TableCell className="text-xs font-mono text-muted-foreground">
+                      {usuario.last_ip || "—"}
+                      {usuario.country && (
+                        <span className="ml-1 text-blue-600">({usuario.country})</span>
+                      )}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {formatDate(usuario.end_date)}

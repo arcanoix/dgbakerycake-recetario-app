@@ -8,20 +8,37 @@ UNION ALL
 SELECT 'plans' as table_name, COUNT(*) as count FROM plans;
 
 -- 2. Ver los IDs de subscription_plans
-SELECT id, name, display_name FROM subscription_plans ORDER BY sort_order;
+SELECT id, name, display_name FROM subscription_plans;
 
 -- 3. Ver los IDs actuales de plans (si hay)
-SELECT id, name, display_name FROM plans ORDER BY sort_order;
+SELECT id, name, display_name FROM plans;
 
--- 4. Si plans está vacía, insertar los planes desde subscription_plans con los mismos IDs
+-- 4. Ver las columnas de subscription_plans
+SELECT column_name, data_type 
+FROM information_schema.columns 
+WHERE table_name = 'subscription_plans';
+
+-- 5. Si plans está vacía, insertar los planes desde subscription_plans con los mismos IDs
 INSERT INTO plans (id, name, display_name, description, price_usd, price_bs, price_period, max_productos, max_recetas, features, is_active, sort_order)
-SELECT sp.id, sp.name, sp.display_name, sp.description, sp.price_usd, sp.price_bs, 
-       COALESCE(sp.price_period, 'monthly'), 
-       COALESCE(sp.max_productos, -1), 
-       COALESCE(sp.max_recetas, -1), 
-       sp.features, 
-       COALESCE(sp.is_active, true), 
-       COALESCE(sp.sort_order, 1)
+SELECT 
+    sp.id, 
+    sp.name, 
+    sp.display_name, 
+    sp.description, 
+    COALESCE(sp.price_usd, 0), 
+    COALESCE(sp.price_bs, 0), 
+    'monthly', 
+    COALESCE(sp.max_productos, -1), 
+    COALESCE(sp.max_recetas, -1), 
+    COALESCE(sp.features, '{}'::jsonb), 
+    COALESCE(sp.is_active, true),
+    CASE sp.name 
+        WHEN 'free' THEN 1
+        WHEN 'basico' THEN 2
+        WHEN 'profesional' THEN 3
+        WHEN 'empresarial' THEN 4
+        ELSE 5
+    END as sort_order
 FROM subscription_plans sp
 ON CONFLICT (name) DO UPDATE 
 SET display_name = EXCLUDED.display_name,
@@ -35,12 +52,10 @@ SET display_name = EXCLUDED.display_name,
     is_active = EXCLUDED.is_active,
     sort_order = EXCLUDED.sort_order;
 
--- 5. Verificar que los planes ahora existen
-SELECT id, name, display_name FROM plans ORDER BY sort_order;
+-- 6. Verificar que los planes ahora existen
+SELECT id, name, display_name FROM plans;
 
--- 6. Ahora sí, actualizar las foreign keys
-
--- Actualizar payment_requests
+-- 7. Actualizar payment_requests foreign key
 ALTER TABLE payment_requests 
 DROP CONSTRAINT IF EXISTS payment_requests_plan_id_fkey;
 
@@ -48,7 +63,7 @@ ALTER TABLE payment_requests
 ADD CONSTRAINT payment_requests_plan_id_fkey 
 FOREIGN KEY (plan_id) REFERENCES plans(id) ON DELETE CASCADE;
 
--- Actualizar user_subscriptions  
+-- 8. Actualizar user_subscriptions foreign key
 ALTER TABLE user_subscriptions 
 DROP CONSTRAINT IF EXISTS user_subscriptions_plan_id_fkey;
 
@@ -56,7 +71,7 @@ ALTER TABLE user_subscriptions
 ADD CONSTRAINT user_subscriptions_plan_id_fkey 
 FOREIGN KEY (plan_id) REFERENCES plans(id) ON DELETE RESTRICT;
 
--- 7. Actualizar funciones RPC
+-- 9. Actualizar funciones RPC
 
 -- get_my_subscription_info
 DROP FUNCTION IF EXISTS get_my_subscription_info();
@@ -150,7 +165,7 @@ BEGIN
 END;
 $$;
 
--- 8. Verificar que todo está correcto
+-- 10. Verificar que todo está correcto
 SELECT 
   us.user_id,
   us.plan_id,

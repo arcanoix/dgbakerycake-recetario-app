@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 interface LogoProps {
   size?: "sm" | "md" | "lg";
@@ -24,13 +25,17 @@ export const Logo = ({ size = "md", showText = true, href = "/", variant = "icon
 
   const logoContent = (
     <div className="flex items-center gap-3">
-      <img
-        src={imgSrc}
-        alt="DGcost"
-        width={imgWidth}
-        height={isFull ? undefined : imgHeight}
-        className={`${imgClass} ${isFull ? "h-auto w-auto max-h-[140px]" : ""}`}
-      />
+      <div className={`relative ${isFull ? 'w-[280px] h-[80px]' : 'w-[40px] h-[40px]'}`}>
+        <Image
+          src={imgSrc}
+          alt="DGcost"
+          fill={!isFull}
+          width={isFull ? 280 : undefined}
+          height={isFull ? 80 : undefined}
+          className={`${imgClass} ${isFull ? "object-contain" : "object-cover"}`}
+          unoptimized={isFull}
+        />
+      </div>
       {!isFull && showText && (
         <span className={`font-bold ${textSize} bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent`}>
           DGcost

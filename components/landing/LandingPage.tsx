@@ -282,7 +282,7 @@ export const LandingPage = () => {
         <section className="py-20 px-4 bg-gray-50">
           <div className="container mx-auto">
             <div className="max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
+              <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
                 ¿Te suena conocido?
               </h2>
               <p className="text-xl text-gray-600 text-center mb-12">
@@ -325,7 +325,7 @@ export const LandingPage = () => {
       <AnimatedSection>
         <section className="py-20 px-4">
           <div className="container mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
               DGcost lo resuelve todo
             </h2>
             <p className="text-xl text-gray-600 text-center mb-16 max-w-2xl mx-auto">
@@ -364,7 +364,7 @@ export const LandingPage = () => {
       <AnimatedSection>
         <section className="py-20 px-4 bg-gradient-to-br from-violet-50 to-fuchsia-50">
           <div className="container mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
               Lo que dicen nuestros usuarios
             </h2>
             <p className="text-xl text-gray-600 text-center mb-16">
@@ -414,7 +414,7 @@ export const LandingPage = () => {
       <AnimatedSection>
         <section className="py-20 px-4">
           <div className="container mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
               Planes para cada etapa
             </h2>
             <p className="text-xl text-gray-600 text-center mb-16">
@@ -476,7 +476,7 @@ export const LandingPage = () => {
       <AnimatedSection>
         <section className="py-20 px-4 bg-gray-50">
           <div className="container mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
               Preguntas Frecuentes
             </h2>
             <p className="text-xl text-gray-600 text-center mb-16">

@@ -7,6 +7,7 @@ import {
   UserSubscriptionInfo,
   PaymentStatus,
 } from '@/types/subscription';
+import { ActivityLog } from '@/types/user';
 
 // ============================================
 // PLANES DE SUSCRIPCIÓN
@@ -261,6 +262,8 @@ export const obtenerTodosLosUsuarios = async () => {
         subscription_status: usuario.subscription_status,
         start_date: usuario.start_date,
         end_date: usuario.end_date,
+        last_sign_in_at: usuario.last_sign_in_at,
+        created_at: usuario.created_at,
         productos_count: productosCount || 0,
         recetas_count: recetasCount || 0,
         is_active: usuario.is_active,
@@ -557,4 +560,60 @@ export const verificarLimite = async (
   }
 
   return { permitido: true, limite };
+};
+
+// ============================================
+// REGISTRO DE ACTIVIDADES (AUDIT LOG)
+// ============================================
+
+/**
+ * Log a user activity. Calls the API route so that the server can
+ * capture the real IP address from the request headers.
+ * Non-blocking – errors are silently swallowed so that they never
+ * disrupt the user-facing operation.
+ */
+export const registrarActividad = async (
+  action: string,
+  module: string,
+  description: string,
+  entityId?: string,
+  entityName?: string
+): Promise<void> => {
+  try {
+    await fetch('/api/admin/activity-logs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action,
+        module,
+        description,
+        entity_id: entityId,
+        entity_name: entityName,
+      }),
+    });
+  } catch {
+    // Do not throw – logging failures must never break user operations
+  }
+};
+
+/**
+ * Retrieve activity logs for the admin panel.
+ */
+export const obtenerActividadesAdmin = async (
+  limit = 200,
+  offset = 0,
+  filters?: { userId?: string; module?: string; action?: string }
+): Promise<ActivityLog[]> => {
+  const params = new URLSearchParams({ limit: String(limit), offset: String(offset) });
+  if (filters?.userId) params.set('user_id', filters.userId);
+  if (filters?.module) params.set('module', filters.module);
+  if (filters?.action) params.set('action', filters.action);
+
+  try {
+    const res = await fetch(`/api/admin/activity-logs?${params.toString()}`);
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
 };

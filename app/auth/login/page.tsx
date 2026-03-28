@@ -64,10 +64,10 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-        <div className="text-center mb-8 flex flex-col items-center">
-          <Logo size="lg" variant="full" showText={false} href={undefined} />
+        <div className="text-center mb-6 flex flex-col items-center">
+          <Logo size="lg" variant="full" showText={false} href="/" />
           <h1 className="sr-only">DGcost</h1>
-          <p className="text-gray-600 mt-4">Inicia sesión en tu cuenta</p>
+          <p className="text-gray-600 mt-2">Inicia sesión en tu cuenta</p>
         </div>
 
         <Button 

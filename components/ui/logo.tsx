@@ -28,8 +28,8 @@ export const Logo = ({ size = "md", showText = true, href = "/", variant = "icon
         src={imgSrc}
         alt="DGcost"
         width={imgWidth}
-        height={imgHeight}
-        className={imgClass}
+        height={isFull ? undefined : imgHeight}
+        className={`${imgClass} ${isFull ? "h-auto w-auto max-h-[140px]" : ""}`}
       />
       {!isFull && showText && (
         <span className={`font-bold ${textSize} bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent`}>

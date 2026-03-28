@@ -134,7 +134,7 @@ export const obtenerSuscripcionActual = async (): Promise<UserSubscription | nul
     .from('user_subscriptions')
     .select(`
       *,
-      plan:subscription_plans(*)
+      plan:plans(*)
     `)
     .eq('user_id', user.id)
     .eq('status', 'active')
@@ -204,7 +204,7 @@ export const obtenerMisSolicitudes = async (): Promise<PaymentRequest[]> => {
     .from('payment_requests')
     .select(`
       *,
-      plan:subscription_plans(*)
+      plan:plans(*)
     `)
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
@@ -226,7 +226,7 @@ export const obtenerTodasLasSolicitudes = async (): Promise<PaymentRequest[]> =>
     .from('payment_requests')
     .select(`
       *,
-      plan:subscription_plans(*)
+      plan:plans(*)
     `)
     .order('created_at', { ascending: false });
 
@@ -293,7 +293,7 @@ export const obtenerEstadisticasAdmin = async () => {
     .from('user_subscriptions')
     .select('*', { count: 'exact', head: true })
     .eq('status', 'active')
-    .neq('plan_id', (await supabase.from('subscription_plans').select('id').eq('name', 'free').single()).data?.id);
+    .neq('plan_id', (await supabase.from('plans').select('id').eq('name', 'free').single()).data?.id);
 
   return {
     solicitudesPendientes: solicitudesPendientes || 0,
@@ -367,7 +367,7 @@ export const obtenerEstadisticasUsuarios = async () => {
 
   // Obtener ID del plan gratuito
   const { data: freePlan } = await supabase
-    .from('subscription_plans')
+    .from('plans')
     .select('id')
     .eq('name', 'free')
     .single();

@@ -19,8 +19,57 @@ import {
 } from "@/lib/subscriptionStorage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { motion } from "motion/react";
+import { 
+  CreditCard, Users, BarChart3, Activity, RefreshCw, 
+  Clock, CheckCircle, XCircle, TrendingUp, UserPlus, 
+  Crown, AlertCircle
+} from "lucide-react";
 
 type Vista = "solicitudes" | "usuarios" | "graficos" | "actividades";
+
+const TABS: { id: Vista; label: string; icon: React.ReactNode }[] = [
+  { id: "solicitudes", label: "Solicitudes", icon: <CreditCard className="w-4 h-4" /> },
+  { id: "usuarios", label: "Usuarios", icon: <Users className="w-4 h-4" /> },
+  { id: "graficos", label: "Estadísticas", icon: <BarChart3 className="w-4 h-4" /> },
+  { id: "actividades", label: "Actividad", icon: <Activity className="w-4 h-4" /> },
+];
+
+interface StatCardProps {
+  title: string;
+  value: number | string;
+  icon: React.ReactNode;
+  color: string;
+  gradient: string;
+  subtitle?: string;
+}
+
+const StatCard = ({ title, value, icon, color, gradient, subtitle }: StatCardProps) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    whileHover={{ scale: 1.02 }}
+    transition={{ duration: 0.2 }}
+  >
+    <Card className="border-0 shadow-lg overflow-hidden relative">
+      <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${gradient}`} />
+      <CardContent className="pt-6">
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{title}</p>
+            <p className="text-3xl font-bold mt-1 text-gray-900 dark:text-gray-100">{value}</p>
+            {subtitle && (
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{subtitle}</p>
+            )}
+          </div>
+          <div className={`w-12 h-12 rounded-xl ${color} flex items-center justify-center`}>
+            {icon}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  </motion.div>
+);
 
 export default function AdminPage() {
   const router = useRouter();
@@ -50,8 +99,6 @@ export default function AdminPage() {
     } else if (isAdmin) {
       cargarDatos();
     }
-  // router is stable (from useRouter) and cargarDatos is defined in render scope;
-  // intentionally omitted to avoid re-running on every render.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin, cargandoRole]);
 
@@ -82,8 +129,15 @@ export default function AdminPage() {
   if (cargandoRole || cargando) {
     return (
       <ProtectedRoute>
-        <div className="container mx-auto p-6">
-          <p className="text-center">Cargando panel de administrador...</p>
+        <div className="min-h-screen flex items-center justify-center">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center"
+          >
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full border-4 border-t-transparent border-violet-500 animate-spin"></div>
+            <p className="text-gray-500 dark:text-gray-400">Cargando panel de administrador...</p>
+          </motion.div>
         </div>
       </ProtectedRoute>
     );
@@ -93,217 +147,136 @@ export default function AdminPage() {
     return null;
   }
 
-  const TABS: { id: Vista; label: string }[] = [
-    { id: "solicitudes", label: "💳 Solicitudes de Pago" },
-    { id: "usuarios", label: "👥 Usuarios" },
-    { id: "graficos", label: "📊 Gráficos" },
-    { id: "actividades", label: "🕵️ Actividades" },
-  ];
+  const pendingCount = solicitudes.filter((s) => s.status === "pending").length;
+  const approvedCount = solicitudes.filter((s) => s.status === "approved").length;
+  const rejectedCount = solicitudes.filter((s) => s.status === "rejected").length;
 
   return (
     <ProtectedRoute>
       <div className="container mx-auto p-6 space-y-6">
         {/* Header */}
-        <div className="flex justify-between items-center">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+        >
           <div>
-            <h1 className="text-3xl font-bold">Panel de Administrador</h1>
-            <p className="text-muted-foreground">
-              Gestiona solicitudes de pago, suscripciones, usuarios y auditoría
+            <h1 className="text-3xl font-bold flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
+                <Crown className="w-5 h-5 text-white" />
+              </div>
+              Panel de Administrador
+            </h1>
+            <p className="text-gray-500 dark:text-gray-400 mt-1">
+              Gestiona solicitudes, usuarios y auditoría del sistema
             </p>
           </div>
-          <Button onClick={cargarDatos} variant="outline">
-            🔄 Actualizar
+          <Button 
+            onClick={cargarDatos} 
+            variant="outline"
+            className="gap-2"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Actualizar
           </Button>
-        </div>
+        </motion.div>
 
         {/* Tabs */}
-        <div className="flex gap-2 border-b flex-wrap">
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="flex gap-2 border-b border-gray-200 dark:border-gray-700 pb-1 flex-wrap"
+        >
           {TABS.map((tab) => (
             <Button
               key={tab.id}
-              variant={vistaActual === tab.id ? "default" : "ghost"}
+              variant="ghost"
               onClick={() => setVistaActual(tab.id)}
-              className="rounded-b-none"
+              className={`gap-2 rounded-lg ${
+                vistaActual === tab.id 
+                  ? "bg-violet-100 dark:bg-violet-900/50 text-violet-700 dark:text-violet-300" 
+                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+              }`}
             >
+              {tab.icon}
               {tab.label}
+              {tab.id === "solicitudes" && pendingCount > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 text-xs bg-yellow-500 text-white rounded-full">
+                  {pendingCount}
+                </span>
+              )}
             </Button>
           ))}
-        </div>
+        </motion.div>
 
         {/* ===================== STATS CARDS ===================== */}
         {vistaActual === "solicitudes" && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Solicitudes Pendientes
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold text-yellow-600">
-                  {estadisticas.solicitudesPendientes}
-                </p>
-              </CardContent>
-            </Card>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.15 }}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard
+                title="Pendientes"
+                value={estadisticas.solicitudesPendientes}
+                icon={<Clock className="w-6 h-6 text-yellow-600" />}
+                color="bg-yellow-100 dark:bg-yellow-900/50"
+                gradient="from-yellow-500 to-orange-500"
+                subtitle={`${pendingCount} solicitudes esperan`}
+              />
+              <StatCard
+                title="Aprobadas"
+                value={estadisticas.solicitudesAprobadas}
+                icon={<CheckCircle className="w-6 h-6 text-green-600" />}
+                color="bg-green-100 dark:bg-green-900/50"
+                gradient="from-green-500 to-emerald-500"
+                subtitle={`${approvedCount} aprobadas`}
+              />
+              <StatCard
+                title="Total Usuarios"
+                value={estadisticas.totalUsuarios}
+                icon={<Users className="w-6 h-6 text-blue-600" />}
+                color="bg-blue-100 dark:bg-blue-900/50"
+                gradient="from-blue-500 to-cyan-500"
+                subtitle="usuarios registrados"
+              />
+              <StatCard
+                title="Suscripciones"
+                value={estadisticas.suscripcionesActivas}
+                icon={<Crown className="w-6 h-6 text-violet-600" />}
+                color="bg-violet-100 dark:bg-violet-900/50"
+                gradient="from-violet-500 to-fuchsia-500"
+                subtitle="planes activos"
+              />
+            </div>
 
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Solicitudes Aprobadas
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold text-green-600">
-                  {estadisticas.solicitudesAprobadas}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Total Usuarios
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold">{estadisticas.totalUsuarios}</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Suscripciones Activas
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold text-blue-600">
-                  {estadisticas.suscripcionesActivas}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {vistaActual === "usuarios" && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Total Usuarios
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold">
-                  {estadisticasUsuarios.totalUsuarios}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Usuarios Activos
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold text-green-600">
-                  {estadisticasUsuarios.usuariosActivos}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Con Plan de Pago
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold text-blue-600">
-                  {estadisticasUsuarios.usuariosConPlanPago}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Nuevos Este Mes
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold text-purple-600">
-                  {estadisticasUsuarios.usuariosNuevosEsteMes}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {vistaActual === "actividades" && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Total Actividades
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold">{activityLogs.length}</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Creaciones
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold text-green-600">
-                  {activityLogs.filter((l) => l.action === "create").length}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Eliminaciones
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold text-red-600">
-                  {activityLogs.filter((l) => l.action === "delete").length}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {/* ===================== MAIN CONTENT ===================== */}
-        {vistaActual === "solicitudes" && (
-          <>
             {/* Filtros */}
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-2 flex-wrap mt-6">
               <Button
                 variant={filtro === "pending" ? "default" : "outline"}
                 onClick={() => setFiltro("pending")}
+                className={`gap-2 ${filtro === "pending" ? "bg-yellow-500 hover:bg-yellow-600" : ""}`}
               >
-                Pendientes ({solicitudes.filter((s) => s.status === "pending").length})
+                <Clock className="w-4 h-4" />
+                Pendientes ({pendingCount})
               </Button>
               <Button
                 variant={filtro === "approved" ? "default" : "outline"}
                 onClick={() => setFiltro("approved")}
+                className={`gap-2 ${filtro === "approved" ? "bg-green-500 hover:bg-green-600" : ""}`}
               >
-                Aprobadas ({solicitudes.filter((s) => s.status === "approved").length})
+                <CheckCircle className="w-4 h-4" />
+                Aprobadas ({approvedCount})
               </Button>
               <Button
                 variant={filtro === "rejected" ? "default" : "outline"}
                 onClick={() => setFiltro("rejected")}
+                className={`gap-2 ${filtro === "rejected" ? "bg-red-500 hover:bg-red-600" : ""}`}
               >
-                Rechazadas ({solicitudes.filter((s) => s.status === "rejected").length})
+                <XCircle className="w-4 h-4" />
+                Rechazadas ({rejectedCount})
               </Button>
               <Button
                 variant={filtro === "all" ? "default" : "outline"}
@@ -313,23 +286,99 @@ export default function AdminPage() {
               </Button>
             </div>
 
-            <PaymentRequestsTable
-              solicitudes={solicitudesFiltradas}
-              onUpdate={cargarDatos}
-            />
-          </>
+            <div className="mt-4">
+              <PaymentRequestsTable
+                solicitudes={solicitudesFiltradas}
+                onUpdate={cargarDatos}
+              />
+            </div>
+          </motion.div>
         )}
 
         {vistaActual === "usuarios" && (
-          <UsersTable usuarios={usuarios} onUpdate={cargarDatos} />
-        )}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.15 }}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              <StatCard
+                title="Total Usuarios"
+                value={estadisticasUsuarios.totalUsuarios}
+                icon={<Users className="w-6 h-6 text-blue-600" />}
+                color="bg-blue-100 dark:bg-blue-900/50"
+                gradient="from-blue-500 to-cyan-500"
+              />
+              <StatCard
+                title="Usuarios Activos"
+                value={estadisticasUsuarios.usuariosActivos}
+                icon={<TrendingUp className="w-6 h-6 text-green-600" />}
+                color="bg-green-100 dark:bg-green-900/50"
+                gradient="from-green-500 to-emerald-500"
+              />
+              <StatCard
+                title="Con Plan de Pago"
+                value={estadisticasUsuarios.usuariosConPlanPago}
+                icon={<Crown className="w-6 h-6 text-violet-600" />}
+                color="bg-violet-100 dark:bg-violet-900/50"
+                gradient="from-violet-500 to-fuchsia-500"
+              />
+              <StatCard
+                title="Nuevos Este Mes"
+                value={estadisticasUsuarios.usuariosNuevosEsteMes}
+                icon={<UserPlus className="w-6 h-6 text-amber-600" />}
+                color="bg-amber-100 dark:bg-amber-900/50"
+                gradient="from-amber-500 to-orange-500"
+                subtitle="registros este mes"
+              />
+            </div>
 
-        {vistaActual === "graficos" && (
-          <AdminCharts usuarios={usuarios} activityLogs={activityLogs} />
+            <UsersTable usuarios={usuarios} onUpdate={cargarDatos} />
+          </motion.div>
         )}
 
         {vistaActual === "actividades" && (
-          <ActivityLogsTable logs={activityLogs} />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.15 }}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <StatCard
+                title="Total Actividades"
+                value={activityLogs.length}
+                icon={<Activity className="w-6 h-6 text-blue-600" />}
+                color="bg-blue-100 dark:bg-blue-900/50"
+                gradient="from-blue-500 to-cyan-500"
+              />
+              <StatCard
+                title="Creaciones"
+                value={activityLogs.filter((l) => l.action === "create").length}
+                icon={<CheckCircle className="w-6 h-6 text-green-600" />}
+                color="bg-green-100 dark:bg-green-900/50"
+                gradient="from-green-500 to-emerald-500"
+              />
+              <StatCard
+                title="Eliminaciones"
+                value={activityLogs.filter((l) => l.action === "delete").length}
+                icon={<XCircle className="w-6 h-6 text-red-600" />}
+                color="bg-red-100 dark:bg-red-900/50"
+                gradient="from-red-500 to-rose-500"
+              />
+            </div>
+
+            <ActivityLogsTable logs={activityLogs} />
+          </motion.div>
+        )}
+
+        {vistaActual === "graficos" && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.15 }}
+          >
+            <AdminCharts usuarios={usuarios} activityLogs={activityLogs} />
+          </motion.div>
         )}
       </div>
     </ProtectedRoute>

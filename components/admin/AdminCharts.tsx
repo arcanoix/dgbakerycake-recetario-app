@@ -14,29 +14,31 @@ import {
   ResponsiveContainer,
   LineChart,
   Line,
+  Area,
+  AreaChart,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserData, ActivityLog } from "@/types/user";
+import { motion } from "motion/react";
+import { Users, Calendar, Activity, Zap, TrendingUp, Package, BookOpen, Settings } from "lucide-react";
 
 const COLORS = [
-  "#3b82f6",
-  "#10b981",
-  "#f59e0b",
-  "#ef4444",
-  "#8b5cf6",
-  "#ec4899",
-  "#14b8a6",
-  "#f97316",
+  "#8b5cf6", // violet
+  "#06b6d4", // cyan
+  "#f59e0b", // amber
+  "#10b981", // emerald
+  "#ec4899", // pink
+  "#3b82f6", // blue
 ];
 
-const MODULE_LABELS: Record<string, string> = {
-  recetas: "Recetas",
-  productos: "Productos",
-  auth: "Auth",
-  configuracion: "Configuración",
-  categorias: "Categorías",
-  unidades: "Unidades",
-  subscription: "Suscripción",
+const MODULE_CONFIG: Record<string, { color: string; icon: React.ReactNode }> = {
+  recetas: { color: "#8b5cf6", icon: <BookOpen className="w-4 h-4" /> },
+  productos: { color: "#06b6d4", icon: <Package className="w-4 h-4" /> },
+  auth: { color: "#f59e0b", icon: <Users className="w-4 h-4" /> },
+  configuracion: { color: "#10b981", icon: <Settings className="w-4 h-4" /> },
+  categorias: { color: "#ec4899", icon: <Package className="w-4 h-4" /> },
+  unidades: { color: "#3b82f6", icon: <Package className="w-4 h-4" /> },
+  subscription: { color: "#ef4444", icon: <Users className="w-4 h-4" /> },
 };
 
 const ACTION_COLORS: Record<string, string> = {
@@ -48,14 +50,44 @@ const ACTION_COLORS: Record<string, string> = {
   view: "#f59e0b",
 };
 
-interface AdminChartsProps {
-  usuarios: UserData[];
-  activityLogs: ActivityLog[];
+const MODULE_LABELS: Record<string, string> = {
+  recetas: "Recetas",
+  productos: "Productos",
+  auth: "Auth",
+  configuracion: "Configuración",
+  categorias: "Categorías",
+  unidades: "Unidades",
+  subscription: "Suscripción",
+};
+
+interface ChartCardProps {
+  title: string;
+  icon: React.ReactNode;
+  gradient: string;
+  children: React.ReactNode;
 }
 
-/* ---------------------------------------------------------------
-   Helper: group users by subscription plan
----------------------------------------------------------------- */
+const ChartCard = ({ title, icon, gradient, children }: ChartCardProps) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3 }}
+  >
+    <Card className="border-0 shadow-lg overflow-hidden">
+      <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${gradient}`} />
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base flex items-center gap-2">
+          <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center`}>
+            {icon}
+          </div>
+          {title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>{children}</CardContent>
+    </Card>
+  </motion.div>
+);
+
 function groupUsersByPlan(usuarios: UserData[]) {
   const counts: Record<string, number> = {};
   usuarios.forEach((u) => {
@@ -65,14 +97,10 @@ function groupUsersByPlan(usuarios: UserData[]) {
   return Object.entries(counts).map(([name, value]) => ({ name, value }));
 }
 
-/* ---------------------------------------------------------------
-   Helper: group users by registration month (last 6 months)
----------------------------------------------------------------- */
 function groupUsersByMonth(usuarios: UserData[]) {
   const now = new Date();
   const months: Record<string, number> = {};
 
-  // Initialize last 6 months
   for (let i = 5; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const key = d.toLocaleDateString("es-VE", { month: "short", year: "2-digit" });
@@ -91,9 +119,6 @@ function groupUsersByMonth(usuarios: UserData[]) {
   return Object.entries(months).map(([mes, usuarios]) => ({ mes, usuarios }));
 }
 
-/* ---------------------------------------------------------------
-   Helper: activity by module from logs
----------------------------------------------------------------- */
 function groupActivityByModule(logs: ActivityLog[]) {
   const counts: Record<string, number> = {};
   logs.forEach((l) => {
@@ -105,9 +130,6 @@ function groupActivityByModule(logs: ActivityLog[]) {
     .sort((a, b) => b.acciones - a.acciones);
 }
 
-/* ---------------------------------------------------------------
-   Helper: activity by action type from logs
----------------------------------------------------------------- */
 function groupActivityByAction(logs: ActivityLog[]) {
   const counts: Record<string, number> = {};
   logs.forEach((l) => {
@@ -116,9 +138,6 @@ function groupActivityByAction(logs: ActivityLog[]) {
   return Object.entries(counts).map(([accion, total]) => ({ accion, total }));
 }
 
-/* ---------------------------------------------------------------
-   Helper: activity over last 7 days
----------------------------------------------------------------- */
 function groupActivityByDay(logs: ActivityLog[]) {
   const now = new Date();
   const days: Record<string, number> = {};
@@ -141,15 +160,12 @@ function groupActivityByDay(logs: ActivityLog[]) {
   return Object.entries(days).map(([dia, acciones]) => ({ dia, acciones }));
 }
 
-/* ---------------------------------------------------------------
-   Helper: custom pie tooltip
----------------------------------------------------------------- */
 const PieTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white dark:bg-gray-800 p-3 border rounded-lg shadow-lg text-sm">
-        <p className="font-semibold">{payload[0].name}</p>
-        <p className="text-muted-foreground">
+      <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl text-sm">
+        <p className="font-semibold text-gray-900 dark:text-gray-100">{payload[0].name}</p>
+        <p className="text-gray-500 dark:text-gray-400">
           {payload[0].value} usuario{payload[0].value !== 1 ? "s" : ""}
         </p>
       </div>
@@ -158,9 +174,22 @@ const PieTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-/* ===============================================================
-   Main Component
-================================================================ */
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl text-sm">
+        <p className="font-semibold text-gray-900 dark:text-gray-100 mb-1">{label}</p>
+        {payload.map((p: any, i: number) => (
+          <p key={i} style={{ color: p.color }} className="text-sm">
+            {p.name}: {p.value}
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
 export const AdminCharts = ({ usuarios, activityLogs }: AdminChartsProps) => {
   const planData = groupUsersByPlan(usuarios);
   const monthData = groupUsersByMonth(usuarios);
@@ -170,163 +199,186 @@ export const AdminCharts = ({ usuarios, activityLogs }: AdminChartsProps) => {
 
   return (
     <div className="space-y-6">
-      {/* Row 1: Plan distribution + Monthly registrations */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Users by plan */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Usuarios por Plan</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {planData.length === 0 ? (
-              <p className="text-muted-foreground text-sm text-center py-8">
-                Sin datos
-              </p>
-            ) : (
-              <ResponsiveContainer width="100%" height={260}>
-                <PieChart>
-                  <Pie
-                    data={planData}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={90}
-                    dataKey="value"
-                    nameKey="name"
-                    label={({ name, percent }) =>
-                      `${name}: ${((percent ?? 0) * 100).toFixed(0)}%`
-                    }
-                  >
-                    {planData.map((_, index) => (
-                      <Cell
-                        key={`plan-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip content={<PieTooltip />} />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Monthly registrations */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">
-              Nuevos Usuarios — Últimos 6 Meses
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={260}>
-              <LineChart data={monthData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Line
-                  type="monotone"
-                  dataKey="usuarios"
-                  stroke="#3b82f6"
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                  name="Registros"
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Row 2: Activity by module + Activity by action */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Activity by module */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Actividad por Módulo</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {moduleData.length === 0 ? (
-              <p className="text-muted-foreground text-sm text-center py-8">
-                Sin actividad registrada aún
-              </p>
-            ) : (
-              <ResponsiveContainer width="100%" height={260}>
-                <BarChart data={moduleData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" allowDecimals={false} />
-                  <YAxis dataKey="module" type="category" width={100} tick={{ fontSize: 12 }} />
-                  <Tooltip />
-                  <Bar dataKey="acciones" name="Acciones" fill="#8b5cf6" />
-                </BarChart>
-              </ResponsiveContainer>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Activity by action type */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Acciones Realizadas</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {actionData.length === 0 ? (
-              <p className="text-muted-foreground text-sm text-center py-8">
-                Sin actividad registrada aún
-              </p>
-            ) : (
-              <ResponsiveContainer width="100%" height={260}>
-                <BarChart data={actionData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="accion" tick={{ fontSize: 12 }} />
-                  <YAxis allowDecimals={false} />
-                  <Tooltip />
-                  <Bar dataKey="total" name="Total" radius={[4, 4, 0, 0]}>
-                    {actionData.map((entry) => (
-                      <Cell
-                        key={entry.accion}
-                        fill={ACTION_COLORS[entry.accion] || "#6b7280"}
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Row 3: Activity over last 7 days */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Actividad — Últimos 7 Días</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {activityLogs.length === 0 ? (
-            <p className="text-muted-foreground text-sm text-center py-8">
-              Sin actividad registrada aún
-            </p>
+        <ChartCard
+          title="Usuarios por Plan"
+          icon={<Users className="w-4 h-4 text-white" />}
+          gradient="from-violet-500 to-purple-600"
+        >
+          {planData.length === 0 ? (
+            <div className="h-64 flex items-center justify-center text-gray-400">
+              <p>Sin datos disponibles</p>
+            </div>
           ) : (
-            <ResponsiveContainer width="100%" height={220}>
-              <LineChart data={dayData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="dia" tick={{ fontSize: 11 }} />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Line
-                  type="monotone"
-                  dataKey="acciones"
-                  stroke="#10b981"
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                  name="Acciones"
+            <ResponsiveContainer width="100%" height={280}>
+              <PieChart>
+                <Pie
+                  data={planData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={100}
+                  paddingAngle={3}
+                  dataKey="value"
+                  nameKey="name"
+                >
+                  {planData.map((_, index) => (
+                    <Cell
+                      key={`plan-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                      stroke="transparent"
+                    />
+                  ))}
+                </Pie>
+                <Tooltip content={<PieTooltip />} />
+                <Legend 
+                  formatter={(value) => <span className="text-sm text-gray-600 dark:text-gray-400">{value}</span>}
                 />
-              </LineChart>
+              </PieChart>
             </ResponsiveContainer>
           )}
-        </CardContent>
-      </Card>
+        </ChartCard>
+
+        <ChartCard
+          title="Registros por Mes"
+          icon={<Calendar className="w-4 h-4 text-white" />}
+          gradient="from-cyan-500 to-blue-600"
+        >
+          <ResponsiveContainer width="100%" height={280}>
+            <AreaChart data={monthData}>
+              <defs>
+                <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis dataKey="mes" tick={{ fontSize: 11 }} stroke="#9ca3af" />
+              <YAxis allowDecimals={false} stroke="#9ca3af" />
+              <Tooltip content={<CustomTooltip />} />
+              <Area
+                type="monotone"
+                dataKey="usuarios"
+                stroke="#06b6d4"
+                strokeWidth={2}
+                fill="url(#colorUsers)"
+                name="Registros"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </ChartCard>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <ChartCard
+          title="Actividad por Módulo"
+          icon={<Activity className="w-4 h-4 text-white" />}
+          gradient="from-amber-500 to-orange-600"
+        >
+          {moduleData.length === 0 ? (
+            <div className="h-64 flex items-center justify-center text-gray-400">
+              <p>Sin actividad registrada</p>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={moduleData} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis type="number" allowDecimals={false} stroke="#9ca3af" />
+                <YAxis 
+                  dataKey="module" 
+                  type="category" 
+                  width={90} 
+                  tick={{ fontSize: 11 }} 
+                  stroke="#9ca3af"
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Bar 
+                  dataKey="acciones" 
+                  name="Acciones" 
+                  radius={[0, 4, 4, 0]}
+                  fill="#f59e0b"
+                >
+                  {moduleData.map((entry, index) => (
+                    <Cell 
+                      key={`module-${index}`} 
+                      fill={MODULE_CONFIG[entry.module.toLowerCase()]?.color || "#f59e0b"} 
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </ChartCard>
+
+        <ChartCard
+          title="Acciones Realizadas"
+          icon={<Zap className="w-4 h-4 text-white" />}
+          gradient="from-emerald-500 to-teal-600"
+        >
+          {actionData.length === 0 ? (
+            <div className="h-64 flex items-center justify-center text-gray-400">
+              <p>Sin actividad registrada</p>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={actionData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="accion" tick={{ fontSize: 11 }} stroke="#9ca3af" />
+                <YAxis allowDecimals={false} stroke="#9ca3af" />
+                <Tooltip content={<CustomTooltip />} />
+                <Bar dataKey="total" name="Total" radius={[4, 4, 0, 0]}>
+                  {actionData.map((entry) => (
+                    <Cell
+                      key={entry.accion}
+                      fill={ACTION_COLORS[entry.accion] || "#6b7280"}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </ChartCard>
+      </div>
+
+      <ChartCard
+        title="Actividad - Últimos 7 Días"
+        icon={<TrendingUp className="w-4 h-4 text-white" />}
+        gradient="from-rose-500 to-pink-600"
+      >
+        {activityLogs.length === 0 ? (
+          <div className="h-48 flex items-center justify-center text-gray-400">
+            <p>Sin actividad registrada</p>
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={240}>
+            <LineChart data={dayData}>
+              <defs>
+                <linearGradient id="colorActions" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis dataKey="dia" tick={{ fontSize: 11 }} stroke="#9ca3af" />
+              <YAxis allowDecimals={false} stroke="#9ca3af" />
+              <Tooltip content={<CustomTooltip />} />
+              <Line
+                type="monotone"
+                dataKey="acciones"
+                stroke="#f43f5e"
+                strokeWidth={2}
+                dot={{ r: 4, fill: "#f43f5e", strokeWidth: 2, stroke: "#fff" }}
+                name="Acciones"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
+      </ChartCard>
     </div>
   );
 };
+
+interface AdminChartsProps {
+  usuarios: UserData[];
+  activityLogs: ActivityLog[];
+}

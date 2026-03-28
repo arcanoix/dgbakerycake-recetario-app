@@ -73,7 +73,13 @@ export default function ResetPasswordPage() {
       });
 
       if (error) {
-        setError(error.message);
+        let errorMsg = error.message;
+        if (errorMsg.includes('New password should be different from the old password')) {
+          errorMsg = 'La nueva contraseña debe ser diferente a la contraseña anterior.';
+        } else if (errorMsg.includes('Password should be at least')) {
+          errorMsg = 'La contraseña debe tener al menos 6 caracteres.';
+        }
+        setError(errorMsg);
       } else {
         setSuccess(true);
         // Cerrar sesión para que el usuario inicie sesión con la nueva contraseña

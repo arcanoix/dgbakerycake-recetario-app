@@ -81,24 +81,28 @@ export default function DashboardPage() {
             value={estadisticas.totalProductos}
             icon="📦"
             description="Insumos registrados"
+            color="violet"
           />
           <StatsCard
             title="Total Recetas"
             value={estadisticas.totalRecetas}
             icon="📝"
             description="Recetas creadas"
+            color="fuchsia"
           />
           <StatsCard
             title="Valor Inventario"
             value={formatearDualMoneda(valorInventario, configuracion.tasaCambioUSD || 50, configuracion.moneda === 'USD')}
             icon="💰"
             description="Inversión total en productos"
+            color="emerald"
           />
           <StatsCard
-            title="Costo Promedio Receta"
+            title="Costo Promedio"
             value={formatearDualMoneda(estadisticas.costoPromedioReceta, configuracion.tasaCambioUSD || 50, configuracion.moneda === 'USD')}
             icon="📊"
             description="Promedio de todas las recetas"
+            color="cyan"
           />
         </div>
 

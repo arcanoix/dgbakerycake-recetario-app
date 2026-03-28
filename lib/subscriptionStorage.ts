@@ -6,19 +6,20 @@ import {
   PaymentRequestFormData,
   UserSubscriptionInfo,
   PaymentStatus,
+  Plan,
 } from '@/types/subscription';
 import { ActivityLog } from '@/types/user';
 
 // ============================================
-// PLANES DE SUSCRIPCIÓN
+// PLANES DE SUSCRIPCIÓN (desde tabla plans)
 // ============================================
 
-export const obtenerPlanes = async (): Promise<SubscriptionPlan[]> => {
+export const obtenerPlanes = async (): Promise<Plan[]> => {
   const { data, error } = await supabase
-    .from('subscription_plans')
+    .from('plans')
     .select('*')
     .eq('is_active', true)
-    .order('price_usd', { ascending: true });
+    .order('sort_order', { ascending: true });
 
   if (error) {
     console.error('Error al obtener planes:', error);
@@ -28,9 +29,9 @@ export const obtenerPlanes = async (): Promise<SubscriptionPlan[]> => {
   return data || [];
 };
 
-export const obtenerPlanPorId = async (id: string): Promise<SubscriptionPlan | null> => {
+export const obtenerPlanPorId = async (id: string): Promise<Plan | null> => {
   const { data, error } = await supabase
-    .from('subscription_plans')
+    .from('plans')
     .select('*')
     .eq('id', id)
     .single();
@@ -41,6 +42,83 @@ export const obtenerPlanPorId = async (id: string): Promise<SubscriptionPlan | n
   }
 
   return data;
+};
+
+export const obtenerPlanPorNombre = async (name: string): Promise<Plan | null> => {
+  const { data, error } = await supabase
+    .from('plans')
+    .select('*')
+    .eq('name', name)
+    .eq('is_active', true)
+    .single();
+
+  if (error) {
+    console.error('Error al obtener plan por nombre:', error);
+    return null;
+  }
+
+  return data;
+};
+
+// Admin: Obtener todos los planes (incluidos inactivos)
+export const obtenerTodosLosPlanes = async (): Promise<Plan[]> => {
+  const { data, error } = await supabase
+    .from('plans')
+    .select('*')
+    .order('sort_order', { ascending: true });
+
+  if (error) {
+    console.error('Error al obtener todos los planes:', error);
+    return [];
+  }
+
+  return data || [];
+};
+
+// Admin: Actualizar plan
+export const actualizarPlan = async (id: string, updates: Partial<Plan>): Promise<{ exitoso: boolean; error?: string }> => {
+  const { error } = await supabase
+    .from('plans')
+    .update(updates)
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error al actualizar plan:', error);
+    return { exitoso: false, error: error.message };
+  }
+
+  return { exitoso: true };
+};
+
+// Admin: Crear plan
+export const crearPlan = async (plan: Omit<Plan, 'id' | 'created_at' | 'updated_at'>): Promise<{ exitoso: boolean; error?: string; plan?: Plan }> => {
+  const { data, error } = await supabase
+    .from('plans')
+    .insert(plan)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error al crear plan:', error);
+    return { exitoso: false, error: error.message };
+  }
+
+  return { exitoso: true, plan: data };
+};
+
+// Admin: Eliminar plan
+export const eliminarPlan = async (id: string): Promise<{ exitoso: boolean; error?: string }> => {
+  const { error } = await supabase
+    .from('plans')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error al eliminar plan:', error);
+    return { exitoso: false, error: error.message };
+  }
+
+  return { exitoso: true };
 };
 
 // ============================================

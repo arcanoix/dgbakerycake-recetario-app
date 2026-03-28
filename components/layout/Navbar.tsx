@@ -28,7 +28,8 @@ const navItems: NavItem[] = [
 ];
 
 const adminItems: NavItem[] = [
-  { href: "/admin", label: "Admin", icon: "👑", requiredFeature: "menu_admin" },
+  { href: "/admin", label: "Panel Admin", icon: "👑", requiredFeature: "menu_admin" },
+  { href: "/admin/planes", label: "Planes", icon: "💎", requiredFeature: "menu_admin" },
 ];
 
 export const Navbar = () => {

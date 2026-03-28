@@ -1,11 +1,11 @@
 "use client";
 
 import { useSubscription } from "@/hooks/useSubscription";
-import { PLAN_FEATURES, PlanFeature, PlanFeatures, SubscriptionPlanName } from "@/types/subscription";
+import { PLAN_FEATURES, PlanFeature, PlanFeatures, SubscriptionPlanName, planToFeatures } from "@/types/subscription";
 import { useRole } from "./useRole";
 
 export const usePlanAccess = () => {
-  const { infoSuscripcion, cargando } = useSubscription();
+  const { infoSuscripcion, planes, cargando } = useSubscription();
   const { isAdmin } = useRole();
 
   const getPlanFeatures = (): PlanFeatures => {
@@ -18,6 +18,11 @@ export const usePlanAccess = () => {
 
     if (!infoSuscripcion) {
       return PLAN_FEATURES['free'];
+    }
+
+    const plan = planes.find(p => p.name === infoSuscripcion.plan_name);
+    if (plan) {
+      return planToFeatures(plan);
     }
 
     return PLAN_FEATURES[infoSuscripcion.plan_name] || PLAN_FEATURES['free'];

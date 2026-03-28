@@ -7,6 +7,7 @@ import {
   UserSubscription,
   PaymentRequest,
   UserSubscriptionInfo,
+  Plan,
 } from "@/types/subscription";
 import {
   obtenerPlanes,
@@ -18,7 +19,7 @@ import {
 
 export const useSubscription = () => {
   const { user } = useAuth();
-  const [planes, setPlanes] = useState<SubscriptionPlan[]>([]);
+  const [planes, setPlanes] = useState<Plan[]>([]);
   const [suscripcionActual, setSuscripcionActual] = useState<UserSubscription | null>(null);
   const [infoSuscripcion, setInfoSuscripcion] = useState<UserSubscriptionInfo | null>(null);
   const [solicitudes, setSolicitudes] = useState<PaymentRequest[]>([]);

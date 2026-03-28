@@ -10,6 +10,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
   SubscriptionPlan,
+  Plan,
   PaymentMethod,
   Currency,
   PaymentRequestFormData,
@@ -22,7 +23,7 @@ import {
 import { crearSolicitudPago } from "@/lib/subscriptionStorage";
 
 interface PaymentRequestFormProps {
-  plan: SubscriptionPlan;
+  plan: Plan | SubscriptionPlan;
   onSuccess?: () => void;
   onCancel?: () => void;
 }

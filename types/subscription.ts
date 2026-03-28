@@ -10,6 +10,88 @@ export type PaymentStatus = 'pending' | 'approved' | 'rejected';
 
 export type Currency = 'BS' | 'USD' | 'USDT';
 
+export type PlanFeature = 
+  | 'menu_dashboard'
+  | 'menu_productos'
+  | 'menu_recetas'
+  | 'menu_precios'
+  | 'menu_facturacion'
+  | 'menu_perfil'
+  | 'menu_configuracion'
+  | 'menu_unidades'
+  | 'menu_admin'
+  | 'crear_productos'
+  | 'crear_recetas'
+  | 'exportar_pdf'
+  | 'ver_analytics'
+  | 'exportar_datos'
+  | 'api_access'
+  | 'soporte_prioritario';
+
+export interface PlanFeatures {
+  menu_dashboard: boolean;
+  menu_productos: boolean;
+  menu_recetas: boolean;
+  menu_precios: boolean;
+  menu_facturacion: boolean;
+  menu_perfil: boolean;
+  menu_configuracion: boolean;
+  menu_unidades: boolean;
+  menu_admin: boolean;
+  crear_productos: boolean;
+  crear_recetas: boolean;
+  exportar_pdf: boolean;
+  ver_analytics: boolean;
+  exportar_datos: boolean;
+  api_access: boolean;
+  soporte_prioritario: boolean;
+  max_productos: number;
+  max_recetas: number;
+}
+
+// Plan desde la base de datos
+export interface Plan {
+  id: string;
+  name: SubscriptionPlanName;
+  display_name: string;
+  description?: string;
+  price_usd: number;
+  price_bs: number;
+  price_period: string;
+  max_productos: number;
+  max_recetas: number;
+  features: Record<string, any>;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+// Convertir Plan de BD a PlanFeatures
+export const planToFeatures = (plan: Plan): PlanFeatures => {
+  const features = plan.features || {};
+  return {
+    menu_dashboard: true,
+    menu_productos: true,
+    menu_recetas: true,
+    menu_precios: true,
+    menu_facturacion: true,
+    menu_perfil: true,
+    menu_configuracion: true,
+    menu_unidades: true,
+    menu_admin: plan.name === 'empresarial',
+    crear_productos: true,
+    crear_recetas: true,
+    exportar_pdf: features.exportar_pdf ?? false,
+    ver_analytics: features.ver_analytics ?? false,
+    exportar_datos: features.exportar_datos ?? false,
+    api_access: features.api_access ?? false,
+    soporte_prioritario: features.soporte_prioritario ?? false,
+    max_productos: plan.max_productos,
+    max_recetas: plan.max_recetas,
+  };
+};
+
 export interface SubscriptionPlan {
   id: string;
   name: SubscriptionPlanName;
@@ -159,49 +241,7 @@ export const PLAN_LIMITS: Record<SubscriptionPlanName, { maxProductos: number; m
   },
 };
 
-// ============================================
-// PLAN FEATURES - Control de acceso por plan
-// ============================================
-
-export type PlanFeature = 
-  | 'menu_dashboard'
-  | 'menu_productos'
-  | 'menu_recetas'
-  | 'menu_precios'
-  | 'menu_facturacion'
-  | 'menu_perfil'
-  | 'menu_configuracion'
-  | 'menu_unidades'
-  | 'menu_admin'
-  | 'crear_productos'
-  | 'crear_recetas'
-  | 'exportar_pdf'
-  | 'ver_analytics'
-  | 'exportar_datos'
-  | 'api_access'
-  | 'soporte_prioritario';
-
-export interface PlanFeatures {
-  menu_dashboard: boolean;
-  menu_productos: boolean;
-  menu_recetas: boolean;
-  menu_precios: boolean;
-  menu_facturacion: boolean;
-  menu_perfil: boolean;
-  menu_configuracion: boolean;
-  menu_unidades: boolean;
-  menu_admin: boolean;
-  crear_productos: boolean;
-  crear_recetas: boolean;
-  exportar_pdf: boolean;
-  ver_analytics: boolean;
-  exportar_datos: boolean;
-  api_access: boolean;
-  soporte_prioritario: boolean;
-  max_productos: number;
-  max_recetas: number;
-}
-
+// Legacy PLAN_FEATURES - still used as fallback when DB is not available
 export const PLAN_FEATURES: Record<SubscriptionPlanName, PlanFeatures> = {
   free: {
     menu_dashboard: true,

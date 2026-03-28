@@ -1,14 +1,14 @@
 "use client";
 
-import { SubscriptionPlan } from "@/types/subscription";
+import { Plan, SubscriptionPlan } from "@/types/subscription";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { formatearMoneda } from "@/lib/constants";
 
 interface PricingCardProps {
-  plan: SubscriptionPlan;
+  plan: Plan | SubscriptionPlan;
   isCurrentPlan?: boolean;
-  onSelect: (plan: SubscriptionPlan) => void;
+  onSelect: (plan: any) => void;
 }
 
 export const PricingCard = ({ plan, isCurrentPlan, onSelect }: PricingCardProps) => {

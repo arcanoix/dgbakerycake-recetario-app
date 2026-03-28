@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PaymentRequestForm } from "@/components/subscription/PaymentRequestForm";
-import { SubscriptionPlan } from "@/types/subscription";
+import { Plan } from "@/types/subscription";
 import { obtenerPlanPorId } from "@/lib/subscriptionStorage";
 
 function PaymentContent() {
@@ -12,7 +12,7 @@ function PaymentContent() {
   const router = useRouter();
   const planId = searchParams.get("plan");
   
-  const [plan, setPlan] = useState<SubscriptionPlan | null>(null);
+  const [plan, setPlan] = useState<Plan | null>(null);
   const [cargando, setCargando] = useState(true);
 
   useEffect(() => {

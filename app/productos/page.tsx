@@ -7,12 +7,13 @@ import { useProductos } from "@/hooks/useProductos";
 import { usePlanAccess } from "@/hooks/usePlanAccess";
 import { ProductoForm } from "@/components/productos/ProductoForm";
 import { ProductoList } from "@/components/productos/ProductoList";
+import { ImportarProductosModal } from "@/components/productos/ImportarProductosModal";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "motion/react";
-import { Package, AlertCircle, Lock, Crown, ArrowRight } from "lucide-react";
+import { Package, AlertCircle, Lock, ArrowRight, Upload } from "lucide-react";
 
 export default function ProductosPage() {
   const router = useRouter();
@@ -24,11 +25,13 @@ export default function ProductosPage() {
     actualizarProducto,
     eliminar,
     buscarProductos,
+    importarProductosMasivo,
   } = useProductos();
 
   const { getCurrentCount, getPlanDisplayName, getPlanName } = usePlanAccess();
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [mostrarImportacion, setMostrarImportacion] = useState(false);
   const [productoEditando, setProductoEditando] = useState<Producto | undefined>();
   const [terminoBusqueda, setTerminoBusqueda] = useState("");
 
@@ -61,6 +64,7 @@ export default function ProductosPage() {
 
   const handleCancel = () => {
     setMostrarFormulario(false);
+    setMostrarImportacion(false);
     setProductoEditando(undefined);
   };
 
@@ -71,6 +75,16 @@ export default function ProductosPage() {
     }
     setProductoEditando(undefined);
     setMostrarFormulario(true);
+  };
+
+  const handleImportar = () => {
+    if (!canCreate) {
+      router.push('/pricing');
+      return;
+    }
+    setMostrarFormulario(false);
+    setProductoEditando(undefined);
+    setMostrarImportacion(true);
   };
 
   if (cargando) {
@@ -103,21 +117,33 @@ export default function ProductosPage() {
               Gestiona los ingredientes y materiales para tus recetas
             </p>
           </div>
-          <Button 
-            onClick={handleNuevo} 
-            size="lg"
-            disabled={!canCreate}
-            className={`gap-2 ${canCreate ? 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 border-0' : ''}`}
-          >
-            {canCreate ? (
-              <> + Nuevo Producto</>
-            ) : (
-              <>
-                <Lock className="w-4 h-4" />
-                Límite alcanzado
-              </>
-            )}
-          </Button>
+          <div className="flex flex-wrap gap-3">
+            <Button 
+              onClick={handleNuevo} 
+              size="lg"
+              disabled={!canCreate}
+              className={`gap-2 ${canCreate ? 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 border-0' : ''}`}
+            >
+              {canCreate ? (
+                <> + Nuevo Producto</>
+              ) : (
+                <>
+                  <Lock className="w-4 h-4" />
+                  Límite alcanzado
+                </>
+              )}
+            </Button>
+            <Button
+              onClick={handleImportar}
+              size="lg"
+              variant="outline"
+              disabled={!canCreate}
+              className="gap-2"
+            >
+              <Upload className="w-4 h-4" />
+              Importar Excel/CSV
+            </Button>
+          </div>
         </motion.div>
 
         {isLimited && (
@@ -167,7 +193,15 @@ export default function ProductosPage() {
           />
         )}
 
-        {!mostrarFormulario && (
+        {mostrarImportacion && (
+          <ImportarProductosModal
+            onImportar={importarProductosMasivo}
+            onCerrar={handleCancel}
+            canCreate={canCreate}
+          />
+        )}
+
+        {!mostrarFormulario && !mostrarImportacion && (
           <div className="flex gap-4">
             <Input
               placeholder="Buscar productos por nombre, categoría o proveedor..."
@@ -183,7 +217,7 @@ export default function ProductosPage() {
           </div>
         )}
 
-        {!mostrarFormulario && productos.length > 0 && (
+        {!mostrarFormulario && !mostrarImportacion && productos.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card>
               <CardContent className="py-4">
@@ -208,7 +242,7 @@ export default function ProductosPage() {
           </div>
         )}
 
-        {!mostrarFormulario && (
+        {!mostrarFormulario && !mostrarImportacion && (
           <ProductoList
             productos={productosFiltrados}
             onEdit={handleEdit}

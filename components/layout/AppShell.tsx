@@ -3,10 +3,6 @@
 import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/layout/Navbar";
 
-/**
- * AppShell: wraps the app content with conditional Navbar and footer.
- * Auth routes (/auth/*) get a clean layout without any chrome.
- */
 export const AppShell = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const isAuthRoute = pathname.startsWith("/auth/");
@@ -18,12 +14,11 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen">{children}</main>
-      <footer className="bg-white border-t border-gray-200 py-6 mt-12">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>© 2026 DGcost - Sistema de Gestión de Costos de Recetas</p>
+      <main className="min-h-screen pt-16 lg:pt-0">
+        <div className="p-4 lg:p-8">
+          {children}
         </div>
-      </footer>
+      </main>
     </>
   );
 };

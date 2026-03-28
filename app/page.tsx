@@ -99,14 +99,14 @@ function Dashboard() {
   const costoTotalRecetas = recetas.reduce((sum, r) => sum + r.costoTotal, 0);
 
   return (
-    <main className="min-h-screen p-8 bg-gray-50">
+    <main className="min-h-screen">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">
-            🍰 Dashboard - DGcost
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Dashboard
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-gray-500">
             Resumen general de tu negocio de repostería
           </p>
         </div>

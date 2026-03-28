@@ -148,7 +148,7 @@ export const LandingPage = () => {
               </span>
             </Link>
             <div className="flex items-center gap-4">
-              <Link href="/auth/login" className="text-gray-600 hover:text-gray-900 font-medium">
+              <Link href="/auth/login" className="text-gray-700 hover:text-gray-900 font-medium">
                 Iniciar sesión
               </Link>
               <Link href="/auth/register">
@@ -212,7 +212,7 @@ export const LandingPage = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="text-xl md:text-2xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed"
+              className="text-xl md:text-2xl text-gray-700 mb-10 max-w-2xl mx-auto leading-relaxed"
             >
               DGcost calcula automáticamente el costo de tus recetas.
               Deja de adivinar precios y empieza a ganar más con cada venta.
@@ -269,7 +269,7 @@ export const LandingPage = () => {
                   <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
                     {stat.value}
                   </div>
-                  <div className="text-gray-500 text-sm">{stat.label}</div>
+                  <div className="text-gray-700 text-sm">{stat.label}</div>
                 </motion.div>
               ))}
             </motion.div>
@@ -285,7 +285,7 @@ export const LandingPage = () => {
               <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
                 ¿Te suena conocido?
               </h2>
-              <p className="text-xl text-gray-600 text-center mb-12">
+              <p className="text-xl text-gray-700 text-center mb-12">
                 Estos son los problemas que enfrentan los reposteros cada día
               </p>
 
@@ -308,7 +308,7 @@ export const LandingPage = () => {
                           <span className="text-2xl">{problem.emoji}</span>
                           <div>
                             <h3 className="font-bold text-gray-900 mb-2">{problem.title}</h3>
-                            <p className="text-gray-600">{problem.desc}</p>
+                            <p className="text-gray-700">{problem.desc}</p>
                           </div>
                         </div>
                       </CardContent>
@@ -328,7 +328,7 @@ export const LandingPage = () => {
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
               DGcost lo resuelve todo
             </h2>
-            <p className="text-xl text-gray-600 text-center mb-16 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-700 text-center mb-16 max-w-2xl mx-auto">
               La herramienta que todo repostero necesita
             </p>
 
@@ -350,7 +350,7 @@ export const LandingPage = () => {
                         {feature.icon}
                       </motion.div>
                       <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-                      <p className="text-gray-600">{feature.description}</p>
+                      <p className="text-gray-700">{feature.description}</p>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -367,7 +367,7 @@ export const LandingPage = () => {
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
               Lo que dicen nuestros usuarios
             </h2>
-            <p className="text-xl text-gray-600 text-center mb-16">
+            <p className="text-xl text-gray-700 text-center mb-16">
               Reposteros como tú ya están mejorando sus negocios
             </p>
 
@@ -391,15 +391,15 @@ export const LandingPage = () => {
                         />
                         <div>
                           <h4 className="font-bold text-gray-900">{testimonial.name}</h4>
-                          <p className="text-gray-500 text-sm">{testimonial.role}</p>
+                          <p className="text-gray-700 text-sm">{testimonial.role}</p>
                         </div>
                       </div>
-                      <p className="text-gray-600 mb-6 italic">"{testimonial.quote}"</p>
+                      <p className="text-gray-700 mb-6 italic">"{testimonial.quote}"</p>
                       <div className="flex items-baseline gap-2">
                         <span className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
                           {testimonial.metric}
                         </span>
-                        <span className="text-gray-500 text-sm">{testimonial.metricLabel}</span>
+                        <span className="text-gray-700 text-sm">{testimonial.metricLabel}</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -417,7 +417,7 @@ export const LandingPage = () => {
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
               Planes para cada etapa
             </h2>
-            <p className="text-xl text-gray-600 text-center mb-16">
+            <p className="text-xl text-gray-700 text-center mb-16">
               Empieza gratis, escala cuando quieras
             </p>
 
@@ -442,10 +442,10 @@ export const LandingPage = () => {
                     )}
                     <CardContent className="p-8">
                       <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
-                      <p className="text-gray-500 mb-6">{i === 0 ? 'Para empezar' : i === 1 ? 'Para negocios en crecimiento' : 'Para negocios establecidos'}</p>
+                      <p className="text-gray-700 mb-6">{i === 0 ? 'Para empezar' : i === 1 ? 'Para negocios en crecimiento' : 'Para negocios establecidos'}</p>
                       <div className="mb-6">
                         <span className="text-4xl font-bold">{plan.price}</span>
-                        <span className="text-gray-500">{plan.period}</span>
+                        <span className="text-gray-700">{plan.period}</span>
                       </div>
                       <ul className="space-y-3 mb-8">
                         {plan.features.map((feat, j) => (
@@ -479,7 +479,7 @@ export const LandingPage = () => {
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
               Preguntas Frecuentes
             </h2>
-            <p className="text-xl text-gray-600 text-center mb-16">
+            <p className="text-xl text-gray-700 text-center mb-16">
               Todo lo que necesitas saber
             </p>
 
@@ -515,7 +515,7 @@ export const LandingPage = () => {
                     transition={{ duration: 0.3 }}
                     className="overflow-hidden"
                   >
-                    <div className="px-6 pb-4 text-gray-600">
+                    <div className="px-6 pb-4 text-gray-700">
                       {faq.answer}
                     </div>
                   </motion.div>

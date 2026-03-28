@@ -12,9 +12,9 @@ export const LandingPage = () => {
       <section className="container mx-auto px-4 py-20 text-center">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-center mb-6">
-            <Logo size="lg" showText={false} href={undefined} />
+            <Logo size="lg" variant="full" href={undefined} />
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <h1 className="sr-only">
             DGcost
           </h1>
           <p className="text-2xl md:text-3xl font-semibold text-gray-700 mb-4">

@@ -158,3 +158,129 @@ export const PLAN_LIMITS: Record<SubscriptionPlanName, { maxProductos: number; m
     maxRecetas: -1,   // Ilimitado
   },
 };
+
+// ============================================
+// PLAN FEATURES - Control de acceso por plan
+// ============================================
+
+export type PlanFeature = 
+  | 'menu_dashboard'
+  | 'menu_productos'
+  | 'menu_recetas'
+  | 'menu_precios'
+  | 'menu_facturacion'
+  | 'menu_perfil'
+  | 'menu_configuracion'
+  | 'menu_unidades'
+  | 'menu_admin'
+  | 'crear_productos'
+  | 'crear_recetas'
+  | 'exportar_pdf'
+  | 'ver_analytics'
+  | 'exportar_datos'
+  | 'api_access'
+  | 'soporte_prioritario';
+
+export interface PlanFeatures {
+  menu_dashboard: boolean;
+  menu_productos: boolean;
+  menu_recetas: boolean;
+  menu_precios: boolean;
+  menu_facturacion: boolean;
+  menu_perfil: boolean;
+  menu_configuracion: boolean;
+  menu_unidades: boolean;
+  menu_admin: boolean;
+  crear_productos: boolean;
+  crear_recetas: boolean;
+  exportar_pdf: boolean;
+  ver_analytics: boolean;
+  exportar_datos: boolean;
+  api_access: boolean;
+  soporte_prioritario: boolean;
+  max_productos: number;
+  max_recetas: number;
+}
+
+export const PLAN_FEATURES: Record<SubscriptionPlanName, PlanFeatures> = {
+  free: {
+    menu_dashboard: true,
+    menu_productos: true,
+    menu_recetas: true,
+    menu_precios: true,
+    menu_facturacion: true,
+    menu_perfil: true,
+    menu_configuracion: true,
+    menu_unidades: true,
+    menu_admin: false,
+    crear_productos: true,
+    crear_recetas: true,
+    exportar_pdf: false,
+    ver_analytics: false,
+    exportar_datos: false,
+    api_access: false,
+    soporte_prioritario: false,
+    max_productos: 50,
+    max_recetas: 20,
+  },
+  basico: {
+    menu_dashboard: true,
+    menu_productos: true,
+    menu_recetas: true,
+    menu_precios: true,
+    menu_facturacion: true,
+    menu_perfil: true,
+    menu_configuracion: true,
+    menu_unidades: true,
+    menu_admin: false,
+    crear_productos: true,
+    crear_recetas: true,
+    exportar_pdf: true,
+    ver_analytics: true,
+    exportar_datos: false,
+    api_access: false,
+    soporte_prioritario: false,
+    max_productos: 200,
+    max_recetas: 100,
+  },
+  profesional: {
+    menu_dashboard: true,
+    menu_productos: true,
+    menu_recetas: true,
+    menu_precios: true,
+    menu_facturacion: true,
+    menu_perfil: true,
+    menu_configuracion: true,
+    menu_unidades: true,
+    menu_admin: false,
+    crear_productos: true,
+    crear_recetas: true,
+    exportar_pdf: true,
+    ver_analytics: true,
+    exportar_datos: true,
+    api_access: false,
+    soporte_prioritario: true,
+    max_productos: 1000,
+    max_recetas: 500,
+  },
+  empresarial: {
+    menu_dashboard: true,
+    menu_productos: true,
+    menu_recetas: true,
+    menu_precios: true,
+    menu_facturacion: true,
+    menu_perfil: true,
+    menu_configuracion: true,
+    menu_unidades: true,
+    menu_admin: true,
+    crear_productos: true,
+    crear_recetas: true,
+    exportar_pdf: true,
+    ver_analytics: true,
+    exportar_datos: true,
+    api_access: true,
+    soporte_prioritario: true,
+    max_productos: -1,
+    max_recetas: -1,
+  },
+};

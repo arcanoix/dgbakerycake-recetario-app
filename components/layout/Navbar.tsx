@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRole } from "@/hooks/useRole";
+import { usePlanAccess } from "@/hooks/usePlanAccess";
 import { Button } from "@/components/ui/button";
 import { ThemeSwitcher } from "@/components/layout/ThemeSwitcher";
 
@@ -12,21 +13,22 @@ interface NavItem {
   href: string;
   label: string;
   icon: string;
+  requiredFeature?: string;
 }
 
 const navItems: NavItem[] = [
-  { href: "/dashboard", label: "Dashboard", icon: "📊" },
-  { href: "/productos", label: "Productos", icon: "📦" },
-  { href: "/recetas", label: "Recetas", icon: "📝" },
-  { href: "/pricing", label: "Planes", icon: "💎" },
-  { href: "/billing", label: "Facturación", icon: "💳" },
-  { href: "/perfil", label: "Perfil", icon: "👤" },
-  { href: "/configuracion", label: "Configuración", icon: "⚙️" },
-  { href: "/unidades", label: "Unidades", icon: "📏" },
+  { href: "/dashboard", label: "Dashboard", icon: "📊", requiredFeature: "menu_dashboard" },
+  { href: "/productos", label: "Productos", icon: "📦", requiredFeature: "menu_productos" },
+  { href: "/recetas", label: "Recetas", icon: "📝", requiredFeature: "menu_recetas" },
+  { href: "/pricing", label: "Planes", icon: "💎", requiredFeature: "menu_precios" },
+  { href: "/billing", label: "Facturación", icon: "💳", requiredFeature: "menu_facturacion" },
+  { href: "/perfil", label: "Perfil", icon: "👤", requiredFeature: "menu_perfil" },
+  { href: "/configuracion", label: "Configuración", icon: "⚙️", requiredFeature: "menu_configuracion" },
+  { href: "/unidades", label: "Unidades", icon: "📏", requiredFeature: "menu_unidades" },
 ];
 
 const adminItems: NavItem[] = [
-  { href: "/admin", label: "Admin", icon: "👑" },
+  { href: "/admin", label: "Admin", icon: "👑", requiredFeature: "menu_admin" },
 ];
 
 export const Navbar = () => {
@@ -34,11 +36,19 @@ export const Navbar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, signOut } = useAuth();
   const { isAdmin } = useRole();
+  const { canAccess, getPlanDisplayName } = usePlanAccess();
 
-  // Don't show navbar for auth routes or if user is not logged in
   if (pathname.startsWith('/auth/') || !user) {
     return null;
   }
+
+  const visibleNavItems = navItems.filter(
+    (item) => !item.requiredFeature || canAccess(item.requiredFeature as any)
+  );
+
+  const visibleAdminItems = adminItems.filter(
+    (item) => !item.requiredFeature || canAccess(item.requiredFeature as any)
+  );
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -47,7 +57,6 @@ export const Navbar = () => {
 
   return (
     <>
-      {/* Mobile overlay */}
       {sidebarOpen && (
         <div 
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
@@ -55,12 +64,10 @@ export const Navbar = () => {
         />
       )}
 
-      {/* Sidebar */}
       <aside className={`
         fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 lg:translate-x-0
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        {/* Logo */}
         <div className="h-16 flex items-center px-6 border-b border-gray-100">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-2xl">🧁</span>
@@ -70,9 +77,8 @@ export const Navbar = () => {
           </Link>
         </div>
 
-        {/* Navigation */}
         <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100vh-8rem)]">
-          {navItems.map((item) => (
+          {visibleNavItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -90,14 +96,14 @@ export const Navbar = () => {
             </Link>
           ))}
 
-          {isAdmin && (
+          {(isAdmin || visibleAdminItems.length > 0) && (
             <>
               <div className="pt-4 pb-2">
                 <p className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                   Administración
                 </p>
               </div>
-              {adminItems.map((item) => (
+              {(isAdmin ? adminItems : visibleAdminItems).map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -118,7 +124,6 @@ export const Navbar = () => {
           )}
         </nav>
 
-        {/* User section */}
         {user && (
           <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
             <div className="flex items-center justify-between mb-3">
@@ -131,7 +136,7 @@ export const Navbar = () => {
                     {user.email?.split('@')[0]}
                   </p>
                   <p className="text-xs text-gray-500 truncate">
-                    {user.email}
+                    {getPlanDisplayName()}
                   </p>
                 </div>
               </div>
@@ -149,7 +154,6 @@ export const Navbar = () => {
         )}
       </aside>
 
-      {/* Header for mobile */}
       <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-30 flex items-center px-4">
         <button
           onClick={() => setSidebarOpen(true)}
@@ -167,7 +171,6 @@ export const Navbar = () => {
         </Link>
       </header>
 
-      {/* Spacer for desktop */}
       <div className="hidden lg:block lg:pl-64" />
     </>
   );

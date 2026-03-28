@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Receta, MaterialReceta } from "@/types";
 import { useRecetas } from "@/hooks/useRecetas";
 import { useProductos } from "@/hooks/useProductos";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
+import { usePlanAccess } from "@/hooks/usePlanAccess";
 import { MaterialSelector } from "@/components/recetas/MaterialSelector";
 import { DesgloseCostos } from "@/components/recetas/DesgloseCostos";
 import { RecetaList } from "@/components/recetas/RecetaList";
@@ -17,11 +19,15 @@ import { Select } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CATEGORIAS_RECETAS } from "@/lib/constants";
 import { generarDesgloseCostos } from "@/lib/calculations";
+import { motion } from "motion/react";
+import { BookOpen, AlertCircle, Lock, ArrowRight } from "lucide-react";
 
 export default function RecetasPage() {
+  const router = useRouter();
   const { recetas, cargando, error, crearReceta, actualizarReceta, eliminar, agregarMaterial } = useRecetas();
   const { productos } = useProductos();
   const { configuracion } = useConfiguracion();
+  const { getCurrentCount, getPlanDisplayName, getPlanName } = usePlanAccess();
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [recetaEditando, setRecetaEditando] = useState<Receta | undefined>();
@@ -106,25 +112,77 @@ export default function RecetasPage() {
 
   if (cargando) return <div className="container mx-auto p-6">Cargando...</div>;
 
-  // Validar que existan productos antes de permitir crear recetas
   const hayProductos = productos.length > 0;
+  const limitInfo = getCurrentCount('recetas', recetas.length);
+  const canCreate = limitInfo.canCreate && getPlanName() !== 'free';
+  const isLimited = getPlanName() === 'free' || getPlanName() === 'basico';
+
+  const handleNuevo = () => {
+    if (!canCreate) {
+      router.push('/pricing');
+      return;
+    }
+    setMostrarFormulario(!mostrarFormulario);
+  };
 
   return (
     <ProtectedRoute>
       <div className="container mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+      >
         <div>
-          <h1 className="text-3xl font-bold">Recetas</h1>
-          <p className="text-muted-foreground">Gestiona tus recetas y calcula costos</p>
+          <h1 className="text-3xl font-bold flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+              <BookOpen className="w-5 h-5 text-white" />
+            </div>
+            Recetas
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Gestiona tus recetas y calcula costos</p>
         </div>
         <Button 
-          onClick={() => setMostrarFormulario(!mostrarFormulario)} 
+          onClick={handleNuevo}
           size="lg"
           disabled={!hayProductos && !mostrarFormulario}
+          className={`gap-2 ${canCreate ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 border-0' : ''}`}
         >
+          {!canCreate && <Lock className="w-4 h-4" />}
           {mostrarFormulario ? "Cancelar" : "+ Nueva Receta"}
         </Button>
-      </div>
+      </motion.div>
+
+      {isLimited && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
+          <Card className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30">
+            <CardContent className="py-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <AlertCircle className="w-5 h-5 text-amber-500" />
+                <div>
+                  <p className="font-medium text-amber-900 dark:text-amber-200">
+                    Plan: {getPlanDisplayName()} - Límite de {limitInfo.limit} recetas
+                  </p>
+                  <p className="text-sm text-amber-700 dark:text-amber-300">
+                    Has usado {recetas.length} de {limitInfo.limit} recetas ({limitInfo.remaining} restantes)
+                  </p>
+                </div>
+              </div>
+              <Button 
+                variant="outline" 
+                onClick={() => router.push('/pricing')}
+                className="gap-2"
+              >
+                Actualizar plan
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       {!hayProductos && (
         <Card className="border-amber-500 bg-amber-50">

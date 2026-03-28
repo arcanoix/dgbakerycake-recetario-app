@@ -1,16 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Producto, ProductoFormData } from "@/types";
 import { useProductos } from "@/hooks/useProductos";
+import { usePlanAccess } from "@/hooks/usePlanAccess";
 import { ProductoForm } from "@/components/productos/ProductoForm";
 import { ProductoList } from "@/components/productos/ProductoList";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { motion } from "motion/react";
+import { Package, AlertCircle, Lock, Crown, ArrowRight } from "lucide-react";
 
 export default function ProductosPage() {
+  const router = useRouter();
   const {
     productos,
     cargando,
@@ -21,6 +26,8 @@ export default function ProductosPage() {
     buscarProductos,
   } = useProductos();
 
+  const { getCurrentCount, getPlanDisplayName, getPlanName } = usePlanAccess();
+
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [productoEditando, setProductoEditando] = useState<Producto | undefined>();
   const [terminoBusqueda, setTerminoBusqueda] = useState("");
@@ -28,6 +35,9 @@ export default function ProductosPage() {
   const productosFiltrados = terminoBusqueda
     ? buscarProductos(terminoBusqueda)
     : productos;
+
+  const limitInfo = getCurrentCount('productos', productos.length);
+  const canCreate = limitInfo.canCreate && getPlanName() !== 'free';
 
   const handleSubmit = async (datos: ProductoFormData): Promise<void> => {
     let exito = false;
@@ -55,6 +65,10 @@ export default function ProductosPage() {
   };
 
   const handleNuevo = () => {
+    if (!canCreate) {
+      router.push('/pricing');
+      return;
+    }
     setProductoEditando(undefined);
     setMostrarFormulario(true);
   };
@@ -67,93 +81,142 @@ export default function ProductosPage() {
     );
   }
 
+  const planName = getPlanName();
+  const isLimited = planName === 'free' || planName === 'basico';
+
   return (
     <ProtectedRoute>
       <div className="container mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold">Productos e Insumos</h1>
-          <p className="text-muted-foreground">
-            Gestiona los ingredientes y materiales para tus recetas
-          </p>
-        </div>
-        <Button onClick={handleNuevo} size="lg">
-          + Nuevo Producto
-        </Button>
-      </div>
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+        >
+          <div>
+            <h1 className="text-3xl font-bold flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                <Package className="w-5 h-5 text-white" />
+              </div>
+              Productos e Insumos
+            </h1>
+            <p className="text-gray-500 dark:text-gray-400 mt-1">
+              Gestiona los ingredientes y materiales para tus recetas
+            </p>
+          </div>
+          <Button 
+            onClick={handleNuevo} 
+            size="lg"
+            disabled={!canCreate}
+            className={`gap-2 ${canCreate ? 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 border-0' : ''}`}
+          >
+            {canCreate ? (
+              <> + Nuevo Producto</>
+            ) : (
+              <>
+                <Lock className="w-4 h-4" />
+                Límite alcanzado
+              </>
+            )}
+          </Button>
+        </motion.div>
 
-      {/* Error */}
-      {error && (
-        <Card className="border-destructive">
-          <CardContent className="py-4">
-            <p className="text-destructive">{error}</p>
-          </CardContent>
-        </Card>
-      )}
+        {isLimited && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
+            <Card className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30">
+              <CardContent className="py-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <AlertCircle className="w-5 h-5 text-amber-500" />
+                  <div>
+                    <p className="font-medium text-amber-900 dark:text-amber-200">
+                      Plan: {getPlanDisplayName()} - Límite de {limitInfo.limit} productos
+                    </p>
+                    <p className="text-sm text-amber-700 dark:text-amber-300">
+                      Has usado {productos.length} de {limitInfo.limit} productos ({limitInfo.remaining} restantes)
+                    </p>
+                  </div>
+                </div>
+                <Button 
+                  variant="outline" 
+                  onClick={() => router.push('/pricing')}
+                  className="gap-2"
+                >
+                  Actualizar plan
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
 
-      {/* Formulario */}
-      {mostrarFormulario && (
-        <ProductoForm
-          producto={productoEditando}
-          onSubmit={handleSubmit}
-          onCancel={handleCancel}
-        />
-      )}
+        {error && (
+          <Card className="border-red-200 dark:border-red-800">
+            <CardContent className="py-4">
+              <p className="text-red-600 dark:text-red-400">{error}</p>
+            </CardContent>
+          </Card>
+        )}
 
-      {/* Búsqueda */}
-      {!mostrarFormulario && (
-        <div className="flex gap-4">
-          <Input
-            placeholder="Buscar productos por nombre, categoría o proveedor..."
-            value={terminoBusqueda}
-            onChange={(e) => setTerminoBusqueda(e.target.value)}
-            className="max-w-md"
+        {mostrarFormulario && (
+          <ProductoForm
+            producto={productoEditando}
+            onSubmit={handleSubmit}
+            onCancel={handleCancel}
           />
-          {terminoBusqueda && (
-            <Button variant="outline" onClick={() => setTerminoBusqueda("")}>
-              Limpiar
-            </Button>
-          )}
-        </div>
-      )}
+        )}
 
-      {/* Estadísticas */}
-      {!mostrarFormulario && productos.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card>
-            <CardContent className="py-4">
-              <p className="text-sm text-muted-foreground">Total de Productos</p>
-              <p className="text-2xl font-bold">{productos.length}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="py-4">
-              <p className="text-sm text-muted-foreground">Resultados</p>
-              <p className="text-2xl font-bold">{productosFiltrados.length}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="py-4">
-              <p className="text-sm text-muted-foreground">Categorías</p>
-              <p className="text-2xl font-bold">
-                {new Set(productos.map((p) => p.categoria).filter(Boolean)).size}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+        {!mostrarFormulario && (
+          <div className="flex gap-4">
+            <Input
+              placeholder="Buscar productos por nombre, categoría o proveedor..."
+              value={terminoBusqueda}
+              onChange={(e) => setTerminoBusqueda(e.target.value)}
+              className="max-w-md"
+            />
+            {terminoBusqueda && (
+              <Button variant="outline" onClick={() => setTerminoBusqueda("")}>
+                Limpiar
+              </Button>
+            )}
+          </div>
+        )}
 
-      {/* Lista de Productos */}
-      {!mostrarFormulario && (
-        <ProductoList
-          productos={productosFiltrados}
-          onEdit={handleEdit}
-          onDelete={async (id: string) => {
-            await eliminar(id);
-          }}
-        />
-      )}
+        {!mostrarFormulario && productos.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card>
+              <CardContent className="py-4">
+                <p className="text-sm text-gray-500 dark:text-gray-400">Total de Productos</p>
+                <p className="text-2xl font-bold">{productos.length}</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="py-4">
+                <p className="text-sm text-gray-500 dark:text-gray-400">Resultados</p>
+                <p className="text-2xl font-bold">{productosFiltrados.length}</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="py-4">
+                <p className="text-sm text-gray-500 dark:text-gray-400">Categorías</p>
+                <p className="text-2xl font-bold">
+                  {new Set(productos.map((p) => p.categoria).filter(Boolean)).size}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {!mostrarFormulario && (
+          <ProductoList
+            productos={productosFiltrados}
+            onEdit={handleEdit}
+            onDelete={async (id: string) => {
+              await eliminar(id);
+            }}
+          />
+        )}
       </div>
     </ProtectedRoute>
   );

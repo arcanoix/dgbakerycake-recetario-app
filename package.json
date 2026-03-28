@@ -20,6 +20,7 @@
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
     "lucide-react": "^0.575.0",
+    "motion": "^12.38.0",
     "next": "^16.1.7",
     "next-themes": "latest",
     "react": "^19.0.0",

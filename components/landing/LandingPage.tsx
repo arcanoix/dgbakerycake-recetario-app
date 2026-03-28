@@ -349,7 +349,7 @@ export const LandingPage = () => {
                       >
                         {feature.icon}
                       </motion.div>
-                      <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
+                      <h3 className="text-xl font-bold mb-3 text-gray-900">{feature.title}</h3>
                       <p className="text-gray-700">{feature.description}</p>
                     </CardContent>
                   </Card>
@@ -441,17 +441,17 @@ export const LandingPage = () => {
                       </div>
                     )}
                     <CardContent className="p-8">
-                      <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
+                      <h3 className="text-xl font-bold mb-2 text-gray-900">{plan.name}</h3>
                       <p className="text-gray-700 mb-6">{i === 0 ? 'Para empezar' : i === 1 ? 'Para negocios en crecimiento' : 'Para negocios establecidos'}</p>
                       <div className="mb-6">
-                        <span className="text-4xl font-bold">{plan.price}</span>
+                        <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
                         <span className="text-gray-700">{plan.period}</span>
                       </div>
                       <ul className="space-y-3 mb-8">
                         {plan.features.map((feat, j) => (
                           <li key={j} className="flex items-center gap-2">
                             <span className="text-green-500">✓</span>
-                            <span>{feat}</span>
+                            <span className="text-gray-700">{feat}</span>
                           </li>
                         ))}
                       </ul>
@@ -570,7 +570,7 @@ export const LandingPage = () => {
             </div>
 
             <div>
-              <h4 className="font-bold mb-4">Producto</h4>
+              <h4 className="font-bold mb-4 text-white">Producto</h4>
               <ul className="space-y-2 text-gray-400">
                 <li><a href="#" className="hover:text-white">Características</a></li>
                 <li><a href="#" className="hover:text-white">Precios</a></li>
@@ -579,7 +579,7 @@ export const LandingPage = () => {
             </div>
 
             <div>
-              <h4 className="font-bold mb-4">Empresa</h4>
+              <h4 className="font-bold mb-4 text-white">Empresa</h4>
               <ul className="space-y-2 text-gray-400">
                 <li><a href="#" className="hover:text-white">Sobre nosotros</a></li>
                 <li><a href="#" className="hover:text-white">Blog</a></li>
@@ -588,7 +588,7 @@ export const LandingPage = () => {
             </div>
 
             <div>
-              <h4 className="font-bold mb-4">Legal</h4>
+              <h4 className="font-bold mb-4 text-white">Legal</h4>
               <ul className="space-y-2 text-gray-400">
                 <li><a href="#" className="hover:text-white">Términos</a></li>
                 <li><a href="#" className="hover:text-white">Privacidad</a></li>

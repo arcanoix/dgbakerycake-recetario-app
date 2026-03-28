@@ -1,31 +1,37 @@
 "use client";
 
-import { useState } from "react";
+
 import { useRouter } from "next/navigation";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PricingCard } from "@/components/subscription/PricingCard";
 import { useSubscription } from "@/hooks/useSubscription";
 import { SubscriptionPlan } from "@/types/subscription";
 import { Card, CardContent } from "@/components/ui/card";
+import { motion } from "motion/react";
+import { Crown, CreditCard, Wallet, Globe, Check, Sparkles } from "lucide-react";
 
 export default function PricingPage() {
   const router = useRouter();
   const { planes, infoSuscripcion, cargando } = useSubscription();
-
   const handleSelectPlan = (plan: SubscriptionPlan) => {
     if (plan.name === 'free') {
-      return; // No hacer nada para plan gratuito
+      return;
     }
-
-    // Redirigir a página de pago
     router.push(`/payment?plan=${plan.id}`);
   };
 
   if (cargando) {
     return (
       <ProtectedRoute>
-        <div className="container mx-auto p-6">
-          <p className="text-center">Cargando planes...</p>
+        <div className="min-h-screen flex items-center justify-center">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center"
+          >
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full border-4 border-t-transparent border-violet-500 animate-spin"></div>
+            <p className="text-gray-500 dark:text-gray-400">Cargando planes...</p>
+          </motion.div>
         </div>
       </ProtectedRoute>
     );
@@ -33,66 +39,131 @@ export default function PricingPage() {
 
   return (
     <ProtectedRoute>
-      <div className="container mx-auto p-6 space-y-8">
+      <div className="container mx-auto p-6 space-y-12">
         {/* Header */}
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold">Planes y Precios</h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Elige el plan perfecto para tu negocio de repostería
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center space-y-4"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-violet-100 dark:bg-violet-900/30 rounded-full">
+            <Sparkles className="w-4 h-4 text-violet-600 dark:text-violet-400" />
+            <span className="text-sm font-medium text-violet-700 dark:text-violet-300">Planes y Precios</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-violet-600 via-fuchsia-600 to-rose-600 bg-clip-text text-transparent">
+            Elige tu Plan Perfecto
+          </h1>
+          <p className="text-xl text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+            Potencia tu negocio de repostería con las herramientas que necesitas
           </p>
+          
           {infoSuscripcion && (
-            <Card className="max-w-md mx-auto">
-              <CardContent className="py-4">
-                <p className="text-sm">
-                  <span className="font-semibold">Plan actual:</span>{' '}
-                  {infoSuscripcion.plan_display_name}
-                </p>
-              </CardContent>
-            </Card>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-50 to-fuchsia-50 dark:from-violet-950/30 dark:to-fuchsia-950/30 rounded-xl border border-violet-200 dark:border-violet-800"
+            >
+              <Crown className="w-5 h-5 text-violet-500" />
+              <span className="text-sm font-medium">Plan actual:</span>
+              <span className="font-bold text-violet-700 dark:text-violet-300">{infoSuscripcion.plan_display_name}</span>
+            </motion.div>
           )}
-        </div>
+        </motion.div>
 
         {/* Planes */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-          {planes.map((plan) => (
-            <PricingCard
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto"
+        >
+          {planes.map((plan, index) => (
+            <motion.div
               key={plan.id}
-              plan={plan}
-              isCurrentPlan={infoSuscripcion?.plan_name === plan.name}
-              onSelect={handleSelectPlan}
-            />
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + index * 0.05 }}
+            >
+              <PricingCard
+                plan={plan}
+                isCurrentPlan={infoSuscripcion?.plan_name === plan.name}
+                onSelect={handleSelectPlan}
+              />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Información adicional */}
-        <div className="max-w-3xl mx-auto mt-12">
-          <Card>
-            <CardContent className="py-6 space-y-4">
-              <h3 className="text-xl font-bold">💳 Métodos de Pago Aceptados</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="font-semibold mb-2">🇻🇪 Venezuela:</p>
-                  <ul className="space-y-1 text-muted-foreground">
-                    <li>• Pago Móvil</li>
-                    <li>• Transferencia Bancaria</li>
-                    <li>• Binance (USDT)</li>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <Card className="max-w-3xl mx-auto border-0 shadow-xl overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-rose-500" />
+            <CardContent className="py-8">
+              <h3 className="text-xl font-bold flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
+                  <CreditCard className="w-5 h-5 text-white" />
+                </div>
+                Métodos de Pago Aceptados
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div className="bg-emerald-50 dark:bg-emerald-950/30 rounded-xl p-5 border border-emerald-100 dark:border-emerald-900">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Globe className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                    <h4 className="font-semibold text-emerald-900 dark:text-emerald-100">🇻🇪 Venezuela</h4>
+                  </div>
+                  <ul className="space-y-2 text-sm text-emerald-700 dark:text-emerald-300">
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4" /> Pago Móvil
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4" /> Transferencia Bancaria
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4" /> Binance (USDT)
+                    </li>
                   </ul>
                 </div>
-                <div>
-                  <p className="font-semibold mb-2">🌎 Internacional:</p>
-                  <ul className="space-y-1 text-muted-foreground">
-                    <li>• Zelle</li>
-                    <li>• PayPal</li>
-                    <li>• Binance (USDT)</li>
+                
+                <div className="bg-blue-50 dark:bg-blue-950/30 rounded-xl p-5 border border-blue-100 dark:border-blue-900">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Globe className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <h4 className="font-semibold text-blue-900 dark:text-blue-100">🌎 Internacional</h4>
+                  </div>
+                  <ul className="space-y-2 text-sm text-blue-700 dark:text-blue-300">
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4" /> Zelle
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4" /> PayPal
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4" /> Binance (USDT)
+                    </li>
                   </ul>
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground mt-4">
-                * Todos los pagos son verificados manualmente. Tu suscripción se activará dentro de 24 horas hábiles después de la aprobación.
-              </p>
+              
+              <div className="bg-amber-50 dark:bg-amber-950/30 rounded-xl p-4 border border-amber-100 dark:border-amber-900">
+                <div className="flex items-start gap-3">
+                  <Wallet className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
+                      Verificación manual
+                    </p>
+                    <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
+                      Todos los pagos son verificados manualmente. Tu suscripción se activará dentro de 24 horas hábiles después de la aprobación.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
-        </div>
+        </motion.div>
       </div>
     </ProtectedRoute>
   );

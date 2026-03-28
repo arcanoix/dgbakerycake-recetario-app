@@ -17,7 +17,7 @@ export const Logo = ({ size = "md", showText = true, href = "/", variant = "icon
   const { width, height, textSize } = sizeMap[size];
 
   const isFull = variant === "full";
-  const imgSrc = isFull ? "/logo-largo.png" : "/logo.png";
+  const imgSrc = isFull ? "/logo-completo.png" : "/logo.png";
   const imgClass = isFull ? "h-auto w-auto max-w-[180px]" : "rounded-full w-10 h-10";
 
   const logoContent = (

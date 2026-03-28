@@ -75,9 +75,7 @@ export const obtenerInfoSuscripcion = async (): Promise<UserSubscriptionInfo | n
   if (!user) return null;
 
   const { data, error } = await supabase
-    .from('user_subscription_info')
-    .select('*')
-    .eq('user_id', user.id)
+    .rpc('get_my_subscription_info')
     .single();
 
   if (error) {
@@ -85,7 +83,7 @@ export const obtenerInfoSuscripcion = async (): Promise<UserSubscriptionInfo | n
     return null;
   }
 
-  return data;
+  return data as UserSubscriptionInfo | null;
 };
 
 // ============================================
@@ -231,11 +229,9 @@ export const obtenerEstadisticasAdmin = async () => {
 // ============================================
 
 export const obtenerTodosLosUsuarios = async () => {
-  // Obtener información de usuarios desde user_subscription_info
+  // Obtener información de usuarios usando la función segura para admins
   const { data: usuarios, error } = await supabase
-    .from('user_subscription_info')
-    .select('*')
-    .order('email', { ascending: true });
+    .rpc('get_all_users_subscription_info');
 
   if (error) {
     console.error('Error al obtener usuarios:', error);
@@ -244,7 +240,7 @@ export const obtenerTodosLosUsuarios = async () => {
 
   // Obtener conteos de productos y recetas por usuario
   const usuariosConConteos = await Promise.all(
-    (usuarios || []).map(async (usuario) => {
+    (usuarios || []).map(async (usuario: any) => {
       const [{ count: productosCount }, { count: recetasCount }] = await Promise.all([
         supabase
           .from('productos')
@@ -276,20 +272,35 @@ export const obtenerTodosLosUsuarios = async () => {
 };
 
 export const obtenerEstadisticasUsuarios = async () => {
+  // Total de usuarios (todos los roles excepto admins para estadísticas de clientes)
   const { count: totalUsuarios } = await supabase
-    .from('user_subscription_info')
-    .select('*', { count: 'exact', head: true });
+    .from('user_roles')
+    .select('*', { count: 'exact', head: true })
+    .eq('role', 'cliente');
 
+  // Usuarios con suscripción activa
   const { count: usuariosActivos } = await supabase
-    .from('user_subscription_info')
+    .from('user_subscriptions')
     .select('*', { count: 'exact', head: true })
-    .eq('is_active', true);
+    .eq('status', 'active');
 
-  const { count: usuariosConPlanPago } = await supabase
-    .from('user_subscription_info')
-    .select('*', { count: 'exact', head: true })
-    .neq('plan_name', 'free')
-    .eq('subscription_status', 'active');
+  // Obtener ID del plan gratuito
+  const { data: freePlan } = await supabase
+    .from('subscription_plans')
+    .select('id')
+    .eq('name', 'free')
+    .single();
+
+  // Usuarios con plan de pago (activos y no free)
+  let usuariosConPlanPago = 0;
+  if (freePlan) {
+    const { count } = await supabase
+      .from('user_subscriptions')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'active')
+      .neq('plan_id', freePlan.id);
+    usuariosConPlanPago = count || 0;
+  }
 
   // Usuarios nuevos este mes
   const inicioMes = new Date();

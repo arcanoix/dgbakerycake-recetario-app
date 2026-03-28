@@ -260,31 +260,106 @@ CREATE TRIGGER on_payment_approved
   EXECUTE FUNCTION activate_subscription_on_payment_approval();
 
 -- ============================================
--- VISTAS ÚTILES
+-- FUNCIONES SEGURAS PARA INFORMACIÓN DE USUARIO
 -- ============================================
 
--- Vista para obtener información completa del usuario
-CREATE OR REPLACE VIEW user_subscription_info AS
-SELECT 
-  u.id as user_id,
-  u.email,
-  ur.role,
-  sp.name as plan_name,
-  sp.display_name as plan_display_name,
-  sp.max_productos,
-  sp.max_recetas,
-  us.status as subscription_status,
-  us.start_date,
-  us.end_date,
-  CASE 
-    WHEN us.end_date IS NULL THEN true
-    WHEN us.end_date > NOW() THEN true
-    ELSE false
-  END as is_active
-FROM auth.users u
-LEFT JOIN user_roles ur ON u.id = ur.user_id
-LEFT JOIN user_subscriptions us ON u.id = us.user_id AND us.status = 'active'
-LEFT JOIN subscription_plans sp ON us.plan_id = sp.id;
+-- Función para obtener información del usuario autenticado (solo su propia info)
+CREATE OR REPLACE FUNCTION get_my_subscription_info()
+RETURNS TABLE (
+  user_id UUID,
+  email VARCHAR,
+  role VARCHAR,
+  plan_name VARCHAR,
+  plan_display_name VARCHAR,
+  max_productos INTEGER,
+  max_recetas INTEGER,
+  subscription_status VARCHAR,
+  start_date TIMESTAMP,
+  end_date TIMESTAMP,
+  is_active BOOLEAN
+) 
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  RETURN QUERY
+  SELECT 
+    u.id,
+    u.email::VARCHAR,
+    ur.role::VARCHAR,
+    sp.name::VARCHAR,
+    sp.display_name::VARCHAR,
+    sp.max_productos,
+    sp.max_recetas,
+    us.status::VARCHAR,
+    us.start_date,
+    us.end_date,
+    CASE 
+      WHEN us.end_date IS NULL THEN true
+      WHEN us.end_date > NOW() THEN true
+      ELSE false
+    END as is_active
+  FROM auth.users u
+  LEFT JOIN user_roles ur ON u.id = ur.user_id
+  LEFT JOIN user_subscriptions us ON u.id = us.user_id AND us.status = 'active'
+  LEFT JOIN subscription_plans sp ON us.plan_id = sp.id
+  WHERE u.id = auth.uid();
+END;
+$$;
+
+-- Función para admins - Devuelve información de todos los usuarios
+CREATE OR REPLACE FUNCTION get_all_users_subscription_info()
+RETURNS TABLE (
+  user_id UUID,
+  email VARCHAR,
+  role VARCHAR,
+  plan_name VARCHAR,
+  plan_display_name VARCHAR,
+  max_productos INTEGER,
+  max_recetas INTEGER,
+  subscription_status VARCHAR,
+  start_date TIMESTAMP,
+  end_date TIMESTAMP,
+  is_active BOOLEAN
+) 
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  -- Verificar si el usuario es admin
+  IF NOT public.is_admin(auth.uid()) THEN
+    RAISE EXCEPTION 'Acceso denegado: Solo admins pueden ver esta información';
+  END IF;
+  
+  RETURN QUERY
+  SELECT 
+    u.id,
+    u.email::VARCHAR,
+    ur.role::VARCHAR,
+    sp.name::VARCHAR,
+    sp.display_name::VARCHAR,
+    sp.max_productos,
+    sp.max_recetas,
+    us.status::VARCHAR,
+    us.start_date,
+    us.end_date,
+    CASE 
+      WHEN us.end_date IS NULL THEN true
+      WHEN us.end_date > NOW() THEN true
+      ELSE false
+    END as is_active
+  FROM auth.users u
+  LEFT JOIN user_roles ur ON u.id = ur.user_id
+  LEFT JOIN user_subscriptions us ON u.id = us.user_id AND us.status = 'active'
+  LEFT JOIN subscription_plans sp ON us.plan_id = sp.id;
+END;
+$$;
+
+-- Otorgar permisos
+GRANT EXECUTE ON FUNCTION get_my_subscription_info() TO authenticated;
+GRANT EXECUTE ON FUNCTION get_all_users_subscription_info() TO authenticated;
 
 -- ============================================
 -- DATOS INICIALES

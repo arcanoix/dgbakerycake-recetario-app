@@ -7,13 +7,14 @@ DROP TRIGGER IF EXISTS on_payment_approved ON payment_requests;
 DROP TRIGGER IF EXISTS on_user_role_created ON user_roles;
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 
--- Eliminar funciones
+-- Eliminar funciones de suscripción
 DROP FUNCTION IF EXISTS activate_subscription_on_payment_approval();
 DROP FUNCTION IF EXISTS assign_free_subscription();
 DROP FUNCTION IF EXISTS assign_default_role();
 
--- Eliminar vista
-DROP VIEW IF EXISTS user_subscription_info;
+-- Eliminar funciones de seguridad (si existen de ejecuciones anteriores)
+DROP FUNCTION IF EXISTS get_my_subscription_info();
+DROP FUNCTION IF EXISTS get_all_users_subscription_info();
 
 -- Eliminar tablas (en orden inverso por dependencias)
 DROP TABLE IF EXISTS payment_requests CASCADE;
@@ -236,25 +237,100 @@ CREATE TRIGGER on_payment_approved
   FOR EACH ROW
   EXECUTE FUNCTION activate_subscription_on_payment_approval();
 
--- Vista
-CREATE OR REPLACE VIEW user_subscription_info AS
-SELECT 
-  u.id as user_id,
-  u.email,
-  ur.role,
-  sp.name as plan_name,
-  sp.display_name as plan_display_name,
-  sp.max_productos,
-  sp.max_recetas,
-  us.status as subscription_status,
-  us.start_date,
-  us.end_date,
-  CASE 
-    WHEN us.end_date IS NULL THEN true
-    WHEN us.end_date > NOW() THEN true
-    ELSE false
-  END as is_active
-FROM auth.users u
-LEFT JOIN user_roles ur ON u.id = ur.user_id
-LEFT JOIN user_subscriptions us ON u.id = us.user_id AND us.status = 'active'
-LEFT JOIN subscription_plans sp ON us.plan_id = sp.id;
+-- Funciones seguras para acceder a información de usuarios
+
+-- Función para obtener información del usuario autenticado
+CREATE OR REPLACE FUNCTION get_my_subscription_info()
+RETURNS TABLE (
+  user_id UUID,
+  email VARCHAR,
+  role VARCHAR,
+  plan_name VARCHAR,
+  plan_display_name VARCHAR,
+  max_productos INTEGER,
+  max_recetas INTEGER,
+  subscription_status VARCHAR,
+  start_date TIMESTAMP,
+  end_date TIMESTAMP,
+  is_active BOOLEAN
+) 
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  RETURN QUERY
+  SELECT 
+    u.id,
+    u.email::VARCHAR,
+    ur.role::VARCHAR,
+    sp.name::VARCHAR,
+    sp.display_name::VARCHAR,
+    sp.max_productos,
+    sp.max_recetas,
+    us.status::VARCHAR,
+    us.start_date,
+    us.end_date,
+    CASE 
+      WHEN us.end_date IS NULL THEN true
+      WHEN us.end_date > NOW() THEN true
+      ELSE false
+    END as is_active
+  FROM auth.users u
+  LEFT JOIN user_roles ur ON u.id = ur.user_id
+  LEFT JOIN user_subscriptions us ON u.id = us.user_id AND us.status = 'active'
+  LEFT JOIN subscription_plans sp ON us.plan_id = sp.id
+  WHERE u.id = auth.uid();
+END;
+$$;
+
+-- Función para admins
+CREATE OR REPLACE FUNCTION get_all_users_subscription_info()
+RETURNS TABLE (
+  user_id UUID,
+  email VARCHAR,
+  role VARCHAR,
+  plan_name VARCHAR,
+  plan_display_name VARCHAR,
+  max_productos INTEGER,
+  max_recetas INTEGER,
+  subscription_status VARCHAR,
+  start_date TIMESTAMP,
+  end_date TIMESTAMP,
+  is_active BOOLEAN
+) 
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  IF NOT public.is_admin(auth.uid()) THEN
+    RAISE EXCEPTION 'Acceso denegado: Solo admins pueden ver esta información';
+  END IF;
+  
+  RETURN QUERY
+  SELECT 
+    u.id,
+    u.email::VARCHAR,
+    ur.role::VARCHAR,
+    sp.name::VARCHAR,
+    sp.display_name::VARCHAR,
+    sp.max_productos,
+    sp.max_recetas,
+    us.status::VARCHAR,
+    us.start_date,
+    us.end_date,
+    CASE 
+      WHEN us.end_date IS NULL THEN true
+      WHEN us.end_date > NOW() THEN true
+      ELSE false
+    END as is_active
+  FROM auth.users u
+  LEFT JOIN user_roles ur ON u.id = ur.user_id
+  LEFT JOIN user_subscriptions us ON u.id = us.user_id AND us.status = 'active'
+  LEFT JOIN subscription_plans sp ON us.plan_id = sp.id;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION get_my_subscription_info() TO authenticated;
+GRANT EXECUTE ON FUNCTION get_all_users_subscription_info() TO authenticated;

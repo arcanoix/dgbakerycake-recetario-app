@@ -12,7 +12,7 @@ export const LandingPage = () => {
       <section className="container mx-auto px-4 py-20 text-center">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-center mb-6">
-            <Logo size="lg" variant="full" href={undefined} />
+            <img src="https://g2vx4pgn24b8d9ki.public.blob.vercel-storage.com/logo.png" alt="DGcost" className="w-40 h-auto mb-4" />
           </div>
           <h1 className="sr-only">
             DGcost

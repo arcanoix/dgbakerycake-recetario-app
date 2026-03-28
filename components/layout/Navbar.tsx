@@ -23,7 +23,6 @@ const navItems: NavItem[] = [
   { href: "/perfil", label: "Perfil", icon: "👤" },
   { href: "/configuracion", label: "Configuración", icon: "⚙️" },
   { href: "/unidades", label: "Unidades", icon: "📏" },
-  { href: "/categorias", label: "Categorías", icon: "🏷️" },
 ];
 
 const adminItems: NavItem[] = [

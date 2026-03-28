@@ -47,7 +47,7 @@ export const ProductoList = ({ productos, onEdit, onDelete }: ProductoListProps)
             <CardTitle className="text-lg">{producto.nombre}</CardTitle>
             {producto.categoria && (
               <CardDescription>
-                <span className="inline-block px-2 py-1 text-xs rounded-full bg-secondary">
+                <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-300">
                   {producto.categoria}
                 </span>
               </CardDescription>

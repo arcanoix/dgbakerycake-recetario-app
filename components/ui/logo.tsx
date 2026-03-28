@@ -17,8 +17,8 @@ export const Logo = ({ size = "md", showText = true, href = "/", variant = "icon
   const { width, height, textSize, fullWidth } = sizeMap[size];
 
   const isFull = variant === "full";
-  const imgSrc = isFull ? "/logo-largo.png" : "/logo.png";
-  const imgClass = isFull ? "h-auto w-full max-w-[280px]" : "rounded-full";
+  const imgSrc = "/logo.png"; // Usar siempre logo.png para evitar problemas de tamaño
+  const imgClass = isFull ? "h-auto w-auto max-w-[200px]" : "rounded-full";
 
   const logoContent = (
     <div className="flex items-center gap-3">

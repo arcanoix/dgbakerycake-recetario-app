@@ -146,6 +146,9 @@ export const LandingPage = () => {
               <span className="text-xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
                 DGcost
               </span>
+              <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                BETA
+              </span>
             </Link>
             <div className="flex items-center gap-4">
               <Link href="/auth/login" className="text-gray-700 hover:text-gray-900 font-medium">
@@ -360,9 +363,56 @@ export const LandingPage = () => {
         </section>
       </AnimatedSection>
 
-      {/* Testimonials Section */}
+      {/* Mobile App Section */}
       <AnimatedSection>
         <section className="py-20 px-4 bg-gradient-to-br from-violet-50 to-fuchsia-50">
+          <div className="container mx-auto max-w-4xl">
+            <div className="text-center">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-6"
+              >
+                <span>📱</span>
+                <span>Próximamente</span>
+              </motion.div>
+              
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+                App Móvil en Camino
+              </h2>
+              
+              <p className="text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
+                Muy pronto podrás gestionar tus recetas y costos desde tu celular. 
+                Estamos trabajando en aplicaciones nativas para Android e iOS.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <div className="flex items-center gap-3 bg-white px-6 py-4 rounded-xl shadow-lg">
+                  <span className="text-3xl">🤖</span>
+                  <div className="text-left">
+                    <p className="text-xs text-gray-500">Disponible pronto en</p>
+                    <p className="font-bold text-gray-900">Google Play</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3 bg-white px-6 py-4 rounded-xl shadow-lg">
+                  <span className="text-3xl">🍎</span>
+                  <div className="text-left">
+                    <p className="text-xs text-gray-500">Disponible pronto en</p>
+                    <p className="font-bold text-gray-900">App Store</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </AnimatedSection>
+
+      {/* Testimonials Section */}
+      <AnimatedSection>
+        <section className="py-20 px-4 bg-gray-50">
           <div className="container mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
               Lo que dicen nuestros usuarios

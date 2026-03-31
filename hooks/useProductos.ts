@@ -10,8 +10,14 @@ import {
   generarId,
   obtenerUnidadPorId,
 } from "@/lib/storageSupabase";
-import { calcularPrecioPorUnidad } from "@/lib/calculations";
 import { verificarLimite } from "@/lib/subscriptionStorage";
+
+export interface ResultadoImportacionMasiva {
+  importados: number;
+  errores: number;
+  omitidos: number;
+  mensaje: string;
+}
 
 export const useProductos = () => {
   const [productos, setProductos] = useState<Producto[]>([]);
@@ -182,6 +188,90 @@ export const useProductos = () => {
     return productos.filter((producto) => producto.unidadMedida === unidadId);
   };
 
+  const importarProductosMasivo = async (
+    productosFormData: ProductoFormData[]
+  ): Promise<ResultadoImportacionMasiva> => {
+    try {
+      const verificacion = await verificarLimite('productos', productos.length);
+
+      if (!verificacion.permitido) {
+        const mensaje = verificacion.mensaje || "Has alcanzado el límite de productos de tu plan";
+        setError(mensaje);
+        return { importados: 0, errores: 0, omitidos: productosFormData.length, mensaje };
+      }
+
+      // Calculate how many can be imported within the plan limit
+      const espacioDisponible =
+        verificacion.limite === -1
+          ? productosFormData.length
+          : verificacion.limite - productos.length;
+
+      const aImportar = productosFormData.slice(0, espacioDisponible);
+      const omitidos = productosFormData.length - aImportar.length;
+
+      let importados = 0;
+      let errores = 0;
+
+      for (const datos of aImportar) {
+        try {
+          const unidad = await obtenerUnidadPorId(datos.unidadMedida);
+          const cantidadTotal = datos.tamañoPresentacion * datos.cantidadPresentaciones;
+          const precioPorUnidad = datos.precioTotal / cantidadTotal;
+          const precioPorPresentacion = datos.precioTotal / datos.cantidadPresentaciones;
+
+          const nuevoProducto: Producto = {
+            id: generarId("prod"),
+            nombre: datos.nombre,
+            precioTotal: datos.precioTotal,
+            tamañoPresentacion: datos.tamañoPresentacion,
+            cantidadPresentaciones: datos.cantidadPresentaciones,
+            cantidadTotal,
+            unidadMedida: datos.unidadMedida,
+            unidadMedidaNombre: unidad?.nombre,
+            unidadMedidaSimbolo: unidad?.simbolo,
+            precioPorUnidad,
+            precioPorPresentacion,
+            categoria: datos.categoria,
+            proveedor: datos.proveedor,
+            notas: datos.notas,
+            fechaCreacion: new Date(),
+            fechaActualizacion: new Date(),
+          };
+
+          const respuesta = await guardarProducto(nuevoProducto);
+          if (respuesta.exitoso) {
+            importados++;
+          } else {
+            errores++;
+          }
+        } catch (err) {
+          errores++;
+          console.error('Error al importar producto:', err);
+        }
+      }
+
+      // Reload the product list once after all imports
+      await cargarProductos();
+
+      let mensaje = '';
+      if (importados > 0) {
+        mensaje = `Se importaron ${importados} producto${importados !== 1 ? 's' : ''} correctamente`;
+        if (errores > 0) mensaje += `, ${errores} con errores`;
+        if (omitidos > 0) mensaje += `, ${omitidos} omitido${omitidos !== 1 ? 's' : ''} por límite del plan`;
+        mensaje += '.';
+      } else {
+        mensaje = `No se importaron productos.${errores > 0 ? ` ${errores} con errores.` : ''}`;
+      }
+
+      return { importados, errores, omitidos, mensaje };
+    } catch (err) {
+      const mensaje = "Error durante la importación masiva";
+      setError(mensaje);
+      console.error(err);
+      return { importados: 0, errores: productosFormData.length, omitidos: 0, mensaje };
+    }
+  };
+
   return {
     productos,
     cargando,
@@ -194,5 +284,6 @@ export const useProductos = () => {
     buscarProductos,
     filtrarPorCategoria,
     filtrarPorUnidad,
+    importarProductosMasivo,
   };
 };

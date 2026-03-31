@@ -28,8 +28,7 @@ const navItems: NavItem[] = [
 ];
 
 const adminItems: NavItem[] = [
-  { href: "/admin", label: "Panel Admin", icon: "👑", requiredFeature: "menu_admin" },
-  { href: "/admin/planes", label: "Planes", icon: "💎", requiredFeature: "menu_admin" },
+  { href: "/admin", label: "Panel Admin", icon: "👑", requiredFeature: "menu_admin" }
 ];
 
 export const Navbar = () => {
@@ -59,7 +58,7 @@ export const Navbar = () => {
   return (
     <>
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
@@ -86,8 +85,8 @@ export const Navbar = () => {
               onClick={() => setSidebarOpen(false)}
               className={`
                 flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200
-                ${isActive(item.href) 
-                  ? "bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 border-l-4 border-violet-600" 
+                ${isActive(item.href)
+                  ? "bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 border-l-4 border-violet-600"
                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 }
               `}
@@ -111,8 +110,8 @@ export const Navbar = () => {
                   onClick={() => setSidebarOpen(false)}
                   className={`
                     flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200
-                    ${isActive(item.href) 
-                      ? "bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 border-l-4 border-violet-600" 
+                    ${isActive(item.href)
+                      ? "bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 border-l-4 border-violet-600"
                       : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                     }
                   `}
@@ -143,10 +142,10 @@ export const Navbar = () => {
               </div>
               <ThemeSwitcher />
             </div>
-            <Button 
-              onClick={signOut} 
-              variant="outline" 
-              size="sm" 
+            <Button
+              onClick={signOut}
+              variant="outline"
+              size="sm"
               className="w-full rounded-lg"
             >
               Cerrar Sesión

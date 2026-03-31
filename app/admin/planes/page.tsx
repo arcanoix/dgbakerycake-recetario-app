@@ -116,7 +116,7 @@ function Switch({
 
 export default function AdminPlanesPage() {
   const { user, loading: loadingAuth } = useAuth();
-  const { isAdmin } = useRole();
+  const { isAdmin, cargando: cargandoRole } = useRole();
   const router = useRouter();
   const [planes, setPlanes] = useState<Plan[]>([]);
   const [cargando, setCargando] = useState(true);
@@ -127,10 +127,10 @@ export default function AdminPlanesPage() {
   const [mensaje, setMensaje] = useState<{ tipo: "success" | "error"; texto: string } | null>(null);
 
   useEffect(() => {
-    if (!loadingAuth && (!user || !isAdmin)) {
+    if (!loadingAuth && !cargandoRole && (!user || !isAdmin)) {
       router.push("/dashboard");
     }
-  }, [user, loadingAuth, isAdmin, router]);
+  }, [user, loadingAuth, isAdmin, cargandoRole, router]);
 
   useEffect(() => {
     if (user && isAdmin) {
@@ -268,7 +268,7 @@ export default function AdminPlanesPage() {
     }
   };
 
-  if (loadingAuth || !user || !isAdmin) {
+  if (loadingAuth || cargandoRole || !user || !isAdmin) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />

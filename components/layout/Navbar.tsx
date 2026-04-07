@@ -29,7 +29,8 @@ const navItems: NavItem[] = [
 
 const adminItems: NavItem[] = [
   { href: "/admin", label: "Panel Admin", icon: "👑", requiredFeature: "menu_admin" },
-  { href: "/admin/planes", label: "Planes", icon: "💎", requiredFeature: "menu_admin" }
+  { href: "/admin/planes", label: "Planes", icon: "💎", requiredFeature: "menu_admin" },
+  { href: "/admin/blog", label: "Blog", icon: "✍️", requiredFeature: "menu_admin" },
 ];
 
 export const Navbar = () => {

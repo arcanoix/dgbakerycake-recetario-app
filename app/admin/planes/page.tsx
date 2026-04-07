@@ -59,10 +59,24 @@ interface PlanFormData {
   max_productos: number;
   max_recetas: number;
   features: {
+    // Menu visibility
+    menu_dashboard: boolean;
+    menu_productos: boolean;
+    menu_recetas: boolean;
+    menu_precios: boolean;
+    menu_facturacion: boolean;
+    menu_perfil: boolean;
+    menu_configuracion: boolean;
+    menu_unidades: boolean;
+    // Actions
+    crear_productos: boolean;
+    crear_recetas: boolean;
+    exportar_pdf: boolean;
+    ver_analytics: boolean;
+    exportar_datos: boolean;
+    api_access: boolean;
+    soporte_prioritario: boolean;
     soporte?: string;
-    analytics?: boolean;
-    exportar_datos?: boolean;
-    api_access?: boolean;
   };
   is_active: boolean;
   sort_order: number;
@@ -78,10 +92,22 @@ const DEFAULT_FORM_DATA: PlanFormData = {
   max_productos: 50,
   max_recetas: 20,
   features: {
-    soporte: "básico",
-    analytics: false,
+    menu_dashboard: true,
+    menu_productos: true,
+    menu_recetas: true,
+    menu_precios: true,
+    menu_facturacion: true,
+    menu_perfil: true,
+    menu_configuracion: true,
+    menu_unidades: true,
+    crear_productos: true,
+    crear_recetas: true,
+    exportar_pdf: false,
+    ver_analytics: false,
     exportar_datos: false,
     api_access: false,
+    soporte_prioritario: false,
+    soporte: "básico",
   },
   is_active: true,
   sort_order: 0,
@@ -154,6 +180,7 @@ export default function AdminPlanesPage() {
   const iniciarEdicion = (plan: Plan) => {
     setEditando(plan.id);
     setModoCrear(false);
+    const f = (plan.features as any) || {};
     setFormData({
       name: plan.name,
       display_name: plan.display_name,
@@ -164,10 +191,22 @@ export default function AdminPlanesPage() {
       max_productos: plan.max_productos,
       max_recetas: plan.max_recetas,
       features: {
-        soporte: (plan.features as any)?.soporte || "básico",
-        analytics: (plan.features as any)?.analytics || false,
-        exportar_datos: (plan.features as any)?.exportar_datos || false,
-        api_access: (plan.features as any)?.api_access || false,
+        menu_dashboard: f.menu_dashboard ?? true,
+        menu_productos: f.menu_productos ?? true,
+        menu_recetas: f.menu_recetas ?? true,
+        menu_precios: f.menu_precios ?? true,
+        menu_facturacion: f.menu_facturacion ?? true,
+        menu_perfil: f.menu_perfil ?? true,
+        menu_configuracion: f.menu_configuracion ?? true,
+        menu_unidades: f.menu_unidades ?? true,
+        crear_productos: f.crear_productos ?? true,
+        crear_recetas: f.crear_recetas ?? true,
+        exportar_pdf: f.exportar_pdf ?? false,
+        ver_analytics: f.ver_analytics ?? false,
+        exportar_datos: f.exportar_datos ?? false,
+        api_access: f.api_access ?? false,
+        soporte_prioritario: f.soporte_prioritario ?? false,
+        soporte: f.soporte || "básico",
       },
       is_active: plan.is_active,
       sort_order: plan.sort_order,
@@ -460,8 +499,58 @@ export default function AdminPlanesPage() {
                 </div>
               </div>
 
+              {/* Menu visibility */}
               <div className="border-t pt-4">
-                <h3 className="font-semibold mb-4">Características Adicionales</h3>
+                <h3 className="font-semibold mb-1">Visibilidad del Menú</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Controla qué elementos del menú de navegación son visibles para los usuarios de este plan.
+                </p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {(
+                    [
+                      { id: "menu_dashboard", label: "Dashboard", icon: "📊" },
+                      { id: "menu_productos", label: "Productos", icon: "📦" },
+                      { id: "menu_recetas", label: "Recetas", icon: "📝" },
+                      { id: "menu_precios", label: "Planes", icon: "💎" },
+                      { id: "menu_facturacion", label: "Facturación", icon: "💳" },
+                      { id: "menu_perfil", label: "Perfil", icon: "👤" },
+                      { id: "menu_configuracion", label: "Configuración", icon: "⚙️" },
+                      { id: "menu_unidades", label: "Unidades", icon: "📏" },
+                    ] as { id: keyof typeof formData.features; label: string; icon: string }[]
+                  ).map(({ id, label, icon }) => (
+                    <div
+                      key={id}
+                      className={`flex items-center gap-2 p-3 rounded-lg border transition-colors ${
+                        formData.features[id]
+                          ? "border-primary/40 bg-primary/5"
+                          : "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50"
+                      }`}
+                    >
+                      <Switch
+                        id={id}
+                        checked={!!formData.features[id]}
+                        onCheckedChange={(checked: boolean) =>
+                          setFormData({
+                            ...formData,
+                            features: { ...formData.features, [id]: checked },
+                          })
+                        }
+                      />
+                      <Label htmlFor={id} className="cursor-pointer text-sm">
+                        <span className="mr-1">{icon}</span>
+                        {label}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action features */}
+              <div className="border-t pt-4">
+                <h3 className="font-semibold mb-1">Acciones y Funcionalidades</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Define qué acciones y funciones pueden realizar los usuarios de este plan.
+                </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="soporte">Tipo de Soporte</Label>
@@ -479,51 +568,36 @@ export default function AdminPlanesPage() {
                       <option value="básico">Básico</option>
                       <option value="estándar">Estándar</option>
                       <option value="prioritario">Prioritario</option>
+                      <option value="dedicado">Dedicado</option>
                     </select>
                   </div>
 
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                      <Switch
-                        id="analytics"
-                        checked={!!formData.features.analytics}
-                        onCheckedChange={(checked: boolean) =>
-                          setFormData({
-                            ...formData,
-                            features: { ...formData.features, analytics: checked },
-                          })
-                        }
-                      />
-                      <Label htmlFor="analytics">Analytics</Label>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Switch
-                        id="exportar_datos"
-                        checked={!!formData.features.exportar_datos}
-                        onCheckedChange={(checked: boolean) =>
-                          setFormData({
-                            ...formData,
-                            features: { ...formData.features, exportar_datos: checked },
-                          })
-                        }
-                      />
-                      <Label htmlFor="exportar_datos">Exportar Datos</Label>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Switch
-                        id="api_access"
-                        checked={!!formData.features.api_access}
-                        onCheckedChange={(checked: boolean) =>
-                          setFormData({
-                            ...formData,
-                            features: { ...formData.features, api_access: checked },
-                          })
-                        }
-                      />
-                      <Label htmlFor="api_access">API</Label>
-                    </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    {(
+                      [
+                        { id: "crear_productos", label: "Crear Productos" },
+                        { id: "crear_recetas", label: "Crear Recetas" },
+                        { id: "exportar_pdf", label: "Exportar PDF" },
+                        { id: "ver_analytics", label: "Analytics" },
+                        { id: "exportar_datos", label: "Exportar Datos" },
+                        { id: "api_access", label: "Acceso API" },
+                        { id: "soporte_prioritario", label: "Soporte Prioritario" },
+                      ] as { id: keyof typeof formData.features; label: string }[]
+                    ).map(({ id, label }) => (
+                      <div key={id} className="flex items-center gap-2">
+                        <Switch
+                          id={id}
+                          checked={!!formData.features[id]}
+                          onCheckedChange={(checked: boolean) =>
+                            setFormData({
+                              ...formData,
+                              features: { ...formData.features, [id]: checked },
+                            })
+                          }
+                        />
+                        <Label htmlFor={id} className="cursor-pointer text-sm">{label}</Label>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -619,6 +693,37 @@ export default function AdminPlanesPage() {
                       {plan.max_recetas === -1 ? "Ilimitado" : plan.max_recetas}
                     </span>
                   </div>
+                </div>
+
+                {/* Feature badges */}
+                <div className="flex flex-wrap gap-1 mb-4">
+                  {[
+                    { key: "exportar_pdf", label: "PDF" },
+                    { key: "ver_analytics", label: "Analytics" },
+                    { key: "exportar_datos", label: "Exportar" },
+                    { key: "api_access", label: "API" },
+                    { key: "soporte_prioritario", label: "Soporte+" },
+                  ].map(({ key, label }) => {
+                    const enabled = (plan.features as any)?.[key];
+                    return enabled ? (
+                      <Badge key={key} variant="secondary" className="text-xs bg-primary/10 text-primary">
+                        {label}
+                      </Badge>
+                    ) : null;
+                  })}
+                  {(() => {
+                    const f = plan.features as any;
+                    const disabledMenus = [
+                      "menu_dashboard", "menu_productos", "menu_recetas",
+                      "menu_precios", "menu_facturacion", "menu_perfil",
+                      "menu_configuracion", "menu_unidades",
+                    ].filter((k) => f[k] === false);
+                    return disabledMenus.length > 0 ? (
+                      <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">
+                        {disabledMenus.length} menú{disabledMenus.length > 1 ? "s" : ""} oculto{disabledMenus.length > 1 ? "s" : ""}
+                      </Badge>
+                    ) : null;
+                  })()}
                 </div>
 
                 <div className="flex gap-2">

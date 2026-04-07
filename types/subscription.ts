@@ -20,9 +20,13 @@ export type PlanFeature =
   | 'menu_configuracion'
   | 'menu_unidades'
   | 'menu_admin'
+  | 'menu_clientes'
+  | 'menu_ventas'
   | 'crear_productos'
   | 'crear_recetas'
+  | 'crear_ordenes'
   | 'exportar_pdf'
+  | 'exportar_cotizacion_pdf'
   | 'ver_analytics'
   | 'exportar_datos'
   | 'api_access'
@@ -38,9 +42,13 @@ export interface PlanFeatures {
   menu_configuracion: boolean;
   menu_unidades: boolean;
   menu_admin: boolean;
+  menu_clientes: boolean;
+  menu_ventas: boolean;
   crear_productos: boolean;
   crear_recetas: boolean;
+  crear_ordenes: boolean;
   exportar_pdf: boolean;
+  exportar_cotizacion_pdf: boolean;
   ver_analytics: boolean;
   exportar_datos: boolean;
   api_access: boolean;
@@ -70,6 +78,7 @@ export interface Plan {
 // Convertir Plan de BD a PlanFeatures
 export const planToFeatures = (plan: Plan): PlanFeatures => {
   const features = plan.features || {};
+  const isPaid = plan.name !== 'free';
   return {
     menu_dashboard: true,
     menu_productos: true,
@@ -80,9 +89,13 @@ export const planToFeatures = (plan: Plan): PlanFeatures => {
     menu_configuracion: true,
     menu_unidades: true,
     menu_admin: plan.name === 'empresarial',
+    menu_clientes: isPaid,
+    menu_ventas: isPaid,
     crear_productos: true,
     crear_recetas: true,
+    crear_ordenes: isPaid,
     exportar_pdf: features.exportar_pdf ?? false,
+    exportar_cotizacion_pdf: features.exportar_cotizacion_pdf ?? isPaid,
     ver_analytics: features.ver_analytics ?? false,
     exportar_datos: features.exportar_datos ?? false,
     api_access: features.api_access ?? false,
@@ -253,9 +266,13 @@ export const PLAN_FEATURES: Record<SubscriptionPlanName, PlanFeatures> = {
     menu_configuracion: true,
     menu_unidades: true,
     menu_admin: false,
+    menu_clientes: false,
+    menu_ventas: false,
     crear_productos: true,
     crear_recetas: true,
+    crear_ordenes: false,
     exportar_pdf: false,
+    exportar_cotizacion_pdf: false,
     ver_analytics: false,
     exportar_datos: false,
     api_access: false,
@@ -273,9 +290,13 @@ export const PLAN_FEATURES: Record<SubscriptionPlanName, PlanFeatures> = {
     menu_configuracion: true,
     menu_unidades: true,
     menu_admin: false,
+    menu_clientes: true,
+    menu_ventas: true,
     crear_productos: true,
     crear_recetas: true,
+    crear_ordenes: true,
     exportar_pdf: true,
+    exportar_cotizacion_pdf: true,
     ver_analytics: true,
     exportar_datos: false,
     api_access: false,
@@ -293,9 +314,13 @@ export const PLAN_FEATURES: Record<SubscriptionPlanName, PlanFeatures> = {
     menu_configuracion: true,
     menu_unidades: true,
     menu_admin: false,
+    menu_clientes: true,
+    menu_ventas: true,
     crear_productos: true,
     crear_recetas: true,
+    crear_ordenes: true,
     exportar_pdf: true,
+    exportar_cotizacion_pdf: true,
     ver_analytics: true,
     exportar_datos: true,
     api_access: false,
@@ -313,9 +338,13 @@ export const PLAN_FEATURES: Record<SubscriptionPlanName, PlanFeatures> = {
     menu_configuracion: true,
     menu_unidades: true,
     menu_admin: true,
+    menu_clientes: true,
+    menu_ventas: true,
     crear_productos: true,
     crear_recetas: true,
+    crear_ordenes: true,
     exportar_pdf: true,
+    exportar_cotizacion_pdf: true,
     ver_analytics: true,
     exportar_datos: true,
     api_access: true,

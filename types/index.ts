@@ -280,3 +280,82 @@ export interface RespuestaAPI<T> {
   error?: string;
   mensaje?: string;
 }
+
+// ============================================
+// TIPOS DE CLIENTES
+// ============================================
+
+export interface Cliente {
+  id: string;
+  userId: string;
+  nombre: string;
+  email?: string;
+  telefono?: string;
+  direccion?: string;
+  notas?: string;
+  fechaCreacion: Date;
+  fechaActualizacion: Date;
+}
+
+export interface ClienteFormData {
+  nombre: string;
+  email?: string;
+  telefono?: string;
+  direccion?: string;
+  notas?: string;
+}
+
+// ============================================
+// TIPOS DE ÓRDENES / COTIZACIONES
+// ============================================
+
+export type EstadoOrden = 'cotizacion' | 'confirmada' | 'entregada' | 'cancelada';
+
+export interface OrdenItem {
+  id: string;
+  ordenId: string;
+  recetaId?: string;
+  nombreItem: string;
+  cantidad: number;
+  precioUnitario: number;
+  subtotal: number;
+  notas?: string;
+}
+
+export interface OrdenItemFormData {
+  recetaId?: string;
+  nombreItem: string;
+  cantidad: number;
+  precioUnitario: number;
+  notas?: string;
+}
+
+export interface Orden {
+  id: string;
+  userId: string;
+  clienteId: string;
+  clienteNombre?: string;
+  numeroOrden: string;
+  estado: EstadoOrden;
+  items: OrdenItem[];
+  subtotal: number;
+  descuentoPorcentaje: number;
+  descuentoMonto: number;
+  total: number;
+  pagoAdelantado: number;
+  saldoPendiente: number;
+  notas?: string;
+  fechaEntrega?: Date;
+  fechaCreacion: Date;
+  fechaActualizacion: Date;
+}
+
+export interface OrdenFormData {
+  clienteId: string;
+  estado: EstadoOrden;
+  items: OrdenItemFormData[];
+  descuentoPorcentaje: number;
+  pagoAdelantado: number;
+  notas?: string;
+  fechaEntrega?: Date;
+}

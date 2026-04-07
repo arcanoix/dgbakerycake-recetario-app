@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { marked } from "marked";
+import DOMPurify from "dompurify";
 import { BlogPost, BlogPostFormData } from "@/types/blog";
 import { crearPost, actualizarPost } from "@/lib/blog";
 import { generarSlug } from "@/lib/blog-utils";
@@ -56,6 +58,12 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"content" | "seo">("content");
+
+  const previewHtml = useMemo(() => {
+    if (!form.content) return '';
+    const raw = marked.parse(form.content, { async: false }) as string;
+    return DOMPurify.sanitize(raw);
+  }, [form.content]);
 
   const handleTitleChange = (value: string) => {
     setForm((prev) => ({
@@ -270,30 +278,16 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-4">
-                    <div
-                      className="prose prose-sm dark:prose-invert max-w-none"
-                      dangerouslySetInnerHTML={{
-                        __html: (() => {
-                          try {
-                            // inline preview using a basic transformation for the admin form
-                            // the actual rendering on the public page uses MarkdownRenderer
-                            const text = form.content
-                              .replace(/^#{1}\s(.+)$/gm, '<h1 class="text-2xl font-bold">$1</h1>')
-                              .replace(/^#{2}\s(.+)$/gm, '<h2 class="text-xl font-bold">$1</h2>')
-                              .replace(/^#{3}\s(.+)$/gm, '<h3 class="text-lg font-semibold">$1</h3>')
-                              .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-                              .replace(/\*(.+?)\*/g, '<em>$1</em>')
-                              .replace(/`(.+?)`/g, '<code class="bg-gray-100 px-1 rounded text-sm">$1</code>')
-                              .replace(/^- (.+)$/gm, '<li class="ml-4 list-disc">$1</li>')
-                              .replace(/\n\n/g, '</p><p class="mb-3">')
-                              .replace(/\n/g, '<br/>');
-                            return `<p class="mb-3">${text}</p>`;
-                          } catch {
-                            return '<p class="text-gray-400">Error al previsualizar</p>';
-                          }
-                        })(),
-                      }}
-                    />
+                    {previewHtml ? (
+                      <div
+                        className="prose prose-sm dark:prose-invert max-w-none"
+                        dangerouslySetInnerHTML={{ __html: previewHtml }}
+                      />
+                    ) : (
+                      <p className="text-sm text-gray-400 italic">
+                        Escribe contenido Markdown para ver la vista previa.
+                      </p>
+                    )}
                   </CardContent>
                 </Card>
               </div>

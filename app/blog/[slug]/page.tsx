@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 /* ------------------------------------------------------------------ */
-/* Page component                                                        */
+/* JSON-LD structured data                                              */
 /* ------------------------------------------------------------------ */
 
 function buildJsonLd(post: Awaited<ReturnType<typeof obtenerPostPorSlug>>) {

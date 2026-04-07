@@ -8,8 +8,9 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const { user } = useAuth();
   const isAuthRoute = pathname.startsWith("/auth/");
+  const isBlogRoute = pathname.startsWith("/blog");
 
-  if (isAuthRoute || !user) {
+  if (isAuthRoute || isBlogRoute || !user) {
     return <main className="min-h-screen">{children}</main>;
   }
 

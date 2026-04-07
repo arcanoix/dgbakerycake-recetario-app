@@ -335,7 +335,7 @@ export interface Orden {
   userId: string;
   clienteId: string;
   clienteNombre?: string;
-  numerOrden: string;
+  numeroOrden: string;
   estado: EstadoOrden;
   items: OrdenItem[];
   subtotal: number;

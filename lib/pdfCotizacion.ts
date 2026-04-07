@@ -29,7 +29,7 @@ export const exportarCotizacionPDF = (
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
   doc.setTextColor(textMuted[0], textMuted[1], textMuted[2]);
-  doc.text(`N° ${orden.numerOrden}`, 14, 30);
+  doc.text(`N° ${orden.numeroOrden}`, 14, 30);
 
   // Estado badge
   const estadoLabel: Record<string, string> = {
@@ -193,6 +193,6 @@ export const exportarCotizacionPDF = (
     285
   );
 
-  const filename = `Cotizacion-${orden.numerOrden.replace(/[^a-z0-9-]/gi, "_")}.pdf`;
+  const filename = `Cotizacion-${orden.numeroOrden.replace(/[^a-z0-9-]/gi, "_")}.pdf`;
   doc.save(filename);
 };

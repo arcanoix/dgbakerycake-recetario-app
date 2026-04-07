@@ -118,7 +118,7 @@ export const OrdenForm = ({ orden, clientes, recetas, onGuardar, onCancelar }: O
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between pb-4">
         <CardTitle className="text-lg">
-          {orden ? `Editar ${orden.numerOrden}` : "Nueva Orden / Cotización"}
+          {orden ? `Editar ${orden.numeroOrden}` : "Nueva Orden / Cotización"}
         </CardTitle>
         <button onClick={onCancelar} className="p-1 rounded hover:bg-gray-100">
           <X className="w-5 h-5 text-gray-500" />

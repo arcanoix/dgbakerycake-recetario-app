@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS ordenes (
 CREATE INDEX IF NOT EXISTS idx_ordenes_user_id ON ordenes(user_id);
 CREATE INDEX IF NOT EXISTS idx_ordenes_cliente_id ON ordenes(cliente_id);
 CREATE INDEX IF NOT EXISTS idx_ordenes_estado ON ordenes(estado);
-CREATE INDEX IF NOT EXISTS idx_ordenes_numero ON ordenes(numero_orden);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_ordenes_user_numero ON ordenes(user_id, numero_orden);
 
 -- Tabla de Ítems de Orden
 CREATE TABLE IF NOT EXISTS orden_items (

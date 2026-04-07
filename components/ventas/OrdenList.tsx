@@ -59,7 +59,7 @@ export const OrdenList = ({
   const ordenesFiltradas = ordenes.filter(o => {
     const matchBusqueda =
       !busqueda ||
-      o.numerOrden.toLowerCase().includes(busqueda.toLowerCase()) ||
+      o.numeroOrden.toLowerCase().includes(busqueda.toLowerCase()) ||
       o.clienteNombre?.toLowerCase().includes(busqueda.toLowerCase());
     const matchEstado = !filtroEstado || o.estado === filtroEstado;
     return matchBusqueda && matchEstado;
@@ -136,7 +136,7 @@ export const OrdenList = ({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-mono text-sm font-semibold text-gray-900 dark:text-white">
-                        {orden.numerOrden}
+                        {orden.numeroOrden}
                       </span>
                       <span
                         className={`text-xs px-2 py-0.5 rounded-full border font-medium ${ESTADO_COLORS[orden.estado]}`}

@@ -114,7 +114,6 @@ export default function VentasPage() {
               onClick={() => setMostrarFormulario(true)}
               className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700"
               disabled={clientes.length === 0}
-              title={clientes.length === 0 ? "Primero registra un cliente en la sección Clientes" : ""}
             >
               <Plus className="w-4 h-4 mr-2" /> Nueva Orden
             </Button>

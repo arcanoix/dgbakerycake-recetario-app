@@ -117,7 +117,7 @@ export const useOrdenes = () => {
     const t = termino.toLowerCase();
     return ordenes.filter(
       o =>
-        o.numerOrden.toLowerCase().includes(t) ||
+        o.numeroOrden.toLowerCase().includes(t) ||
         o.clienteNombre?.toLowerCase().includes(t) ||
         o.notas?.toLowerCase().includes(t)
     );

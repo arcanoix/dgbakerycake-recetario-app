@@ -175,13 +175,12 @@ export const crearOrden = async (datos: OrdenFormData): Promise<{ exitoso: boole
   const saldoPendiente = total - datos.pagoAdelantado;
 
   // Generar número de orden
-  const { data: ordenCount } = await supabase
+  const { count } = await supabase
     .from('ordenes')
-    .select('id', { count: 'exact', head: true })
+    .select('*', { count: 'exact', head: true })
     .eq('user_id', user.id);
 
-  const count = (ordenCount as any) || 0;
-  const numeroOrden = `ORD-${new Date().getFullYear()}-${String(typeof count === 'number' ? count + 1 : 1).padStart(4, '0')}`;
+  const numeroOrden = `ORD-${new Date().getFullYear()}-${String((count ?? 0) + 1).padStart(4, '0')}`;
 
   // Insertar orden
   const { data: orden, error: ordenError } = await supabase
@@ -273,7 +272,11 @@ export const actualizarOrden = async (id: string, datos: OrdenFormData): Promise
   }
 
   // Reemplazar ítems: eliminar los existentes e insertar los nuevos
-  await supabase.from('orden_items').delete().eq('orden_id', id);
+  const { error: deleteItemsError } = await supabase.from('orden_items').delete().eq('orden_id', id);
+  if (deleteItemsError) {
+    console.error('Error al eliminar ítems existentes:', deleteItemsError);
+    return { exitoso: false, error: deleteItemsError.message };
+  }
 
   if (datos.items.length > 0) {
     const itemsData = datos.items.map(item => ({
@@ -373,7 +376,7 @@ function mapOrdenFromDB(data: any): Orden {
     userId: data.user_id,
     clienteId: data.cliente_id,
     clienteNombre: data.clientes?.nombre || undefined,
-    numerOrden: data.numero_orden,
+    numeroOrden: data.numero_orden,
     estado: data.estado,
     items,
     subtotal: parseFloat(data.subtotal),

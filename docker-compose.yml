@@ -10,6 +10,8 @@ services:
       - .:/app
       - /app/node_modules
       - /app/.next
+    env_file:
+      - .env.local
     environment:
       - NODE_ENV=development
       - WATCHPACK_POLLING=true

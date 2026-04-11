@@ -1,7 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
+// Constantes de configuración
+const TASA_MIN = 1;
+const TASA_MAX = 200;
+const MAX_REINTENTOS = 3;
+const TIMEOUT_MS = 10000;
 
+
+
+/**
+ * Valida que la tasa de cambio esté dentro de un rango razonable.
+ */
+function validarTasa(tasa: number): boolean {
+  return !isNaN(tasa) && tasa >= TASA_MIN && tasa <= TASA_MAX;
+}
 
 /**
  * Extrae la tasa de cambio USD del HTML de la página del BCV.
@@ -19,7 +32,10 @@ function parsearTasaBCV(html: string): number | null {
   if (seccionDolar) {
     // El BCV usa coma como separador decimal en español (ej. "36,50")
     const valor = parseFloat(seccionDolar[1].replace(',', '.'));
-    if (!isNaN(valor) && valor > 0) return valor;
+    if (validarTasa(valor)) {
+      console.log(`[BCV Parser] Método 1 exitoso: ${valor} Bs/USD`);
+      return valor;
+    }
   }
 
   // Método 2: buscar el bloque completo del dólar (div con clase que incluye "dolar")
@@ -28,7 +44,10 @@ function parsearTasaBCV(html: string): number | null {
   );
   if (bloqueDolar) {
     const valor = parseFloat(bloqueDolar[1].replace(',', '.'));
-    if (!isNaN(valor) && valor > 0) return valor;
+    if (validarTasa(valor)) {
+      console.log(`[BCV Parser] Método 2 exitoso: ${valor} Bs/USD`);
+      return valor;
+    }
   }
 
   // Método 3: buscar cualquier <strong> que siga a texto "dólar" o "USD" en el HTML
@@ -37,10 +56,69 @@ function parsearTasaBCV(html: string): number | null {
   );
   if (contextoDolar) {
     const valor = parseFloat(contextoDolar[1].replace(',', '.'));
-    if (!isNaN(valor) && valor > 0) return valor;
+    if (validarTasa(valor)) {
+      console.log(`[BCV Parser] Método 3 exitoso: ${valor} Bs/USD`);
+      return valor;
+    }
   }
 
+  console.error('[BCV Parser] No se pudo extraer tasa válida con ningún método');
   return null;
+}
+
+/**
+ * Obtiene la tasa de cambio del BCV con reintentos.
+ */
+async function obtenerTasaBCVConReintentos(): Promise<number> {
+  let ultimoError: Error | null = null;
+
+  for (let intento = 1; intento <= MAX_REINTENTOS; intento++) {
+    try {
+      console.log(`[BCV Fetch] Intento ${intento}/${MAX_REINTENTOS}`);
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+      const respuestaBCV = await fetch('https://www.bcv.org.ve/', {
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+          Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'Accept-Language': 'es-VE,es;q=0.9,en;q=0.8',
+        },
+        cache: 'no-store',
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!respuestaBCV.ok) {
+        throw new Error(`HTTP ${respuestaBCV.status}: ${respuestaBCV.statusText}`);
+      }
+
+      const html = await respuestaBCV.text();
+      const tasaCambio = parsearTasaBCV(html);
+
+      if (!tasaCambio) {
+        throw new Error('No se pudo extraer la tasa de cambio del HTML');
+      }
+
+      console.log(`[BCV Fetch] Éxito: ${tasaCambio} Bs/USD`);
+      return tasaCambio;
+    } catch (error) {
+      ultimoError = error instanceof Error ? error : new Error(String(error));
+      console.error(`[BCV Fetch] Intento ${intento} falló:`, ultimoError.message);
+
+      // Esperar antes de reintentar (exponential backoff)
+      if (intento < MAX_REINTENTOS) {
+        const espera = Math.min(1000 * Math.pow(2, intento - 1), 5000);
+        console.log(`[BCV Fetch] Esperando ${espera}ms antes de reintentar...`);
+        await new Promise(resolve => setTimeout(resolve, espera));
+      }
+    }
+  }
+
+  throw ultimoError || new Error('Error desconocido al obtener tasa BCV');
 }
 
 /**
@@ -61,70 +139,102 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
   }
 
+  const inicioEjecucion = Date.now();
+  console.log(`[BCV Cron] Iniciando ejecución - ${new Date().toISOString()}`);
+
   try {
-    // Obtener la página del BCV
-    const respuestaBCV = await fetch('https://www.bcv.org.ve/', {
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'es-VE,es;q=0.9,en;q=0.8',
-      },
-      // No almacenar en caché para siempre obtener el valor actual
-      cache: 'no-store',
-    });
-
-    if (!respuestaBCV.ok) {
-      throw new Error(
-        `Error al obtener la página del BCV: HTTP ${respuestaBCV.status}`
-      );
-    }
-
-    const html = await respuestaBCV.text();
-
-    // Parsear la tasa de cambio
-    const tasaCambio = parsearTasaBCV(html);
-
-    if (!tasaCambio) {
-      throw new Error(
-        'No se pudo extraer la tasa de cambio USD de la página del BCV'
-      );
-    }
+    // Obtener la tasa de cambio con reintentos
+    const tasaCambio = await obtenerTasaBCVConReintentos();
 
     // Actualizar la configuración en Supabase usando el service role key
+    console.log('[BCV Cron] Conectando a Supabase...');
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
       { auth: { autoRefreshToken: false, persistSession: false } }
     );
 
-    // Actualizar la tasa de cambio en TODAS las filas existentes de configuración
-    // Usamos .not('id', 'is', null) como un filtro dummy para afectar a todas las filas
-    const { error: errorActualizar, count } = await supabase
+    // Obtener la primera configuración existente
+    const { data: configExistente, error: errorObtener } = await supabase
       .from('configuracion')
-      .update({ tasa_cambio_usd: tasaCambio })
-      .not('id', 'is', null);
+      .select('id, tasa_cambio_usd')
+      .limit(1)
+      .maybeSingle();
 
-    if (errorActualizar) {
-      throw new Error(
-        `Error al actualizar configuraciones: ${errorActualizar.message}`
-      );
+    if (errorObtener) {
+      throw new Error(`Error al obtener configuración: ${errorObtener.message}`);
     }
 
-    console.log(
-      `[BCV Cron] Tasa de cambio actualizada: ${tasaCambio} Bs/USD`
-    );
+    let resultado;
+    if (configExistente) {
+      // Actualizar solo si la tasa cambió
+      const tasaAnterior = configExistente.tasa_cambio_usd;
+      if (tasaAnterior === tasaCambio) {
+        console.log(`[BCV Cron] Tasa sin cambios: ${tasaCambio} Bs/USD`);
+        const duracion = Date.now() - inicioEjecucion;
+        return NextResponse.json({
+          exitoso: true,
+          tasaCambio,
+          sinCambios: true,
+          actualizadoEn: new Date().toISOString(),
+          duracionMs: duracion,
+          mensaje: `Tasa sin cambios: ${tasaCambio} Bs/USD`,
+        });
+      }
+
+      console.log(`[BCV Cron] Actualizando tasa: ${tasaAnterior} → ${tasaCambio} Bs/USD`);
+      const { error: errorActualizar } = await supabase
+        .from('configuracion')
+        .update({ tasa_cambio_usd: tasaCambio })
+        .eq('id', configExistente.id);
+
+      if (errorActualizar) {
+        throw new Error(`Error al actualizar configuración: ${errorActualizar.message}`);
+      }
+      resultado = { actualizado: true, tasaAnterior };
+    } else {
+      // Crear nueva configuración si no existe
+      console.log('[BCV Cron] Creando nueva configuración...');
+      const { error: errorCrear } = await supabase
+        .from('configuracion')
+        .insert([{
+          costo_por_hora_defecto: 10,
+          moneda: 'VES',
+          margen_ganancia_defecto: 30,
+          tasa_cambio_usd: tasaCambio,
+        }]);
+
+      if (errorCrear) {
+        throw new Error(`Error al crear configuración: ${errorCrear.message}`);
+      }
+      resultado = { creado: true };
+    }
+
+    const duracion = Date.now() - inicioEjecucion;
+    console.log(`[BCV Cron] ✓ Completado exitosamente en ${duracion}ms`);
 
     return NextResponse.json({
       exitoso: true,
       tasaCambio,
       actualizadoEn: new Date().toISOString(),
+      duracionMs: duracion,
       mensaje: `Tasa de cambio USD actualizada a ${tasaCambio} Bs/USD`,
+      ...resultado,
     });
   } catch (error) {
-    const mensaje =
-      error instanceof Error ? error.message : 'Error desconocido';
-    console.error('[BCV Cron] Error:', mensaje);
-    return NextResponse.json({ exitoso: false, error: mensaje }, { status: 500 });
+    const duracion = Date.now() - inicioEjecucion;
+    const mensaje = error instanceof Error ? error.message : 'Error desconocido';
+    console.error('[BCV Cron] ✗ Error:', mensaje);
+    console.error('[BCV Cron] Stack:', error instanceof Error ? error.stack : 'N/A');
+
+    return NextResponse.json(
+      {
+        exitoso: false,
+        error: mensaje,
+        duracionMs: duracion,
+        timestamp: new Date().toISOString(),
+      },
+      { status: 500 }
+    );
   }
 }

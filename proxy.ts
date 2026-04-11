@@ -20,6 +20,12 @@ const ratelimit = new Ratelimit({
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Excluir rutas de cron del middleware de autenticación
+  // Los cron jobs usan su propio sistema de autenticación (CRON_SECRET)
+  if (pathname.startsWith('/api/cron/')) {
+    return NextResponse.next();
+  }
+
   // Rate Limiting para APIs
   if (pathname.startsWith('/api/') && process.env.UPSTASH_REDIS_REST_URL) {
     // Identificar usuario por su IP (de las cabeceras de proxy o del request)

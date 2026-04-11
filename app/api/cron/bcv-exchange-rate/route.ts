@@ -67,7 +67,54 @@ function parsearTasaBCV(html: string): number | null {
 }
 
 /**
- * Obtiene la tasa de cambio del BCV con reintentos.
+ * Obtiene la tasa de cambio desde la API JSON del BCV (alternativa al scraping).
+ * Endpoint: https://pydolarve.org/api/v1/dollar?page=bcv
+ */
+async function obtenerTasaDesdeBCVAPI(): Promise<number | null> {
+  try {
+    console.log('[BCV API] Intentando obtener tasa desde API alternativa...');
+    
+    const response = await fetch('https://pydolarve.org/api/v1/dollar?page=bcv', {
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      console.error(`[BCV API] HTTP ${response.status}: ${response.statusText}`);
+      return null;
+    }
+
+    const data = await response.json();
+    
+    // La API retorna: { monitors: { bcv: { price: "36.50", ... } } }
+    const precio = data?.monitors?.bcv?.price;
+    
+    if (!precio) {
+      console.error('[BCV API] No se encontró el precio en la respuesta');
+      return null;
+    }
+
+    const tasa = parseFloat(precio);
+    
+    if (validarTasa(tasa)) {
+      console.log(`[BCV API] ✓ Tasa obtenida: ${tasa} Bs/USD`);
+      return tasa;
+    }
+    
+    console.error(`[BCV API] Tasa fuera de rango: ${tasa}`);
+    return null;
+  } catch (error) {
+    const mensaje = error instanceof Error ? error.message : String(error);
+    console.error('[BCV API] Error:', mensaje);
+    return null;
+  }
+}
+
+/**
+ * Obtiene la tasa de cambio del BCV con reintentos (scraping HTML).
  */
 async function obtenerTasaBCVConReintentos(): Promise<number> {
   let ultimoError: Error | null = null;
@@ -79,12 +126,25 @@ async function obtenerTasaBCVConReintentos(): Promise<number> {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
+      console.log(`[BCV Fetch] Intentando conectar a BCV...`);
+      
       const respuestaBCV = await fetch('https://www.bcv.org.ve/', {
         headers: {
           'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-          Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-          'Accept-Language': 'es-VE,es;q=0.9,en;q=0.8',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+          'Accept-Language': 'es-VE,es;q=0.9,en-US;q=0.8,en;q=0.7',
+          'Accept-Encoding': 'gzip, deflate, br',
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+          'Sec-Ch-Ua': '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+          'Sec-Ch-Ua-Mobile': '?0',
+          'Sec-Ch-Ua-Platform': '"Windows"',
+          'Sec-Fetch-Dest': 'document',
+          'Sec-Fetch-Mode': 'navigate',
+          'Sec-Fetch-Site': 'none',
+          'Sec-Fetch-User': '?1',
+          'Upgrade-Insecure-Requests': '1',
         },
         cache: 'no-store',
         signal: controller.signal,
@@ -108,6 +168,8 @@ async function obtenerTasaBCVConReintentos(): Promise<number> {
     } catch (error) {
       ultimoError = error instanceof Error ? error : new Error(String(error));
       console.error(`[BCV Fetch] Intento ${intento} falló:`, ultimoError.message);
+      console.error(`[BCV Fetch] Error type:`, error instanceof Error ? error.constructor.name : typeof error);
+      console.error(`[BCV Fetch] Error cause:`, error instanceof Error && 'cause' in error ? error.cause : 'N/A');
 
       // Esperar antes de reintentar (exponential backoff)
       if (intento < MAX_REINTENTOS) {
@@ -119,6 +181,31 @@ async function obtenerTasaBCVConReintentos(): Promise<number> {
   }
 
   throw ultimoError || new Error('Error desconocido al obtener tasa BCV');
+}
+
+/**
+ * Obtiene la tasa de cambio intentando primero la API y luego el scraping.
+ */
+async function obtenerTasaBCV(): Promise<number> {
+  // Intentar primero con la API alternativa (más confiable)
+  console.log('[BCV] Método 1: Intentando API alternativa...');
+  const tasaAPI = await obtenerTasaDesdeBCVAPI();
+  
+  if (tasaAPI) {
+    console.log(`[BCV] ✓ Tasa obtenida desde API: ${tasaAPI} Bs/USD`);
+    return tasaAPI;
+  }
+
+  // Si falla la API, intentar scraping del sitio web
+  console.log('[BCV] Método 2: Intentando scraping del sitio web...');
+  try {
+    const tasaScraping = await obtenerTasaBCVConReintentos();
+    console.log(`[BCV] ✓ Tasa obtenida desde scraping: ${tasaScraping} Bs/USD`);
+    return tasaScraping;
+  } catch (error) {
+    console.error('[BCV] ✗ Ambos métodos fallaron');
+    throw new Error('No se pudo obtener la tasa de cambio del BCV. Intentos: API alternativa y scraping web.');
+  }
 }
 
 /**
@@ -143,8 +230,8 @@ export async function GET(req: NextRequest) {
   console.log(`[BCV Cron] Iniciando ejecución - ${new Date().toISOString()}`);
 
   try {
-    // Obtener la tasa de cambio con reintentos
-    const tasaCambio = await obtenerTasaBCVConReintentos();
+    // Obtener la tasa de cambio (API primero, luego scraping)
+    const tasaCambio = await obtenerTasaBCV();
 
     // Actualizar la configuración en Supabase usando el service role key
     console.log('[BCV Cron] Conectando a Supabase...');

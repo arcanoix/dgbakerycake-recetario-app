@@ -20,17 +20,23 @@ Este cron job obtiene automáticamente la tasa de cambio USD/VES del Banco Centr
 └─────────────────────────────────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
-│ 3. Obtención de Tasa BCV (con reintentos)                   │
+│ 3. Obtención de Tasa BCV (estrategia dual)                  │
+│    Método 1: API alternativa (PyDolarVe)                    │
+│    - Endpoint: https://pydolarve.org/api/v1/dollar?page=bcv │
+│    - Formato JSON (más confiable)                           │
+│    Método 2: Scraping web (fallback)                        │
 │    - Máximo 3 intentos con exponential backoff              │
 │    - Timeout: 10 segundos por intento                       │
 │    - Fetch: https://www.bcv.org.ve/                         │
 └─────────────────────────────────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
-│ 4. Parsing HTML (3 métodos de extracción)                   │
-│    Método 1: Buscar id="dolar" + <strong>                   │
-│    Método 2: Buscar class="*dolar*" + <strong>              │
-│    Método 3: Buscar texto "dólar"/"USD" + <strong>          │
+│ 4. Parsing (según método usado)                             │
+│    Si API: Extraer JSON { monitors.bcv.price }              │
+│    Si Scraping: 3 métodos de extracción HTML                │
+│    - Método 1: Buscar id="dolar" + <strong>                 │
+│    - Método 2: Buscar class="*dolar*" + <strong>            │
+│    - Método 3: Buscar texto "dólar"/"USD" + <strong>        │
 └─────────────────────────────────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
@@ -191,13 +197,32 @@ curl http://localhost:3000/api/cron/bcv-exchange-rate/test
 
 ## 🔧 Características Implementadas
 
+### ✅ Estrategia Dual de Obtención de Datos
+**Método 1: API Alternativa (Primario)**
+- Endpoint: `https://pydolarve.org/api/v1/dollar?page=bcv`
+- Formato JSON estructurado
+- Más confiable y rápido
+- No requiere parsing HTML
+
+**Método 2: Scraping Web (Fallback)**
+- Solo se usa si la API falla
+- 3 estrategias diferentes de parsing HTML
+- Máximo 3 intentos con exponential backoff
+- Timeout: 10 segundos por intento
+
+**Ventajas de esta estrategia:**
+- ✅ Mayor confiabilidad (dos fuentes independientes)
+- ✅ Funciona incluso si el BCV bloquea IPs de Vercel
+- ✅ Fallback automático sin intervención manual
+- ✅ Logging detallado de qué método funcionó
+
 ### ✅ Validación de Rango
 - Tasa mínima: 1 Bs/USD
 - Tasa máxima: 200 Bs/USD
 - Rechaza valores fuera de rango
 
 ### ✅ Retry Logic
-- Máximo 3 intentos
+- Máximo 3 intentos (solo en scraping)
 - Exponential backoff: 1s, 2s, 4s (máx 5s)
 - Timeout por intento: 10 segundos
 
@@ -211,11 +236,7 @@ curl http://localhost:3000/api/cron/bcv-exchange-rate/test
 - Duración de ejecución
 - Stack traces en errores
 - Indicadores visuales (✓/✗)
-
-### ✅ Múltiples Métodos de Parsing
-- 3 estrategias diferentes para extraer la tasa
-- Fallback automático entre métodos
-- Logging de qué método funcionó
+- Logging de qué método funcionó (API vs Scraping)
 
 ## 📈 Respuestas del API
 
@@ -324,11 +345,17 @@ curl http://localhost:3000/api/cron/bcv-exchange-rate/test
 - Verificar conectividad: `curl https://www.bcv.org.ve/`
 - Considerar implementar API alternativa (DolarToday, etc.)
 
-### Problema: "fetch failed" en Docker
+### Problema: "fetch failed" en Docker o Vercel
 
-**Causa**: El contenedor Docker no puede acceder a https://www.bcv.org.ve/
+**Causa**: El servidor no puede acceder a https://www.bcv.org.ve/ (bloqueado por IP)
 
-**Solución**:
+**Solución Automática**: 
+El sistema ahora usa una **estrategia dual**:
+1. **Primero** intenta obtener la tasa desde la API alternativa (PyDolarVe)
+2. **Si falla**, intenta scraping del sitio web del BCV
+3. **Solo falla** si ambos métodos fallan
+
+**Solución Manual (desarrollo)**:
 ```bash
 # Usar modo simulado
 curl "http://localhost:3000/api/cron/bcv-exchange-rate/test?simulate=true&tasa=37.50"
@@ -337,7 +364,7 @@ curl "http://localhost:3000/api/cron/bcv-exchange-rate/test?simulate=true&tasa=3
 Invoke-WebRequest -Uri "http://localhost:3000/api/cron/bcv-exchange-rate/test?simulate=true&tasa=37.50" -UseBasicParsing
 ```
 
-**Nota**: Esto es normal en Docker y **no afecta producción**. En Vercel funcionará correctamente.
+**Nota**: Con la API alternativa, el cron job debería funcionar correctamente en Vercel incluso si el BCV bloquea las IPs de AWS.
 
 ### Problema: "No se pudo extraer la tasa de cambio"
 

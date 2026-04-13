@@ -51,16 +51,23 @@ Este cron job obtiene automáticamente la tasa de cambio USD/VES del Banco Centr
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
 │ 6. Actualización en Supabase                                │
-│    - Obtiene configuración existente                        │
-│    - Si no cambió: retorna sin actualizar                   │
-│    - Si cambió: actualiza solo ese registro                 │
-│    - Si no existe: crea nueva configuración                 │
+│    - Si existe: UPDATE tasa_cambio_usd                      │
+│    - Si no existe: INSERT nueva configuración               │
+│    - Solo actualiza si la tasa cambió                       │
 └─────────────────────────────────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
-│ 7. Respuesta JSON                                           │
+│ 7. Sincronización con API Externa                           │
+│    - POST https://python-scrapping-bcv.onrender.com/sync    │
+│    - Header: X-API-Key                                      │
+│    - Actualiza la base de datos de la API externa           │
+│    - No bloquea el flujo si falla                           │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│ 8. Respuesta Exitosa                                        │
 │    {                                                         │
-│      exitoso: true,                                         │
+│      exitoso: true,                                          │
 │      tasaCambio: 36.50,                                     │
 │      actualizadoEn: "2026-04-11T16:00:00.000Z",            │
 │      duracionMs: 1234,                                      │
@@ -184,12 +191,15 @@ curl http://localhost:3000/api/cron/bcv-exchange-rate/test
 
 ```
 [BCV Cron] Iniciando ejecución - 2026-04-11T16:00:00.000Z
-[BCV Fetch] Intento 1/3
-[BCV Parser] Método 1 exitoso: 36.50 Bs/USD
-[BCV Fetch] Éxito: 36.50 Bs/USD
+[BCV] Método 1: Intentando API externa de scraping...
+[API Externa] Intentando obtener tasa desde API de scraping...
+[API Externa] ✓ Tasa obtenida: 36.50 Bs/USD
+[BCV] ✓ Tasa obtenida desde API externa: 36.50 Bs/USD
 [BCV Cron] Conectando a Supabase...
 [BCV Cron] Actualizando tasa: 35.80 → 36.50 Bs/USD
-[BCV Cron] ✓ Completado exitosamente en 1234ms
+[Sync API] Sincronizando con API externa...
+[Sync API] ✓ Sincronización exitosa: { success: true, ... }
+[BCV Cron] ✓ Completado exitosamente en 1456ms
 ```
 
 ### Logs de Error
@@ -247,6 +257,13 @@ curl http://localhost:3000/api/cron/bcv-exchange-rate/test
 - Solo actualiza si la tasa cambió
 - Actualiza un solo registro (no todas las filas)
 - Crea configuración si no existe
+- Sincroniza automáticamente con API externa después de actualizar
+
+### ✅ Sincronización con API Externa
+- Llama al endpoint `/sync` de la API externa
+- Mantiene sincronizada la base de datos de la API
+- No bloquea el flujo principal si falla
+- Usa la misma autenticación (X-API-Key)
 
 ### ✅ Logging Mejorado
 - Timestamps en cada paso

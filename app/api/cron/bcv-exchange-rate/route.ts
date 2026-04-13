@@ -242,6 +242,48 @@ async function obtenerTasaBCVConReintentos(): Promise<number> {
 }
 
 /**
+ * Sincroniza la tasa de cambio con la API externa.
+ * Llama al endpoint /sync para que la API externa actualice su base de datos.
+ */
+async function sincronizarConAPIExterna(): Promise<boolean> {
+  try {
+    console.log('[Sync API] Sincronizando con API externa...');
+    
+    const apiKey = process.env.BCV_API_KEY;
+
+    if (!apiKey) {
+      console.error('[Sync API] BCV_API_KEY no configurada');
+      return false;
+    }
+
+    const response = await fetch(
+      'https://python-scrapping-bcv.onrender.com/sync',
+      {
+        method: 'POST',
+        headers: {
+          'X-API-Key': apiKey,
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store',
+      }
+    );
+
+    if (!response.ok) {
+      console.error(`[Sync API] HTTP ${response.status}: ${response.statusText}`);
+      return false;
+    }
+
+    const data = await response.json();
+    console.log(`[Sync API] ✓ Sincronización exitosa:`, data);
+    return true;
+  } catch (error) {
+    const mensaje = error instanceof Error ? error.message : String(error);
+    console.error('[Sync API] Error en sincronización:', mensaje);
+    return false;
+  }
+}
+
+/**
  * Obtiene la tasa de cambio intentando múltiples métodos con fallback automático.
  * 
  * Estrategia de fallback:
@@ -351,6 +393,9 @@ export async function GET(req: NextRequest) {
         throw new Error(`Error al actualizar configuración: ${errorActualizar.message}`);
       }
       resultado = { actualizado: true, tasaAnterior };
+      
+      // Sincronizar con API externa después de actualizar Supabase
+      await sincronizarConAPIExterna();
     } else {
       // Crear nueva configuración si no existe
       console.log('[BCV Cron] Creando nueva configuración...');
@@ -367,6 +412,9 @@ export async function GET(req: NextRequest) {
         throw new Error(`Error al crear configuración: ${errorCrear.message}`);
       }
       resultado = { creado: true };
+      
+      // Sincronizar con API externa después de crear configuración
+      await sincronizarConAPIExterna();
     }
 
     const duracion = Date.now() - inicioEjecucion;

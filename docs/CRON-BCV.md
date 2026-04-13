@@ -24,9 +24,9 @@ Este cron job obtiene automáticamente la tasa de cambio USD/VES del Banco Centr
 │    Método 1: API alternativa (PyDolarVe)                    │
 │    - Endpoint: https://pydolarve.org/api/v1/dollar?page=bcv │
 │    - Formato JSON (más confiable)                           │
-│    Método 2: Edge Function Python (Supabase)                │
-│    - Scraping con lxml y XPath preciso                      │
-│    - XPath: /html/body/div[4]/.../div[2]                    │
+│    Método 2: Edge Function TypeScript (Supabase)            │
+│    - Scraping con DOMParser y selectores CSS                │
+│    - Múltiples selectores + fallback regex                  │
 │    Método 3: Scraping TypeScript (fallback final)           │
 │    - Máximo 3 intentos con exponential backoff              │
 │    - Timeout: 10 segundos por intento                       │
@@ -36,7 +36,7 @@ Este cron job obtiene automáticamente la tasa de cambio USD/VES del Banco Centr
 ┌─────────────────────────────────────────────────────────────┐
 │ 4. Parsing (según método usado)                             │
 │    Si API: Extraer JSON { monitors.bcv.price }              │
-│    Si Edge Function: XPath directo al elemento              │
+│    Si Edge Function: Selectores CSS + regex fallback        │
 │    Si Scraping TS: 3 métodos de extracción HTML con regex   │
 │    - Método 1: Buscar id="dolar" + <strong>                 │
 │    - Método 2: Buscar class="*dolar*" + <strong>            │
@@ -208,11 +208,11 @@ curl http://localhost:3000/api/cron/bcv-exchange-rate/test
 - Más confiable y rápido
 - No requiere parsing HTML
 
-**Método 2: Edge Function Python (Fallback 1)**
-- Supabase Edge Function con Python
-- Scraping usando `lxml` y XPath preciso
-- XPath: `/html/body/div[4]/div/div[2]/div/div[1]/div[1]/section[1]/div/div[2]/div/div[7]/div/div/div[2]`
-- Más robusto que regex para parsing HTML
+**Método 2: Edge Function TypeScript (Fallback 1)**
+- Supabase Edge Function con TypeScript/Deno
+- Scraping usando `DOMParser` y selectores CSS
+- Múltiples selectores + fallback con regex
+- Más robusto que regex simple para parsing HTML
 - Se ejecuta en infraestructura de Supabase
 
 **Método 3: Scraping TypeScript (Fallback 2)**
@@ -224,8 +224,8 @@ curl http://localhost:3000/api/cron/bcv-exchange-rate/test
 **Ventajas de esta estrategia:**
 - ✅ Triple redundancia (tres fuentes independientes)
 - ✅ Funciona incluso si el BCV bloquea IPs de Vercel
-- ✅ Python es mejor para scraping que TypeScript
-- ✅ XPath es más preciso que regex
+- ✅ Edge Function se ejecuta en infraestructura de Supabase
+- ✅ Selectores CSS + regex para máxima compatibilidad
 - ✅ Fallback automático sin intervención manual
 - ✅ Logging detallado de qué método funcionó
 

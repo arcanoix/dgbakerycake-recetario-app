@@ -1,13 +1,13 @@
-# Guía de Configuración - Supabase Edge Function Python
+# Guía de Configuración - Supabase Edge Function (TypeScript/Deno)
 
-Esta guía te ayudará a desplegar la Edge Function Python para scraping del BCV en Supabase.
+Esta guía te ayudará a desplegar la Edge Function TypeScript/Deno para scraping del BCV en Supabase.
 
 ## 📋 Pre-requisitos
 
 - Cuenta de Supabase activa
 - Proyecto de Supabase creado
 - Supabase CLI instalado
-- Python 3.9+ (para desarrollo local)
+- Deno instalado (opcional, solo para desarrollo local)
 
 ## 🚀 Instalación de Supabase CLI
 

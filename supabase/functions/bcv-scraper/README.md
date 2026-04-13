@@ -1,11 +1,12 @@
-# BCV Scraper - Supabase Edge Function (Python)
+# BCV Scraper - Supabase Edge Function (TypeScript/Deno)
 
-Edge Function en Python para obtener la tasa de cambio USD del BCV mediante scraping web usando XPath.
+Edge Function en TypeScript/Deno para obtener la tasa de cambio USD del BCV mediante scraping web.
 
 ## 🎯 Características
 
-- ✅ **XPath preciso**: Usa el XPath específico `/html/body/div[4]/div/div[2]/div/div[1]/div[1]/section[1]/div/div[2]/div/div[7]/div/div/div[2]`
-- ✅ **Scraping robusto**: Usa `lxml` para parsing HTML eficiente
+- ✅ **Múltiples selectores CSS**: Intenta varios selectores para encontrar el dólar
+- ✅ **Scraping robusto**: Usa `DOMParser` de Deno para parsing HTML eficiente
+- ✅ **Fallback con regex**: Si los selectores fallan, usa regex como respaldo
 - ✅ **Validación de datos**: Verifica que la tasa esté en rango válido (1-200 Bs/USD)
 - ✅ **Actualización automática**: Guarda directamente en tabla `configuracion` de Supabase
 - ✅ **Logging detallado**: Logs completos para debugging
@@ -13,12 +14,9 @@ Edge Function en Python para obtener la tasa de cambio USD del BCV mediante scra
 
 ## 📋 Requisitos
 
-### Dependencias Python
-```
-requests==2.31.0
-lxml==5.1.0
-supabase==2.3.4
-```
+### Runtime
+- Deno (incluido en Supabase Edge Functions)
+- No requiere dependencias adicionales
 
 ### Variables de Entorno
 ```bash

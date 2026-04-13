@@ -67,6 +67,67 @@ function parsearTasaBCV(html: string): number | null {
 }
 
 /**
+ * Obtiene la tasa de cambio desde Supabase Edge Function (Python con XPath).
+ * Esta función llama a la Edge Function que hace scraping con lxml y XPath preciso.
+ */
+async function obtenerTasaDesdeEdgeFunction(): Promise<number | null> {
+  try {
+    console.log('[Edge Function] Intentando obtener tasa desde Supabase Edge Function...');
+    
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const functionSecret = process.env.FUNCTION_SECRET;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('[Edge Function] Variables de Supabase no configuradas');
+      return null;
+    }
+
+    const response = await fetch(
+      `${supabaseUrl}/functions/v1/bcv-scraper`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${supabaseAnonKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          secret: functionSecret || undefined
+        }),
+        cache: 'no-store',
+      }
+    );
+
+    if (!response.ok) {
+      console.error(`[Edge Function] HTTP ${response.status}: ${response.statusText}`);
+      return null;
+    }
+
+    const data = await response.json();
+    
+    if (!data.success) {
+      console.error('[Edge Function] Error en Edge Function:', data.error);
+      return null;
+    }
+
+    const tasa = data.tasa_cambio;
+    
+    if (validarTasa(tasa)) {
+      console.log(`[Edge Function] ✓ Tasa obtenida: ${tasa} Bs/USD`);
+      console.log(`[Edge Function] Método: ${data.metodo}, Duración: ${data.duracion_ms}ms`);
+      return tasa;
+    }
+    
+    console.error(`[Edge Function] Tasa fuera de rango: ${tasa}`);
+    return null;
+  } catch (error) {
+    const mensaje = error instanceof Error ? error.message : String(error);
+    console.error('[Edge Function] Error:', mensaje);
+    return null;
+  }
+}
+
+/**
  * Obtiene la tasa de cambio desde la API JSON del BCV (alternativa al scraping).
  * Endpoint: https://pydolarve.org/api/v1/dollar?page=bcv
  */
@@ -184,11 +245,16 @@ async function obtenerTasaBCVConReintentos(): Promise<number> {
 }
 
 /**
- * Obtiene la tasa de cambio intentando primero la API y luego el scraping.
+ * Obtiene la tasa de cambio intentando múltiples métodos con fallback automático.
+ * 
+ * Estrategia de fallback:
+ * 1. API alternativa (PyDolarVe) - Más rápido y confiable
+ * 2. Edge Function Python (Supabase) - Scraping con XPath preciso
+ * 3. Scraping TypeScript (Next.js) - Fallback final con regex
  */
 async function obtenerTasaBCV(): Promise<number> {
-  // Intentar primero con la API alternativa (más confiable)
-  console.log('[BCV] Método 1: Intentando API alternativa...');
+  // Método 1: API alternativa (más confiable)
+  console.log('[BCV] Método 1: Intentando API alternativa (PyDolarVe)...');
   const tasaAPI = await obtenerTasaDesdeBCVAPI();
   
   if (tasaAPI) {
@@ -196,15 +262,24 @@ async function obtenerTasaBCV(): Promise<number> {
     return tasaAPI;
   }
 
-  // Si falla la API, intentar scraping del sitio web
-  console.log('[BCV] Método 2: Intentando scraping del sitio web...');
+  // Método 2: Edge Function Python con XPath
+  console.log('[BCV] Método 2: Intentando Edge Function Python (XPath)...');
+  const tasaEdgeFunction = await obtenerTasaDesdeEdgeFunction();
+  
+  if (tasaEdgeFunction) {
+    console.log(`[BCV] ✓ Tasa obtenida desde Edge Function: ${tasaEdgeFunction} Bs/USD`);
+    return tasaEdgeFunction;
+  }
+
+  // Método 3: Scraping TypeScript (fallback final)
+  console.log('[BCV] Método 3: Intentando scraping TypeScript (regex)...');
   try {
     const tasaScraping = await obtenerTasaBCVConReintentos();
-    console.log(`[BCV] ✓ Tasa obtenida desde scraping: ${tasaScraping} Bs/USD`);
+    console.log(`[BCV] ✓ Tasa obtenida desde scraping TS: ${tasaScraping} Bs/USD`);
     return tasaScraping;
   } catch (error) {
-    console.error('[BCV] ✗ Ambos métodos fallaron');
-    throw new Error('No se pudo obtener la tasa de cambio del BCV. Intentos: API alternativa y scraping web.');
+    console.error('[BCV] ✗ Todos los métodos fallaron');
+    throw new Error('No se pudo obtener la tasa de cambio del BCV. Intentos: API alternativa, Edge Function Python y scraping TypeScript.');
   }
 }
 

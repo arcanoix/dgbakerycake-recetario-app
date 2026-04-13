@@ -20,58 +20,22 @@ Este cron job obtiene automáticamente la tasa de cambio USD/VES del Banco Centr
 └─────────────────────────────────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
-│ 3. Obtención de Tasa BCV (estrategia triple)                │
-│    Método 1: API externa de scraping (Principal)            │
-│    - POST https://python-scrapping-bcv.onrender.com/...     │
-│    - Header: X-API-Key                                      │
-│    Método 2: API alternativa (PyDolarVe)                    │
-│    - GET https://pydolarve.org/api/v1/dollar?page=bcv       │
-│    - Formato JSON público                                   │
-│    Método 3: Scraping TypeScript (fallback final)           │
-│    - Máximo 3 intentos con exponential backoff              │
-│    - Timeout: 10 segundos por intento                       │
-│    - Fetch: https://www.bcv.org.ve/                         │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│ 4. Parsing (según método usado)                             │
-│    Si API Externa: Extraer JSON { price/rate/value/tasa }   │
-│    Si API PyDolarVe: Extraer JSON { monitors.bcv.price }    │
-│    Si Scraping TS: 3 métodos de extracción HTML con regex   │
-│    - Método 1: Buscar id="dolar" + <strong>                 │
-│    - Método 2: Buscar class="*dolar*" + <strong>            │
-│    - Método 3: Buscar texto "dólar"/"USD" + <strong>        │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│ 5. Validación de Tasa                                       │
-│    - Rango válido: 1 - 200 Bs/USD                           │
-│    - Rechaza si está fuera de rango                         │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│ 6. Actualización en Supabase                                │
-│    - Si existe: UPDATE tasa_cambio_usd                      │
-│    - Si no existe: INSERT nueva configuración               │
-│    - Solo actualiza si la tasa cambió                       │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│ 7. Sincronización con API Externa                           │
+│ 3. Sincronización con API Externa                           │
 │    - POST https://python-scrapping-bcv.onrender.com/sync    │
 │    - Header: X-API-Key                                      │
-│    - Actualiza la base de datos de la API externa           │
-│    - No bloquea el flujo si falla                           │
+│    - La API externa:                                        │
+│      • Obtiene tasa del BCV (scraping)                      │
+│      • Valida la tasa                                       │
+│      • Actualiza Supabase directamente                      │
 └─────────────────────────────────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
-│ 8. Respuesta Exitosa                                        │
+│ 4. Respuesta Exitosa                                        │
 │    {                                                         │
 │      exitoso: true,                                          │
-│      tasaCambio: 36.50,                                     │
-│      actualizadoEn: "2026-04-11T16:00:00.000Z",            │
+│      actualizadoEn: "2026-04-13T23:38:00.000Z",            │
 │      duracionMs: 1234,                                      │
-│      mensaje: "Tasa actualizada a 36.50 Bs/USD"            │
+│      mensaje: "Sincronización exitosa con API externa"      │
 │    }                                                         │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -247,11 +211,6 @@ curl http://localhost:3000/api/cron/bcv-exchange-rate/test
 - Tasa mínima: 1 Bs/USD
 - Tasa máxima: 200 Bs/USD
 - Rechaza valores fuera de rango
-
-### ✅ Retry Logic
-- Máximo 3 intentos (solo en scraping)
-- Exponential backoff: 1s, 2s, 4s (máx 5s)
-- Timeout por intento: 10 segundos
 
 ### ✅ Actualización Optimizada
 - Solo actualiza si la tasa cambió

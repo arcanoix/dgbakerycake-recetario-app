@@ -21,12 +21,12 @@ Este cron job obtiene automáticamente la tasa de cambio USD/VES del Banco Centr
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
 │ 3. Obtención de Tasa BCV (estrategia triple)                │
-│    Método 1: API alternativa (PyDolarVe)                    │
-│    - Endpoint: https://pydolarve.org/api/v1/dollar?page=bcv │
-│    - Formato JSON (más confiable)                           │
-│    Método 2: Edge Function TypeScript (Supabase)            │
-│    - Scraping con DOMParser y selectores CSS                │
-│    - Múltiples selectores + fallback regex                  │
+│    Método 1: API externa de scraping (Principal)            │
+│    - POST https://python-scrapping-bcv.onrender.com/...     │
+│    - Header: X-API-Key                                      │
+│    Método 2: API alternativa (PyDolarVe)                    │
+│    - GET https://pydolarve.org/api/v1/dollar?page=bcv       │
+│    - Formato JSON público                                   │
 │    Método 3: Scraping TypeScript (fallback final)           │
 │    - Máximo 3 intentos con exponential backoff              │
 │    - Timeout: 10 segundos por intento                       │
@@ -35,8 +35,8 @@ Este cron job obtiene automáticamente la tasa de cambio USD/VES del Banco Centr
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
 │ 4. Parsing (según método usado)                             │
-│    Si API: Extraer JSON { monitors.bcv.price }              │
-│    Si Edge Function: Selectores CSS + regex fallback        │
+│    Si API Externa: Extraer JSON { price/rate/value/tasa }   │
+│    Si API PyDolarVe: Extraer JSON { monitors.bcv.price }    │
 │    Si Scraping TS: 3 métodos de extracción HTML con regex   │
 │    - Método 1: Buscar id="dolar" + <strong>                 │
 │    - Método 2: Buscar class="*dolar*" + <strong>            │
@@ -128,6 +128,7 @@ environment:
   - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
   - DATABASE_URL=${DATABASE_URL}
   - CRON_SECRET=${CRON_SECRET}
+  - BCV_API_KEY=${BCV_API_KEY}
 ```
 
 ### Archivo `.env.local`
@@ -141,6 +142,9 @@ DATABASE_URL=postgresql://postgres:xxx@db.xxx.supabase.co:5432/postgres
 
 # Cron Job Security
 CRON_SECRET="your-cron-secret-here"
+
+# API Externa de Scraping BCV
+BCV_API_KEY="tu-api-key-de-scraping"
 ```
 
 ### Ejecutar en Docker
@@ -202,18 +206,18 @@ curl http://localhost:3000/api/cron/bcv-exchange-rate/test
 ## 🔧 Características Implementadas
 
 ### ✅ Estrategia Triple de Obtención de Datos
-**Método 1: API Alternativa (Primario)**
+**Método 1: API Externa de Scraping (Primario)**
+- Endpoint: `https://python-scrapping-bcv.onrender.com/currency/usd`
+- API dedicada con Python para scraping del BCV
+- Autenticación con `X-API-Key` header
+- Método POST
+- Más confiable y mantenible
+
+**Método 2: API Alternativa PyDolarVe (Fallback 1)**
 - Endpoint: `https://pydolarve.org/api/v1/dollar?page=bcv`
 - Formato JSON estructurado
-- Más confiable y rápido
-- No requiere parsing HTML
-
-**Método 2: Edge Function TypeScript (Fallback 1)**
-- Supabase Edge Function con TypeScript/Deno
-- Scraping usando `DOMParser` y selectores CSS
-- Múltiples selectores + fallback con regex
-- Más robusto que regex simple para parsing HTML
-- Se ejecuta en infraestructura de Supabase
+- No requiere autenticación
+- Fallback si la API principal falla
 
 **Método 3: Scraping TypeScript (Fallback 2)**
 - Solo se usa si ambos métodos anteriores fallan
@@ -223,11 +227,11 @@ curl http://localhost:3000/api/cron/bcv-exchange-rate/test
 
 **Ventajas de esta estrategia:**
 - ✅ Triple redundancia (tres fuentes independientes)
+- ✅ API principal dedicada y optimizada para scraping
 - ✅ Funciona incluso si el BCV bloquea IPs de Vercel
-- ✅ Edge Function se ejecuta en infraestructura de Supabase
-- ✅ Selectores CSS + regex para máxima compatibilidad
 - ✅ Fallback automático sin intervención manual
 - ✅ Logging detallado de qué método funcionó
+- ✅ Fácil de mantener (scraping centralizado en API externa)
 
 ### ✅ Validación de Rango
 - Tasa mínima: 1 Bs/USD

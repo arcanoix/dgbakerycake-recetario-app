@@ -29,7 +29,6 @@
     "marked": "^15.0.12",
     "motion": "^12.38.0",
     "next": "^16.1.7",
-    "next-themes": "latest",
     "papaparse": "^5.5.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

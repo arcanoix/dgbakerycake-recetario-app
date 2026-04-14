@@ -179,56 +179,28 @@ curl http://localhost:3000/api/cron/bcv-exchange-rate/test
 
 ## 🔧 Características Implementadas
 
-### ✅ Estrategia Triple de Obtención de Datos
-**Método 1: API Externa de Scraping (Primario)**
-- Endpoint: `https://python-scrapping-bcv.onrender.com/currency/usd`
-- API dedicada con Python para scraping del BCV
+### ✅ Sincronización con API Externa
+**Arquitectura simplificada:**
+- Endpoint: `https://python-scrapping-bcv.onrender.com/sync`
 - Autenticación con `X-API-Key` header
 - Método POST
-- Más confiable y mantenible
+- La API externa maneja todo el proceso:
+  - Scraping del BCV con Python
+  - Validación de la tasa
+  - Actualización directa en Supabase
 
-**Método 2: API Alternativa PyDolarVe (Fallback 1)**
-- Endpoint: `https://pydolarve.org/api/v1/dollar?page=bcv`
-- Formato JSON estructurado
-- No requiere autenticación
-- Fallback si la API principal falla
-
-**Método 3: Scraping TypeScript (Fallback 2)**
-- Solo se usa si ambos métodos anteriores fallan
-- 3 estrategias diferentes de parsing HTML con regex
-- Máximo 3 intentos con exponential backoff
-- Timeout: 10 segundos por intento
-
-**Ventajas de esta estrategia:**
-- ✅ Triple redundancia (tres fuentes independientes)
-- ✅ API principal dedicada y optimizada para scraping
-- ✅ Funciona incluso si el BCV bloquea IPs de Vercel
-- ✅ Fallback automático sin intervención manual
-- ✅ Logging detallado de qué método funcionó
-- ✅ Fácil de mantener (scraping centralizado en API externa)
-
-### ✅ Validación de Rango
-- Tasa mínima: 1 Bs/USD
-- Tasa máxima: 200 Bs/USD
-- Rechaza valores fuera de rango
-
-### ✅ Actualización Optimizada
-- Solo actualiza si la tasa cambió
-- Actualiza un solo registro (no todas las filas)
-- Crea configuración si no existe
-- Sincroniza automáticamente con API externa después de actualizar
-
-### ✅ Sincronización con API Externa
-- Llama al endpoint `/sync` de la API externa
-- Mantiene sincronizada la base de datos de la API
-- No bloquea el flujo principal si falla
-- Usa la misma autenticación (X-API-Key)
+**Ventajas:**
+- ✅ Lógica centralizada en la API externa
+- ✅ Cron job simple y ligero
+- ✅ Mantenimiento en un solo lugar
+- ✅ Scraping robusto con Python
+- ✅ Fácil de actualizar si el BCV cambia
+- ✅ La API externa tiene acceso directo a Supabase
 
 ### ✅ Logging Mejorado
 - Timestamps en cada paso
 - Duración de ejecución
 - Stack traces en errores
-- Indicadores visuales (✓/✗)
 - Logging de qué método funcionó (API vs Scraping)
 
 ## 📈 Respuestas del API

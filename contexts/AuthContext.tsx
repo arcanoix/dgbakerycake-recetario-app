@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabaseAuth, getCurrentUser } from '@/lib/supabase-auth';
 import { useRouter } from 'next/navigation';
+import { sincronizarPrecioBCVAlLogin } from '@/lib/bcvSync';
 
 interface AuthContextType {
   user: User | null;
@@ -50,6 +51,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       async (event, session) => {
         if (session?.user) {
           setUser(session.user);
+          
+          // Sincronizar precio BCV al iniciar sesión
+          if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+            sincronizarPrecioBCVAlLogin().catch(err => {
+              console.error('Error en sincronización BCV:', err);
+            });
+          }
         } else {
           setUser(null);
         }

@@ -148,7 +148,7 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProp
                   <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-200">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-[10px] uppercase tracking-wider text-emerald-600 font-medium mb-1">
+                        <p className="text-[11px] uppercase tracking-wider text-emerald-700 font-semibold mb-1">
                           Precio de Venta Sugerido
                         </p>
                         <PrecioDual 

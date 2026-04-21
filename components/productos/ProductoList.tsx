@@ -53,7 +53,7 @@ export const ProductoList = ({ productos, onEdit, onDelete }: ProductoListProps)
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col items-center justify-center py-16 px-4"
       >
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-violet-100 to-fuchsia-100 dark:from-violet-900 dark:to-fuchsia-900 flex items-center justify-center mb-4">
+        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-violet-100 to-fuchsia-100 flex items-center justify-center mb-4">
           <Package className="w-10 h-10 text-violet-500" />
         </div>
         <h3 className="text-xl font-semibold text-gray-900 mb-2">
@@ -98,73 +98,73 @@ export const ProductoList = ({ productos, onEdit, onDelete }: ProductoListProps)
               </CardHeader>
               
               <CardContent className="space-y-4">
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-850 rounded-xl p-4 space-y-3">
+                <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-4 space-y-3 border border-slate-200">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-700 flex items-center gap-1.5">
-                      <DollarSign className="w-3.5 h-3.5" />
+                    <span className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                      <DollarSign className="w-4 h-4" />
                       Precio Total
                     </span>
                     <PrecioDual 
                       valorUSD={producto.precioTotal} 
                       tasaCambio={configuracion?.tasaCambioUSD || 50}
                       monedaPorDefecto={configuracion?.moneda || 'VES'}
-                      className="text-sm font-semibold text-gray-900"
+                      className="text-sm font-bold text-slate-900"
                     />
                   </div>
                   
-                  <div className="h-px bg-gray-200" />
+                  <div className="h-px bg-slate-300" />
                   
                   <div className="grid grid-cols-3 gap-2">
                     <div className="text-center">
                       <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-100 mx-auto mb-1">
                         <Scale className="w-4 h-4 text-blue-600" />
                       </div>
-                      <p className="text-xs text-gray-700">Presentación</p>
-                      <p className="text-xs font-semibold text-gray-900">
+                      <p className="text-xs font-medium text-slate-700">Presentación</p>
+                      <p className="text-xs font-bold text-slate-900">
                         {formatearNumero(producto.tamañoPresentacion)}
                       </p>
-                      <p className="text-[10px] text-gray-700">{producto.unidadMedidaSimbolo || 'u'}</p>
+                      <p className="text-[10px] text-slate-600">{producto.unidadMedidaSimbolo || 'u'}</p>
                     </div>
                     <div className="text-center">
                       <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-100 mx-auto mb-1">
                         <ShoppingCart className="w-4 h-4 text-emerald-600" />
                       </div>
-                      <p className="text-xs text-gray-700">Cantidad</p>
-                      <p className="text-xs font-semibold text-gray-900">
+                      <p className="text-xs font-medium text-slate-700">Cantidad</p>
+                      <p className="text-xs font-bold text-slate-900">
                         {producto.cantidadPresentaciones}
                       </p>
-                      <p className="text-[10px] text-gray-700">unds</p>
+                      <p className="text-[10px] text-slate-600">unds</p>
                     </div>
                     <div className="text-center">
                       <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-violet-100 mx-auto mb-1">
                         <Package className="w-4 h-4 text-violet-600" />
                       </div>
-                      <p className="text-xs text-gray-700">Total</p>
-                      <p className="text-xs font-bold text-gray-900">
+                      <p className="text-xs font-medium text-slate-700">Total</p>
+                      <p className="text-xs font-bold text-slate-900">
                         {formatearNumero(producto.cantidadTotal)}
                       </p>
-                      <p className="text-[10px] text-gray-700">{producto.unidadMedidaSimbolo || 'u'}</p>
+                      <p className="text-[10px] text-slate-600">{producto.unidadMedidaSimbolo || 'u'}</p>
                     </div>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-blue-50/50 rounded-lg p-3">
-                    <p className="text-[10px] uppercase tracking-wider text-blue-600 font-medium mb-1">Por Presentación</p>
+                  <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                    <p className="text-[11px] uppercase tracking-wider text-blue-700 font-semibold mb-1">Por Presentación</p>
                     <PrecioDual 
                       valorUSD={producto.precioPorPresentacion} 
                       tasaCambio={configuracion?.tasaCambioUSD || 50}
                       monedaPorDefecto={configuracion?.moneda || 'VES'}
-                      className="text-sm font-bold text-blue-700"
+                      className="text-sm font-bold text-blue-800"
                     />
                   </div>
-                  <div className="bg-violet-50/50 rounded-lg p-3">
-                    <p className="text-[10px] uppercase tracking-wider text-violet-600 font-medium mb-1">Por Unidad</p>
+                  <div className="bg-violet-50 rounded-lg p-3 border border-violet-200">
+                    <p className="text-[11px] uppercase tracking-wider text-violet-700 font-semibold mb-1">Por Unidad</p>
                     <PrecioDual 
                       valorUSD={producto.precioPorUnidad} 
                       tasaCambio={configuracion?.tasaCambioUSD || 50}
                       monedaPorDefecto={configuracion?.moneda || 'VES'}
-                      className="text-sm font-bold text-violet-700"
+                      className="text-sm font-bold text-violet-800"
                     />
                   </div>
                 </div>

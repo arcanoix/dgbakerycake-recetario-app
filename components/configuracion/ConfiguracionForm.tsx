@@ -74,7 +74,7 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
             </div>
             Configuración Global
           </CardTitle>
-          <CardDescription className="text-gray-500 dark:text-gray-400 mt-1">
+          <CardDescription className="text-gray-700 mt-1">
             Configura los valores por defecto para el cálculo de costos en tu negocio
           </CardDescription>
         </CardHeader>
@@ -110,7 +110,7 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
                       </option>
                     ))}
                   </Select>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-gray-700">
                     Moneda utilizada para mostrar precios y costos
                   </p>
                 </div>
@@ -132,9 +132,9 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
                       placeholder="50.00"
                       className="h-11 pl-10"
                     />
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-medium">VES</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 font-medium">VES</span>
                   </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-gray-700">
                     Tipo de cambio oficial del Banco Central de Venezuela
                   </p>
                 </div>
@@ -169,9 +169,9 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
                       placeholder="30.00"
                       className="h-11 pr-10"
                     />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 font-medium">%</span>
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 font-medium">%</span>
                   </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-gray-700">
                     Porcentaje de ganancia por defecto para calcular precio de venta
                   </p>
                 </div>
@@ -181,18 +181,18 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
                     <Calculator className="w-4 h-4 text-blue-500" />
                     Ejemplo de Precio de Venta
                   </Label>
-                  <div className="h-11 bg-gradient-to-r from-blue-50 to-violet-50 dark:from-blue-950/30 dark:to-violet-950/30 rounded-lg border border-blue-100 dark:border-blue-900 flex items-center px-4">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      Costo: <span className="font-semibold text-gray-900 dark:text-gray-100">100 {formData.moneda}</span>
+                  <div className="h-11 bg-gradient-to-r from-blue-50 to-violet-50 rounded-lg border border-blue-200 flex items-center px-4">
+                    <span className="text-sm text-gray-800">
+                      Costo: <span className="font-semibold text-gray-900">100 {formData.moneda}</span>
                     </span>
-                    <span className="mx-2 text-gray-300">→</span>
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      Venta: <span className="font-bold text-violet-600 dark:text-violet-400">
+                    <span className="mx-2 text-gray-400">→</span>
+                    <span className="text-sm text-gray-800">
+                      Venta: <span className="font-bold text-violet-600">
                         {(100 * (1 + (formData.margenGananciaDefecto || 0) / 100)).toFixed(2)} {formData.moneda}
                       </span>
                     </span>
                   </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-gray-700">
                     Preview automático basado en el margen configurado
                   </p>
                 </div>
@@ -207,7 +207,7 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
-                    className="flex items-center gap-2 text-green-600 dark:text-green-400"
+                    className="flex items-center gap-2 text-green-600"
                   >
                     <Check className="w-5 h-5" />
                     <span className="text-sm font-medium">Configuración guardada exitosamente</span>

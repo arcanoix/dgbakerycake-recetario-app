@@ -25,7 +25,7 @@ export default function ConfiguracionPage() {
             className="text-center"
           >
             <div className="w-16 h-16 mx-auto mb-4 rounded-full border-4 border-t-transparent border-violet-500 animate-spin"></div>
-            <p className="text-gray-500 dark:text-gray-400">Cargando configuración...</p>
+            <p className="text-gray-700">Cargando configuración...</p>
           </motion.div>
         </div>
       </ProtectedRoute>
@@ -66,7 +66,7 @@ export default function ConfiguracionPage() {
             </div>
             Configuración
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-gray-700 mt-1">
             Configura los valores globales del sistema
           </p>
         </motion.div>
@@ -144,8 +144,8 @@ export default function ConfiguracionPage() {
                 </div>
               </div>
               
-              <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 border border-gray-100 dark:border-gray-800">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                <p className="text-sm text-gray-800">
                   <strong>Nota:</strong> Estos valores son por defecto. Puedes modificarlos individualmente en cada receta según tus necesidades.
                 </p>
               </div>

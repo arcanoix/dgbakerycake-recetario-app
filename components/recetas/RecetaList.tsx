@@ -51,7 +51,7 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProp
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col items-center justify-center py-16 px-4"
       >
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900 dark:to-orange-900 flex items-center justify-center mb-4">
+        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center mb-4">
           <ChefHat className="w-10 h-10 text-amber-500" />
         </div>
         <h3 className="text-xl font-semibold text-gray-900 mb-2">
@@ -103,49 +103,49 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProp
               </CardHeader>
               
               <CardContent className="space-y-4">
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-850 rounded-xl p-4 space-y-3">
+                <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-4 space-y-3 border border-slate-200">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-700 flex items-center gap-1.5">
-                      <Package className="w-3.5 h-3.5" />
+                    <span className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                      <Package className="w-4 h-4" />
                       Materiales
                     </span>
-                    <span className="text-sm font-semibold text-gray-900">
+                    <span className="text-sm font-bold text-slate-900">
                       {receta.materiales.length} {receta.materiales.length === 1 ? 'item' : 'items'}
                     </span>
                   </div>
                   
-                  <div className="h-px bg-gray-200" />
+                  <div className="h-px bg-slate-300" />
                   
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-blue-50/50 rounded-lg p-3">
-                      <p className="text-[10px] uppercase tracking-wider text-blue-600 font-medium mb-1 flex items-center gap-1">
-                        <DollarSign className="w-3 h-3" />
+                    <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                      <p className="text-[11px] uppercase tracking-wider text-blue-700 font-semibold mb-1 flex items-center gap-1">
+                        <DollarSign className="w-3.5 h-3.5" />
                         Costo Materiales
                       </p>
                       <PrecioDual 
                         valorUSD={receta.costoMateriales} 
                         tasaCambio={configuracion?.tasaCambioUSD || 50}
                         monedaPorDefecto={configuracion?.moneda || 'VES'}
-                        className="text-sm font-bold text-blue-700"
+                        className="text-sm font-bold text-blue-800"
                       />
                     </div>
-                    <div className="bg-violet-50/50 rounded-lg p-3">
-                      <p className="text-[10px] uppercase tracking-wider text-violet-600 font-medium mb-1 flex items-center gap-1">
-                        <TrendingUp className="w-3 h-3" />
+                    <div className="bg-violet-50 rounded-lg p-3 border border-violet-200">
+                      <p className="text-[11px] uppercase tracking-wider text-violet-700 font-semibold mb-1 flex items-center gap-1">
+                        <TrendingUp className="w-3.5 h-3.5" />
                         Costo Total
                       </p>
                       <PrecioDual 
                         valorUSD={receta.costoTotal} 
                         tasaCambio={configuracion?.tasaCambioUSD || 50}
                         monedaPorDefecto={configuracion?.moneda || 'VES'}
-                        className="text-sm font-bold text-violet-700"
+                        className="text-sm font-bold text-violet-800"
                       />
                     </div>
                   </div>
                 </div>
                 
                 {receta.precioVentaSugerido && (
-                  <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/50 dark:to-green-950/50 rounded-xl p-4 border border-emerald-100">
+                  <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-200">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-[10px] uppercase tracking-wider text-emerald-600 font-medium mb-1">
@@ -155,15 +155,15 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProp
                           valorUSD={receta.precioVentaSugerido} 
                           tasaCambio={configuracion?.tasaCambioUSD || 50}
                           monedaPorDefecto={configuracion?.moneda || 'VES'}
-                          className="text-xl font-bold text-emerald-700"
+                          className="text-xl font-bold text-emerald-800"
                         />
                       </div>
                       {hasMargen && (
                         <div className="text-right">
-                          <p className="text-[10px] uppercase tracking-wider text-emerald-600 font-medium mb-1">
+                          <p className="text-[11px] uppercase tracking-wider text-emerald-700 font-semibold mb-1">
                             Margen
                           </p>
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-700 text-sm font-bold">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 text-sm font-bold border border-emerald-300">
                             +{receta.margenGanancia}%
                           </span>
                         </div>

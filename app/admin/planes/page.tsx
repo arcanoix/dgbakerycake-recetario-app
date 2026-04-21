@@ -63,6 +63,8 @@ interface PlanFormData {
     menu_dashboard: boolean;
     menu_productos: boolean;
     menu_recetas: boolean;
+    menu_clientes: boolean;
+    menu_ventas: boolean;
     menu_precios: boolean;
     menu_facturacion: boolean;
     menu_perfil: boolean;
@@ -95,6 +97,8 @@ const DEFAULT_FORM_DATA: PlanFormData = {
     menu_dashboard: true,
     menu_productos: true,
     menu_recetas: true,
+    menu_clientes: false,
+    menu_ventas: false,
     menu_precios: true,
     menu_facturacion: true,
     menu_perfil: true,
@@ -194,6 +198,8 @@ export default function AdminPlanesPage() {
         menu_dashboard: f.menu_dashboard ?? true,
         menu_productos: f.menu_productos ?? true,
         menu_recetas: f.menu_recetas ?? true,
+        menu_clientes: f.menu_clientes ?? false,
+        menu_ventas: f.menu_ventas ?? false,
         menu_precios: f.menu_precios ?? true,
         menu_facturacion: f.menu_facturacion ?? true,
         menu_perfil: f.menu_perfil ?? true,
@@ -511,6 +517,8 @@ export default function AdminPlanesPage() {
                       { id: "menu_dashboard", label: "Dashboard", icon: "📊" },
                       { id: "menu_productos", label: "Productos", icon: "📦" },
                       { id: "menu_recetas", label: "Recetas", icon: "📝" },
+                      { id: "menu_clientes", label: "Clientes", icon: "👥" },
+                      { id: "menu_ventas", label: "Ventas", icon: "🛒" },
                       { id: "menu_precios", label: "Planes", icon: "💎" },
                       { id: "menu_facturacion", label: "Facturación", icon: "💳" },
                       { id: "menu_perfil", label: "Perfil", icon: "👤" },
@@ -715,6 +723,7 @@ export default function AdminPlanesPage() {
                     const f = plan.features as any;
                     const disabledMenus = [
                       "menu_dashboard", "menu_productos", "menu_recetas",
+                      "menu_clientes", "menu_ventas",
                       "menu_precios", "menu_facturacion", "menu_perfil",
                       "menu_configuracion", "menu_unidades",
                     ].filter((k) => f[k] === false);

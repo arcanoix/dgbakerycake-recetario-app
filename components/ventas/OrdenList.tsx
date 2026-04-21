@@ -92,7 +92,7 @@ export const OrdenList = ({
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-700" />
           <Input
             value={busqueda}
             onChange={e => setBusqueda(e.target.value)}
@@ -114,7 +114,7 @@ export const OrdenList = ({
       </div>
 
       {ordenesFiltradas.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
+        <div className="text-center py-12 text-gray-700">
           <ShoppingBag className="w-12 h-12 mx-auto mb-3 opacity-30" />
           <p className="font-medium">
             {busqueda || filtroEstado ? "No se encontraron órdenes" : "Sin órdenes registradas"}
@@ -130,12 +130,12 @@ export const OrdenList = ({
               <CardContent className="p-0">
                 {/* Order header */}
                 <div
-                  className="flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                  className="flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50/50 transition-colors"
                   onClick={() => toggleExpandir(orden.id)}
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-mono text-sm font-semibold text-gray-900 dark:text-white">
+                      <span className="font-mono text-sm font-semibold text-gray-900">
                         {orden.numeroOrden}
                       </span>
                       <span
@@ -144,10 +144,10 @@ export const OrdenList = ({
                         {ESTADO_LABELS[orden.estado]}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-0.5">
+                    <p className="text-sm text-gray-600 mt-0.5">
                       {orden.clienteNombre || "Cliente desconocido"}
                       {orden.fechaEntrega && (
-                        <span className="ml-2 text-xs text-gray-400">
+                        <span className="ml-2 text-xs text-gray-700">
                           · Entrega: {orden.fechaEntrega.toLocaleDateString("es-VE")}
                         </span>
                       )}
@@ -164,28 +164,28 @@ export const OrdenList = ({
                   </div>
 
                   {expandida === orden.id ? (
-                    <ChevronUp className="w-4 h-4 text-gray-400 shrink-0" />
+                    <ChevronUp className="w-4 h-4 text-gray-700 shrink-0" />
                   ) : (
-                    <ChevronDown className="w-4 h-4 text-gray-400 shrink-0" />
+                    <ChevronDown className="w-4 h-4 text-gray-700 shrink-0" />
                   )}
                 </div>
 
                 {/* Expanded details */}
                 {expandida === orden.id && (
-                  <div className="border-t border-gray-100 dark:border-gray-800 p-4 space-y-4">
+                  <div className="border-t border-gray-200 p-4 space-y-4">
                     {/* Items list */}
                     {orden.items.length > 0 && (
                       <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                        <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">
                           Artículos
                         </p>
                         <div className="space-y-1">
                           {orden.items.map(item => (
                             <div
                               key={item.id}
-                              className="flex justify-between text-sm py-1 border-b border-gray-50 dark:border-gray-800 last:border-0"
+                              className="flex justify-between text-sm py-1 border-b border-gray-50 last:border-0"
                             >
-                              <span className="text-gray-700 dark:text-gray-300">
+                              <span className="text-gray-700">
                                 {item.cantidad} × {item.nombreItem}
                               </span>
                               <span className="font-medium">{formatearUSD(item.subtotal)}</span>
@@ -193,7 +193,7 @@ export const OrdenList = ({
                           ))}
                         </div>
 
-                        <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-800 space-y-1 text-sm">
+                        <div className="mt-2 pt-2 border-t border-gray-200 space-y-1 text-sm">
                           {orden.descuentoPorcentaje > 0 && (
                             <div className="flex justify-between text-green-600">
                               <span>Descuento ({orden.descuentoPorcentaje}%)</span>
@@ -222,10 +222,10 @@ export const OrdenList = ({
 
                     {orden.notas && (
                       <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                        <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-1">
                           Notas
                         </p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{orden.notas}</p>
+                        <p className="text-sm text-gray-600">{orden.notas}</p>
                       </div>
                     )}
 

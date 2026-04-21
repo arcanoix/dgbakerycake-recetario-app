@@ -40,10 +40,10 @@ export default function ConfiguracionPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            <Card className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30">
+            <Card className="border-red-200 bg-red-50/30">
               <CardContent className="py-8 text-center">
                 <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-                <p className="text-red-600 dark:text-red-400 font-medium">Error al cargar la configuración</p>
+                <p className="text-red-600 font-medium">Error al cargar la configuración</p>
               </CardContent>
             </Card>
           </motion.div>
@@ -77,10 +77,10 @@ export default function ConfiguracionPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            <Card className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30">
+            <Card className="border-red-200 bg-red-50/30">
               <CardContent className="py-4 flex items-center gap-3">
                 <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
-                <p className="text-red-600 dark:text-red-400">{error}</p>
+                <p className="text-red-600">{error}</p>
               </CardContent>
             </Card>
           </motion.div>
@@ -105,46 +105,46 @@ export default function ConfiguracionPage() {
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500" />
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
-                  <AlertCircle className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <div className="w-8 h-8 rounded-lg bg-blue-100/50 flex items-center justify-center">
+                  <AlertCircle className="w-4 h-4 text-blue-600" />
                 </div>
                 Información Importante
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-emerald-50 dark:bg-emerald-950/30 rounded-xl p-4 border border-emerald-100 dark:border-emerald-900">
+                <div className="bg-emerald-50/30 rounded-xl p-4 border border-emerald-100">
                   <div className="flex items-center gap-2 mb-2">
-                    <DollarSign className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                    <h4 className="font-semibold text-emerald-900 dark:text-emerald-100 text-sm">Moneda</h4>
+                    <DollarSign className="w-4 h-4 text-emerald-600" />
+                    <h4 className="font-semibold text-emerald-900 text-sm">Moneda</h4>
                   </div>
-                  <p className="text-sm text-emerald-700 dark:text-emerald-300">
+                  <p className="text-sm text-emerald-700">
                     Afecta cómo se muestran los precios en todo el sistema
                   </p>
                 </div>
                 
-                <div className="bg-violet-50 dark:bg-violet-950/30 rounded-xl p-4 border border-violet-100 dark:border-violet-900">
+                <div className="bg-violet-50/30 rounded-xl p-4 border border-violet-100">
                   <div className="flex items-center gap-2 mb-2">
-                    <Percent className="w-4 h-4 text-violet-600 dark:text-violet-400" />
-                    <h4 className="font-semibold text-violet-900 dark:text-violet-100 text-sm">Margen de Ganancia</h4>
+                    <Percent className="w-4 h-4 text-violet-600" />
+                    <h4 className="font-semibold text-violet-900 text-sm">Margen de Ganancia</h4>
                   </div>
-                  <p className="text-sm text-violet-700 dark:text-violet-300">
+                  <p className="text-sm text-violet-700">
                     Se usa para calcular el precio de venta sugerido
                   </p>
                 </div>
                 
-                <div className="bg-amber-50 dark:bg-amber-950/30 rounded-xl p-4 border border-amber-100 dark:border-amber-900">
+                <div className="bg-amber-50/30 rounded-xl p-4 border border-amber-100">
                   <div className="flex items-center gap-2 mb-2">
-                    <Globe className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                    <h4 className="font-semibold text-amber-900 dark:text-amber-100 text-sm">Tasa de Cambio</h4>
+                    <Globe className="w-4 h-4 text-amber-600" />
+                    <h4 className="font-semibold text-amber-900 text-sm">Tasa de Cambio</h4>
                   </div>
-                  <p className="text-sm text-amber-700 dark:text-amber-300">
+                  <p className="text-sm text-amber-700">
                     Valor del USD en moneda local (actualizable desde BCV)
                   </p>
                 </div>
               </div>
               
-              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+              <div className="bg-gray-50 rounded-xl p-4 border border-gray-300">
                 <p className="text-sm text-gray-800">
                   <strong>Nota:</strong> Estos valores son por defecto. Puedes modificarlos individualmente en cada receta según tus necesidades.
                 </p>

@@ -121,7 +121,7 @@ export const OrdenForm = ({ orden, clientes, recetas, onGuardar, onCancelar }: O
           {orden ? `Editar ${orden.numeroOrden}` : "Nueva Orden / Cotización"}
         </CardTitle>
         <button onClick={onCancelar} className="p-1 rounded hover:bg-gray-100">
-          <X className="w-5 h-5 text-gray-500" />
+          <X className="w-5 h-5 text-gray-700" />
         </button>
       </CardHeader>
 
@@ -181,14 +181,14 @@ export const OrdenForm = ({ orden, clientes, recetas, onGuardar, onCancelar }: O
             {errores.items && <p className="text-sm text-red-500">{errores.items}</p>}
 
             {items.length === 0 && (
-              <p className="text-sm text-gray-500 text-center py-4 border border-dashed rounded-lg">
+              <p className="text-sm text-gray-700 text-center py-4 border border-dashed rounded-lg">
                 Sin artículos. Haz clic en "Agregar" para comenzar.
               </p>
             )}
 
             <div className="space-y-3">
               {items.map((item, index) => (
-                <div key={index} className="p-3 border rounded-lg bg-gray-50 dark:bg-gray-800/50 space-y-2">
+                <div key={index} className="p-3 border rounded-lg bg-gray-50/50 space-y-2">
                   {/* Receta selector */}
                   <div className="space-y-1">
                     <Label className="text-xs">Receta (opcional)</Label>
@@ -241,13 +241,13 @@ export const OrdenForm = ({ orden, clientes, recetas, onGuardar, onCancelar }: O
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-gray-700">
                       Subtotal: <strong>{formatearUSD(item.cantidad * item.precioUnitario)}</strong>
                     </span>
                     <button
                       type="button"
                       onClick={() => eliminarItem(index)}
-                      className="p-1 rounded hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
+                      className="p-1 rounded hover:bg-red-50 text-gray-700 hover:text-red-500 transition-colors"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -286,7 +286,7 @@ export const OrdenForm = ({ orden, clientes, recetas, onGuardar, onCancelar }: O
 
           {/* Summary box */}
           {items.length > 0 && (
-            <div className="bg-violet-50 dark:bg-violet-950/20 rounded-lg p-4 space-y-1.5 text-sm">
+            <div className="bg-violet-50/20 rounded-lg p-4 space-y-1.5 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal</span>
                 <span className="font-medium">{formatearUSD(subtotal)}</span>
@@ -297,7 +297,7 @@ export const OrdenForm = ({ orden, clientes, recetas, onGuardar, onCancelar }: O
                   <span>-{formatearUSD(descuentoMonto)}</span>
                 </div>
               )}
-              <div className="flex justify-between font-bold border-t border-violet-100 dark:border-violet-900 pt-1.5">
+              <div className="flex justify-between font-bold border-t border-violet-100 pt-1.5">
                 <span>Total</span>
                 <span>{formatearUSD(total)}</span>
               </div>

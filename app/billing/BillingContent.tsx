@@ -24,9 +24,9 @@ export default function BillingContent() {
 
   const getStatusBadge = (status: string) => {
     const badges = {
-      pending: { bg: "bg-yellow-100 dark:bg-yellow-900/50", text: "text-yellow-700 dark:text-yellow-300", label: "Pendiente", icon: <Clock className="w-4 h-4" /> },
-      approved: { bg: "bg-green-100 dark:bg-green-900/50", text: "text-green-700 dark:text-green-300", label: "Aprobado", icon: <CheckCircle className="w-4 h-4" /> },
-      rejected: { bg: "bg-red-100 dark:bg-red-900/50", text: "text-red-700 dark:text-red-300", label: "Rechazado", icon: <XCircle className="w-4 h-4" /> },
+      pending: { bg: "bg-yellow-100/50", text: "text-yellow-700", label: "Pendiente", icon: <Clock className="w-4 h-4" /> },
+      approved: { bg: "bg-green-100/50", text: "text-green-700", label: "Aprobado", icon: <CheckCircle className="w-4 h-4" /> },
+      rejected: { bg: "bg-red-100/50", text: "text-red-700", label: "Rechazado", icon: <XCircle className="w-4 h-4" /> },
     };
     
     const badge = badges[status as keyof typeof badges] || badges.pending;
@@ -56,7 +56,7 @@ export default function BillingContent() {
           className="text-center"
         >
           <div className="w-16 h-16 mx-auto mb-4 rounded-full border-4 border-t-transparent border-violet-500 animate-spin"></div>
-          <p className="text-gray-500 dark:text-gray-400">Cargando...</p>
+          <p className="text-gray-700">Cargando...</p>
         </motion.div>
       </div>
     );
@@ -75,7 +75,7 @@ export default function BillingContent() {
           </div>
           Facturación y Suscripción
         </h1>
-        <p className="text-gray-500 dark:text-gray-400 mt-1">
+        <p className="text-gray-700 mt-1">
           Gestiona tu plan y revisa tus pagos
         </p>
       </motion.div>
@@ -88,14 +88,14 @@ export default function BillingContent() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
           >
-            <Card className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30">
+            <Card className="border-green-200 bg-green-50/30">
               <CardContent className="py-4 flex items-center gap-3">
                 <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
                 <div>
-                  <p className="font-semibold text-green-800 dark:text-green-200">
+                  <p className="font-semibold text-green-800">
                     Solicitud de pago enviada exitosamente
                   </p>
-                  <p className="text-sm text-green-700 dark:text-green-300">
+                  <p className="text-sm text-green-700">
                     Tu solicitud será revisada por un administrador. Te notificaremos cuando sea aprobada.
                   </p>
                 </div>
@@ -129,11 +129,11 @@ export default function BillingContent() {
                     <h3 className="text-2xl font-bold flex items-center gap-2">
                       {infoSuscripcion.plan_display_name}
                       {infoSuscripcion.is_active ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300">
+                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100/50 text-green-700">
                           <CheckCircle className="w-3 h-3" /> Activo
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300">
+                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-red-100/50 text-red-700">
                           <XCircle className="w-3 h-3" /> Inactivo
                         </span>
                       )}
@@ -149,23 +149,23 @@ export default function BillingContent() {
 
                 <div className="grid grid-cols-2 gap-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
-                      <Package className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <div className="w-10 h-10 rounded-lg bg-blue-100/50 flex items-center justify-center">
+                      <Package className="w-5 h-5 text-blue-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Productos</p>
-                      <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                      <p className="text-sm text-gray-700">Productos</p>
+                      <p className="text-lg font-bold text-gray-900">
                         {infoSuscripcion.max_productos === -1 ? "Ilimitados" : infoSuscripcion.max_productos}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-violet-100 dark:bg-violet-900/50 flex items-center justify-center">
-                      <BookOpen className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+                    <div className="w-10 h-10 rounded-lg bg-violet-100/50 flex items-center justify-center">
+                      <BookOpen className="w-5 h-5 text-violet-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Recetas</p>
-                      <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                      <p className="text-sm text-gray-700">Recetas</p>
+                      <p className="text-lg font-bold text-gray-900">
                         {infoSuscripcion.max_recetas === -1 ? "Ilimitadas" : infoSuscripcion.max_recetas}
                       </p>
                     </div>
@@ -173,14 +173,14 @@ export default function BillingContent() {
                 </div>
 
                 {infoSuscripcion.end_date && (
-                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="flex items-center gap-2 text-sm text-gray-700">
                     <Calendar className="w-4 h-4" />
                     <span>Válido hasta: {formatDate(infoSuscripcion.end_date)}</span>
                   </div>
                 )}
               </>
             ) : (
-              <div className="flex items-center gap-3 text-yellow-600 dark:text-yellow-400">
+              <div className="flex items-center gap-3 text-yellow-600">
                 <AlertCircle className="w-5 h-5" />
                 <span>No se pudo cargar información de suscripción</span>
               </div>
@@ -208,10 +208,10 @@ export default function BillingContent() {
           <CardContent>
             {solicitudes.length === 0 ? (
               <div className="text-center py-12">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                  <CreditCard className="w-8 h-8 text-gray-400" />
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                  <CreditCard className="w-8 h-8 text-gray-700" />
                 </div>
-                <p className="text-gray-500 dark:text-gray-400 mb-4">No tienes solicitudes de pago</p>
+                <p className="text-gray-700 mb-4">No tienes solicitudes de pago</p>
                 <Link href="/pricing">
                   <Button className="gap-2">
                     Ver Planes
@@ -227,12 +227,12 @@ export default function BillingContent() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="p-4 border border-gray-100 dark:border-gray-800 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                    className="p-4 border border-gray-200 rounded-xl hover:bg-gray-50/50 transition-colors"
                   >
                     <div className="flex justify-between items-start mb-3">
                       <div>
                         <h4 className="font-semibold text-lg">{solicitud.plan?.display_name}</h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                        <p className="text-sm text-gray-700 flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
                           {formatDate(solicitud.created_at)}
                         </p>
@@ -242,21 +242,21 @@ export default function BillingContent() {
 
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <p className="text-gray-500 dark:text-gray-400">Método</p>
+                        <p className="text-gray-700">Método</p>
                         <p className="font-medium">{solicitud.payment_method}</p>
                       </div>
                       <div>
-                        <p className="text-gray-500 dark:text-gray-400">Monto</p>
-                        <p className="font-bold text-violet-600 dark:text-violet-400">
+                        <p className="text-gray-700">Monto</p>
+                        <p className="font-bold text-violet-600">
                           {solicitud.currency} {solicitud.amount.toLocaleString('es-VE')}
                         </p>
                       </div>
                     </div>
 
                     {solicitud.admin_notes && (
-                      <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900 rounded-lg">
-                        <p className="text-xs font-semibold text-blue-900 dark:text-blue-200 mb-1">Notas del Administrador:</p>
-                        <p className="text-sm text-blue-800 dark:text-blue-300">{solicitud.admin_notes}</p>
+                      <div className="mt-3 p-3 bg-blue-50/30 border border-blue-100 rounded-lg">
+                        <p className="text-xs font-semibold text-blue-900 mb-1">Notas del Administrador:</p>
+                        <p className="text-sm text-blue-800">{solicitud.admin_notes}</p>
                       </div>
                     )}
 

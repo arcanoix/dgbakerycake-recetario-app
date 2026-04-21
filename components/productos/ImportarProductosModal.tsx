@@ -100,7 +100,7 @@ export const ImportarProductosModal = ({
         {/* Top accent bar */}
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500" />
 
-        <CardHeader className="pb-4 border-b border-gray-100 dark:border-gray-800">
+        <CardHeader className="pb-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <CardTitle className="text-2xl font-bold flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
@@ -112,7 +112,7 @@ export const ImportarProductosModal = ({
               <X className="w-4 h-4" />
             </Button>
           </div>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-gray-700 mt-1">
             Carga un archivo CSV o XLSX con tus productos para importarlos de forma masiva
           </p>
         </CardHeader>
@@ -124,8 +124,8 @@ export const ImportarProductosModal = ({
               <motion.div key="upload" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
                 {/* Unidades disponibles */}
                 {unidadesActivas.length > 0 && (
-                  <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
-                    <p className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">
+                  <div className="p-4 rounded-xl bg-blue-50/30 border border-blue-200">
+                    <p className="text-sm font-medium text-blue-800 mb-2">
                       Unidades de medida disponibles:
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -135,16 +135,16 @@ export const ImportarProductosModal = ({
                         </Badge>
                       ))}
                     </div>
-                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
-                      Usa el nombre o símbolo de la unidad en la columna <code className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">unidadMedida</code>
+                    <p className="text-xs text-blue-600 mt-2">
+                      Usa el nombre o símbolo de la unidad en la columna <code className="font-mono bg-blue-100 px-1 rounded">unidadMedida</code>
                     </p>
                   </div>
                 )}
 
                 {unidadesActivas.length === 0 && (
-                  <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 flex items-start gap-3">
+                  <div className="p-4 rounded-xl bg-amber-50/30 border border-amber-200 flex items-start gap-3">
                     <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-amber-800 dark:text-amber-200">
+                    <p className="text-sm text-amber-800">
                       No hay unidades de medida configuradas. Por favor, crea al menos una unidad antes de importar productos.
                     </p>
                   </div>
@@ -158,8 +158,8 @@ export const ImportarProductosModal = ({
                   onClick={() => inputRef.current?.click()}
                   className={`relative border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all duration-200 ${
                     arrastre
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                      ? 'border-blue-500 bg-blue-50/30'
+                      : 'border-gray-200 hover:border-blue-400 hover:bg-gray-50/50'
                   }`}
                 >
                   <input
@@ -178,11 +178,11 @@ export const ImportarProductosModal = ({
                       </div>
                     )}
                     <div>
-                      <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                      <p className="text-lg font-semibold text-gray-800">
                         {parsando ? 'Procesando archivo…' : 'Arrastra tu archivo aquí'}
                       </p>
                       {!parsando && (
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        <p className="text-sm text-gray-700 mt-1">
                           o <span className="text-blue-500 font-medium">haz clic para seleccionarlo</span>
                         </p>
                       )}
@@ -198,17 +198,17 @@ export const ImportarProductosModal = ({
                 </div>
 
                 {parseoError && (
-                  <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800">
+                  <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50/30 border border-red-200">
                     <XCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-red-700 dark:text-red-300">{parseoError}</p>
+                    <p className="text-sm text-red-700">{parseoError}</p>
                   </div>
                 )}
 
                 {/* Template download */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-gray-50/50 border border-gray-200">
                   <div>
-                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">¿Primera vez?</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    <p className="text-sm font-medium text-gray-800">¿Primera vez?</p>
+                    <p className="text-xs text-gray-700 mt-0.5">
                       Descarga la plantilla CSV con el formato y ejemplos incluidos
                     </p>
                   </div>
@@ -233,20 +233,20 @@ export const ImportarProductosModal = ({
                     { col: 'unidadMedida', req: true, desc: 'Nombre o símbolo de unidad' },
                     { col: 'categoria', req: false, desc: 'Categoría (opcional)' },
                   ].map(({ col, req, desc }) => (
-                    <div key={col} className="p-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                    <div key={col} className="p-3 rounded-lg bg-white border border-gray-200">
                       <div className="flex items-center gap-1.5 mb-1">
-                        <code className="text-xs font-mono text-blue-600 dark:text-blue-400">{col}</code>
+                        <code className="text-xs font-mono text-blue-600">{col}</code>
                         {req ? (
-                          <Badge className="text-[10px] py-0 px-1.5 bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300 border-0">
+                          <Badge className="text-[10px] py-0 px-1.5 bg-red-100 text-red-700 border-0">
                             requerido
                           </Badge>
                         ) : (
-                          <Badge className="text-[10px] py-0 px-1.5 bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 border-0">
+                          <Badge className="text-[10px] py-0 px-1.5 bg-gray-100 text-gray-600 border-0">
                             opcional
                           </Badge>
                         )}
                       </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{desc}</p>
+                      <p className="text-xs text-gray-700">{desc}</p>
                     </div>
                   ))}
                 </div>
@@ -262,27 +262,27 @@ export const ImportarProductosModal = ({
               <motion.div key="preview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
                 {/* Summary */}
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-center">
-                    <p className="text-2xl font-bold text-blue-800 dark:text-blue-200">{parseoResultado.totalFilas}</p>
-                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">Total de filas</p>
+                  <div className="p-4 rounded-xl bg-blue-50/30 border border-blue-200 text-center">
+                    <p className="text-2xl font-bold text-blue-800">{parseoResultado.totalFilas}</p>
+                    <p className="text-xs text-blue-600 mt-1">Total de filas</p>
                   </div>
-                  <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-center">
-                    <p className="text-2xl font-bold text-emerald-800 dark:text-emerald-200">{parseoResultado.totalValidos}</p>
-                    <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">Válidos</p>
+                  <div className="p-4 rounded-xl bg-emerald-50/30 border border-emerald-200 text-center">
+                    <p className="text-2xl font-bold text-emerald-800">{parseoResultado.totalValidos}</p>
+                    <p className="text-xs text-emerald-600 mt-1">Válidos</p>
                   </div>
-                  <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-center">
-                    <p className="text-2xl font-bold text-red-800 dark:text-red-200">{parseoResultado.totalErrores}</p>
-                    <p className="text-xs text-red-600 dark:text-red-400 mt-1">Con errores</p>
+                  <div className="p-4 rounded-xl bg-red-50/30 border border-red-200 text-center">
+                    <p className="text-2xl font-bold text-red-800">{parseoResultado.totalErrores}</p>
+                    <p className="text-xs text-red-600 mt-1">Con errores</p>
                   </div>
                 </div>
 
                 {/* File info */}
                 {archivoSeleccionado && (
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50/50 border border-gray-200">
                     <FileSpreadsheet className="w-5 h-5 text-blue-500" />
                     <div>
-                      <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{archivoSeleccionado.name}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-sm font-medium text-gray-800">{archivoSeleccionado.name}</p>
+                      <p className="text-xs text-gray-700">
                         {(archivoSeleccionado.size / 1024).toFixed(1)} KB
                       </p>
                     </div>
@@ -295,32 +295,32 @@ export const ImportarProductosModal = ({
                 {/* Rows table */}
                 {parseoResultado.filas.length > 0 && (
                   <div className="space-y-2">
-                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <p className="text-sm font-medium text-gray-700">
                       Vista previa de filas ({Math.min(parseoResultado.filas.length, 10)} de {parseoResultado.filas.length})
                     </p>
-                    <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+                    <div className="overflow-x-auto rounded-xl border border-gray-200">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-                            <th className="text-left px-3 py-2 font-medium text-gray-600 dark:text-gray-400 w-12">#</th>
-                            <th className="text-left px-3 py-2 font-medium text-gray-600 dark:text-gray-400">Estado</th>
-                            <th className="text-left px-3 py-2 font-medium text-gray-600 dark:text-gray-400">Nombre</th>
-                            <th className="text-left px-3 py-2 font-medium text-gray-600 dark:text-gray-400">Precio Total</th>
-                            <th className="text-left px-3 py-2 font-medium text-gray-600 dark:text-gray-400">Detalles</th>
-                            <th className="text-left px-3 py-2 font-medium text-gray-600 dark:text-gray-400">Errores</th>
+                          <tr className="bg-gray-50 border-b border-gray-200">
+                            <th className="text-left px-3 py-2 font-medium text-gray-600 w-12">#</th>
+                            <th className="text-left px-3 py-2 font-medium text-gray-600">Estado</th>
+                            <th className="text-left px-3 py-2 font-medium text-gray-600">Nombre</th>
+                            <th className="text-left px-3 py-2 font-medium text-gray-600">Precio Total</th>
+                            <th className="text-left px-3 py-2 font-medium text-gray-600">Detalles</th>
+                            <th className="text-left px-3 py-2 font-medium text-gray-600">Errores</th>
                           </tr>
                         </thead>
                         <tbody>
                           {parseoResultado.filas.slice(0, 10).map((fila) => (
                             <tr
                               key={fila.fila}
-                              className={`border-b border-gray-100 dark:border-gray-800 ${
+                              className={`border-b border-gray-200 ${
                                 fila.valido
-                                  ? 'bg-white dark:bg-gray-900'
-                                  : 'bg-red-50 dark:bg-red-950/20'
+                                  ? 'bg-white'
+                                  : 'bg-red-50/20'
                               }`}
                             >
-                              <td className="px-3 py-2 text-gray-400">{fila.fila}</td>
+                              <td className="px-3 py-2 text-gray-700">{fila.fila}</td>
                               <td className="px-3 py-2">
                                 {fila.valido ? (
                                   <CheckCircle className="w-4 h-4 text-emerald-500" />
@@ -328,26 +328,26 @@ export const ImportarProductosModal = ({
                                   <XCircle className="w-4 h-4 text-red-500" />
                                 )}
                               </td>
-                              <td className="px-3 py-2 font-medium text-gray-800 dark:text-gray-200">
-                                {fila.datos?.nombre ?? <span className="text-gray-400 italic">—</span>}
+                              <td className="px-3 py-2 font-medium text-gray-800">
+                                {fila.datos?.nombre ?? <span className="text-gray-700 italic">—</span>}
                               </td>
-                              <td className="px-3 py-2 text-gray-600 dark:text-gray-400">
+                              <td className="px-3 py-2 text-gray-600">
                                 {fila.datos ? `$${fila.datos.precioTotal}` : '—'}
                               </td>
-                              <td className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400">
+                              <td className="px-3 py-2 text-xs text-gray-700">
                                 {fila.datos
                                   ? `${fila.datos.tamañoPresentacion} × ${fila.datos.cantidadPresentaciones} | ${fila.datos.categoria || '—'}`
                                   : '—'}
                               </td>
-                              <td className="px-3 py-2 text-xs text-red-600 dark:text-red-400">
-                                {fila.errores.length > 0 ? fila.errores.join(' • ') : <span className="text-emerald-600 dark:text-emerald-400">✓</span>}
+                              <td className="px-3 py-2 text-xs text-red-600">
+                                {fila.errores.length > 0 ? fila.errores.join(' • ') : <span className="text-emerald-600">✓</span>}
                               </td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
                       {parseoResultado.filas.length > 10 && (
-                        <p className="text-xs text-gray-400 text-center py-2">
+                        <p className="text-xs text-gray-700 text-center py-2">
                           y {parseoResultado.filas.length - 10} filas más…
                         </p>
                       )}
@@ -356,15 +356,15 @@ export const ImportarProductosModal = ({
                 )}
 
                 {parseoResultado.totalValidos === 0 && (
-                  <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
+                  <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50/30 border border-amber-200">
                     <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-amber-800 dark:text-amber-200">
+                    <p className="text-sm text-amber-800">
                       No hay filas válidas para importar. Revisa los errores y corrige el archivo.
                     </p>
                   </div>
                 )}
 
-                <div className="flex gap-3 justify-end pt-2 border-t border-gray-100 dark:border-gray-800">
+                <div className="flex gap-3 justify-end pt-2 border-t border-gray-200">
                   <Button variant="outline" onClick={handleReiniciar}>
                     Cargar otro archivo
                   </Button>
@@ -389,8 +389,8 @@ export const ImportarProductosModal = ({
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
                   <Loader2 className="w-8 h-8 text-white animate-spin" />
                 </div>
-                <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">Importando productos…</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Esto puede tardar unos segundos</p>
+                <p className="text-lg font-semibold text-gray-800">Importando productos…</p>
+                <p className="text-sm text-gray-700">Esto puede tardar unos segundos</p>
               </motion.div>
             )}
 
@@ -406,25 +406,25 @@ export const ImportarProductosModal = ({
                 </div>
 
                 <div className="text-center space-y-1">
-                  <p className="text-xl font-bold text-gray-800 dark:text-gray-200">
+                  <p className="text-xl font-bold text-gray-800">
                     {resultado.importados > 0 ? '¡Importación completada!' : 'No se importaron productos'}
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{resultado.mensaje}</p>
+                  <p className="text-sm text-gray-700">{resultado.mensaje}</p>
                 </div>
 
                 {(resultado.importados > 0 || resultado.errores > 0 || resultado.omitidos > 0) && (
                   <div className="grid grid-cols-3 gap-4 w-full max-w-sm">
-                    <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-center">
-                      <p className="text-xl font-bold text-emerald-800 dark:text-emerald-200">{resultado.importados}</p>
-                      <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">Importados</p>
+                    <div className="p-3 rounded-xl bg-emerald-50/30 border border-emerald-200 text-center">
+                      <p className="text-xl font-bold text-emerald-800">{resultado.importados}</p>
+                      <p className="text-xs text-emerald-600 mt-0.5">Importados</p>
                     </div>
-                    <div className="p-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-center">
-                      <p className="text-xl font-bold text-red-800 dark:text-red-200">{resultado.errores}</p>
-                      <p className="text-xs text-red-600 dark:text-red-400 mt-0.5">Errores</p>
+                    <div className="p-3 rounded-xl bg-red-50/30 border border-red-200 text-center">
+                      <p className="text-xl font-bold text-red-800">{resultado.errores}</p>
+                      <p className="text-xs text-red-600 mt-0.5">Errores</p>
                     </div>
-                    <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-center">
-                      <p className="text-xl font-bold text-amber-800 dark:text-amber-200">{resultado.omitidos}</p>
-                      <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">Omitidos</p>
+                    <div className="p-3 rounded-xl bg-amber-50/30 border border-amber-200 text-center">
+                      <p className="text-xl font-bold text-amber-800">{resultado.omitidos}</p>
+                      <p className="text-xs text-amber-600 mt-0.5">Omitidos</p>
                     </div>
                   </div>
                 )}

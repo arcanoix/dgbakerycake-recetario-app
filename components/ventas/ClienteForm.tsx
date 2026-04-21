@@ -67,7 +67,7 @@ export const ClienteForm = ({ cliente, onGuardar, onCancelar }: ClienteFormProps
           {cliente ? "Editar Cliente" : "Nuevo Cliente"}
         </CardTitle>
         <button onClick={onCancelar} className="p-1 rounded hover:bg-gray-100">
-          <X className="w-5 h-5 text-gray-500" />
+          <X className="w-5 h-5 text-gray-700" />
         </button>
       </CardHeader>
       <CardContent>

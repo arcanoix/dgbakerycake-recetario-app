@@ -91,7 +91,7 @@ export default function RegisterPage() {
             </span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">Crea tu cuenta</h1>
-          <p className="text-gray-500 mt-2">Comienza a gestionar tus costos</p>
+          <p className="text-gray-700 mt-2">Comienza a gestionar tus costos</p>
         </div>
 
         <Button 
@@ -112,10 +112,10 @@ export default function RegisterPage() {
 
         <div className="relative mb-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200"></div>
+            <div className="w-full border-t border-gray-300"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-4 bg-white text-gray-400">o</span>
+            <span className="px-4 bg-white text-gray-700">o</span>
           </div>
         </div>
 

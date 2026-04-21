@@ -16,7 +16,7 @@ export default function CategoriasPage() {
     <div className="container mx-auto p-6 space-y-6">
       <div className="text-center py-12">
         <div className="animate-spin inline-block w-8 h-8 border-4 rounded-full border-t-transparent border-violet-500"></div>
-        <p className="mt-4 text-muted-foreground">Redirigiendo...</p>
+        <p className="mt-4 text-gray-700">Redirigiendo...</p>
       </div>
     </div>
   );

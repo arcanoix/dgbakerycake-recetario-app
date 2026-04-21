@@ -24,7 +24,7 @@ const ACTION_LABELS: Record<string, { label: string; color: string }> = {
   update: { label: "Edición", color: "bg-blue-500" },
   delete: { label: "Eliminación", color: "bg-red-500" },
   login: { label: "Inicio sesión", color: "bg-purple-500" },
-  logout: { label: "Cierre sesión", color: "bg-gray-500" },
+  logout: { label: "Cierre sesión", color: "bg-gray-1000" },
   view: { label: "Consulta", color: "bg-yellow-500" },
 };
 
@@ -149,7 +149,7 @@ export const ActivityLogsTable = ({ logs }: ActivityLogsTableProps) => {
 
       <CardContent>
         {logsFiltrados.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8">
+          <p className="text-center text-gray-700 py-8">
             No se encontraron registros de actividad.
           </p>
         ) : (
@@ -170,12 +170,12 @@ export const ActivityLogsTable = ({ logs }: ActivityLogsTableProps) => {
                 <TableBody>
                   {logsEnPagina.map((log) => (
                     <TableRow key={log.id}>
-                      <TableCell className="text-xs whitespace-nowrap text-muted-foreground">
+                      <TableCell className="text-xs whitespace-nowrap text-gray-700">
                         {formatDate(log.created_at)}
                       </TableCell>
                       <TableCell className="text-sm font-medium max-w-[180px] truncate">
                         {log.email || (
-                          <span className="text-muted-foreground text-xs font-mono">
+                          <span className="text-gray-700 text-xs font-mono">
                             {log.user_id?.slice(0, 8)}…
                           </span>
                         )}
@@ -185,11 +185,11 @@ export const ActivityLogsTable = ({ logs }: ActivityLogsTableProps) => {
                       <TableCell className="text-sm max-w-[240px] truncate" title={log.description}>
                         {log.description || "—"}
                       </TableCell>
-                      <TableCell className="text-xs font-mono text-muted-foreground whitespace-nowrap">
+                      <TableCell className="text-xs font-mono text-gray-700 whitespace-nowrap">
                         {log.ip_address || "—"}
                       </TableCell>
                       <TableCell
-                        className="text-xs text-muted-foreground max-w-[160px] truncate"
+                        className="text-xs text-gray-700 max-w-[160px] truncate"
                         title={log.user_agent}
                       >
                         {log.user_agent
@@ -204,7 +204,7 @@ export const ActivityLogsTable = ({ logs }: ActivityLogsTableProps) => {
 
             {/* Pagination */}
             {totalPaginas > 1 && (
-              <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
+              <div className="mt-4 flex items-center justify-between text-sm text-gray-700">
                 <span>
                   Página {paginaActual} de {totalPaginas} ·{" "}
                   {logsFiltrados.length} registros

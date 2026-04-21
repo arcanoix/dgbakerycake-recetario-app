@@ -46,14 +46,14 @@ export default function ClientesPage() {
           <div className="w-16 h-16 rounded-full bg-gradient-to-r from-violet-100 to-fuchsia-100 flex items-center justify-center mx-auto mb-4">
             <Lock className="w-8 h-8 text-violet-500" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">
             Módulo de Clientes
           </h2>
-          <p className="text-gray-500 mb-4 text-sm">
+          <p className="text-gray-700 mb-4 text-sm">
             Gestiona tus clientes y asígnales órdenes y cotizaciones. Disponible desde el plan
             Básico.
           </p>
-          <p className="text-xs text-gray-400 mb-5">
+          <p className="text-xs text-gray-700 mb-5">
             Tu plan actual: <strong>{getPlanDisplayName()}</strong>
           </p>
           <Link href="/pricing">
@@ -80,8 +80,8 @@ export default function ClientesPage() {
               <Users className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Clientes</h1>
-              <p className="text-sm text-gray-500">
+              <h1 className="text-2xl font-bold text-gray-900">Clientes</h1>
+              <p className="text-sm text-gray-700">
                 {clientes.length} cliente{clientes.length !== 1 ? "s" : ""} registrado{clientes.length !== 1 ? "s" : ""}
               </p>
             </div>
@@ -99,7 +99,7 @@ export default function ClientesPage() {
 
         {/* Error */}
         {error && (
-          <Card className="border-red-200 bg-red-50 dark:bg-red-950/20">
+          <Card className="border-red-200 bg-red-50/20">
             <CardContent className="py-3 px-4 text-sm text-red-600">{error}</CardContent>
           </Card>
         )}

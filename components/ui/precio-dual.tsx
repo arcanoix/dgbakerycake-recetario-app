@@ -24,7 +24,7 @@ export const PrecioDual = ({
         <span className="font-bold text-gray-900">
           {usdFormateado}
         </span>
-        <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wide">
+        <span className="text-[10px] font-medium text-gray-700 uppercase tracking-wide">
           {bsFormateado}
         </span>
       </span>
@@ -37,7 +37,7 @@ export const PrecioDual = ({
       <span className="font-semibold text-green-600">
         {bsFormateado}
       </span>
-      <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wide">
+      <span className="text-[10px] font-medium text-gray-700 uppercase tracking-wide">
         {usdFormateado}
       </span>
     </span>

@@ -19,7 +19,7 @@ export default function PerfilPage() {
             </div>
             Mi Perfil
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-gray-700 mt-1">
             Gestiona tu información personal y credenciales de acceso
           </p>
         </motion.div>

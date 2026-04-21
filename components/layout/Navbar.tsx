@@ -68,10 +68,10 @@ export const Navbar = () => {
       )}
 
       <aside className={`
-        fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 lg:translate-x-0
+        fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-gray-300 transform transition-transform duration-300 lg:translate-x-0
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <div className="h-16 flex items-center px-6 border-b border-gray-100">
+        <div className="h-16 flex items-center px-6 border-b border-gray-300">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-2xl">🧁</span>
             <span className="text-xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
@@ -90,7 +90,7 @@ export const Navbar = () => {
                 flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200
                 ${isActive(item.href)
                   ? "bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 border-l-4 border-violet-600"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                 }
               `}
             >
@@ -102,7 +102,7 @@ export const Navbar = () => {
           {(isAdmin || visibleAdminItems.length > 0) && (
             <>
               <div className="pt-4 pb-2">
-                <p className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                <p className="px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Administración
                 </p>
               </div>
@@ -115,7 +115,7 @@ export const Navbar = () => {
                     flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200
                     ${isActive(item.href)
                       ? "bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 border-l-4 border-violet-600"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                     }
                   `}
                 >
@@ -128,7 +128,7 @@ export const Navbar = () => {
         </nav>
 
         {user && (
-          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-100 bg-white">
+          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-300 bg-white">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 flex items-center justify-center text-white font-bold">
                 {user.email?.charAt(0).toUpperCase()}
@@ -137,7 +137,7 @@ export const Navbar = () => {
                 <p className="text-sm font-medium text-gray-900 truncate">
                   {user.email?.split('@')[0]}
                 </p>
-                <p className="text-xs text-gray-500 truncate">
+                <p className="text-xs text-gray-700 truncate">
                   {getPlanDisplayName()}
                 </p>
               </div>
@@ -154,7 +154,7 @@ export const Navbar = () => {
         )}
       </aside>
 
-      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-30 flex items-center px-4">
+      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-300 z-30 flex items-center px-4">
         <button
           onClick={() => setSidebarOpen(true)}
           className="p-2 rounded-lg hover:bg-gray-100"

@@ -20,7 +20,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">⏳</div>
-          <p className="text-muted-foreground">Cargando...</p>
+          <p className="text-gray-700">Cargando...</p>
         </div>
       </div>
     );
@@ -44,7 +44,7 @@ const ProtectedContent = ({ children }: ProtectedRouteProps) => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">⏳</div>
-          <p className="text-muted-foreground">Verificando autenticación...</p>
+          <p className="text-gray-700">Verificando autenticación...</p>
         </div>
       </div>
     );

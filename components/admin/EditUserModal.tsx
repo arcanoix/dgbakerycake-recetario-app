@@ -70,7 +70,7 @@ export const EditUserModal = ({ usuario, onClose, onUpdate }: EditUserModalProps
       <Card className="w-full max-w-md mx-4">
         <CardHeader>
           <CardTitle>Editar Usuario</CardTitle>
-          <p className="text-sm text-muted-foreground">{usuario.email}</p>
+          <p className="text-sm text-gray-700">{usuario.email}</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -91,10 +91,10 @@ export const EditUserModal = ({ usuario, onClose, onUpdate }: EditUserModalProps
 
             <div className="space-y-2">
               <Label>Email</Label>
-              <p className="text-sm text-muted-foreground px-3 py-2 bg-muted rounded-md">
+              <p className="text-sm text-gray-700 px-3 py-2 bg-muted rounded-md">
                 {usuario.email}
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-gray-700">
                 El email no puede modificarse desde el panel de administrador.
               </p>
             </div>

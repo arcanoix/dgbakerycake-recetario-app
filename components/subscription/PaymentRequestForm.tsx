@@ -139,7 +139,7 @@ export const PaymentRequestForm = ({ plan, onSuccess, onCancel }: PaymentRequest
     <Card>
       <CardHeader>
         <CardTitle>Solicitar Pago - {plan.display_name}</CardTitle>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-gray-700">
           Completa los datos de tu pago y adjunta el comprobante
         </p>
       </CardHeader>
@@ -392,7 +392,7 @@ export const PaymentRequestForm = ({ plan, onSuccess, onCancel }: PaymentRequest
               onChange={(e) => setProofUrl(e.target.value)}
               placeholder="https://..."
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-gray-700">
               Puedes subir tu comprobante a un servicio como Imgur o Google Drive y pegar el enlace aquí
             </p>
           </div>

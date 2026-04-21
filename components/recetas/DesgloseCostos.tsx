@@ -28,7 +28,7 @@ export const DesgloseCostos = ({ desglose }: DesgloseCostosProps) => {
         {/* Resumen de Costos */}
         <div className="space-y-3">
           <div className="flex justify-between items-center py-2 border-b">
-            <span className="text-muted-foreground">Costo de Materiales:</span>
+            <span className="text-gray-700">Costo de Materiales:</span>
             <span className="font-semibold">
               {formatearMoneda(desglose.costoMateriales, configuracion?.moneda, tasaCambio)}
             </span>
@@ -45,7 +45,7 @@ export const DesgloseCostos = ({ desglose }: DesgloseCostosProps) => {
         {desglose.precioVentaSugerido && desglose.margenGanancia && (
           <div className="space-y-3 pt-4 border-t">
             <div className="flex justify-between items-center py-2">
-              <span className="text-muted-foreground">
+              <span className="text-gray-700">
                 Margen de Ganancia ({desglose.margenGanancia}%):
               </span>
               <span className="font-semibold text-green-600">
@@ -79,7 +79,7 @@ export const DesgloseCostos = ({ desglose }: DesgloseCostosProps) => {
                 >
                   <div className="flex-1">
                     <p className="text-sm font-medium">{detalle.nombreProducto}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-gray-700">
                       {formatearNumero(detalle.cantidad)}{" "}
                       {obtenerSimboloUnidad(detalle.unidad)}
                     </p>
@@ -88,7 +88,7 @@ export const DesgloseCostos = ({ desglose }: DesgloseCostosProps) => {
                     <p className="text-sm font-semibold">
                       {formatearMoneda(detalle.costo, configuracion?.moneda, tasaCambio)}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-gray-700">
                       {formatearNumero(detalle.porcentaje, 1)}%
                     </p>
                   </div>

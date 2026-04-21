@@ -84,11 +84,11 @@ export default function AdminBlogPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
               <FileText className="w-6 h-6 text-violet-600" />
               Gestión del Blog
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-sm text-gray-700 mt-1">
               Administra los artículos del Blog / Magazine público.
             </p>
           </div>
@@ -124,7 +124,7 @@ export default function AdminBlogPage() {
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-violet-600" />
               </div>
             ) : posts.length === 0 ? (
-              <div className="text-center py-16 text-gray-400">
+              <div className="text-center py-16 text-gray-700">
                 <FileText className="w-10 h-10 mx-auto mb-3 opacity-40" />
                 <p className="font-medium">No hay posts aún</p>
                 <p className="text-sm mt-1">Crea tu primer artículo</p>
@@ -133,43 +133,43 @@ export default function AdminBlogPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-gray-100 dark:border-gray-800 text-left">
-                      <th className="px-6 py-3 font-medium text-gray-500 dark:text-gray-400">Título</th>
-                      <th className="px-6 py-3 font-medium text-gray-500 dark:text-gray-400 hidden sm:table-cell">Estado</th>
-                      <th className="px-6 py-3 font-medium text-gray-500 dark:text-gray-400 hidden md:table-cell">Publicado</th>
-                      <th className="px-6 py-3 font-medium text-gray-500 dark:text-gray-400 hidden lg:table-cell">Autor</th>
-                      <th className="px-6 py-3 font-medium text-gray-500 dark:text-gray-400 text-right">Acciones</th>
+                    <tr className="border-b border-gray-200 text-left">
+                      <th className="px-6 py-3 font-medium text-gray-700">Título</th>
+                      <th className="px-6 py-3 font-medium text-gray-700 hidden sm:table-cell">Estado</th>
+                      <th className="px-6 py-3 font-medium text-gray-700 hidden md:table-cell">Publicado</th>
+                      <th className="px-6 py-3 font-medium text-gray-700 hidden lg:table-cell">Autor</th>
+                      <th className="px-6 py-3 font-medium text-gray-700 text-right">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
                     {posts.map((post) => (
                       <tr
                         key={post.id}
-                        className="border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors"
+                        className="border-b border-gray-50/50 hover:bg-gray-50/30 transition-colors"
                       >
                         <td className="px-6 py-4">
-                          <div className="font-medium text-gray-900 dark:text-white line-clamp-1 max-w-xs">
+                          <div className="font-medium text-gray-900 line-clamp-1 max-w-xs">
                             {post.title}
                           </div>
-                          <div className="text-xs text-gray-400 mt-0.5 font-mono">{post.slug}</div>
+                          <div className="text-xs text-gray-700 mt-0.5 font-mono">{post.slug}</div>
                         </td>
                         <td className="px-6 py-4 hidden sm:table-cell">
                           {post.status === "published" ? (
-                            <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400">
+                            <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-green-50/20 text-green-700">
                               <Eye className="w-3 h-3" />
                               Publicado
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400">
+                            <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-yellow-50/20 text-yellow-700">
                               <EyeOff className="w-3 h-3" />
                               Borrador
                             </span>
                           )}
                         </td>
-                        <td className="px-6 py-4 hidden md:table-cell text-gray-500 dark:text-gray-400 text-xs">
+                        <td className="px-6 py-4 hidden md:table-cell text-gray-700 text-xs">
                           {formatFecha(post.published_at)}
                         </td>
-                        <td className="px-6 py-4 hidden lg:table-cell text-gray-500 dark:text-gray-400 text-xs">
+                        <td className="px-6 py-4 hidden lg:table-cell text-gray-700 text-xs">
                           {post.author_name ?? "—"}
                         </td>
                         <td className="px-6 py-4">

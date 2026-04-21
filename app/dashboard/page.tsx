@@ -37,7 +37,7 @@ export default function DashboardPage() {
       <main className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">⏳</div>
-          <p className="text-gray-500">Cargando dashboard...</p>
+          <p className="text-gray-700">Cargando dashboard...</p>
         </div>
       </main>
     );
@@ -48,7 +48,7 @@ export default function DashboardPage() {
       <main className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">⚠️</div>
-          <p className="text-gray-500 mb-4">No se encontró configuración</p>
+          <p className="text-gray-700 mb-4">No se encontró configuración</p>
           <Link href="/configuracion">
             <Button>Ir a Configuración</Button>
           </Link>
@@ -69,7 +69,7 @@ export default function DashboardPage() {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Dashboard
           </h1>
-          <p className="text-gray-500">
+          <p className="text-gray-700">
             Resumen general de tu negocio de repostería
           </p>
         </div>
@@ -111,10 +111,10 @@ export default function DashboardPage() {
           {recetas.length > 0 ? (
             <CostosChart recetas={recetas} moneda={configuracion.moneda} />
           ) : (
-            <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 flex items-center justify-center h-[400px]">
+            <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200 flex items-center justify-center h-[400px]">
               <div className="text-center">
                 <p className="text-4xl mb-4">📝</p>
-                <p className="text-gray-500 mb-4">No hay recetas aún</p>
+                <p className="text-gray-700 mb-4">No hay recetas aún</p>
                 {productos.length === 0 ? (
                   <>
                     <p className="text-sm text-amber-600 mb-4 max-w-xs mx-auto">
@@ -136,10 +136,10 @@ export default function DashboardPage() {
           {estadisticas.productosPorCategoria.length > 0 ? (
             <ProductosChart productos={estadisticas.productosPorCategoria} />
           ) : (
-            <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 flex items-center justify-center h-[400px]">
+            <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200 flex items-center justify-center h-[400px]">
               <div className="text-center">
                 <p className="text-4xl mb-4">🛒</p>
-                <p className="text-gray-500 mb-4">No hay productos aún</p>
+                <p className="text-gray-700 mb-4">No hay productos aún</p>
                 <Link href="/productos">
                   <Button>Agregar Productos</Button>
                 </Link>
@@ -154,7 +154,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 mb-8">
+        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200 mb-8">
           <h3 className="text-lg font-bold mb-4">Acciones Rápidas</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link href="/productos">

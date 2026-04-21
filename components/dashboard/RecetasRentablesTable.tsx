@@ -23,7 +23,7 @@ export const RecetasRentablesTable = ({ recetas, moneda }: RecetasRentablesTable
     .slice(0, 5);
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-300">
       <h3 className="text-lg font-bold mb-4">Top 5 Recetas Más Rentables</h3>
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -38,7 +38,7 @@ export const RecetasRentablesTable = ({ recetas, moneda }: RecetasRentablesTable
           </thead>
           <tbody>
             {recetasConMargen.map((receta, index) => (
-              <tr key={receta.id} className="border-b hover:bg-gray-50">
+              <tr key={receta.id} className="border-b hover:bg-gray-100">
                 <td className="py-3 px-2">
                   <div className="flex items-center">
                     <span className="text-2xl mr-2">
@@ -66,7 +66,7 @@ export const RecetasRentablesTable = ({ recetas, moneda }: RecetasRentablesTable
           </tbody>
         </table>
         {recetasConMargen.length === 0 && (
-          <div className="text-center py-8 text-muted-foreground">
+          <div className="text-center py-8 text-gray-700">
             <p>No hay recetas con precio de venta configurado</p>
             <p className="text-sm mt-2">Agrega recetas con margen de ganancia para ver estadísticas</p>
           </div>

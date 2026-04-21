@@ -72,10 +72,10 @@ export const StatsCard = ({
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-sm font-medium text-gray-500 mb-1">{title}</p>
+          <p className="text-sm font-medium text-gray-700 mb-1">{title}</p>
           <p className="text-3xl font-bold text-gray-900">{value}</p>
           {description && (
-            <p className="text-xs text-gray-500 mt-1">{description}</p>
+            <p className="text-xs text-gray-700 mt-1">{description}</p>
           )}
         </div>
         
@@ -94,7 +94,7 @@ export const StatsCard = ({
             <span className="mr-1">{trend.isPositive ? "↑" : "↓"}</span>
             {Math.abs(trend.value)}%
           </span>
-          <span className="text-xs text-gray-400">vs mes anterior</span>
+          <span className="text-xs text-gray-700">vs mes anterior</span>
         </div>
       )}
     </motion.div>

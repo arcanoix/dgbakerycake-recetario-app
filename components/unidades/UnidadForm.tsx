@@ -18,10 +18,10 @@ const TIPO_ICONS = {
 };
 
 const TIPO_COLORS = {
-  peso: { bg: 'bg-blue-50 dark:bg-blue-950', text: 'text-blue-600 dark:text-blue-400', ring: 'focus:ring-blue-500' },
-  volumen: { bg: 'bg-emerald-50 dark:bg-emerald-950', text: 'text-emerald-600 dark:text-emerald-400', ring: 'focus:ring-emerald-500' },
-  cantidad: { bg: 'bg-violet-50 dark:bg-violet-950', text: 'text-violet-600 dark:text-violet-400', ring: 'focus:ring-violet-500' },
-  otro: { bg: 'bg-gray-50 dark:bg-gray-800', text: 'text-gray-600 dark:text-gray-400', ring: 'focus:ring-gray-500' },
+  peso: { bg: 'bg-blue-50', text: 'text-blue-600', ring: 'focus:ring-blue-500' },
+  volumen: { bg: 'bg-emerald-50', text: 'text-emerald-600', ring: 'focus:ring-emerald-500' },
+  cantidad: { bg: 'bg-violet-50', text: 'text-violet-600', ring: 'focus:ring-violet-500' },
+  otro: { bg: 'bg-gray-50', text: 'text-gray-600', ring: 'focus:ring-gray-500' },
 };
 
 interface UnidadFormProps {
@@ -84,14 +84,14 @@ export const UnidadForm = ({ unidad, unidades, onSubmit, onCancel }: UnidadFormP
       <Card className="border-0 shadow-xl overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500" />
         
-        <CardHeader className="pb-6 border-b border-gray-100 dark:border-gray-800">
+        <CardHeader className="pb-6 border-b border-gray-200">
           <CardTitle className="text-2xl font-bold flex items-center gap-3">
             <div className={`w-10 h-10 rounded-xl ${tipoColor.bg} ${tipoColor.text} flex items-center justify-center`}>
               {TIPO_ICONS[formData.tipo as keyof typeof TIPO_ICONS] || TIPO_ICONS.otro}
             </div>
             {unidad ? "Editar Unidad de Medida" : "Nueva Unidad de Medida"}
           </CardTitle>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-gray-700 mt-1">
             {unidad ? "Actualiza los detalles de la unidad" : "Registra una nueva unidad de medida"}
           </p>
         </CardHeader>
@@ -111,9 +111,9 @@ export const UnidadForm = ({ unidad, unidades, onSubmit, onCancel }: UnidadFormP
                   onChange={handleChange}
                   placeholder="Ej: gramos, litros, docenas"
                   required
-                  className="h-11 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="h-11 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-700">
                   Nombre completo de la unidad
                 </p>
               </div>
@@ -130,9 +130,9 @@ export const UnidadForm = ({ unidad, unidades, onSubmit, onCancel }: UnidadFormP
                   onChange={handleChange}
                   placeholder="Ej: g, L, dz"
                   required
-                  className="h-11 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 font-mono"
+                  className="h-11 border-gray-200 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 font-mono"
                 />
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-700">
                   Abreviatura o símbolo
                 </p>
               </div>
@@ -158,21 +158,21 @@ export const UnidadForm = ({ unidad, unidades, onSubmit, onCancel }: UnidadFormP
               </Select>
             </div>
 
-            <div className="border-t border-gray-100 dark:border-gray-800 pt-6">
+            <div className="border-t border-gray-200 pt-6">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900 flex items-center justify-center">
-                  <ArrowRightLeft className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
+                  <ArrowRightLeft className="w-4 h-4 text-amber-600" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Conversión (Opcional)</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Define cómo convertir a una unidad base</p>
+                  <h3 className="text-sm font-semibold text-gray-900">Conversión (Opcional)</h3>
+                  <p className="text-xs text-gray-700">Define cómo convertir a una unidad base</p>
                 </div>
               </div>
               
-              <div className="bg-amber-50 dark:bg-amber-950/30 rounded-xl p-4 mb-4 border border-amber-100 dark:border-amber-900">
+              <div className="bg-amber-50/30 rounded-xl p-4 mb-4 border border-amber-100">
                 <div className="flex items-start gap-2">
-                  <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
-                  <p className="text-xs text-amber-800 dark:text-amber-300">
+                  <Info className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                  <p className="text-xs text-amber-800">
                     Ejemplo: 1 kilogramo = 1000 gramos (factor: 1000, base: gramos)
                   </p>
                 </div>
@@ -192,7 +192,7 @@ export const UnidadForm = ({ unidad, unidades, onSubmit, onCancel }: UnidadFormP
                     value={formData.factorConversionBase || ""}
                     onChange={handleChange}
                     placeholder="Ej: 1000"
-                    className="h-11 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-amber-500"
+                    className="h-11 border-gray-200 focus:ring-2 focus:ring-amber-500"
                   />
                 </div>
 
@@ -217,7 +217,7 @@ export const UnidadForm = ({ unidad, unidades, onSubmit, onCancel }: UnidadFormP
                     ))}
                   </Select>
                   {unidadesDelMismoTipo.length === 0 && (
-                    <p className="text-xs text-amber-600 dark:text-amber-400">
+                    <p className="text-xs text-amber-600">
                       No hay unidades del mismo tipo
                     </p>
                   )}
@@ -225,7 +225,7 @@ export const UnidadForm = ({ unidad, unidades, onSubmit, onCancel }: UnidadFormP
               </div>
             </div>
 
-            <div className="flex gap-3 justify-end pt-4 border-t border-gray-100 dark:border-gray-800">
+            <div className="flex gap-3 justify-end pt-4 border-t border-gray-200">
               <Button 
                 type="button" 
                 variant="outline" 

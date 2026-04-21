@@ -74,7 +74,7 @@ export default function LoginPage() {
             </span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">Bienvenido de nuevo</h1>
-          <p className="text-gray-500 mt-2">Inicia sesión para continuar</p>
+          <p className="text-gray-700 mt-2">Inicia sesión para continuar</p>
         </div>
 
         <Button 
@@ -95,10 +95,10 @@ export default function LoginPage() {
 
         <div className="relative mb-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200"></div>
+            <div className="w-full border-t border-gray-300"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-4 bg-white text-gray-400">o</span>
+            <span className="px-4 bg-white text-gray-700">o</span>
           </div>
         </div>
 
@@ -154,7 +154,7 @@ export default function LoginPage() {
         </div>
 
         <div className="mt-4 text-center">
-          <Link href="/auth/forgot-password" className="text-sm text-gray-500 hover:text-violet-600">
+          <Link href="/auth/forgot-password" className="text-sm text-gray-700 hover:text-violet-600">
             ¿Olvidaste tu contraseña?
           </Link>
         </div>

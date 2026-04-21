@@ -208,7 +208,7 @@ export const MaterialSelector = ({
 
                   {/* Lista de productos filtrados */}
                   {productosFiltrados.length === 0 ? (
-                    <div className="px-3 py-2 text-sm text-muted-foreground">
+                    <div className="px-3 py-2 text-sm text-gray-700">
                       No se encontraron productos
                     </div>
                   ) : (
@@ -220,7 +220,7 @@ export const MaterialSelector = ({
                         onClick={() => seleccionarProducto(producto.id, producto.nombre)}
                       >
                         <span className="font-medium">{producto.nombre}</span>
-                        <span className="ml-2 text-muted-foreground text-xs">
+                        <span className="ml-2 text-gray-700 text-xs">
                           ({obtenerSimboloUnidad(producto.unidadMedida)})
                         </span>
                       </button>
@@ -233,7 +233,7 @@ export const MaterialSelector = ({
 
           {/* ── Campos para "Otro" ──────────────────────────────────── */}
           {esOtro && (
-            <div className="grid grid-cols-2 gap-3 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg">
+            <div className="grid grid-cols-2 gap-3 p-3 bg-amber-50/30 border border-amber-200 rounded-lg">
               <div className="col-span-2 space-y-2">
                 <Label htmlFor="otro-nombre">
                   ¿Qué ingrediente es? *
@@ -292,7 +292,7 @@ export const MaterialSelector = ({
                 <Label htmlFor="unidad">
                   Unidad *
                   {unidadProducto && (
-                    <span className="text-xs text-muted-foreground ml-1">
+                    <span className="text-xs text-gray-700 ml-1">
                       (base: {unidadProducto.simbolo})
                     </span>
                   )}
@@ -323,7 +323,7 @@ export const MaterialSelector = ({
             unidadProducto &&
             unidadSeleccionadaData.id !== unidadProducto.id &&
             cantidad > 0 && (
-              <div className="p-2 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg text-sm text-blue-700 dark:text-blue-300">
+              <div className="p-2 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-700">
                 <span className="font-medium">Conversión automática:</span>{" "}
                 {formatearNumero(cantidad, 2)} {unidadSeleccionadaData.simbolo} →{" "}
                 {formatearNumero(
@@ -338,7 +338,7 @@ export const MaterialSelector = ({
           {/* Costo estimado */}
           {costoEstimado > 0 && (
             <div className="p-3 bg-muted rounded-lg">
-              <p className="text-sm text-muted-foreground">Costo estimado:</p>
+              <p className="text-sm text-gray-700">Costo estimado:</p>
               <p className="text-lg font-bold text-primary">
                 {formatearMoneda(costoEstimado, configuracion?.moneda, tasaCambio)}
               </p>
@@ -374,12 +374,12 @@ export const MaterialSelector = ({
                     <div className="flex items-center gap-2">
                       <p className="font-medium">{material.nombreProducto}</p>
                       {material.productoId === PRODUCTO_OTRO_ID && (
-                        <span className="text-xs bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 px-1.5 py-0.5 rounded font-medium">
+                        <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">
                           personalizado
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-gray-700">
                       {formatearNumero(material.cantidadUtilizada)}{" "}
                       {material.unidadMedidaSimbolo
                         ? material.unidadMedidaSimbolo

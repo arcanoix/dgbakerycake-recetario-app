@@ -120,13 +120,13 @@ export default async function BlogPostPage({ params }: Props) {
       {/* Back link */}
       <Link
         href="/blog"
-        className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 mb-8 transition-colors"
+        className="inline-flex items-center gap-2 text-sm text-gray-700 hover:text-violet-600 mb-8 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         Volver al Blog
       </Link>
 
-      <article className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
+      <article className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         {/* Cover image */}
         {post.cover_image && (
           <div className="relative w-full h-64 sm:h-80">
@@ -148,7 +148,7 @@ export default async function BlogPostPage({ params }: Props) {
               {tags.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300"
+                  className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-violet-50/30 text-violet-700"
                 >
                   <Tag className="w-3 h-3" />
                   {tag}
@@ -158,12 +158,12 @@ export default async function BlogPostPage({ params }: Props) {
           )}
 
           {/* Title */}
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white mb-4 leading-tight">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4 leading-tight">
             {post.title}
           </h1>
 
           {/* Meta */}
-          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 dark:text-gray-500 pb-8 border-b border-gray-100 dark:border-gray-800 mb-8">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-700 pb-8 border-b border-gray-200 mb-8">
             {post.author_name && (
               <span className="flex items-center gap-1.5">
                 <User className="w-4 h-4" />

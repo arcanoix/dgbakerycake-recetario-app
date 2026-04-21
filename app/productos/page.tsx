@@ -113,7 +113,7 @@ export default function ProductosPage() {
               </div>
               Productos e Insumos
             </h1>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-gray-700 mt-1">
               Gestiona los ingredientes y materiales para tus recetas
             </p>
           </div>
@@ -151,15 +151,15 @@ export default function ProductosPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            <Card className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30">
+            <Card className="border-amber-200 bg-amber-50/30">
               <CardContent className="py-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <AlertCircle className="w-5 h-5 text-amber-500" />
                   <div>
-                    <p className="font-medium text-amber-900 dark:text-amber-200">
+                    <p className="font-medium text-amber-900">
                       Plan: {getPlanDisplayName()} - Límite de {limitInfo.limit} productos
                     </p>
-                    <p className="text-sm text-amber-700 dark:text-amber-300">
+                    <p className="text-sm text-amber-700">
                       Has usado {productos.length} de {limitInfo.limit} productos ({limitInfo.remaining} restantes)
                     </p>
                   </div>
@@ -178,9 +178,9 @@ export default function ProductosPage() {
         )}
 
         {error && (
-          <Card className="border-red-200 dark:border-red-800">
+          <Card className="border-red-200">
             <CardContent className="py-4">
-              <p className="text-red-600 dark:text-red-400">{error}</p>
+              <p className="text-red-600">{error}</p>
             </CardContent>
           </Card>
         )}
@@ -221,19 +221,19 @@ export default function ProductosPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card>
               <CardContent className="py-4">
-                <p className="text-sm text-gray-500 dark:text-gray-400">Total de Productos</p>
+                <p className="text-sm text-gray-700">Total de Productos</p>
                 <p className="text-2xl font-bold">{productos.length}</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="py-4">
-                <p className="text-sm text-gray-500 dark:text-gray-400">Resultados</p>
+                <p className="text-sm text-gray-700">Resultados</p>
                 <p className="text-2xl font-bold">{productosFiltrados.length}</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="py-4">
-                <p className="text-sm text-gray-500 dark:text-gray-400">Categorías</p>
+                <p className="text-sm text-gray-700">Categorías</p>
                 <p className="text-2xl font-bold">
                   {new Set(productos.map((p) => p.categoria).filter(Boolean)).size}
                 </p>

@@ -76,7 +76,7 @@ export const CategoriaForm = ({ categoria, onSubmit, onCancel }: CategoriaFormPr
                 placeholder="Ej: Lácteos, Tortas, etc."
                 required
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-gray-700">
                 Nombre de la categoría
               </p>
             </div>
@@ -93,7 +93,7 @@ export const CategoriaForm = ({ categoria, onSubmit, onCancel }: CategoriaFormPr
                 <option value="producto">Producto</option>
                 <option value="receta">Receta</option>
               </Select>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-gray-700">
                 ¿Es para productos o recetas?
               </p>
             </div>
@@ -109,7 +109,7 @@ export const CategoriaForm = ({ categoria, onSubmit, onCancel }: CategoriaFormPr
               placeholder="Descripción opcional de la categoría"
               rows={3}
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-gray-700">
               Información adicional sobre esta categoría
             </p>
           </div>
@@ -140,7 +140,7 @@ export const CategoriaForm = ({ categoria, onSubmit, onCancel }: CategoriaFormPr
               onChange={handleChange}
               className="w-20 h-10"
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-gray-700">
               Color para identificar visualmente la categoría
             </p>
           </div>

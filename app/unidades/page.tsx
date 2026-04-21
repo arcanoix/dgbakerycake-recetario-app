@@ -93,7 +93,7 @@ export default function UnidadesPage() {
           >
             <div className="text-center">
               <div className="w-12 h-12 mx-auto mb-4 rounded-full border-4 border-t-transparent border-violet-500 animate-spin"></div>
-              <p className="text-muted-foreground">Cargando unidades...</p>
+              <p className="text-gray-700">Cargando unidades...</p>
             </div>
           </motion.div>
         </div>
@@ -116,7 +116,7 @@ export default function UnidadesPage() {
               </div>
               Unidades de Medida
             </h1>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-gray-700 mt-1">
               Administra las unidades de medida disponibles ({unidades.length} total)
             </p>
           </div>
@@ -135,9 +135,9 @@ export default function UnidadesPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            <Card className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30">
+            <Card className="border-red-200 bg-red-50/30">
               <CardContent className="py-4">
-                <p className="text-red-600 dark:text-red-400">{error}</p>
+                <p className="text-red-600">{error}</p>
               </CardContent>
             </Card>
           </motion.div>
@@ -168,7 +168,7 @@ export default function UnidadesPage() {
                       variant="ghost" 
                       size="sm" 
                       onClick={limpiarFiltros}
-                      className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                      className="text-gray-700 hover:text-gray-700"
                     >
                       <X className="w-3 h-3 mr-1" />
                       Limpiar
@@ -180,7 +180,7 @@ export default function UnidadesPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium flex items-center gap-2">
-                      <Search className="w-4 h-4 text-gray-400" />
+                      <Search className="w-4 h-4 text-gray-700" />
                       Buscar
                     </label>
                     <Input
@@ -193,7 +193,7 @@ export default function UnidadesPage() {
                   
                   <div className="space-y-2">
                     <label className="text-sm font-medium flex items-center gap-2">
-                      <Scale className="w-4 h-4 text-gray-400" />
+                      <Scale className="w-4 h-4 text-gray-700" />
                       Tipo
                     </label>
                     <Select
@@ -211,7 +211,7 @@ export default function UnidadesPage() {
 
                   <div className="space-y-2">
                     <label className="text-sm font-medium flex items-center gap-2">
-                      <Filter className="w-4 h-4 text-gray-400" />
+                      <Filter className="w-4 h-4 text-gray-700" />
                       Estado
                     </label>
                     <Select
@@ -228,7 +228,7 @@ export default function UnidadesPage() {
               </CardContent>
             </Card>
 
-            <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+            <div className="mt-4 text-sm text-gray-700">
               Mostrando <span className="font-semibold">{unidadesFiltradas.length}</span> de {unidades.length} unidades
             </div>
 

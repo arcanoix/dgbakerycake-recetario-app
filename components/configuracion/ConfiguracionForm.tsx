@@ -67,7 +67,7 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
       <Card className="border-0 shadow-xl overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-rose-500" />
         
-        <CardHeader className="pb-6 border-b border-gray-100 dark:border-gray-800">
+        <CardHeader className="pb-6 border-b border-gray-200">
           <CardTitle className="text-2xl font-bold flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
               <Globe className="w-5 h-5 text-white" />
@@ -84,10 +84,10 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
             {/* Sección: Moneda */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center">
-                  <DollarSign className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <div className="w-8 h-8 rounded-lg bg-emerald-100/50 flex items-center justify-center">
+                  <DollarSign className="w-4 h-4 text-emerald-600" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Moneda y Tasa de Cambio</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Moneda y Tasa de Cambio</h3>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -144,10 +144,10 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
             {/* Sección: Precios */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-900/50 flex items-center justify-center">
-                  <Percent className="w-4 h-4 text-violet-600 dark:text-violet-400" />
+                <div className="w-8 h-8 rounded-lg bg-violet-100/50 flex items-center justify-center">
+                  <Percent className="w-4 h-4 text-violet-600" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Precios de Venta</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Precios de Venta</h3>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -185,7 +185,7 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
                     <span className="text-sm text-gray-800">
                       Costo: <span className="font-semibold text-gray-900">100 {formData.moneda}</span>
                     </span>
-                    <span className="mx-2 text-gray-400">→</span>
+                    <span className="mx-2 text-gray-700">→</span>
                     <span className="text-sm text-gray-800">
                       Venta: <span className="font-bold text-violet-600">
                         {(100 * (1 + (formData.margenGananciaDefecto || 0) / 100)).toFixed(2)} {formData.moneda}
@@ -200,7 +200,7 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
             </div>
 
             {/* Botón de Guardar */}
-            <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800">
+            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
               <AnimatePresence mode="wait">
                 {guardado && (
                   <motion.div

@@ -80,7 +80,7 @@ export const PaymentRequestsTable = ({ solicitudes, onUpdate }: PaymentRequestsT
     return (
       <Card>
         <CardContent className="py-12 text-center">
-          <p className="text-muted-foreground">No hay solicitudes de pago</p>
+          <p className="text-gray-700">No hay solicitudes de pago</p>
         </CardContent>
       </Card>
     );
@@ -96,7 +96,7 @@ export const PaymentRequestsTable = ({ solicitudes, onUpdate }: PaymentRequestsT
                 <CardTitle className="text-lg">
                   {solicitud.user_email || "Usuario"}
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-gray-700">
                   Plan: {solicitud.plan?.display_name}
                 </p>
               </div>
@@ -108,21 +108,21 @@ export const PaymentRequestsTable = ({ solicitudes, onUpdate }: PaymentRequestsT
             {/* Información del Pago */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-muted rounded-lg">
               <div>
-                <p className="text-xs text-muted-foreground">Método</p>
+                <p className="text-xs text-gray-700">Método</p>
                 <p className="font-semibold">{getPaymentMethodLabel(solicitud.payment_method)}</p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Monto</p>
+                <p className="text-xs text-gray-700">Monto</p>
                 <p className="font-semibold">
                   {solicitud.currency} {solicitud.amount.toLocaleString('es-VE')}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Fecha Solicitud</p>
+                <p className="text-xs text-gray-700">Fecha Solicitud</p>
                 <p className="font-semibold text-sm">{formatDate(solicitud.created_at)}</p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">ID</p>
+                <p className="text-xs text-gray-700">ID</p>
                 <p className="font-mono text-xs">{solicitud.id.slice(0, 8)}...</p>
               </div>
             </div>
@@ -156,7 +156,7 @@ export const PaymentRequestsTable = ({ solicitudes, onUpdate }: PaymentRequestsT
                 <p className="text-sm font-semibold mb-1">Notas del Administrador:</p>
                 <p className="text-sm">{solicitud.admin_notes}</p>
                 {solicitud.reviewed_at && (
-                  <p className="text-xs text-muted-foreground mt-2">
+                  <p className="text-xs text-gray-700 mt-2">
                     Revisado: {formatDate(solicitud.reviewed_at)}
                   </p>
                 )}

@@ -43,7 +43,7 @@ const PLAN_ICONS: Record<SubscriptionPlanName, React.ReactNode> = {
 };
 
 const PLAN_COLORS: Record<SubscriptionPlanName, string> = {
-  free: "bg-gray-500",
+  free: "bg-gray-1000",
   basico: "bg-blue-500",
   profesional: "bg-purple-500",
   empresarial: "bg-amber-500",
@@ -132,7 +132,7 @@ function Switch({
       id={id}
       onClick={() => onCheckedChange(!checked)}
       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-        checked ? "bg-primary" : "bg-gray-300 dark:bg-gray-600"
+        checked ? "bg-primary" : "bg-gray-300"
       }`}
     >
       <span
@@ -334,7 +334,7 @@ export default function AdminPlanesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Gestión de Planes</h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-gray-700 mt-1">
             Administra los planes de suscripción disponibles
           </p>
         </div>
@@ -508,7 +508,7 @@ export default function AdminPlanesPage() {
               {/* Menu visibility */}
               <div className="border-t pt-4">
                 <h3 className="font-semibold mb-1">Visibilidad del Menú</h3>
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="text-sm text-gray-700 mb-4">
                   Controla qué elementos del menú de navegación son visibles para los usuarios de este plan.
                 </p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -531,7 +531,7 @@ export default function AdminPlanesPage() {
                       className={`flex items-center gap-2 p-3 rounded-lg border transition-colors ${
                         formData.features[id]
                           ? "border-primary/40 bg-primary/5"
-                          : "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50"
+                          : "border-gray-200 bg-gray-50/50"
                       }`}
                     >
                       <Switch
@@ -556,7 +556,7 @@ export default function AdminPlanesPage() {
               {/* Action features */}
               <div className="border-t pt-4">
                 <h3 className="font-semibold mb-1">Acciones y Funcionalidades</h3>
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="text-sm text-gray-700 mb-4">
                   Define qué acciones y funciones pueden realizar los usuarios de este plan.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -647,7 +647,7 @@ export default function AdminPlanesPage() {
                     </div>
                     <div>
                       <CardTitle className="text-lg">{plan.display_name}</CardTitle>
-                      <p className="text-xs text-muted-foreground">{plan.name}</p>
+                      <p className="text-xs text-gray-700">{plan.name}</p>
                     </div>
                   </div>
                   {plan.is_active ? (
@@ -664,7 +664,7 @@ export default function AdminPlanesPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="text-sm text-gray-700 mb-4">
                   {plan.description || "Sin descripción"}
                 </p>
 
@@ -728,7 +728,7 @@ export default function AdminPlanesPage() {
                       "menu_configuracion", "menu_unidades",
                     ].filter((k) => f[k] === false);
                     return disabledMenus.length > 0 ? (
-                      <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">
+                      <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-700/30">
                         {disabledMenus.length} menú{disabledMenus.length > 1 ? "s" : ""} oculto{disabledMenus.length > 1 ? "s" : ""}
                       </Badge>
                     ) : null;

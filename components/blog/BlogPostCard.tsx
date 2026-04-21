@@ -19,7 +19,7 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
   const tags: string[] = Array.isArray(post.tags) ? post.tags : [];
 
   return (
-    <article className="group bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow duration-300">
+    <article className="group bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300">
       {post.cover_image && (
         <Link href={`/blog/${post.slug}`} className="block overflow-hidden h-48 relative">
           <Image
@@ -38,7 +38,7 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
             {tags.slice(0, 3).map((tag) => (
               <span
                 key={tag}
-                className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300"
+                className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-violet-50/30 text-violet-700"
               >
                 <Tag className="w-3 h-3" />
                 {tag}
@@ -48,18 +48,18 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
         )}
 
         <Link href={`/blog/${post.slug}`}>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors line-clamp-2">
+          <h2 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors line-clamp-2">
             {post.title}
           </h2>
         </Link>
 
         {post.excerpt && (
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 line-clamp-3">
+          <p className="text-sm text-gray-700 mb-4 line-clamp-3">
             {post.excerpt}
           </p>
         )}
 
-        <div className="flex items-center gap-4 text-xs text-gray-400 dark:text-gray-500 pt-4 border-t border-gray-100 dark:border-gray-700">
+        <div className="flex items-center gap-4 text-xs text-gray-700 pt-4 border-t border-gray-200">
           {post.author_name && (
             <span className="flex items-center gap-1">
               <User className="w-3.5 h-3.5" />

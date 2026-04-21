@@ -56,10 +56,10 @@ const StatCard = ({ title, value, icon, color, gradient, subtitle }: StatCardPro
       <CardContent className="pt-6">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{title}</p>
-            <p className="text-3xl font-bold mt-1 text-gray-900 dark:text-gray-100">{value}</p>
+            <p className="text-sm font-medium text-gray-700">{title}</p>
+            <p className="text-3xl font-bold mt-1 text-gray-900">{value}</p>
             {subtitle && (
-              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{subtitle}</p>
+              <p className="text-xs text-gray-700 mt-1">{subtitle}</p>
             )}
           </div>
           <div className={`w-12 h-12 rounded-xl ${color} flex items-center justify-center`}>
@@ -136,7 +136,7 @@ export default function AdminPage() {
             className="text-center"
           >
             <div className="w-16 h-16 mx-auto mb-4 rounded-full border-4 border-t-transparent border-violet-500 animate-spin"></div>
-            <p className="text-gray-500 dark:text-gray-400">Cargando panel de administrador...</p>
+            <p className="text-gray-700">Cargando panel de administrador...</p>
           </motion.div>
         </div>
       </ProtectedRoute>
@@ -167,7 +167,7 @@ export default function AdminPage() {
               </div>
               Panel de Administrador
             </h1>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-gray-700 mt-1">
               Gestiona solicitudes, usuarios y auditoría del sistema
             </p>
           </div>
@@ -186,7 +186,7 @@ export default function AdminPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="flex gap-2 border-b border-gray-200 dark:border-gray-700 pb-1 flex-wrap"
+          className="flex gap-2 border-b border-gray-200 pb-1 flex-wrap"
         >
           {TABS.map((tab) => (
             <Button
@@ -195,8 +195,8 @@ export default function AdminPage() {
               onClick={() => setVistaActual(tab.id)}
               className={`gap-2 rounded-lg ${
                 vistaActual === tab.id 
-                  ? "bg-violet-100 dark:bg-violet-900/50 text-violet-700 dark:text-violet-300" 
-                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  ? "bg-violet-100/50 text-violet-700" 
+                  : "text-gray-600 hover:bg-gray-100"
               }`}
             >
               {tab.icon}
@@ -222,7 +222,7 @@ export default function AdminPage() {
                 title="Pendientes"
                 value={estadisticas.solicitudesPendientes}
                 icon={<Clock className="w-6 h-6 text-yellow-600" />}
-                color="bg-yellow-100 dark:bg-yellow-900/50"
+                color="bg-yellow-100/50"
                 gradient="from-yellow-500 to-orange-500"
                 subtitle={`${pendingCount} solicitudes esperan`}
               />
@@ -230,7 +230,7 @@ export default function AdminPage() {
                 title="Aprobadas"
                 value={estadisticas.solicitudesAprobadas}
                 icon={<CheckCircle className="w-6 h-6 text-green-600" />}
-                color="bg-green-100 dark:bg-green-900/50"
+                color="bg-green-100/50"
                 gradient="from-green-500 to-emerald-500"
                 subtitle={`${approvedCount} aprobadas`}
               />
@@ -238,7 +238,7 @@ export default function AdminPage() {
                 title="Total Usuarios"
                 value={estadisticas.totalUsuarios}
                 icon={<Users className="w-6 h-6 text-blue-600" />}
-                color="bg-blue-100 dark:bg-blue-900/50"
+                color="bg-blue-100/50"
                 gradient="from-blue-500 to-cyan-500"
                 subtitle="usuarios registrados"
               />
@@ -246,7 +246,7 @@ export default function AdminPage() {
                 title="Suscripciones"
                 value={estadisticas.suscripcionesActivas}
                 icon={<Crown className="w-6 h-6 text-violet-600" />}
-                color="bg-violet-100 dark:bg-violet-900/50"
+                color="bg-violet-100/50"
                 gradient="from-violet-500 to-fuchsia-500"
                 subtitle="planes activos"
               />
@@ -306,28 +306,28 @@ export default function AdminPage() {
                 title="Total Usuarios"
                 value={estadisticasUsuarios.totalUsuarios}
                 icon={<Users className="w-6 h-6 text-blue-600" />}
-                color="bg-blue-100 dark:bg-blue-900/50"
+                color="bg-blue-100/50"
                 gradient="from-blue-500 to-cyan-500"
               />
               <StatCard
                 title="Usuarios Activos"
                 value={estadisticasUsuarios.usuariosActivos}
                 icon={<TrendingUp className="w-6 h-6 text-green-600" />}
-                color="bg-green-100 dark:bg-green-900/50"
+                color="bg-green-100/50"
                 gradient="from-green-500 to-emerald-500"
               />
               <StatCard
                 title="Con Plan de Pago"
                 value={estadisticasUsuarios.usuariosConPlanPago}
                 icon={<Crown className="w-6 h-6 text-violet-600" />}
-                color="bg-violet-100 dark:bg-violet-900/50"
+                color="bg-violet-100/50"
                 gradient="from-violet-500 to-fuchsia-500"
               />
               <StatCard
                 title="Nuevos Este Mes"
                 value={estadisticasUsuarios.usuariosNuevosEsteMes}
                 icon={<UserPlus className="w-6 h-6 text-amber-600" />}
-                color="bg-amber-100 dark:bg-amber-900/50"
+                color="bg-amber-100/50"
                 gradient="from-amber-500 to-orange-500"
                 subtitle="registros este mes"
               />
@@ -348,21 +348,21 @@ export default function AdminPage() {
                 title="Total Actividades"
                 value={activityLogs.length}
                 icon={<Activity className="w-6 h-6 text-blue-600" />}
-                color="bg-blue-100 dark:bg-blue-900/50"
+                color="bg-blue-100/50"
                 gradient="from-blue-500 to-cyan-500"
               />
               <StatCard
                 title="Creaciones"
                 value={activityLogs.filter((l) => l.action === "create").length}
                 icon={<CheckCircle className="w-6 h-6 text-green-600" />}
-                color="bg-green-100 dark:bg-green-900/50"
+                color="bg-green-100/50"
                 gradient="from-green-500 to-emerald-500"
               />
               <StatCard
                 title="Eliminaciones"
                 value={activityLogs.filter((l) => l.action === "delete").length}
                 icon={<XCircle className="w-6 h-6 text-red-600" />}
-                color="bg-red-100 dark:bg-red-900/50"
+                color="bg-red-100/50"
                 gradient="from-red-500 to-rose-500"
               />
             </div>

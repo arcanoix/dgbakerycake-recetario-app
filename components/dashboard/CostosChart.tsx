@@ -26,7 +26,7 @@ export const CostosChart = ({ recetas, moneda }: CostosChartProps) => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white p-4 rounded-xl shadow-xl border border-gray-100">
+        <div className="bg-white p-4 rounded-xl shadow-xl border border-gray-300">
           <p className="font-bold text-gray-900 mb-2">{label}</p>
           <div className="space-y-1">
             <p className="text-sm text-violet-600">
@@ -48,20 +48,20 @@ export const CostosChart = ({ recetas, moneda }: CostosChartProps) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg shadow-gray-100/50 border border-gray-100 p-6">
+    <div className="bg-white rounded-2xl shadow-lg shadow-gray-100/50 border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-lg font-bold text-gray-900">Costos por Receta</h3>
-          <p className="text-sm text-gray-500">Desglose de materiales y mano de obra</p>
+          <p className="text-sm text-gray-700">Desglose de materiales y mano de obra</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-violet-500"></div>
-            <span className="text-xs text-gray-500">Materiales</span>
+            <span className="text-xs text-gray-700">Materiales</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-fuchsia-500"></div>
-            <span className="text-xs text-gray-500">Mano de obra</span>
+            <span className="text-xs text-gray-700">Mano de obra</span>
           </div>
         </div>
       </div>

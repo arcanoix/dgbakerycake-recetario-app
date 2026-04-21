@@ -140,7 +140,7 @@ export default function RecetasPage() {
             </div>
             Recetas
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">Gestiona tus recetas y calcula costos</p>
+          <p className="text-gray-700 mt-1">Gestiona tus recetas y calcula costos</p>
         </div>
         <Button 
           onClick={handleNuevo}
@@ -158,15 +158,15 @@ export default function RecetasPage() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <Card className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30">
+          <Card className="border-amber-200 bg-amber-50/30">
             <CardContent className="py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <AlertCircle className="w-5 h-5 text-amber-500" />
                 <div>
-                  <p className="font-medium text-amber-900 dark:text-amber-200">
+                  <p className="font-medium text-amber-900">
                     Plan: {getPlanDisplayName()} - Límite de {limitInfo.limit} recetas
                   </p>
-                  <p className="text-sm text-amber-700 dark:text-amber-300">
+                  <p className="text-sm text-amber-700">
                     Has usado {recetas.length} de {limitInfo.limit} recetas ({limitInfo.remaining} restantes)
                   </p>
                 </div>

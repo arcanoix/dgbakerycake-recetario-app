@@ -163,9 +163,9 @@ function groupActivityByDay(logs: ActivityLog[]) {
 const PieTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl text-sm">
-        <p className="font-semibold text-gray-900 dark:text-gray-100">{payload[0].name}</p>
-        <p className="text-gray-500 dark:text-gray-400">
+      <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-xl text-sm">
+        <p className="font-semibold text-gray-900">{payload[0].name}</p>
+        <p className="text-gray-700">
           {payload[0].value} usuario{payload[0].value !== 1 ? "s" : ""}
         </p>
       </div>
@@ -177,8 +177,8 @@ const PieTooltip = ({ active, payload }: any) => {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl text-sm">
-        <p className="font-semibold text-gray-900 dark:text-gray-100 mb-1">{label}</p>
+      <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-xl text-sm">
+        <p className="font-semibold text-gray-900 mb-1">{label}</p>
         {payload.map((p: any, i: number) => (
           <p key={i} style={{ color: p.color }} className="text-sm">
             {p.name}: {p.value}
@@ -206,7 +206,7 @@ export const AdminCharts = ({ usuarios, activityLogs }: AdminChartsProps) => {
           gradient="from-violet-500 to-purple-600"
         >
           {planData.length === 0 ? (
-            <div className="h-64 flex items-center justify-center text-gray-400">
+            <div className="h-64 flex items-center justify-center text-gray-700">
               <p>Sin datos disponibles</p>
             </div>
           ) : (
@@ -232,7 +232,7 @@ export const AdminCharts = ({ usuarios, activityLogs }: AdminChartsProps) => {
                 </Pie>
                 <Tooltip content={<PieTooltip />} />
                 <Legend 
-                  formatter={(value) => <span className="text-sm text-gray-600 dark:text-gray-400">{value}</span>}
+                  formatter={(value) => <span className="text-sm text-gray-600">{value}</span>}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -276,7 +276,7 @@ export const AdminCharts = ({ usuarios, activityLogs }: AdminChartsProps) => {
           gradient="from-amber-500 to-orange-600"
         >
           {moduleData.length === 0 ? (
-            <div className="h-64 flex items-center justify-center text-gray-400">
+            <div className="h-64 flex items-center justify-center text-gray-700">
               <p>Sin actividad registrada</p>
             </div>
           ) : (
@@ -316,7 +316,7 @@ export const AdminCharts = ({ usuarios, activityLogs }: AdminChartsProps) => {
           gradient="from-emerald-500 to-teal-600"
         >
           {actionData.length === 0 ? (
-            <div className="h-64 flex items-center justify-center text-gray-400">
+            <div className="h-64 flex items-center justify-center text-gray-700">
               <p>Sin actividad registrada</p>
             </div>
           ) : (
@@ -346,7 +346,7 @@ export const AdminCharts = ({ usuarios, activityLogs }: AdminChartsProps) => {
         gradient="from-rose-500 to-pink-600"
       >
         {activityLogs.length === 0 ? (
-          <div className="h-48 flex items-center justify-center text-gray-400">
+          <div className="h-48 flex items-center justify-center text-gray-700">
             <p>Sin actividad registrada</p>
           </div>
         ) : (

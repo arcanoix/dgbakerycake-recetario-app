@@ -48,7 +48,7 @@ export const ClienteList = ({ clientes, cargando, onEditar, onEliminar }: Client
   return (
     <div className="space-y-4">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-700" />
         <Input
           value={busqueda}
           onChange={e => setBusqueda(e.target.value)}
@@ -58,7 +58,7 @@ export const ClienteList = ({ clientes, cargando, onEditar, onEliminar }: Client
       </div>
 
       {clientesFiltrados.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
+        <div className="text-center py-12 text-gray-700">
           <User className="w-12 h-12 mx-auto mb-3 opacity-30" />
           <p className="font-medium">
             {busqueda ? "No se encontraron clientes" : "Sin clientes registrados"}
@@ -78,7 +78,7 @@ export const ClienteList = ({ clientes, cargando, onEditar, onEliminar }: Client
                       {cliente.nombre.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-900 dark:text-white text-sm">
+                      <p className="font-semibold text-gray-900 text-sm">
                         {cliente.nombre}
                       </p>
                     </div>
@@ -86,7 +86,7 @@ export const ClienteList = ({ clientes, cargando, onEditar, onEliminar }: Client
                   <div className="flex gap-1">
                     <button
                       onClick={() => onEditar(cliente)}
-                      className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-violet-600 transition-colors"
+                      className="p-1.5 rounded hover:bg-gray-100 text-gray-700 hover:text-violet-600 transition-colors"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
@@ -95,7 +95,7 @@ export const ClienteList = ({ clientes, cargando, onEditar, onEliminar }: Client
                       className={`p-1.5 rounded transition-colors ${
                         confirmandoEliminar === cliente.id
                           ? "bg-red-50 text-red-600"
-                          : "hover:bg-gray-100 text-gray-500 hover:text-red-500"
+                          : "hover:bg-gray-100 text-gray-700 hover:text-red-500"
                       }`}
                       title={confirmandoEliminar === cliente.id ? "Confirmar eliminación" : "Eliminar"}
                     >
@@ -104,7 +104,7 @@ export const ClienteList = ({ clientes, cargando, onEditar, onEliminar }: Client
                   </div>
                 </div>
 
-                <div className="space-y-1.5 text-xs text-gray-600 dark:text-gray-400">
+                <div className="space-y-1.5 text-xs text-gray-600">
                   {cliente.email && (
                     <div className="flex items-center gap-1.5">
                       <Mail className="w-3 h-3 shrink-0" />

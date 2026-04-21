@@ -102,23 +102,23 @@ export const PerfilForm = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
-              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-1">
+            <div className="bg-gray-50/50 rounded-xl p-4">
+              <div className="flex items-center gap-2 text-sm text-gray-700 mb-1">
                 <Mail className="w-4 h-4" />
                 Email actual
               </div>
-              <p className="font-medium text-gray-900 dark:text-gray-100">{user.email}</p>
+              <p className="font-medium text-gray-900">{user.email}</p>
             </div>
-            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
-              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-1">
+            <div className="bg-gray-50/50 rounded-xl p-4">
+              <div className="flex items-center gap-2 text-sm text-gray-700 mb-1">
                 <Calendar className="w-4 h-4" />
                 Registrado el
               </div>
-              <p className="font-medium text-gray-900 dark:text-gray-100">{fechaRegistro}</p>
+              <p className="font-medium text-gray-900">{fechaRegistro}</p>
             </div>
           </div>
           <div className="mt-4 p-3 bg-muted rounded-lg">
-            <p className="text-xs text-muted-foreground font-mono">ID: {user.id}</p>
+            <p className="text-xs text-gray-700 font-mono">ID: {user.id}</p>
           </div>
         </CardContent>
       </Card>
@@ -139,7 +139,7 @@ export const PerfilForm = () => {
           <form onSubmit={handleDatosSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="nombre" className="flex items-center gap-2">
-                <User className="w-4 h-4 text-gray-400" />
+                <User className="w-4 h-4 text-gray-700" />
                 Nombre
               </Label>
               <Input
@@ -156,7 +156,7 @@ export const PerfilForm = () => {
 
             <div className="space-y-2">
               <Label htmlFor="email" className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-gray-400" />
+                <Mail className="w-4 h-4 text-gray-700" />
                 Email
               </Label>
               <Input
@@ -169,7 +169,7 @@ export const PerfilForm = () => {
                 required
                 className="h-11"
               />
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-gray-700">
                 Si cambias tu email, recibirás un correo de confirmación en la nueva dirección.
               </p>
             </div>
@@ -180,10 +180,10 @@ export const PerfilForm = () => {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg flex items-center gap-2"
+                  className="p-3 bg-red-50/30 border border-red-200 rounded-lg flex items-center gap-2"
                 >
                   <AlertCircle className="w-4 h-4 text-red-500" />
-                  <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+                  <p className="text-sm text-red-700">{error}</p>
                 </motion.div>
               )}
 
@@ -192,10 +192,10 @@ export const PerfilForm = () => {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="p-3 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg flex items-center gap-2"
+                  className="p-3 bg-green-50/30 border border-green-200 rounded-lg flex items-center gap-2"
                 >
                   <Check className="w-4 h-4 text-green-500" />
-                  <p className="text-sm text-green-700 dark:text-green-300">{mensaje}</p>
+                  <p className="text-sm text-green-700">{mensaje}</p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -241,7 +241,7 @@ export const PerfilForm = () => {
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="passwordActual" className="flex items-center gap-2">
-                <Key className="w-4 h-4 text-gray-400" />
+                <Key className="w-4 h-4 text-gray-700" />
                 Contraseña Actual
               </Label>
               <div className="relative">
@@ -258,7 +258,7 @@ export const PerfilForm = () => {
                 <button
                   type="button"
                   onClick={() => setShowPasswords(p => ({ ...p, actual: !p.actual }))}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 hover:text-gray-600"
                 >
                   {showPasswords.actual ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -267,7 +267,7 @@ export const PerfilForm = () => {
 
             <div className="space-y-2">
               <Label htmlFor="passwordNuevo" className="flex items-center gap-2">
-                <Key className="w-4 h-4 text-gray-400" />
+                <Key className="w-4 h-4 text-gray-700" />
                 Nueva Contraseña
               </Label>
               <div className="relative">
@@ -285,7 +285,7 @@ export const PerfilForm = () => {
                 <button
                   type="button"
                   onClick={() => setShowPasswords(p => ({ ...p, nueva: !p.nueva }))}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 hover:text-gray-600"
                 >
                   {showPasswords.nueva ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -294,7 +294,7 @@ export const PerfilForm = () => {
 
             <div className="space-y-2">
               <Label htmlFor="passwordConfirmar" className="flex items-center gap-2">
-                <Key className="w-4 h-4 text-gray-400" />
+                <Key className="w-4 h-4 text-gray-700" />
                 Confirmar Nueva Contraseña
               </Label>
               <div className="relative">
@@ -312,7 +312,7 @@ export const PerfilForm = () => {
                 <button
                   type="button"
                   onClick={() => setShowPasswords(p => ({ ...p, confirmar: !p.confirmar }))}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 hover:text-gray-600"
                 >
                   {showPasswords.confirmar ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -325,10 +325,10 @@ export const PerfilForm = () => {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg flex items-center gap-2"
+                  className="p-3 bg-red-50/30 border border-red-200 rounded-lg flex items-center gap-2"
                 >
                   <AlertCircle className="w-4 h-4 text-red-500" />
-                  <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+                  <p className="text-sm text-red-700">{error}</p>
                 </motion.div>
               )}
 
@@ -337,10 +337,10 @@ export const PerfilForm = () => {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="p-3 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg flex items-center gap-2"
+                  className="p-3 bg-green-50/30 border border-green-200 rounded-lg flex items-center gap-2"
                 >
                   <Check className="w-4 h-4 text-green-500" />
-                  <p className="text-sm text-green-700 dark:text-green-300">{mensaje}</p>
+                  <p className="text-sm text-green-700">{mensaje}</p>
                 </motion.div>
               )}
             </AnimatePresence>

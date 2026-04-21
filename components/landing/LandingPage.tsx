@@ -137,7 +137,7 @@ export const LandingPage = () => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100"
+        className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-300"
       >
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -282,7 +282,7 @@ export const LandingPage = () => {
 
       {/* Problems Section */}
       <AnimatedSection>
-        <section className="py-20 px-4 bg-gray-50">
+        <section className="py-20 px-4 bg-gray-100">
           <div className="container mx-auto">
             <div className="max-w-3xl mx-auto">
               <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
@@ -392,7 +392,7 @@ export const LandingPage = () => {
                 <div className="flex items-center gap-3 bg-white px-6 py-4 rounded-xl shadow-lg">
                   <span className="text-3xl">🤖</span>
                   <div className="text-left">
-                    <p className="text-xs text-gray-500">Disponible pronto en</p>
+                    <p className="text-xs text-gray-700">Disponible pronto en</p>
                     <p className="font-bold text-gray-900">Google Play</p>
                   </div>
                 </div>
@@ -400,7 +400,7 @@ export const LandingPage = () => {
                 <div className="flex items-center gap-3 bg-white px-6 py-4 rounded-xl shadow-lg">
                   <span className="text-3xl">🍎</span>
                   <div className="text-left">
-                    <p className="text-xs text-gray-500">Disponible pronto en</p>
+                    <p className="text-xs text-gray-700">Disponible pronto en</p>
                     <p className="font-bold text-gray-900">App Store</p>
                   </div>
                 </div>
@@ -412,7 +412,7 @@ export const LandingPage = () => {
 
       {/* Testimonials Section */}
       <AnimatedSection>
-        <section className="py-20 px-4 bg-gray-50">
+        <section className="py-20 px-4 bg-gray-100">
           <div className="container mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
               Lo que dicen nuestros usuarios
@@ -484,7 +484,7 @@ export const LandingPage = () => {
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   viewport={{ once: true }}
                 >
-                  <Card className={`${plan.popular ? 'border-2 border-violet-500 relative shadow-2xl shadow-violet-200' : 'border-2 border-gray-100'} h-full`}>
+                  <Card className={`${plan.popular ? 'border-2 border-violet-500 relative shadow-2xl shadow-violet-200' : 'border-2 border-gray-300'} h-full`}>
                     {plan.popular && (
                       <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white px-4 py-1 rounded-full text-sm font-medium">
                         Más popular
@@ -524,7 +524,7 @@ export const LandingPage = () => {
 
       {/* FAQ Section */}
       <AnimatedSection>
-        <section className="py-20 px-4 bg-gray-50">
+        <section className="py-20 px-4 bg-gray-100">
           <div className="container mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
               Preguntas Frecuentes
@@ -541,7 +541,7 @@ export const LandingPage = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: index * 0.1 }}
                   viewport={{ once: true }}
-                  className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
                 >
                   <button
                     className="w-full px-6 py-4 text-left flex items-center justify-between"
@@ -614,14 +614,14 @@ export const LandingPage = () => {
                 <span className="text-2xl">🧁</span>
                 <span className="text-xl font-bold">DGcost</span>
               </div>
-              <p className="text-gray-400">
+              <p className="text-gray-700">
                 La herramienta de gestión de costos para reposteros profesionales.
               </p>
             </div>
 
             <div>
               <h4 className="font-bold mb-4 text-white">Producto</h4>
-              <ul className="space-y-2 text-gray-400">
+              <ul className="space-y-2 text-gray-700">
                 <li><a href="#" className="hover:text-white">Características</a></li>
                 <li><a href="#" className="hover:text-white">Precios</a></li>
                 <li><a href="#" className="hover:text-white">Tutorial</a></li>
@@ -630,7 +630,7 @@ export const LandingPage = () => {
 
             <div>
               <h4 className="font-bold mb-4 text-white">Empresa</h4>
-              <ul className="space-y-2 text-gray-400">
+              <ul className="space-y-2 text-gray-700">
                 <li><a href="#" className="hover:text-white">Sobre nosotros</a></li>
                 <li><a href="#" className="hover:text-white">Blog</a></li>
                 <li><a href="#" className="hover:text-white">Contacto</a></li>
@@ -639,7 +639,7 @@ export const LandingPage = () => {
 
             <div>
               <h4 className="font-bold mb-4 text-white">Legal</h4>
-              <ul className="space-y-2 text-gray-400">
+              <ul className="space-y-2 text-gray-700">
                 <li><a href="#" className="hover:text-white">Términos</a></li>
                 <li><a href="#" className="hover:text-white">Privacidad</a></li>
               </ul>
@@ -647,13 +647,13 @@ export const LandingPage = () => {
           </div>
 
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-700 text-sm">
               © 2026 DGcost. Todos los derechos reservados.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="text-gray-400 hover:text-white text-2xl">📘</a>
-              <a href="#" className="text-gray-400 hover:text-white text-2xl">📸</a>
-              <a href="#" className="text-gray-400 hover:text-white text-2xl">🐦</a>
+              <a href="#" className="text-gray-700 hover:text-white text-2xl">📘</a>
+              <a href="#" className="text-gray-700 hover:text-white text-2xl">📸</a>
+              <a href="#" className="text-gray-700 hover:text-white text-2xl">🐦</a>
             </div>
           </div>
         </div>

@@ -15,9 +15,9 @@ export const ProductosChart = ({ productos }: ProductosChartProps) => {
     if (active && payload && payload.length) {
       const percentage = ((payload[0].value / total) * 100).toFixed(1);
       return (
-        <div className="bg-white p-4 rounded-xl shadow-xl border border-gray-100">
+        <div className="bg-white p-4 rounded-xl shadow-xl border border-gray-300">
           <p className="font-bold text-gray-900">{payload[0].name}</p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-700">
             {payload[0].value} productos ({percentage}%)
           </p>
         </div>
@@ -27,15 +27,15 @@ export const ProductosChart = ({ productos }: ProductosChartProps) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg shadow-gray-100/50 border border-gray-100 p-6">
+    <div className="bg-white rounded-2xl shadow-lg shadow-gray-100/50 border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-lg font-bold text-gray-900">Productos por Categoría</h3>
-          <p className="text-sm text-gray-500">Distribución de inventario</p>
+          <p className="text-sm text-gray-700">Distribución de inventario</p>
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold text-violet-600">{total}</p>
-          <p className="text-xs text-gray-500">Total productos</p>
+          <p className="text-xs text-gray-700">Total productos</p>
         </div>
       </div>
       

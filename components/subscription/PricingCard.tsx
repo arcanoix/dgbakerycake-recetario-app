@@ -45,7 +45,7 @@ export const PricingCard = ({ plan, isCurrentPlan, onSelect }: PricingCardProps)
       
       <CardHeader>
         <CardTitle className="text-2xl">{plan.display_name}</CardTitle>
-        <p className="text-muted-foreground text-sm">{plan.description}</p>
+        <p className="text-gray-700 text-sm">{plan.description}</p>
       </CardHeader>
 
       <CardContent className="space-y-6">
@@ -55,10 +55,10 @@ export const PricingCard = ({ plan, isCurrentPlan, onSelect }: PricingCardProps)
             <span className="text-4xl font-bold">
               {plan.price_usd === 0 ? 'Gratis' : `$${plan.price_usd}`}
             </span>
-            {plan.price_usd > 0 && <span className="text-muted-foreground">/mes</span>}
+            {plan.price_usd > 0 && <span className="text-gray-700">/mes</span>}
           </div>
           {plan.price_bs > 0 && (
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm text-gray-700 mt-1">
               Bs. {plan.price_bs.toLocaleString('es-VE')} /mes
             </p>
           )}

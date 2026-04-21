@@ -36,7 +36,7 @@ export const CategoriaList = ({ categorias, onEdit, onDelete, onToggleEstado }: 
     return (
       <Card>
         <CardContent className="py-8">
-          <p className="text-center text-muted-foreground">
+          <p className="text-center text-gray-700">
             No hay categorías que coincidan con los filtros seleccionados.
           </p>
         </CardContent>
@@ -75,7 +75,7 @@ export const CategoriaList = ({ categorias, onEdit, onDelete, onToggleEstado }: 
 
               {/* Descripción */}
               {categoria.descripcion && (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-gray-700">
                   {categoria.descripcion}
                 </p>
               )}

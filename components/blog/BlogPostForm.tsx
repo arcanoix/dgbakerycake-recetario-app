@@ -143,7 +143,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
             Volver
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-bold text-gray-900">
           {isEditing ? "Editar Post" : "Nuevo Post"}
         </h1>
       </div>
@@ -151,13 +151,13 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Error */}
         {error && (
-          <div className="rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
+          <div className="rounded-xl bg-red-50/20 border border-red-200 px-4 py-3 text-sm text-red-700">
             {error}
           </div>
         )}
 
         {/* Tabs */}
-        <div className="flex gap-1 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex gap-1 border-b border-gray-200">
           {(["content", "seo"] as const).map((tab) => (
             <button
               key={tab}
@@ -166,7 +166,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
               className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
                 activeTab === tab
                   ? "border-violet-600 text-violet-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400"
+                  : "border-transparent text-gray-700 hover:text-gray-700"
               }`}
             >
               {tab === "content" ? "Contenido" : "SEO"}
@@ -179,7 +179,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
           <div className="space-y-5">
             {/* Title */}
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-sm font-medium text-gray-700">
                 Título <span className="text-red-500">*</span>
               </label>
               <Input
@@ -192,11 +192,11 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
 
             {/* Slug */}
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-sm font-medium text-gray-700">
                 Slug (URL) <span className="text-red-500">*</span>
               </label>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-400 shrink-0">/blog/</span>
+                <span className="text-sm text-gray-700 shrink-0">/blog/</span>
                 <Input
                   value={form.slug}
                   onChange={(e) =>
@@ -217,7 +217,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
 
             {/* Excerpt */}
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-sm font-medium text-gray-700">
                 Extracto / Resumen
               </label>
               <Textarea
@@ -230,7 +230,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
 
             {/* Cover image */}
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-sm font-medium text-gray-700">
                 URL de imagen de portada
               </label>
               <Input
@@ -243,7 +243,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
 
             {/* Tags */}
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+              <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
                 <Tag className="w-4 h-4" />
                 Etiquetas
               </label>
@@ -252,12 +252,12 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                 onChange={(e) => handleChange("tags", e.target.value)}
                 placeholder="repostería, costos, tutoriales (separadas por coma)"
               />
-              <p className="text-xs text-gray-400">Separa las etiquetas con comas.</p>
+              <p className="text-xs text-gray-700">Separa las etiquetas con comas.</p>
             </div>
 
             {/* Content editor */}
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-sm font-medium text-gray-700">
                 Contenido (Markdown) <span className="text-red-500">*</span>
               </label>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -273,7 +273,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                 {/* Preview */}
                 <Card className="overflow-y-auto max-h-[520px]">
                   <CardHeader className="py-3 px-4 border-b">
-                    <CardTitle className="text-xs text-gray-400 uppercase tracking-wider">
+                    <CardTitle className="text-xs text-gray-700 uppercase tracking-wider">
                       Vista previa
                     </CardTitle>
                   </CardHeader>
@@ -284,7 +284,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                         dangerouslySetInnerHTML={{ __html: previewHtml }}
                       />
                     ) : (
-                      <p className="text-sm text-gray-400 italic">
+                      <p className="text-sm text-gray-700 italic">
                         Escribe contenido Markdown para ver la vista previa.
                       </p>
                     )}
@@ -295,7 +295,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
 
             {/* Status */}
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-sm font-medium text-gray-700">
                 Estado
               </label>
               <div className="flex gap-3">
@@ -307,9 +307,9 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                     className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
                       form.status === s
                         ? s === "published"
-                          ? "border-green-500 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400"
-                          : "border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400"
-                        : "border-gray-200 dark:border-gray-700 text-gray-500 hover:border-gray-300 dark:hover:border-gray-600"
+                          ? "border-green-500 bg-green-50/20 text-green-700"
+                          : "border-yellow-500 bg-yellow-50/20 text-yellow-700"
+                        : "border-gray-200 text-gray-700 hover:border-gray-300"
                     }`}
                   >
                     {s === "published" ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
@@ -324,13 +324,13 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
         {/* SEO TAB */}
         {activeTab === "seo" && (
           <div className="space-y-5">
-            <div className="rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 px-4 py-3 text-sm text-blue-700 dark:text-blue-300">
+            <div className="rounded-xl bg-blue-50/20 border border-blue-100 px-4 py-3 text-sm text-blue-700">
               Optimiza cómo aparece este artículo en buscadores y redes sociales.
               Si los campos están vacíos se usará el título y extracto del post.
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-sm font-medium text-gray-700">
                 Título SEO
               </label>
               <Input
@@ -339,11 +339,11 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                 placeholder={form.title || "Título para motores de búsqueda"}
                 maxLength={70}
               />
-              <p className="text-xs text-gray-400">{form.seo_title.length}/70 caracteres recomendados</p>
+              <p className="text-xs text-gray-700">{form.seo_title.length}/70 caracteres recomendados</p>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-sm font-medium text-gray-700">
                 Meta descripción
               </label>
               <Textarea
@@ -353,11 +353,11 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                 rows={3}
                 maxLength={160}
               />
-              <p className="text-xs text-gray-400">{form.seo_description.length}/160 caracteres recomendados</p>
+              <p className="text-xs text-gray-700">{form.seo_description.length}/160 caracteres recomendados</p>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-sm font-medium text-gray-700">
                 Imagen Open Graph (URL)
               </label>
               <Input
@@ -366,24 +366,24 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                 placeholder={form.cover_image || "https://... (1200×630 px recomendado)"}
                 type="url"
               />
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-700">
                 Imagen que aparece al compartir en redes sociales. Si está vacío se usa la imagen de portada.
               </p>
             </div>
 
             {/* Preview card */}
             <div className="space-y-1.5">
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <p className="text-sm font-medium text-gray-700">
                 Vista previa en Google
               </p>
-              <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-900 max-w-lg">
-                <p className="text-xs text-green-700 dark:text-green-500 mb-0.5 truncate">
+              <div className="rounded-xl border border-gray-200 p-4 bg-white max-w-lg">
+                <p className="text-xs text-green-700 mb-0.5 truncate">
                   dgcost.app › blog › {form.slug || "mi-articulo"}
                 </p>
-                <p className="text-base text-blue-700 dark:text-blue-400 font-medium leading-snug truncate">
+                <p className="text-base text-blue-700 font-medium leading-snug truncate">
                   {form.seo_title || form.title || "Título del artículo – DGcost"}
                 </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mt-0.5">
+                <p className="text-sm text-gray-700 line-clamp-2 mt-0.5">
                   {form.seo_description || form.excerpt || "Descripción del artículo…"}
                 </p>
               </div>

@@ -135,14 +135,14 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
       <Card className="border-0 shadow-xl overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-rose-500" />
         
-        <CardHeader className="pb-6 border-b border-gray-100 dark:border-gray-800">
+        <CardHeader className="pb-6 border-b border-gray-200">
           <CardTitle className="text-2xl font-bold flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
               <Package className="w-5 h-5 text-white" />
             </div>
             {producto ? "Editar Producto" : "Nuevo Producto"}
           </CardTitle>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-gray-700 mt-1">
             {producto ? "Actualiza los detalles del producto" : "Registra un nuevo producto para gestionar tus costos"}
           </p>
         </CardHeader>
@@ -163,7 +163,7 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
                   onChange={handleChange}
                   placeholder="Ej: Harina de trigo"
                   required
-                  className="h-11 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
+                  className="h-11 border-gray-200 focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
                 />
               </div>
 
@@ -206,9 +206,9 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
                     onChange={handleChange}
                     placeholder="0.00"
                     required
-                    className="h-11 pl-10 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    className="h-11 pl-10 border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500"
                   />
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">$</span>
                 </div>
               </div>
 
@@ -224,7 +224,7 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
                   value={formData.proveedor}
                   onChange={handleChange}
                   placeholder="Nombre del proveedor"
-                  className="h-11 border-gray-200 dark:border-gray-700"
+                  className="h-11 border-gray-200"
                 />
               </div>
 
@@ -244,9 +244,9 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
                   onChange={handleChange}
                   placeholder="Ej: 900"
                   required
-                  className="h-11 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="h-11 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-700">
                   Tamaño de una unidad/paquete individual
                 </p>
               </div>
@@ -267,9 +267,9 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
                   onChange={handleChange}
                   placeholder="Ej: 3"
                   required
-                  className="h-11 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                  className="h-11 border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                 />
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-700">
                   Número de unidades/paquetes comprados
                 </p>
               </div>
@@ -314,46 +314,46 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
                 animate={{ opacity: 1, scale: 1 }}
                 className="space-y-4"
               >
-                <div className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
                   <Calculator className="w-4 h-4 text-violet-500" />
                   Valores Calculados
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="relative p-5 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 rounded-2xl border border-blue-200 dark:border-blue-800">
-                    <div className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-blue-200 dark:bg-blue-800 flex items-center justify-center">
-                      <Scale className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <div className="relative p-5 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 rounded-2xl border border-blue-200">
+                    <div className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-blue-200 flex items-center justify-center">
+                      <Scale className="w-4 h-4 text-blue-600" />
                     </div>
-                    <p className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">Cantidad Total</p>
-                    <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                    <p className="text-xs font-medium text-blue-600 uppercase tracking-wider mb-1">Cantidad Total</p>
+                    <p className="text-2xl font-bold text-blue-900">
                       {cantidadTotal.toFixed(2)}
                     </p>
-                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
+                    <p className="text-xs text-blue-600 mt-2">
                       {formData.tamañoPresentacion} × {formData.cantidadPresentaciones} {unidadesActivas.find(u => u.id === unidadSeleccionada)?.simbolo || 'u'}
                     </p>
                   </div>
                   
-                  <div className="relative p-5 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 rounded-2xl border border-green-200 dark:border-green-800">
-                    <div className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-green-200 dark:bg-green-800 flex items-center justify-center">
-                      <Package className="w-4 h-4 text-green-600 dark:text-green-400" />
+                  <div className="relative p-5 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 rounded-2xl border border-green-200">
+                    <div className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-green-200 flex items-center justify-center">
+                      <Package className="w-4 h-4 text-green-600" />
                     </div>
-                    <p className="text-xs font-medium text-green-600 dark:text-green-400 uppercase tracking-wider mb-1">Precio por Presentación</p>
-                    <p className="text-2xl font-bold text-green-900 dark:text-green-100">
+                    <p className="text-xs font-medium text-green-600 uppercase tracking-wider mb-1">Precio por Presentación</p>
+                    <p className="text-2xl font-bold text-green-900">
                       {formatearMoneda(precioPorPresentacion, configuracion?.moneda, tasaCambio)}
                     </p>
-                    <p className="text-xs text-green-600 dark:text-green-400 mt-2">
+                    <p className="text-xs text-green-600 mt-2">
                       Por unidad/paquete
                     </p>
                   </div>
                   
-                  <div className="relative p-5 bg-gradient-to-br from-violet-50 to-violet-100 dark:from-violet-950 dark:to-violet-900 rounded-2xl border border-violet-200 dark:border-violet-800">
-                    <div className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-violet-200 dark:bg-violet-800 flex items-center justify-center">
-                      <DollarSign className="w-4 h-4 text-violet-600 dark:text-violet-400" />
+                  <div className="relative p-5 bg-gradient-to-br from-violet-50 to-violet-100 dark:from-violet-950 dark:to-violet-900 rounded-2xl border border-violet-200">
+                    <div className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-violet-200 flex items-center justify-center">
+                      <DollarSign className="w-4 h-4 text-violet-600" />
                     </div>
-                    <p className="text-xs font-medium text-violet-600 dark:text-violet-400 uppercase tracking-wider mb-1">Precio por Unidad</p>
-                    <p className="text-2xl font-bold text-violet-900 dark:text-violet-100">
+                    <p className="text-xs font-medium text-violet-600 uppercase tracking-wider mb-1">Precio por Unidad</p>
+                    <p className="text-2xl font-bold text-violet-900">
                       {formatearMoneda(precioPorUnidad, configuracion?.moneda, tasaCambio)}
                     </p>
-                    <p className="text-xs text-violet-600 dark:text-violet-400 mt-2">
+                    <p className="text-xs text-violet-600 mt-2">
                       Por {unidadesActivas.find(u => u.id === unidadSeleccionada)?.simbolo || 'unidad'}
                     </p>
                   </div>
@@ -364,7 +364,7 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
             {/* Notas */}
             <div className="space-y-2">
               <Label htmlFor="notas" className="text-sm font-medium flex items-center gap-2">
-                <FileText className="w-4 h-4 text-gray-500" />
+                <FileText className="w-4 h-4 text-gray-700" />
                 Notas
               </Label>
               <Textarea
@@ -374,12 +374,12 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
                 onChange={handleChange}
                 placeholder="Notas adicionales sobre el producto..."
                 rows={3}
-                className="border-gray-200 dark:border-gray-700 resize-none"
+                className="border-gray-200 resize-none"
               />
             </div>
 
             {/* Botones */}
-            <div className="flex gap-3 justify-end pt-4 border-t border-gray-100 dark:border-gray-800">
+            <div className="flex gap-3 justify-end pt-4 border-t border-gray-200">
               {onCancel && (
                 <Button 
                   type="button" 

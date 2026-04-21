@@ -68,14 +68,14 @@ export default function VentasPage() {
           <div className="w-16 h-16 rounded-full bg-gradient-to-r from-violet-100 to-fuchsia-100 flex items-center justify-center mx-auto mb-4">
             <Lock className="w-8 h-8 text-violet-500" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">
             Módulo de Ventas
           </h2>
-          <p className="text-gray-500 mb-4 text-sm">
+          <p className="text-gray-700 mb-4 text-sm">
             Gestiona tus órdenes y cotizaciones, registra pagos adelantados y emite facturas
             proforma en PDF. Disponible desde el plan Básico.
           </p>
-          <p className="text-xs text-gray-400 mb-5">
+          <p className="text-xs text-gray-700 mb-5">
             Tu plan actual: <strong>{getPlanDisplayName()}</strong>
           </p>
           <Link href="/pricing">
@@ -102,8 +102,8 @@ export default function VentasPage() {
               <ShoppingBag className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Ventas</h1>
-              <p className="text-sm text-gray-500">
+              <h1 className="text-2xl font-bold text-gray-900">Ventas</h1>
+              <p className="text-sm text-gray-700">
                 Órdenes y cotizaciones
               </p>
             </div>
@@ -122,8 +122,8 @@ export default function VentasPage() {
 
         {/* Clientes warning */}
         {clientes.length === 0 && !cargando && (
-          <Card className="border-amber-200 bg-amber-50 dark:bg-amber-950/20">
-            <CardContent className="py-3 px-4 text-sm text-amber-700 dark:text-amber-400 flex items-center gap-2">
+          <Card className="border-amber-200 bg-amber-50/20">
+            <CardContent className="py-3 px-4 text-sm text-amber-700 flex items-center gap-2">
               <span>⚠️</span>
               <span>
                 No tienes clientes registrados.{" "}
@@ -143,7 +143,7 @@ export default function VentasPage() {
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <TrendingUp className="w-4 h-4 text-violet-500" />
-                  <span className="text-xs text-gray-500">Ventas Totales</span>
+                  <span className="text-xs text-gray-700">Ventas Totales</span>
                 </div>
                 <p className="text-lg font-bold">{formatearUSD(totalVentas)}</p>
               </CardContent>
@@ -152,7 +152,7 @@ export default function VentasPage() {
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <Clock className="w-4 h-4 text-yellow-500" />
-                  <span className="text-xs text-gray-500">Cotizaciones</span>
+                  <span className="text-xs text-gray-700">Cotizaciones</span>
                 </div>
                 <p className="text-lg font-bold">{ordenesPendientes}</p>
               </CardContent>
@@ -161,7 +161,7 @@ export default function VentasPage() {
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <FileText className="w-4 h-4 text-blue-500" />
-                  <span className="text-xs text-gray-500">Confirmadas</span>
+                  <span className="text-xs text-gray-700">Confirmadas</span>
                 </div>
                 <p className="text-lg font-bold">{ordenesConfirmadas}</p>
               </CardContent>
@@ -170,7 +170,7 @@ export default function VentasPage() {
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <CheckCircle2 className="w-4 h-4 text-green-500" />
-                  <span className="text-xs text-gray-500">Entregadas</span>
+                  <span className="text-xs text-gray-700">Entregadas</span>
                 </div>
                 <p className="text-lg font-bold">{ordenesEntregadas}</p>
               </CardContent>
@@ -180,7 +180,7 @@ export default function VentasPage() {
 
         {/* Error */}
         {error && (
-          <Card className="border-red-200 bg-red-50 dark:bg-red-950/20">
+          <Card className="border-red-200 bg-red-50/20">
             <CardContent className="py-3 px-4 text-sm text-red-600">{error}</CardContent>
           </Card>
         )}

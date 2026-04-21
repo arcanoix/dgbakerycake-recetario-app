@@ -40,7 +40,7 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
       case "pending":
         return <Badge className="bg-yellow-500">Pendiente</Badge>;
       case "canceled":
-        return <Badge className="bg-gray-500">Cancelado</Badge>;
+        return <Badge className="bg-gray-1000">Cancelado</Badge>;
       default:
         return <Badge className="bg-gray-400">N/A</Badge>;
     }
@@ -178,7 +178,7 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
             <TableBody>
               {usuariosFiltrados.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={10} className="text-center text-muted-foreground">
+                  <TableCell colSpan={10} className="text-center text-gray-700">
                     No se encontraron usuarios
                   </TableCell>
                 </TableRow>
@@ -194,7 +194,7 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
                         <span className="font-medium">
                           {usuario.plan_display_name || "N/A"}
                         </span>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-xs text-gray-700">
                           {usuario.plan_name}
                         </span>
                       </div>
@@ -212,18 +212,18 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
                         {usuario.recetas_count || 0}
                       </span>
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                    <TableCell className="text-sm text-gray-700 whitespace-nowrap">
                       {formatDate(usuario.last_sign_in_at) !== "N/A"
                         ? formatDate(usuario.last_sign_in_at)
                         : formatDate(usuario.start_date)}
                     </TableCell>
-                    <TableCell className="text-xs font-mono text-muted-foreground">
+                    <TableCell className="text-xs font-mono text-gray-700">
                       {usuario.last_ip || "—"}
                       {usuario.country && (
                         <span className="ml-1 text-blue-600">({usuario.country})</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
+                    <TableCell className="text-sm text-gray-700">
                       {formatDate(usuario.end_date)}
                     </TableCell>
                     <TableCell className="text-right">
@@ -282,7 +282,7 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
         </div>
 
         {usuariosFiltrados.length > 0 && (
-          <div className="mt-4 text-sm text-muted-foreground">
+          <div className="mt-4 text-sm text-gray-700">
             Mostrando {usuariosFiltrados.length} de {usuarios.length} usuarios
           </div>
         )}

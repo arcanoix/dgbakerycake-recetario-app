@@ -199,11 +199,26 @@ export const obtenerConfiguracion = async (): Promise<ConfiguracionGlobal | null
   // Si no existe configuración, crear una por defecto
   if (!data) {
     console.log('No se encontró configuración, creando una por defecto...');
+    
+    // Obtener la tasa de cambio del último registro existente
+    let tasaCambioUSD = 50; // Valor fallback
+    const { data: ultimaConfig } = await supabase
+      .from('configuracion')
+      .select('tasa_cambio_usd')
+      .order('updated_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    
+    if (ultimaConfig && ultimaConfig.tasa_cambio_usd) {
+      tasaCambioUSD = parseFloat(ultimaConfig.tasa_cambio_usd);
+      console.log(`Usando tasa de cambio del último registro: ${tasaCambioUSD}`);
+    }
+    
     const configPorDefecto = {
       costo_por_hora_defecto: 10,
-      moneda: 'VES',
-      margen_ganancia_defecto: 30,
-      tasa_cambio_usd: 50,
+      moneda: 'USD',
+      margen_ganancia_defecto: 35,
+      tasa_cambio_usd: tasaCambioUSD,
     };
 
     const { data: nuevaConfig, error: errorCrear } = await supabase

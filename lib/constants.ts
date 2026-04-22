@@ -42,8 +42,8 @@ export const OPCIONES_MONEDA: OpcionSelect[] = [
 
 export const CONFIGURACION_DEFECTO = {
   costoPorHoraDefecto: 10,
-  moneda: 'VES',
-  margenGananciaDefecto: 30,
+  moneda: 'USD',
+  margenGananciaDefecto: 35,
 };
 
 export const TIEMPO_PREPARACION_DEFECTO = 60; // 60 minutos

@@ -57,7 +57,11 @@ Almacena los ítems de cada orden.
 
 ## 🚀 Cómo Ejecutar las Migraciones
 
-### Opción 1: Desde el Dashboard de Supabase (Recomendado)
+### ⚠️ IMPORTANTE: Elige UNA de las siguientes opciones
+
+#### Opción A: Tablas NO Existen (Primera Instalación)
+
+Si las tablas `clientes`, `ordenes` y `orden_items` **NO existen** en tu base de datos:
 
 1. Ve a tu proyecto en [Supabase Dashboard](https://app.supabase.com)
 2. Navega a **SQL Editor** en el menú lateral
@@ -66,6 +70,22 @@ Almacena los ítems de cada orden.
    - `create_clientes_table.sql`
    - `create_ordenes_table.sql`
 5. Ejecuta cada script haciendo clic en **Run**
+
+#### Opción B: Tablas YA Existen (Migración)
+
+Si las tablas **YA existen** pero les faltan columnas:
+
+1. Ve a tu proyecto en [Supabase Dashboard](https://app.supabase.com)
+2. Navega a **SQL Editor** en el menú lateral
+3. Crea una nueva query
+4. Copia y pega el contenido de:
+   - `alter_ordenes_add_columns.sql`
+5. Ejecuta el script haciendo clic en **Run**
+
+Este script agregará las columnas faltantes:
+- `descuento_porcentaje` y `descuento_monto` a `ordenes`
+- `nombre_item` y `notas` a `orden_items`
+- Hará `receta_id` nullable en `orden_items`
 
 ### Opción 2: Usando Supabase CLI
 

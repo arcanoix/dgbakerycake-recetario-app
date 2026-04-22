@@ -19,13 +19,11 @@ export const PerfilForm = () => {
   });
 
   const [passwordForm, setPasswordForm] = useState<CambiarPasswordData>({
-    passwordActual: "",
     passwordNuevo: "",
     passwordConfirmar: "",
   });
 
   const [showPasswords, setShowPasswords] = useState({
-    actual: false,
     nueva: false,
     confirmar: false,
   });
@@ -70,7 +68,7 @@ export const PerfilForm = () => {
     setAccionActiva("password");
     const exito = await cambiarPassword(passwordForm);
     if (exito) {
-      setPasswordForm({ passwordActual: "", passwordNuevo: "", passwordConfirmar: "" });
+      setPasswordForm({ passwordNuevo: "", passwordConfirmar: "" });
       setGuardadoPassword(true);
       setTimeout(() => setGuardadoPassword(false), 3000);
     }
@@ -235,34 +233,14 @@ export const PerfilForm = () => {
             </div>
             Cambiar Contraseña
           </CardTitle>
-          <CardDescription>Actualiza tu contraseña de acceso</CardDescription>
+          <CardDescription>Establece una nueva contraseña para tu cuenta</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="passwordActual" className="flex items-center gap-2">
-                <Key className="w-4 h-4 text-gray-700" />
-                Contraseña Actual
-              </Label>
-              <div className="relative">
-                <Input
-                  id="passwordActual"
-                  name="passwordActual"
-                  type={showPasswords.actual ? "text" : "password"}
-                  value={passwordForm.passwordActual}
-                  onChange={handlePasswordChange}
-                  placeholder="Tu contraseña actual"
-                  required
-                  className="h-11 pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPasswords(p => ({ ...p, actual: !p.actual }))}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 hover:text-gray-600"
-                >
-                  {showPasswords.actual ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
+            <div className="p-3 bg-blue-50/50 border border-blue-200 rounded-lg mb-4">
+              <p className="text-sm text-blue-700">
+                💡 No necesitas tu contraseña actual. Simplemente ingresa una nueva contraseña y confírmala.
+              </p>
             </div>
 
             <div className="space-y-2">

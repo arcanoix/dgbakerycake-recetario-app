@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { actualizarPerfil, updatePassword, signIn } from "@/lib/supabase-auth";
+import { actualizarPerfil, updatePassword } from "@/lib/supabase-auth";
 
 export interface PerfilFormData {
   nombre: string;
@@ -10,7 +10,6 @@ export interface PerfilFormData {
 }
 
 export interface CambiarPasswordData {
-  passwordActual: string;
   passwordNuevo: string;
   passwordConfirmar: string;
 }
@@ -85,11 +84,6 @@ export const usePerfil = () => {
         return false;
       }
 
-      if (!datos.passwordActual) {
-        setError("Debes ingresar tu contraseña actual");
-        return false;
-      }
-
       if (datos.passwordNuevo !== datos.passwordConfirmar) {
         setError("Las contraseñas no coinciden");
         return false;
@@ -103,17 +97,6 @@ export const usePerfil = () => {
       setGuardando(true);
 
       try {
-        // Verify current password by re-authenticating
-        const verificacion = await signIn({
-          email: user.email,
-          password: datos.passwordActual,
-        });
-
-        if (!verificacion.success) {
-          setError("La contraseña actual es incorrecta");
-          return false;
-        }
-
         const resultado = await updatePassword(datos.passwordNuevo);
 
         if (!resultado.success) {

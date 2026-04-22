@@ -29,6 +29,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS update_clientes_updated_at ON public.clientes;
 CREATE TRIGGER update_clientes_updated_at
   BEFORE UPDATE ON public.clientes
   FOR EACH ROW
@@ -38,18 +39,21 @@ CREATE TRIGGER update_clientes_updated_at
 ALTER TABLE public.clientes ENABLE ROW LEVEL SECURITY;
 
 -- Política: Los usuarios solo pueden ver sus propios clientes
+DROP POLICY IF EXISTS "Users can view their own clientes" ON public.clientes;
 CREATE POLICY "Users can view their own clientes"
   ON public.clientes
   FOR SELECT
   USING (auth.uid() = user_id);
 
 -- Política: Los usuarios solo pueden insertar sus propios clientes
+DROP POLICY IF EXISTS "Users can insert their own clientes" ON public.clientes;
 CREATE POLICY "Users can insert their own clientes"
   ON public.clientes
   FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
 -- Política: Los usuarios solo pueden actualizar sus propios clientes
+DROP POLICY IF EXISTS "Users can update their own clientes" ON public.clientes;
 CREATE POLICY "Users can update their own clientes"
   ON public.clientes
   FOR UPDATE
@@ -57,6 +61,7 @@ CREATE POLICY "Users can update their own clientes"
   WITH CHECK (auth.uid() = user_id);
 
 -- Política: Los usuarios solo pueden eliminar sus propios clientes
+DROP POLICY IF EXISTS "Users can delete their own clientes" ON public.clientes;
 CREATE POLICY "Users can delete their own clientes"
   ON public.clientes
   FOR DELETE

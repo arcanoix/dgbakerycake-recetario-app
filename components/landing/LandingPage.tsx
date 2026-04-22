@@ -640,7 +640,7 @@ export const LandingPage = () => {
             <div>
               <h4 className="font-bold mb-4 text-white">Legal</h4>
               <ul className="space-y-2 text-gray-700">
-                <li><a href="#" className="hover:text-white">Términos</a></li>
+                <li><Link href="/terminos" className="hover:text-white">Términos y Condiciones</Link></li>
                 <li><a href="#" className="hover:text-white">Privacidad</a></li>
               </ul>
             </div>

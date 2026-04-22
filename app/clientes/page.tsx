@@ -15,7 +15,7 @@ import Link from "next/link";
 
 export default function ClientesPage() {
   const { clientes, cargando, error, crearCliente, actualizarCliente, eliminar } = useClientes();
-  const { canAccess, getPlanDisplayName } = usePlanAccess();
+  const { canAccess, getPlanDisplayName, cargando: cargandoPlan } = usePlanAccess();
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [clienteEditando, setClienteEditando] = useState<Cliente | undefined>();
@@ -38,6 +38,24 @@ export default function ClientesPage() {
     setClienteEditando(undefined);
     setMostrarFormulario(false);
   };
+
+  // Mostrar loading mientras se verifica el plan
+  if (cargandoPlan) {
+    return (
+      <ProtectedRoute>
+        <div className="min-h-screen flex items-center justify-center">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center"
+          >
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full border-4 border-t-transparent border-violet-500 animate-spin"></div>
+            <p className="text-gray-700">Verificando acceso...</p>
+          </motion.div>
+        </div>
+      </ProtectedRoute>
+    );
+  }
 
   if (!puedeAcceder) {
     return (

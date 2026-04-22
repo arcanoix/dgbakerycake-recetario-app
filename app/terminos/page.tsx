@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "motion/react";
 import { FileText, Scale, Shield, RefreshCw, Lock, Mail } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
@@ -19,11 +16,7 @@ export default function TerminosPage() {
 
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
+        <div>
           {/* Title */}
           <div className="text-center mb-12">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 flex items-center justify-center mx-auto mb-4">
@@ -238,7 +231,7 @@ export default function TerminosPage() {
               </CardContent>
             </Card>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Footer */}

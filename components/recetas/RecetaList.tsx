@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
 import { PrecioDual } from "@/components/ui/precio-dual";
 import { Download, Edit2, Trash2, ChefHat, Package, DollarSign, TrendingUp, Eye, FileText } from "lucide-react";
-import { exportarRecetaPDF } from "@/lib/pdfExport";
 import { motion } from "motion/react";
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string; icon: string }> = {
@@ -34,6 +33,18 @@ interface RecetaListProps {
 export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProps) => {
   const { configuracion } = useConfiguracion();
   const [eliminando, setEliminando] = useState<string | null>(null);
+  const [exportandoPDF, setExportandoPDF] = useState<string | null>(null);
+
+  // Lazy import de jsPDF — no entra en el bundle inicial (~300 KB)
+  const handleExportPDF = async (receta: Receta) => {
+    setExportandoPDF(receta.id);
+    try {
+      const { exportarRecetaPDF } = await import("@/lib/pdfExport");
+      await exportarRecetaPDF(receta, configuracion);
+    } finally {
+      setExportandoPDF(null);
+    }
+  };
 
   const handleDelete = async (id: string) => {
     setEliminando(id);
@@ -189,10 +200,15 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProp
                     variant="outline"
                     size="sm"
                     className="gap-1.5 hover:bg-blue-50 border-gray-200"
-                    onClick={() => exportarRecetaPDF(receta, configuracion)}
+                    onClick={() => handleExportPDF(receta)}
+                    disabled={exportandoPDF === receta.id}
                     title="Exportar a PDF"
                   >
-                    <FileText className="w-3.5 h-3.5" />
+                    {exportandoPDF === receta.id ? (
+                      <span className="animate-spin text-xs">⏳</span>
+                    ) : (
+                      <FileText className="w-3.5 h-3.5" />
+                    )}
                   </Button>
                   <Button
                     variant="outline"

@@ -5,10 +5,44 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import dynamic from "next/dynamic";
 import { StatsCard } from "@/components/dashboard/StatsCard";
-import { CostosChart } from "@/components/dashboard/CostosChart";
-import { ProductosChart } from "@/components/dashboard/ProductosChart";
 import { RecetasRentablesTable } from "@/components/dashboard/RecetasRentablesTable";
+
+// Recharts es ~300 KB — se carga de forma lazy para no bloquear el bundle inicial
+const CostosChart = dynamic(
+  () => import("@/components/dashboard/CostosChart").then((m) => ({ default: m.CostosChart })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 h-[352px] animate-pulse">
+        <div className="h-5 w-40 bg-gray-200 rounded mb-2" />
+        <div className="h-3 w-56 bg-gray-100 rounded mb-6" />
+        <div className="flex items-end gap-3 h-[240px]">
+          {[60, 90, 45, 75, 55, 80, 40, 65].map((h, i) => (
+            <div key={i} className="flex-1 bg-gray-100 rounded-t" style={{ height: `${h}%` }} />
+          ))}
+        </div>
+      </div>
+    ),
+  }
+);
+
+const ProductosChart = dynamic(
+  () => import("@/components/dashboard/ProductosChart").then((m) => ({ default: m.ProductosChart })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 h-[352px] animate-pulse">
+        <div className="h-5 w-48 bg-gray-200 rounded mb-2" />
+        <div className="h-3 w-36 bg-gray-100 rounded mb-6" />
+        <div className="flex items-center justify-center h-[240px]">
+          <div className="w-40 h-40 rounded-full border-[24px] border-gray-100" />
+        </div>
+      </div>
+    ),
+  }
+);
 import { useAuth } from "@/contexts/AuthContext";
 import { useProductos } from "@/hooks/useProductos";
 import { useRecetas } from "@/hooks/useRecetas";
@@ -67,12 +101,43 @@ export default function DashboardPage() {
     }
   }, [user, authLoading]);
 
-  if (authLoading || !mounted || cargandoProductos || cargandoRecetas || cargandoConfiguracion || cargandoPlan) {
+  // Mostrar skeleton si auth aún no resolvió o configuración no cargó
+  // Los charts tienen su propio skeleton via dynamic() loading
+  const isInitialLoad = authLoading || !mounted || cargandoConfiguracion || cargandoPlan;
+
+  if (isInitialLoad) {
     return (
-      <main className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-4xl mb-4">⏳</div>
-          <p className="text-gray-700">Cargando dashboard...</p>
+      <main className="min-h-screen">
+        <div className="max-w-7xl mx-auto">
+          {/* Header skeleton */}
+          <div className="mb-8 animate-pulse">
+            <div className="h-8 w-36 bg-gray-200 rounded mb-2" />
+            <div className="h-4 w-64 bg-gray-100 rounded" />
+          </div>
+          {/* Stats skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 animate-pulse">
+                <div className="h-4 w-24 bg-gray-200 rounded mb-4" />
+                <div className="h-8 w-20 bg-gray-200 rounded mb-2" />
+                <div className="h-3 w-32 bg-gray-100 rounded" />
+              </div>
+            ))}
+          </div>
+          {/* Charts skeleton */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 h-[352px] animate-pulse">
+                <div className="h-5 w-40 bg-gray-200 rounded mb-2" />
+                <div className="h-3 w-56 bg-gray-100 rounded mb-6" />
+                <div className="flex items-end gap-3 h-[240px]">
+                  {[60, 90, 45, 75, 55, 80, 40, 65].map((h, idx) => (
+                    <div key={idx} className="flex-1 bg-gray-100 rounded-t" style={{ height: `${h}%` }} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </main>
     );

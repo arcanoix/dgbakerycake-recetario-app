@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, useInView } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -433,11 +434,14 @@ export const LandingPage = () => {
                   <Card className="bg-white border-0 shadow-xl h-full">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-4 mb-6">
-                        <motion.img
-                          whileHover={{ scale: 1.1 }}
+                        <Image
                           src={testimonial.image}
                           alt={testimonial.name}
+                          width={56}
+                          height={56}
                           className="w-14 h-14 rounded-full object-cover"
+                          loading="lazy"
+                          unoptimized={false}
                         />
                         <div>
                           <h4 className="font-bold text-gray-900">{testimonial.name}</h4>

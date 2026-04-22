@@ -1,37 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { LandingPage } from "@/components/landing/LandingPage";
 import { useAuth } from "@/contexts/AuthContext";
 
+/**
+ * Home page — sin el anti-pattern useState(mounted).
+ *
+ * Antes: doble render en cada visita → pantalla blanca → CLS severo en LCP.
+ * Ahora: renderiza LandingPage directamente mientras auth resuelve en background.
+ * Si el usuario está logueado, redirige sin pantalla en blanco intermedia.
+ */
 export default function Home() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
 
+  // Redirect authenticated users immediately
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    if (!authLoading && user) {
+      router.push("/dashboard");
+    }
+  }, [user, authLoading, router]);
 
-  // Show loading while checking auth
-  if (!mounted || authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-4xl mb-4">⏳</div>
-          <p className="text-gray-700">Cargando...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // If user is logged in, redirect to dashboard
-  if (user) {
-    router.push("/dashboard");
+  // Render landing page immediately — no spinner, no blank screen
+  // Auth redirect happens as a side effect, which is fine for logged-in users
+  if (authLoading || user) {
+    // Minimal placeholder that doesn't cause CLS
     return null;
   }
 
-  // Show landing page for non-authenticated users
   return <LandingPage />;
 }

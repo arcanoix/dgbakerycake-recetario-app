@@ -8,6 +8,7 @@ import { Analytics } from "@vercel/analytics/next";
 export const metadata: Metadata = {
   title: "DGcost - Gestión de Costos",
   description: "Sistema de gestión de costos de recetas de repostería y pastelería",
+  metadataBase: new URL("https://www.dgcost.online"),
 };
 
 export default function RootLayout({
@@ -17,6 +18,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      <head>
+        {/* Preconnect para recursos externos críticos */}
+        <link rel="preconnect" href="https://images.unsplash.com" />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+      </head>
       <body className="antialiased bg-gray-100">
         <AuthProvider>
           <AppShell>{children}</AppShell>

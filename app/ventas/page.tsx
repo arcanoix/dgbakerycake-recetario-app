@@ -23,7 +23,7 @@ export default function VentasPage() {
   const { clientes } = useClientes();
   const { recetas } = useRecetas();
   const { configuracion } = useConfiguracion();
-  const { canAccess, getPlanDisplayName } = usePlanAccess();
+  const { canAccess, getPlanDisplayName, cargando: cargandoPlan } = usePlanAccess();
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [ordenEditando, setOrdenEditando] = useState<Orden | undefined>();
@@ -60,6 +60,24 @@ export default function VentasPage() {
   const handleExportarPDF = (orden: Orden) => {
     exportarCotizacionPDF(orden, configuracion);
   };
+
+  // Mostrar loading mientras se verifica el plan
+  if (cargandoPlan) {
+    return (
+      <ProtectedRoute>
+        <div className="min-h-screen flex items-center justify-center">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center"
+          >
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full border-4 border-t-transparent border-violet-500 animate-spin"></div>
+            <p className="text-gray-700">Verificando acceso...</p>
+          </motion.div>
+        </div>
+      </ProtectedRoute>
+    );
+  }
 
   if (!puedeAcceder) {
     return (

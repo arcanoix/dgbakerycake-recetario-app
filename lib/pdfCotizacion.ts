@@ -66,7 +66,11 @@ export const exportarCotizacionPDF = (
     doc.setFont("helvetica", "bold");
     doc.text("ENTREGA:", 140, y);
     doc.setFont("helvetica", "normal");
-    doc.text(orden.fechaEntrega.toLocaleDateString("es-VE"), 165, y);
+    const fechaEntrega = orden.fechaEntrega.toLocaleString("es-VE", {
+      dateStyle: "short",
+      timeStyle: "short",
+    });
+    doc.text(fechaEntrega, 165, y);
   }
 
   y += 10;

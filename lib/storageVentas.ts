@@ -197,7 +197,7 @@ export const crearOrden = async (datos: OrdenFormData): Promise<{ exitoso: boole
       pago_adelantado: datos.pagoAdelantado,
       saldo_pendiente: saldoPendiente,
       notas: datos.notas || null,
-      fecha_entrega: datos.fechaEntrega ? datos.fechaEntrega.toISOString().split('T')[0] : null,
+      fecha_entrega: datos.fechaEntrega ? datos.fechaEntrega.toISOString() : null,
     }])
     .select('id')
     .single();
@@ -260,7 +260,7 @@ export const actualizarOrden = async (id: string, datos: OrdenFormData): Promise
       pago_adelantado: datos.pagoAdelantado,
       saldo_pendiente: saldoPendiente,
       notas: datos.notas || null,
-      fecha_entrega: datos.fechaEntrega ? datos.fechaEntrega.toISOString().split('T')[0] : null,
+      fecha_entrega: datos.fechaEntrega ? datos.fechaEntrega.toISOString() : null,
       updated_at: new Date().toISOString(),
     })
     .eq('id', id)
@@ -386,8 +386,23 @@ function mapOrdenFromDB(data: any): Orden {
     pagoAdelantado: parseFloat(data.pago_adelantado),
     saldoPendiente: parseFloat(data.saldo_pendiente),
     notas: data.notas || undefined,
-    fechaEntrega: data.fecha_entrega ? new Date(data.fecha_entrega) : undefined,
+    fechaEntrega: parseFechaEntrega(data.fecha_entrega),
     fechaCreacion: new Date(data.created_at),
     fechaActualizacion: new Date(data.updated_at),
   };
+}
+
+function parseFechaEntrega(value: any): Date | undefined {
+  if (!value) return undefined;
+  if (value instanceof Date) return value;
+  if (typeof value === 'string') {
+    const dateOnlyMatch = /^\d{4}-\d{2}-\d{2}$/.test(value);
+    if (dateOnlyMatch) {
+      const [year, month, day] = value.split('-').map(Number);
+      return new Date(year, month - 1, day);
+    }
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+  }
+  return undefined;
 }

@@ -26,6 +26,16 @@ const ESTADOS: { value: EstadoOrden; label: string }[] = [
   { value: "cancelada", label: "Cancelada" },
 ];
 
+const formatDateTimeLocal = (date: Date) => {
+  const pad = (value: number) => String(value).padStart(2, "0");
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+};
+
 export const OrdenForm = ({ orden, clientes, recetas, onGuardar, onCancelar }: OrdenFormProps) => {
   const [clienteId, setClienteId] = useState(orden?.clienteId || "");
   const [estado, setEstado] = useState<EstadoOrden>(orden?.estado || "cotizacion");
@@ -33,7 +43,7 @@ export const OrdenForm = ({ orden, clientes, recetas, onGuardar, onCancelar }: O
   const [pagoAdelantado, setPagoAdelantado] = useState(orden?.pagoAdelantado || 0);
   const [notas, setNotas] = useState(orden?.notas || "");
   const [fechaEntrega, setFechaEntrega] = useState(
-    orden?.fechaEntrega ? orden.fechaEntrega.toISOString().split("T")[0] : ""
+    orden?.fechaEntrega ? formatDateTimeLocal(orden.fechaEntrega) : ""
   );
   const [items, setItems] = useState<OrdenItemFormData[]>(
     orden?.items.map(i => ({
@@ -160,10 +170,10 @@ export const OrdenForm = ({ orden, clientes, recetas, onGuardar, onCancelar }: O
 
           {/* Fecha de entrega */}
           <div className="space-y-1">
-            <Label htmlFor="fechaEntrega">Fecha de Entrega</Label>
+            <Label htmlFor="fechaEntrega">Fecha y Hora de Entrega</Label>
             <Input
               id="fechaEntrega"
-              type="date"
+              type="datetime-local"
               value={fechaEntrega}
               onChange={e => setFechaEntrega(e.target.value)}
             />

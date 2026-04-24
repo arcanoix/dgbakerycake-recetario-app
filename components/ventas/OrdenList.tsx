@@ -32,6 +32,9 @@ const ESTADO_LABELS: Record<EstadoOrden, string> = {
   cancelada: "Cancelada",
 };
 
+const formatearFechaEntrega = (fecha: Date) =>
+  fecha.toLocaleString("es-VE", { dateStyle: "short", timeStyle: "short" });
+
 interface OrdenListProps {
   ordenes: Orden[];
   cargando: boolean;
@@ -148,7 +151,7 @@ export const OrdenList = ({
                       {orden.clienteNombre || "Cliente desconocido"}
                       {orden.fechaEntrega && (
                         <span className="ml-2 text-xs text-gray-700">
-                          · Entrega: {orden.fechaEntrega.toLocaleDateString("es-VE")}
+                          · Entrega: {formatearFechaEntrega(orden.fechaEntrega)}
                         </span>
                       )}
                     </p>

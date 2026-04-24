@@ -4,8 +4,9 @@ import { useMemo, useState } from "react";
 import { Orden, EstadoOrden } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, X } from "lucide-react";
 import Link from "next/link";
+import { formatearUSD } from "@/lib/currency";
 
 const ESTADO_COLORS: Record<EstadoOrden, string> = {
   cotizacion: "bg-yellow-100 text-yellow-800 border-yellow-200",
@@ -35,23 +36,23 @@ const getDateKey = (date: Date) => {
   return `${year}-${month}-${day}`;
 };
 
-const getDateKeyUTC = (date: Date) => {
-  const year = date.getUTCFullYear();
-  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(date.getUTCDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
 const isSameDay = (a: Date, b: Date) =>
   a.getFullYear() === b.getFullYear() &&
   a.getMonth() === b.getMonth() &&
   a.getDate() === b.getDate();
+
+const formatearFechaEntrega = (fecha: Date) =>
+  fecha.toLocaleString("es-VE", { dateStyle: "medium", timeStyle: "short" });
+
+const formatearHoraEntrega = (fecha: Date) =>
+  fecha.toLocaleTimeString("es-VE", { hour: "2-digit", minute: "2-digit" });
 
 export const OrdenCalendar = ({ ordenes, cargando }: OrdenCalendarProps) => {
   const [currentMonth, setCurrentMonth] = useState(() => {
     const today = new Date();
     return new Date(today.getFullYear(), today.getMonth(), 1);
   });
+  const [ordenSeleccionada, setOrdenSeleccionada] = useState<Orden | null>(null);
 
   const { ordenesConEntrega, ordenesSinEntrega, ordenesPorFecha } = useMemo(() => {
     const conEntrega = ordenes.filter(o => o.fechaEntrega);
@@ -60,7 +61,7 @@ export const OrdenCalendar = ({ ordenes, cargando }: OrdenCalendarProps) => {
 
     conEntrega.forEach(orden => {
       if (!orden.fechaEntrega) return;
-      const key = getDateKeyUTC(orden.fechaEntrega);
+      const key = getDateKey(orden.fechaEntrega);
       const lista = agrupadas.get(key) || [];
       lista.push(orden);
       agrupadas.set(key, lista);
@@ -108,6 +109,10 @@ export const OrdenCalendar = ({ ordenes, cargando }: OrdenCalendarProps) => {
       </div>
     );
   }
+
+  const handleSeleccionarOrden = (orden: Orden) => {
+    setOrdenSeleccionada(prev => (prev?.id === orden.id ? null : orden));
+  };
 
   return (
     <div className="space-y-4">
@@ -206,15 +211,27 @@ export const OrdenCalendar = ({ ordenes, cargando }: OrdenCalendarProps) => {
                     )}
                   </div>
                   <div className="space-y-1">
-                    {visible.map(orden => (
-                      <div
-                        key={orden.id}
-                        className={`text-[10px] leading-tight px-1.5 py-1 rounded border ${ESTADO_COLORS[orden.estado]}`}
-                      >
-                        <p className="font-semibold truncate">{orden.numeroOrden}</p>
-                        <p className="truncate">{orden.clienteNombre || "Cliente"}</p>
-                      </div>
-                    ))}
+                    {visible.map(orden => {
+                      const seleccionada = ordenSeleccionada?.id === orden.id;
+                      return (
+                        <button
+                          key={orden.id}
+                          type="button"
+                          onClick={() => handleSeleccionarOrden(orden)}
+                          className={`w-full text-left text-[10px] leading-tight px-1.5 py-1 rounded border transition-all ${ESTADO_COLORS[orden.estado]} ${
+                            seleccionada ? "ring-2 ring-violet-400" : "hover:ring-1 hover:ring-violet-200"
+                          }`}
+                        >
+                          <p className="font-semibold truncate">{orden.numeroOrden}</p>
+                          <p className="truncate">{orden.clienteNombre || "Cliente"}</p>
+                          {orden.fechaEntrega && (
+                            <p className="text-[10px] opacity-80">
+                              {formatearHoraEntrega(orden.fechaEntrega)}
+                            </p>
+                          )}
+                        </button>
+                      );
+                    })}
                     {ocultos > 0 && (
                       <p className="text-[10px] text-gray-500">+{ocultos} más</p>
                     )}
@@ -225,6 +242,106 @@ export const OrdenCalendar = ({ ordenes, cargando }: OrdenCalendarProps) => {
           </div>
         </CardContent>
       </Card>
+
+      {ordenSeleccionada && (
+        <Card className="border-violet-100">
+          <CardContent className="p-4 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-sm font-semibold text-gray-900">
+                  {ordenSeleccionada.numeroOrden}
+                </span>
+                <span
+                  className={`text-xs px-2 py-0.5 rounded-full border font-medium ${ESTADO_COLORS[ordenSeleccionada.estado]}`}
+                >
+                  {ESTADO_LABELS[ordenSeleccionada.estado]}
+                </span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setOrdenSeleccionada(null)}
+              >
+                <X className="w-4 h-4 mr-1" /> Cerrar
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+              <div>
+                <p className="text-xs text-gray-500">Cliente</p>
+                <p className="font-medium text-gray-900">
+                  {ordenSeleccionada.clienteNombre || "Cliente"}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">Entrega</p>
+                <p className="font-medium text-gray-900">
+                  {ordenSeleccionada.fechaEntrega
+                    ? formatearFechaEntrega(ordenSeleccionada.fechaEntrega)
+                    : "Sin fecha"}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">Total</p>
+                <p className="font-bold text-gray-900">{formatearUSD(ordenSeleccionada.total)}</p>
+              </div>
+            </div>
+
+            {ordenSeleccionada.items.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                  Artículos
+                </p>
+                <div className="space-y-1">
+                  {ordenSeleccionada.items.map(item => (
+                    <div
+                      key={item.id}
+                      className="flex justify-between text-sm py-1 border-b border-gray-50 last:border-0"
+                    >
+                      <span className="text-gray-700">
+                        {item.cantidad} × {item.nombreItem}
+                      </span>
+                      <span className="font-medium">{formatearUSD(item.subtotal)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {ordenSeleccionada.notas && (
+              <div className="text-sm text-gray-700">
+                <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+                  Notas
+                </p>
+                <p>{ordenSeleccionada.notas}</p>
+              </div>
+            )}
+
+            <div className="flex flex-wrap gap-2 text-sm items-center">
+              {ordenSeleccionada.pagoAdelantado > 0 && (
+                <span className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
+                  Adelanto: {formatearUSD(ordenSeleccionada.pagoAdelantado)}
+                </span>
+              )}
+              {ordenSeleccionada.saldoPendiente > 0 && (
+                <span className="px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-100">
+                  Saldo: {formatearUSD(ordenSeleccionada.saldoPendiente)}
+                </span>
+              )}
+              <Button
+                size="sm"
+                variant="outline"
+                className="ml-auto"
+                onClick={() => {
+                  window.location.href = "/ventas";
+                }}
+              >
+                Abrir en Ventas
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="flex flex-wrap gap-2 text-xs text-gray-700">
         {Object.entries(ESTADO_LABELS).map(([estado, label]) => (

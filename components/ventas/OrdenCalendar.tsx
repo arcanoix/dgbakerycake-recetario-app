@@ -48,6 +48,9 @@ const formatearFechaEntrega = (fecha: Date) =>
 const formatearHoraEntrega = (fecha: Date) =>
   fecha.toLocaleTimeString("es-VE", { hour: "2-digit", minute: "2-digit" });
 
+const esOrdenFinalizada = (orden: Orden) =>
+  orden.estado === "entregada" || orden.estado === "cancelada";
+
 export const OrdenCalendar = ({ ordenes, cargando, onActualizarFecha }: OrdenCalendarProps) => {
   const [currentMonth, setCurrentMonth] = useState(() => {
     const today = new Date();
@@ -256,6 +259,7 @@ export const OrdenCalendar = ({ ordenes, cargando, onActualizarFecha }: OrdenCal
                     setDraggingId(null);
                     const orden = ordenes.find(o => o.id === ordenId);
                     if (!orden || !orden.fechaEntrega) return;
+                    if (esOrdenFinalizada(orden)) return;
                     if (isSameDay(orden.fechaEntrega, date)) return;
                     setPendingMove({ orden, fecha: date });
                   }}
@@ -273,20 +277,28 @@ export const OrdenCalendar = ({ ordenes, cargando, onActualizarFecha }: OrdenCal
                   <div className="space-y-1">
                     {visible.map(orden => {
                       const seleccionada = ordenSeleccionada?.id === orden.id;
+                      const bloqueada = esOrdenFinalizada(orden);
                       return (
                         <button
                           key={orden.id}
                           type="button"
                           onClick={() => handleSeleccionarOrden(orden)}
-                          draggable
+                          draggable={!bloqueada}
                           onDragStart={e => {
+                            if (bloqueada) return;
                             e.dataTransfer.setData("text/plain", orden.id);
                             setDraggingId(orden.id);
                           }}
                           onDragEnd={() => setDraggingId(null)}
                           className={`w-full text-left text-[10px] leading-tight px-1.5 py-1 rounded border transition-all ${ESTADO_COLORS[orden.estado]} ${
                             seleccionada ? "ring-2 ring-violet-400" : "hover:ring-1 hover:ring-violet-200"
-                          } ${draggingId === orden.id ? "opacity-60 cursor-grabbing" : "cursor-grab"}`}
+                          } ${
+                            bloqueada
+                              ? "opacity-70 cursor-not-allowed"
+                              : draggingId === orden.id
+                                ? "opacity-60 cursor-grabbing"
+                                : "cursor-grab"
+                          }`}
                         >
                           <p className="font-semibold truncate">{orden.numeroOrden}</p>
                           <p className="truncate">{orden.clienteNombre || "Cliente"}</p>

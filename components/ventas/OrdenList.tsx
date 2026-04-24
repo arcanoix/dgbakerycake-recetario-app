@@ -32,6 +32,9 @@ const ESTADO_LABELS: Record<EstadoOrden, string> = {
   cancelada: "Cancelada",
 };
 
+const esOrdenFinalizada = (orden: Orden) =>
+  orden.estado === "entregada" || orden.estado === "cancelada";
+
 const formatearFechaEntrega = (fecha: Date) =>
   fecha.toLocaleString("es-VE", { dateStyle: "short", timeStyle: "short" });
 
@@ -234,11 +237,19 @@ export const OrdenList = ({
 
                     {/* Actions */}
                     <div className="flex flex-wrap gap-2 pt-1">
+                      {(() => {
+                        const bloqueada = esOrdenFinalizada(orden);
+                        return (
+                          <>
                       {/* State change */}
                       <Select
                         value={orden.estado}
-                        onChange={e => onCambiarEstado(orden.id, e.target.value as EstadoOrden)}
+                        onChange={e => {
+                          if (bloqueada) return;
+                          onCambiarEstado(orden.id, e.target.value as EstadoOrden);
+                        }}
                         className="text-xs h-8 w-auto"
+                        disabled={bloqueada}
                       >
                         <option value="cotizacion">→ Cotización</option>
                         <option value="confirmada">→ Confirmada</option>
@@ -251,6 +262,7 @@ export const OrdenList = ({
                         variant="outline"
                         onClick={() => onEditar(orden)}
                         className="h-8 text-xs"
+                        disabled={bloqueada}
                       >
                         <Edit2 className="w-3 h-3 mr-1" /> Editar
                       </Button>
@@ -269,16 +281,23 @@ export const OrdenList = ({
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => handleEliminar(orden.id)}
+                        onClick={() => {
+                          if (bloqueada) return;
+                          handleEliminar(orden.id);
+                        }}
                         className={`h-8 text-xs ${
                           confirmandoEliminar === orden.id
                             ? "border-red-300 bg-red-50 text-red-600"
                             : "text-red-500 border-red-200 hover:bg-red-50"
                         }`}
+                        disabled={bloqueada}
                       >
                         <Trash2 className="w-3 h-3 mr-1" />
                         {confirmandoEliminar === orden.id ? "Confirmar" : "Eliminar"}
                       </Button>
+                          </>
+                        );
+                      })()}
                     </div>
                   </div>
                 )}

@@ -11,7 +11,7 @@ import { motion } from "motion/react";
 import Link from "next/link";
 
 export default function PedidosPage() {
-  const { ordenes, cargando, error } = useOrdenes();
+  const { ordenes, cargando, error, actualizarFechaEntrega } = useOrdenes();
   const { canAccess, getPlanDisplayName, cargando: cargandoPlan } = usePlanAccess();
 
   const puedeAcceder = canAccess("menu_ventas");
@@ -85,7 +85,11 @@ export default function PedidosPage() {
           </Card>
         )}
 
-        <OrdenCalendar ordenes={ordenes} cargando={cargando} />
+        <OrdenCalendar
+          ordenes={ordenes}
+          cargando={cargando}
+          onActualizarFecha={actualizarFechaEntrega}
+        />
       </div>
     </ProtectedRoute>
   );

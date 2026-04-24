@@ -322,6 +322,32 @@ export const actualizarEstadoOrden = async (id: string, estado: string): Promise
   return { exitoso: true };
 };
 
+export const actualizarFechaEntregaOrden = async (
+  id: string,
+  fechaEntrega?: Date
+): Promise<{ exitoso: boolean; error?: string }> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { exitoso: false, error: 'Usuario no autenticado' };
+
+  const { error } = await supabase
+    .from('ordenes')
+    .update({
+      fecha_entrega: fechaEntrega ? fechaEntrega.toISOString() : null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .eq('user_id', user.id);
+
+  if (error) {
+    console.error('Error al actualizar fecha de entrega:', error);
+    return { exitoso: false, error: error.message };
+  }
+
+  const fechaLabel = fechaEntrega ? fechaEntrega.toISOString() : 'sin fecha';
+  registrarActividad('update', 'ordenes', `Fecha de entrega actualizada: ${fechaLabel}`, id);
+  return { exitoso: true };
+};
+
 export const eliminarOrden = async (id: string): Promise<{ exitoso: boolean; error?: string }> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { exitoso: false, error: 'Usuario no autenticado' };

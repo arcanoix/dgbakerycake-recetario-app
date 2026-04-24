@@ -8,6 +8,7 @@ import {
   crearOrden,
   actualizarOrden,
   actualizarEstadoOrden,
+  actualizarFechaEntregaOrden,
   eliminarOrden,
 } from "@/lib/storageVentas";
 
@@ -86,6 +87,22 @@ export const useOrdenes = () => {
     }
   };
 
+  const actualizarFechaEntrega = async (id: string, fechaEntrega?: Date): Promise<boolean> => {
+    try {
+      const respuesta = await actualizarFechaEntregaOrden(id, fechaEntrega);
+      if (respuesta.exitoso) {
+        await cargarOrdenes();
+        return true;
+      }
+      setError(respuesta.error || "Error al actualizar la fecha de entrega");
+      return false;
+    } catch (err) {
+      setError("Error al actualizar la fecha de entrega");
+      console.error(err);
+      return false;
+    }
+  };
+
   const eliminar = async (id: string): Promise<boolean> => {
     try {
       const respuesta = await eliminarOrden(id);
@@ -132,6 +149,7 @@ export const useOrdenes = () => {
     crear,
     actualizar,
     cambiarEstado,
+    actualizarFechaEntrega,
     eliminar,
     filtrarPorEstado,
     filtrarPorCliente,

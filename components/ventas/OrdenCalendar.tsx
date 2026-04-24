@@ -27,6 +27,7 @@ const WEEK_DAYS = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"];
 interface OrdenCalendarProps {
   ordenes: Orden[];
   cargando: boolean;
+  onActualizarFecha: (id: string, fechaEntrega: Date) => Promise<boolean>;
 }
 
 const getDateKey = (date: Date) => {
@@ -47,12 +48,16 @@ const formatearFechaEntrega = (fecha: Date) =>
 const formatearHoraEntrega = (fecha: Date) =>
   fecha.toLocaleTimeString("es-VE", { hour: "2-digit", minute: "2-digit" });
 
-export const OrdenCalendar = ({ ordenes, cargando }: OrdenCalendarProps) => {
+export const OrdenCalendar = ({ ordenes, cargando, onActualizarFecha }: OrdenCalendarProps) => {
   const [currentMonth, setCurrentMonth] = useState(() => {
     const today = new Date();
     return new Date(today.getFullYear(), today.getMonth(), 1);
   });
   const [ordenSeleccionada, setOrdenSeleccionada] = useState<Orden | null>(null);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [hoverDateKey, setHoverDateKey] = useState<string | null>(null);
+  const [pendingMove, setPendingMove] = useState<{ orden: Orden; fecha: Date } | null>(null);
+  const [guardandoMovimiento, setGuardandoMovimiento] = useState(false);
 
   const { ordenesConEntrega, ordenesSinEntrega, ordenesPorFecha } = useMemo(() => {
     const conEntrega = ordenes.filter(o => o.fechaEntrega);
@@ -116,6 +121,36 @@ export const OrdenCalendar = ({ ordenes, cargando }: OrdenCalendarProps) => {
 
   const cerrarDrawer = () => {
     setOrdenSeleccionada(null);
+  };
+
+  const construirFechaEntrega = (orden: Orden, nuevaFecha: Date) => {
+    const base = orden.fechaEntrega || new Date();
+    const horas = base.getHours();
+    const minutos = base.getMinutes();
+    return new Date(
+      nuevaFecha.getFullYear(),
+      nuevaFecha.getMonth(),
+      nuevaFecha.getDate(),
+      horas,
+      minutos,
+      0,
+      0
+    );
+  };
+
+  const confirmarMovimiento = async () => {
+    if (!pendingMove) return;
+    const fechaEntrega = construirFechaEntrega(pendingMove.orden, pendingMove.fecha);
+    setGuardandoMovimiento(true);
+    const ok = await onActualizarFecha(pendingMove.orden.id, fechaEntrega);
+    setGuardandoMovimiento(false);
+    if (ok) {
+      setPendingMove(null);
+    }
+  };
+
+  const cancelarMovimiento = () => {
+    setPendingMove(null);
   };
 
   return (
@@ -198,11 +233,32 @@ export const OrdenCalendar = ({ ordenes, cargando }: OrdenCalendarProps) => {
               const visible = pedidos.slice(0, 3);
               const ocultos = pedidos.length - visible.length;
               const esHoy = isSameDay(date, new Date());
+              const esHover = hoverDateKey === key;
 
               return (
                 <div
                   key={key}
-                  className="min-h-[120px] border-b border-r border-gray-100 p-2 space-y-2"
+                  className={`min-h-[120px] border-b border-r border-gray-100 p-2 space-y-2 transition-colors ${
+                    esHover ? "bg-violet-50/40" : ""
+                  }`}
+                  onDragOver={e => {
+                    if (!draggingId) return;
+                    e.preventDefault();
+                    setHoverDateKey(key);
+                  }}
+                  onDragLeave={() => {
+                    if (hoverDateKey === key) setHoverDateKey(null);
+                  }}
+                  onDrop={e => {
+                    e.preventDefault();
+                    const ordenId = e.dataTransfer.getData("text/plain");
+                    setHoverDateKey(null);
+                    setDraggingId(null);
+                    const orden = ordenes.find(o => o.id === ordenId);
+                    if (!orden || !orden.fechaEntrega) return;
+                    if (isSameDay(orden.fechaEntrega, date)) return;
+                    setPendingMove({ orden, fecha: date });
+                  }}
                 >
                   <div className="flex items-center justify-between">
                     <span className={`text-xs font-semibold ${esHoy ? "text-violet-700" : "text-gray-700"}`}>
@@ -222,9 +278,15 @@ export const OrdenCalendar = ({ ordenes, cargando }: OrdenCalendarProps) => {
                           key={orden.id}
                           type="button"
                           onClick={() => handleSeleccionarOrden(orden)}
+                          draggable
+                          onDragStart={e => {
+                            e.dataTransfer.setData("text/plain", orden.id);
+                            setDraggingId(orden.id);
+                          }}
+                          onDragEnd={() => setDraggingId(null)}
                           className={`w-full text-left text-[10px] leading-tight px-1.5 py-1 rounded border transition-all ${ESTADO_COLORS[orden.estado]} ${
                             seleccionada ? "ring-2 ring-violet-400" : "hover:ring-1 hover:ring-violet-200"
-                          }`}
+                          } ${draggingId === orden.id ? "opacity-60 cursor-grabbing" : "cursor-grab"}`}
                         >
                           <p className="font-semibold truncate">{orden.numeroOrden}</p>
                           <p className="truncate">{orden.clienteNombre || "Cliente"}</p>
@@ -351,6 +413,51 @@ export const OrdenCalendar = ({ ordenes, cargando }: OrdenCalendarProps) => {
                 </Button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {pendingMove && (
+        <div className="fixed inset-0 z-[60]">
+          <div className="absolute inset-0 bg-black/40" onClick={cancelarMovimiento} />
+          <div className="absolute inset-0 flex items-center justify-center p-4">
+            <Card className="w-full max-w-md border-violet-100">
+              <CardContent className="p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-gray-900">
+                    Confirmar cambio de fecha
+                  </p>
+                  <button
+                    type="button"
+                    className="text-gray-500 hover:text-gray-700"
+                    onClick={cancelarMovimiento}
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="space-y-2 text-sm text-gray-700">
+                  <p>
+                    Pedido <span className="font-semibold">{pendingMove.orden.numeroOrden}</span>
+                  </p>
+                  <p>
+                    Nueva entrega:{" "}
+                    <span className="font-semibold">
+                      {formatearFechaEntrega(construirFechaEntrega(pendingMove.orden, pendingMove.fecha))}
+                    </span>
+                  </p>
+                </div>
+
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" size="sm" onClick={cancelarMovimiento}>
+                    Cancelar
+                  </Button>
+                  <Button size="sm" onClick={confirmarMovimiento} disabled={guardandoMovimiento}>
+                    {guardandoMovimiento ? "Guardando..." : "Confirmar"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       )}

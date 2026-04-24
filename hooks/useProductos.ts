@@ -10,7 +10,7 @@ import {
   generarId,
   obtenerUnidadPorId,
 } from "@/lib/storageSupabase";
-import { verificarLimite } from "@/lib/subscriptionStorage";
+import { verificarLimite, registrarActividad } from "@/lib/subscriptionStorage";
 
 export interface ResultadoImportacionMasiva {
   importados: number;
@@ -87,6 +87,13 @@ export const useProductos = () => {
 
       if (respuesta.exitoso) {
         await cargarProductos();
+        registrarActividad(
+          'create',
+          'productos',
+          `Producto creado: ${nuevoProducto.nombre}`,
+          nuevoProducto.id,
+          nuevoProducto.nombre
+        ).catch(() => {});
         return true;
       } else {
         setError(respuesta.error || "Error al crear el producto");
@@ -137,6 +144,13 @@ export const useProductos = () => {
 
       if (respuesta.exitoso) {
         await cargarProductos();
+        registrarActividad(
+          'update',
+          'productos',
+          `Producto actualizado: ${productoActualizado.nombre}`,
+          productoActualizado.id,
+          productoActualizado.nombre
+        ).catch(() => {});
         return true;
       } else {
         setError(respuesta.error || "Error al actualizar el producto");
@@ -151,10 +165,18 @@ export const useProductos = () => {
 
   const eliminar = async (id: string): Promise<boolean> => {
     try {
+      const productoAEliminar = productos.find((p) => p.id === id);
       const respuesta = await eliminarProducto(id);
 
       if (respuesta.exitoso) {
         await cargarProductos();
+        registrarActividad(
+          'delete',
+          'productos',
+          `Producto eliminado: ${productoAEliminar?.nombre ?? id}`,
+          id,
+          productoAEliminar?.nombre
+        ).catch(() => {});
         return true;
       } else {
         setError(respuesta.error || "Error al eliminar el producto");

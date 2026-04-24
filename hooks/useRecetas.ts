@@ -19,7 +19,7 @@ import {
   calcularCostoTotalReceta,
   calcularPrecioVentaSugerido,
 } from "@/lib/calculations";
-import { verificarLimite } from "@/lib/subscriptionStorage";
+import { verificarLimite, registrarActividad } from "@/lib/subscriptionStorage";
 
 export const useRecetas = () => {
   const [recetas, setRecetas] = useState<Receta[]>([]);
@@ -109,6 +109,13 @@ export const useRecetas = () => {
 
       if (respuesta.exitoso) {
         await cargarRecetas();
+        registrarActividad(
+          'create',
+          'recetas',
+          `Receta creada: ${nuevaReceta.nombre}`,
+          nuevaReceta.id,
+          nuevaReceta.nombre
+        ).catch(() => {});
         return true;
       } else {
         setError(respuesta.error || "Error al crear la receta");
@@ -162,6 +169,13 @@ export const useRecetas = () => {
 
       if (respuesta.exitoso) {
         await cargarRecetas();
+        registrarActividad(
+          'update',
+          'recetas',
+          `Receta actualizada: ${recetaActualizada.nombre}`,
+          recetaActualizada.id,
+          recetaActualizada.nombre
+        ).catch(() => {});
         return true;
       } else {
         setError(respuesta.error || "Error al actualizar la receta");
@@ -176,10 +190,19 @@ export const useRecetas = () => {
 
   const eliminar = async (id: string): Promise<boolean> => {
     try {
+      // Get recipe name before deleting for the log
+      const recetaAEliminar = recetas.find((r) => r.id === id);
       const respuesta = await eliminarReceta(id);
 
       if (respuesta.exitoso) {
         await cargarRecetas();
+        registrarActividad(
+          'delete',
+          'recetas',
+          `Receta eliminada: ${recetaAEliminar?.nombre ?? id}`,
+          id,
+          recetaAEliminar?.nombre
+        ).catch(() => {});
         return true;
       } else {
         setError(respuesta.error || "Error al eliminar la receta");

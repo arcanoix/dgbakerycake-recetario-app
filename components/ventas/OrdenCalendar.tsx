@@ -114,6 +114,10 @@ export const OrdenCalendar = ({ ordenes, cargando }: OrdenCalendarProps) => {
     setOrdenSeleccionada(prev => (prev?.id === orden.id ? null : orden));
   };
 
+  const cerrarDrawer = () => {
+    setOrdenSeleccionada(null);
+  };
+
   return (
     <div className="space-y-4">
       <Card>
@@ -244,9 +248,17 @@ export const OrdenCalendar = ({ ordenes, cargando }: OrdenCalendarProps) => {
       </Card>
 
       {ordenSeleccionada && (
-        <Card className="border-violet-100">
-          <CardContent className="p-4 space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="fixed inset-0 z-50">
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={cerrarDrawer}
+          />
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="absolute right-0 top-0 h-full w-full max-w-md bg-white border-l border-gray-200 shadow-xl flex flex-col"
+          >
+            <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <span className="font-mono text-sm font-semibold text-gray-900">
                   {ordenSeleccionada.numeroOrden}
@@ -257,90 +269,90 @@ export const OrdenCalendar = ({ ordenes, cargando }: OrdenCalendarProps) => {
                   {ESTADO_LABELS[ordenSeleccionada.estado]}
                 </span>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setOrdenSeleccionada(null)}
-              >
+              <Button variant="outline" size="sm" onClick={cerrarDrawer}>
                 <X className="w-4 h-4 mr-1" /> Cerrar
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-              <div>
-                <p className="text-xs text-gray-500">Cliente</p>
-                <p className="font-medium text-gray-900">
-                  {ordenSeleccionada.clienteNombre || "Cliente"}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500">Entrega</p>
-                <p className="font-medium text-gray-900">
-                  {ordenSeleccionada.fechaEntrega
-                    ? formatearFechaEntrega(ordenSeleccionada.fechaEntrega)
-                    : "Sin fecha"}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500">Total</p>
-                <p className="font-bold text-gray-900">{formatearUSD(ordenSeleccionada.total)}</p>
-              </div>
-            </div>
-
-            {ordenSeleccionada.items.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
-                  Artículos
-                </p>
-                <div className="space-y-1">
-                  {ordenSeleccionada.items.map(item => (
-                    <div
-                      key={item.id}
-                      className="flex justify-between text-sm py-1 border-b border-gray-50 last:border-0"
-                    >
-                      <span className="text-gray-700">
-                        {item.cantidad} × {item.nombreItem}
-                      </span>
-                      <span className="font-medium">{formatearUSD(item.subtotal)}</span>
-                    </div>
-                  ))}
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+              <div className="grid grid-cols-1 gap-3 text-sm">
+                <div>
+                  <p className="text-xs text-gray-500">Cliente</p>
+                  <p className="font-medium text-gray-900">
+                    {ordenSeleccionada.clienteNombre || "Cliente"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Entrega</p>
+                  <p className="font-medium text-gray-900">
+                    {ordenSeleccionada.fechaEntrega
+                      ? formatearFechaEntrega(ordenSeleccionada.fechaEntrega)
+                      : "Sin fecha"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Total</p>
+                  <p className="font-bold text-gray-900">
+                    {formatearUSD(ordenSeleccionada.total)}
+                  </p>
                 </div>
               </div>
-            )}
 
-            {ordenSeleccionada.notas && (
-              <div className="text-sm text-gray-700">
-                <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
-                  Notas
-                </p>
-                <p>{ordenSeleccionada.notas}</p>
+              {ordenSeleccionada.items.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                    Artículos
+                  </p>
+                  <div className="space-y-1">
+                    {ordenSeleccionada.items.map(item => (
+                      <div
+                        key={item.id}
+                        className="flex justify-between text-sm py-1 border-b border-gray-50 last:border-0"
+                      >
+                        <span className="text-gray-700">
+                          {item.cantidad} × {item.nombreItem}
+                        </span>
+                        <span className="font-medium">{formatearUSD(item.subtotal)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {ordenSeleccionada.notas && (
+                <div className="text-sm text-gray-700">
+                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+                    Notas
+                  </p>
+                  <p>{ordenSeleccionada.notas}</p>
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-2 text-sm items-center">
+                {ordenSeleccionada.pagoAdelantado > 0 && (
+                  <span className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
+                    Adelanto: {formatearUSD(ordenSeleccionada.pagoAdelantado)}
+                  </span>
+                )}
+                {ordenSeleccionada.saldoPendiente > 0 && (
+                  <span className="px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-100">
+                    Saldo: {formatearUSD(ordenSeleccionada.saldoPendiente)}
+                  </span>
+                )}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="ml-auto"
+                  onClick={() => {
+                    window.location.href = "/ventas";
+                  }}
+                >
+                  Abrir en Ventas
+                </Button>
               </div>
-            )}
-
-            <div className="flex flex-wrap gap-2 text-sm items-center">
-              {ordenSeleccionada.pagoAdelantado > 0 && (
-                <span className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
-                  Adelanto: {formatearUSD(ordenSeleccionada.pagoAdelantado)}
-                </span>
-              )}
-              {ordenSeleccionada.saldoPendiente > 0 && (
-                <span className="px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-100">
-                  Saldo: {formatearUSD(ordenSeleccionada.saldoPendiente)}
-                </span>
-              )}
-              <Button
-                size="sm"
-                variant="outline"
-                className="ml-auto"
-                onClick={() => {
-                  window.location.href = "/ventas";
-                }}
-              >
-                Abrir en Ventas
-              </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       <div className="flex flex-wrap gap-2 text-xs text-gray-700">

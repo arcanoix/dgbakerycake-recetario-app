@@ -319,41 +319,41 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
                   Valores Calculados
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="relative p-5 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 rounded-2xl border border-blue-200">
-                    <div className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-blue-200 flex items-center justify-center">
+                  <div className="relative p-5 bg-white rounded-2xl border border-blue-200/70 shadow-sm">
+                    <div className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
                       <Scale className="w-4 h-4 text-blue-600" />
                     </div>
-                    <p className="text-xs font-medium text-blue-600 uppercase tracking-wider mb-1">Cantidad Total</p>
-                    <p className="text-2xl font-bold text-blue-900">
+                    <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">Cantidad Total</p>
+                    <p className="text-2xl font-bold text-gray-900">
                       {cantidadTotal.toFixed(2)}
                     </p>
-                    <p className="text-xs text-blue-600 mt-2">
+                    <p className="text-xs text-gray-500 mt-2">
                       {formData.tamañoPresentacion} × {formData.cantidadPresentaciones} {unidadesActivas.find(u => u.id === unidadSeleccionada)?.simbolo || 'u'}
                     </p>
                   </div>
                   
-                  <div className="relative p-5 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 rounded-2xl border border-green-200">
-                    <div className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-green-200 flex items-center justify-center">
+                  <div className="relative p-5 bg-white rounded-2xl border border-green-200/70 shadow-sm">
+                    <div className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
                       <Package className="w-4 h-4 text-green-600" />
                     </div>
-                    <p className="text-xs font-medium text-green-600 uppercase tracking-wider mb-1">Precio por Presentación</p>
-                    <p className="text-2xl font-bold text-green-900">
+                    <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">Precio por Presentación</p>
+                    <p className="text-2xl font-bold text-gray-900">
                       {formatearMoneda(precioPorPresentacion, configuracion?.moneda, tasaCambio)}
                     </p>
-                    <p className="text-xs text-green-600 mt-2">
+                    <p className="text-xs text-gray-500 mt-2">
                       Por unidad/paquete
                     </p>
                   </div>
                   
-                  <div className="relative p-5 bg-gradient-to-br from-violet-50 to-violet-100 dark:from-violet-950 dark:to-violet-900 rounded-2xl border border-violet-200">
-                    <div className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-violet-200 flex items-center justify-center">
+                  <div className="relative p-5 bg-white rounded-2xl border border-violet-200/70 shadow-sm">
+                    <div className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center">
                       <DollarSign className="w-4 h-4 text-violet-600" />
                     </div>
-                    <p className="text-xs font-medium text-violet-600 uppercase tracking-wider mb-1">Precio por Unidad</p>
-                    <p className="text-2xl font-bold text-violet-900">
+                    <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">Precio por Unidad</p>
+                    <p className="text-2xl font-bold text-gray-900">
                       {formatearMoneda(precioPorUnidad, configuracion?.moneda, tasaCambio)}
                     </p>
-                    <p className="text-xs text-violet-600 mt-2">
+                    <p className="text-xs text-gray-500 mt-2">
                       Por {unidadesActivas.find(u => u.id === unidadSeleccionada)?.simbolo || 'unidad'}
                     </p>
                   </div>

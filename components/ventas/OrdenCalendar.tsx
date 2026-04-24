@@ -1,0 +1,241 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { Orden, EstadoOrden } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
+
+const ESTADO_COLORS: Record<EstadoOrden, string> = {
+  cotizacion: "bg-yellow-100 text-yellow-800 border-yellow-200",
+  confirmada: "bg-blue-100 text-blue-800 border-blue-200",
+  entregada: "bg-green-100 text-green-800 border-green-200",
+  cancelada: "bg-red-100 text-red-800 border-red-200",
+};
+
+const ESTADO_LABELS: Record<EstadoOrden, string> = {
+  cotizacion: "Cotización",
+  confirmada: "Confirmada",
+  entregada: "Entregada",
+  cancelada: "Cancelada",
+};
+
+const WEEK_DAYS = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"];
+
+interface OrdenCalendarProps {
+  ordenes: Orden[];
+  cargando: boolean;
+}
+
+const getDateKey = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const getDateKeyUTC = (date: Date) => {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const isSameDay = (a: Date, b: Date) =>
+  a.getFullYear() === b.getFullYear() &&
+  a.getMonth() === b.getMonth() &&
+  a.getDate() === b.getDate();
+
+export const OrdenCalendar = ({ ordenes, cargando }: OrdenCalendarProps) => {
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), 1);
+  });
+
+  const { ordenesConEntrega, ordenesSinEntrega, ordenesPorFecha } = useMemo(() => {
+    const conEntrega = ordenes.filter(o => o.fechaEntrega);
+    const sinEntrega = ordenes.filter(o => !o.fechaEntrega);
+    const agrupadas = new Map<string, Orden[]>();
+
+    conEntrega.forEach(orden => {
+      if (!orden.fechaEntrega) return;
+      const key = getDateKeyUTC(orden.fechaEntrega);
+      const lista = agrupadas.get(key) || [];
+      lista.push(orden);
+      agrupadas.set(key, lista);
+    });
+
+    return {
+      ordenesConEntrega: conEntrega,
+      ordenesSinEntrega: sinEntrega,
+      ordenesPorFecha: agrupadas,
+    };
+  }, [ordenes]);
+
+  const calendario = useMemo(() => {
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    const primerDiaMes = new Date(year, month, 1);
+    const ultimoDiaMes = new Date(year, month + 1, 0);
+    const diasEnMes = ultimoDiaMes.getDate();
+
+    const primerDiaSemana = (primerDiaMes.getDay() + 6) % 7;
+    const totalCeldas = Math.ceil((primerDiaSemana + diasEnMes) / 7) * 7;
+
+    const celdas = Array.from({ length: totalCeldas }, (_, index) => {
+      const dia = index - primerDiaSemana + 1;
+      if (dia < 1 || dia > diasEnMes) return null;
+      return new Date(year, month, dia);
+    });
+
+    return { celdas };
+  }, [currentMonth]);
+
+  const moverMes = (delta: number) => {
+    setCurrentMonth(prev => new Date(prev.getFullYear(), prev.getMonth() + delta, 1));
+  };
+
+  const nombreMes = currentMonth.toLocaleString("es-VE", {
+    month: "long",
+    year: "numeric",
+  });
+
+  if (cargando) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-600" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <Card>
+        <CardContent className="p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 flex items-center justify-center">
+              <CalendarDays className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-700">Pedidos con entrega</p>
+              <p className="text-lg font-bold text-gray-900">
+                {ordenesConEntrega.length} en el calendario
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-sm font-semibold text-gray-700 capitalize">
+            {nombreMes}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => moverMes(-1)}>
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const today = new Date();
+                setCurrentMonth(new Date(today.getFullYear(), today.getMonth(), 1));
+              }}
+            >
+              Hoy
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => moverMes(1)}>
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {ordenesSinEntrega.length > 0 && (
+        <Card className="border-amber-200 bg-amber-50/20">
+          <CardContent className="py-3 px-4 text-sm text-amber-700 flex flex-wrap items-center gap-2">
+            <span>⚠️</span>
+            <span>
+              Tienes {ordenesSinEntrega.length} pedido{ordenesSinEntrega.length !== 1 ? "s" : ""} sin
+              fecha de entrega.{" "}
+              <Link href="/ventas" className="font-semibold underline">
+                Asignar fecha
+              </Link>
+            </span>
+          </CardContent>
+        </Card>
+      )}
+
+      <Card className="overflow-hidden">
+        <CardContent className="p-0">
+          <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-200">
+            {WEEK_DAYS.map(dia => (
+              <div key={dia} className="px-3 py-2 text-xs font-semibold text-gray-600 uppercase">
+                {dia}
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-7">
+            {calendario.celdas.map((date, index) => {
+              if (!date) {
+                return (
+                  <div
+                    key={`empty-${index}`}
+                    className="min-h-[120px] border-b border-r border-gray-100 bg-gray-50/40"
+                  />
+                );
+              }
+
+              const key = getDateKey(date);
+              const pedidos = ordenesPorFecha.get(key) || [];
+              const visible = pedidos.slice(0, 3);
+              const ocultos = pedidos.length - visible.length;
+              const esHoy = isSameDay(date, new Date());
+
+              return (
+                <div
+                  key={key}
+                  className="min-h-[120px] border-b border-r border-gray-100 p-2 space-y-2"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className={`text-xs font-semibold ${esHoy ? "text-violet-700" : "text-gray-700"}`}>
+                      {date.getDate()}
+                    </span>
+                    {esHoy && (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-violet-100 text-violet-700">
+                        Hoy
+                      </span>
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    {visible.map(orden => (
+                      <div
+                        key={orden.id}
+                        className={`text-[10px] leading-tight px-1.5 py-1 rounded border ${ESTADO_COLORS[orden.estado]}`}
+                      >
+                        <p className="font-semibold truncate">{orden.numeroOrden}</p>
+                        <p className="truncate">{orden.clienteNombre || "Cliente"}</p>
+                      </div>
+                    ))}
+                    {ocultos > 0 && (
+                      <p className="text-[10px] text-gray-500">+{ocultos} más</p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="flex flex-wrap gap-2 text-xs text-gray-700">
+        {Object.entries(ESTADO_LABELS).map(([estado, label]) => (
+          <span
+            key={estado}
+            className={`px-2 py-1 rounded-full border font-medium ${ESTADO_COLORS[estado as EstadoOrden]}`}
+          >
+            {label}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+};

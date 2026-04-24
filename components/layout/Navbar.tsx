@@ -21,6 +21,7 @@ const navItems: NavItem[] = [
   { href: "/recetas", label: "Recetas", icon: "📝", requiredFeature: "menu_recetas" },
   { href: "/clientes", label: "Clientes", icon: "👥", requiredFeature: "menu_clientes" },
   { href: "/ventas", label: "Ventas", icon: "🛒", requiredFeature: "menu_ventas" },
+  { href: "/pedidos", label: "Pedidos", icon: "🗓️", requiredFeature: "menu_ventas" },
   { href: "/pricing", label: "Planes", icon: "💎", requiredFeature: "menu_precios" },
   { href: "/billing", label: "Facturación", icon: "💳", requiredFeature: "menu_facturacion" },
   { href: "/perfil", label: "Perfil", icon: "👤", requiredFeature: "menu_perfil" },

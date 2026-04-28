@@ -15,6 +15,7 @@ import {
   obtenerInfoSuscripcion,
   obtenerMisSolicitudes,
   verificarLimite,
+  registrarErrorSistema,
 } from "@/lib/subscriptionStorage";
 
 type SubscriptionSnapshot = {
@@ -130,7 +131,11 @@ export const useSubscription = () => {
           }
 
           setError("Error al cargar información de suscripción");
-          console.error(err);
+          registrarErrorSistema(
+            `Error al obtener suscripción: ${String(err)}`,
+            user.id,
+            user.email ?? undefined
+          ).catch(() => {});
         } finally {
           if (active) {
             setCargando(false);
@@ -198,6 +203,11 @@ export const useSubscription = () => {
         setInfoSuscripcion(null);
         setSolicitudes([]);
         setError(null);
+        registrarErrorSistema(
+          `Error al recargar suscripción: ${String(err)}`,
+          user.id,
+          user.email ?? undefined
+        ).catch(() => {});
       } finally {
         setCargando(false);
       }

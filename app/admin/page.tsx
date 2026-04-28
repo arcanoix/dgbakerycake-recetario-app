@@ -27,13 +27,14 @@ import {
   Crown, AlertCircle
 } from "lucide-react";
 
-type Vista = "solicitudes" | "usuarios" | "graficos" | "actividades";
+type Vista = "solicitudes" | "usuarios" | "graficos" | "actividades" | "errores";
 
 const TABS: { id: Vista; label: string; icon: React.ReactNode }[] = [
   { id: "solicitudes", label: "Solicitudes", icon: <CreditCard className="w-4 h-4" /> },
   { id: "usuarios", label: "Usuarios", icon: <Users className="w-4 h-4" /> },
   { id: "graficos", label: "Estadísticas", icon: <BarChart3 className="w-4 h-4" /> },
   { id: "actividades", label: "Actividad", icon: <Activity className="w-4 h-4" /> },
+  { id: "errores", label: "Logs sistema", icon: <AlertCircle className="w-4 h-4" /> },
 ];
 
 interface StatCardProps {
@@ -79,6 +80,7 @@ export default function AdminPage() {
   const [solicitudes, setSolicitudes] = useState<PaymentRequest[]>([]);
   const [usuarios, setUsuarios] = useState<UserData[]>([]);
   const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
+  const [systemLogs, setSystemLogs] = useState<ActivityLog[]>([]);
   const [filtro, setFiltro] = useState<"all" | "pending" | "approved" | "rejected">("pending");
   const [estadisticas, setEstadisticas] = useState({
     solicitudesPendientes: 0,
@@ -114,11 +116,17 @@ export default function AdminPage() {
         obtenerActividadesAdmin(),
       ]);
 
+    const logsSistemaData = await obtenerActividadesAdmin(200, 0, {
+      module: "system",
+      action: "error",
+    });
+
     setSolicitudes(solicitudesData);
     setEstadisticas(statsData);
     setUsuarios(usuariosData);
     setEstadisticasUsuarios(statsUsuariosData);
     setActivityLogs(logsData);
+    setSystemLogs(logsSistemaData);
     setCargando(false);
   };
 
@@ -360,6 +368,51 @@ export default function AdminPage() {
             </div>
 
             <ActivityLogsTable logs={activityLogs} />
+          </motion.div>
+        )}
+
+        {vistaActual === "errores" && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.15 }}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <StatCard
+                title="Errores del sistema"
+                value={systemLogs.length}
+                icon={<AlertCircle className="w-6 h-6 text-red-600" />}
+                color="bg-red-100/50"
+                gradient="from-red-500 to-rose-500"
+                subtitle="eventos capturados"
+              />
+              <StatCard
+                title="Hoy"
+                value={systemLogs.filter((log) => {
+                  const logDate = new Date(log.created_at);
+                  const today = new Date();
+                  return logDate.toDateString() === today.toDateString();
+                }).length}
+                icon={<Clock className="w-6 h-6 text-orange-600" />}
+                color="bg-orange-100/50"
+                gradient="from-orange-500 to-amber-500"
+                subtitle="errores de hoy"
+              />
+              <StatCard
+                title="Módulo"
+                value={Array.from(new Set(systemLogs.map((log) => log.module))).length}
+                icon={<Activity className="w-6 h-6 text-slate-600" />}
+                color="bg-slate-100/50"
+                gradient="from-slate-500 to-gray-500"
+                subtitle="módulos con errores"
+              />
+            </div>
+
+            <ActivityLogsTable
+              logs={systemLogs}
+              title="Logs del sistema"
+              emptyMessage="No se encontraron errores del sistema."
+            />
           </motion.div>
         )}
 

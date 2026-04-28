@@ -675,6 +675,21 @@ export const registrarActividad = async (
 };
 
 /**
+ * Register a system error in the audit log for admin inspection.
+ */
+export const registrarErrorSistema = async (
+  description: string,
+  entityId?: string,
+  entityName?: string
+): Promise<void> => {
+  try {
+    await registrarActividad('error', 'system', description, entityId, entityName);
+  } catch {
+    // Keep error logging non-blocking.
+  }
+};
+
+/**
  * Retrieve activity logs for the admin panel.
  */
 export const obtenerActividadesAdmin = async (

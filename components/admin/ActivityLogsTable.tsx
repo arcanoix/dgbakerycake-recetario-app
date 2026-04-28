@@ -17,6 +17,8 @@ import { Button } from "@/components/ui/button";
 
 interface ActivityLogsTableProps {
   logs: ActivityLog[];
+  title?: string;
+  emptyMessage?: string;
 }
 
 const ACTION_LABELS: Record<string, { label: string; color: string }> = {
@@ -26,6 +28,7 @@ const ACTION_LABELS: Record<string, { label: string; color: string }> = {
   login: { label: "Inicio sesión", color: "bg-purple-500" },
   logout: { label: "Cierre sesión", color: "bg-gray-1000" },
   view: { label: "Consulta", color: "bg-yellow-500" },
+  error: { label: "Error", color: "bg-red-600" },
 };
 
 const MODULE_LABELS: Record<string, string> = {
@@ -36,9 +39,10 @@ const MODULE_LABELS: Record<string, string> = {
   categorias: "Categorías",
   unidades: "Unidades",
   subscription: "Suscripción",
+  system: "Sistema",
 };
 
-export const ActivityLogsTable = ({ logs }: ActivityLogsTableProps) => {
+export const ActivityLogsTable = ({ logs, title, emptyMessage }: ActivityLogsTableProps) => {
   const [busqueda, setBusqueda] = useState("");
   const [filtroModulo, setFiltroModulo] = useState("all");
   const [filtroAccion, setFiltroAccion] = useState("all");
@@ -97,7 +101,7 @@ export const ActivityLogsTable = ({ logs }: ActivityLogsTableProps) => {
     <Card>
       <CardHeader>
         <CardTitle>
-          Registro de Actividades ({logs.length} registros totales)
+          {title || `Registro de Actividades (${logs.length} registros totales)`}
         </CardTitle>
 
         {/* Filters */}
@@ -150,7 +154,7 @@ export const ActivityLogsTable = ({ logs }: ActivityLogsTableProps) => {
       <CardContent>
         {logsFiltrados.length === 0 ? (
           <p className="text-center text-gray-700 py-8">
-            No se encontraron registros de actividad.
+            {emptyMessage || "No se encontraron registros de actividad."}
           </p>
         ) : (
           <>

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserRole } from "@/types/subscription";
 import { supabase } from "@/lib/supabase";
+import { registrarErrorSistema } from "@/lib/subscriptionStorage";
 
 const roleCache = new Map<string, UserRole>();
 const roleRequestCache = new Map<string, Promise<UserRole>>();
@@ -99,10 +100,20 @@ export const useRole = () => {
 
               setRole('cliente');
               setIsAdmin(false);
+              registrarErrorSistema(
+                `Error al cargar rol tras reintento: ${String(retryError)}`,
+                user.id,
+                user.email ?? undefined
+              ).catch(() => {});
               return;
             }
           } else {
             console.error('Error al cargar rol:', error);
+            registrarErrorSistema(
+              `Error al cargar rol: ${String(error)}`,
+              user.id,
+              user.email ?? undefined
+            ).catch(() => {});
           }
 
           setRole('cliente');

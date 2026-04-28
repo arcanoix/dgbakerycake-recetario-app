@@ -97,7 +97,9 @@ export const useRole = () => {
                 return;
               }
 
-              console.error('Error al cargar rol:', retryError);
+              setRole('cliente');
+              setIsAdmin(false);
+              return;
             }
           } else {
             console.error('Error al cargar rol:', error);

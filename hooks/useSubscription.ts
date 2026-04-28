@@ -193,8 +193,11 @@ export const useSubscription = () => {
         setSolicitudes(snapshot.solicitudes);
         setError(null);
       } catch (err) {
-        setError("Error al cargar información de suscripción");
-        console.error(err);
+        setPlanes([]);
+        setSuscripcionActual(null);
+        setInfoSuscripcion(null);
+        setSolicitudes([]);
+        setError(null);
       } finally {
         setCargando(false);
       }

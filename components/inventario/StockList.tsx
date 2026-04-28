@@ -10,6 +10,9 @@ interface StockListProps {
   onSeleccionar?: (productoId: string) => void;
 }
 
+// Progress bar shows full at 2× the minimum stock level
+const STOCK_PROGRESS_MULTIPLIER = 2;
+
 export const StockList = ({
   stocks,
   soloConMovimientos = false,
@@ -89,7 +92,7 @@ export const StockList = ({
                       style={{
                         width: `${Math.min(
                           100,
-                          (s.stockActual / (s.stockMinimo * 2)) * 100
+                          (s.stockActual / (s.stockMinimo * STOCK_PROGRESS_MULTIPLIER)) * 100
                         )}%`,
                       }}
                     />

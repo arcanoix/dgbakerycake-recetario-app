@@ -39,54 +39,6 @@ export const obtenerMovimientos = async (
   return (data || []).map(mapMovimientoFromDB);
 };
 
-export const registrarMovimiento = async (
-  datos: MovimientoFormData
-): Promise<{ exitoso: boolean; id?: string; error?: string }> => {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { exitoso: false, error: 'Usuario no autenticado' };
-
-  // Obtener el stock actual del producto
-  const stockActual = await calcularStockActual(user.id, datos.productoId);
-
-  // Determinar si es entrada o salida para calcular el nuevo stock
-  const esEntrada = datos.tipo === 'compra' || datos.tipo === 'ajuste_entrada';
-  const stockNuevo = esEntrada
-    ? stockActual + datos.cantidad
-    : Math.max(0, stockActual - datos.cantidad);
-
-  const costoTotal =
-    datos.costoUnitario != null ? datos.costoUnitario * datos.cantidad : null;
-
-  const { data, error } = await supabase
-    .from('inventario_movimientos')
-    .insert([
-      {
-        user_id: user.id,
-        producto_id: datos.productoId,
-        tipo: datos.tipo,
-        cantidad: datos.cantidad,
-        unidad_medida: '', // se rellena desde el producto en el hook
-        costo_unitario: datos.costoUnitario ?? null,
-        costo_total: costoTotal,
-        stock_anterior: stockActual,
-        stock_nuevo: stockNuevo,
-        notas: datos.notas ?? null,
-        referencia_id: datos.referenciaId ?? null,
-        referencia_tipo: datos.referenciaTipo ?? null,
-        fecha: datos.fecha ? datos.fecha.toISOString() : new Date().toISOString(),
-      },
-    ])
-    .select('id')
-    .single();
-
-  if (error) {
-    console.error('Error al registrar movimiento:', error);
-    return { exitoso: false, error: error.message };
-  }
-
-  return { exitoso: true, id: data?.id };
-};
-
 export const registrarMovimientoConUnidad = async (
   datos: MovimientoFormData,
   unidadMedida: string
@@ -194,53 +146,56 @@ export const obtenerStockProductos = async (): Promise<StockProducto[]> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
 
-  // Obtener productos que tengan movimientos
-  const { data: productos } = await supabase
-    .from('productos')
-    .select('id, nombre, unidad_medida');
+  // Fetch all data in parallel to avoid N+1 queries
+  const [productosResult, configsResult, movimientosResult] = await Promise.all([
+    supabase.from('productos').select('id, nombre, unidad_medida'),
+    supabase.from('inventario_config_stock').select('*').eq('user_id', user.id),
+    supabase
+      .from('inventario_movimientos')
+      .select('producto_id, tipo, cantidad, fecha')
+      .eq('user_id', user.id),
+  ]);
 
+  const productos = productosResult.data;
   if (!productos || productos.length === 0) return [];
 
-  // Obtener configuraciones de stock mínimo del usuario
-  const { data: configs } = await supabase
-    .from('inventario_config_stock')
-    .select('*')
-    .eq('user_id', user.id);
-
   const configMap = new Map<string, number>();
-  (configs || []).forEach((c: any) => {
+  (configsResult.data || []).forEach((c: any) => {
     configMap.set(c.producto_id, parseFloat(c.stock_minimo));
   });
 
-  // Para cada producto calcular stock actual
-  const resultados: StockProducto[] = await Promise.all(
-    productos.map(async (prod: any) => {
-      const stockActual = await calcularStockActual(user.id, prod.id);
-      const stockMinimo = configMap.get(prod.id) ?? 0;
+  // Aggregate movements per product in memory
+  const movimientos = movimientosResult.data || [];
+  const entradaTipos = new Set(['compra', 'ajuste_entrada']);
 
-      // Obtener la última actualización (último movimiento)
-      const { data: ultimo } = await supabase
-        .from('inventario_movimientos')
-        .select('fecha')
-        .eq('user_id', user.id)
-        .eq('producto_id', prod.id)
-        .order('fecha', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+  type MovAgg = { stock: number; ultimaFecha: Date | null };
+  const aggMap = new Map<string, MovAgg>();
 
-      return {
-        productoId: prod.id,
-        productoNombre: prod.nombre,
-        unidadMedida: prod.unidad_medida,
-        stockActual,
-        stockMinimo,
-        esStockCritico: stockMinimo > 0 && stockActual <= stockMinimo,
-        ultimaActualizacion: ultimo ? new Date(ultimo.fecha) : new Date(0),
-      };
-    })
-  );
+  for (const mov of movimientos) {
+    const agg = aggMap.get(mov.producto_id) ?? { stock: 0, ultimaFecha: null };
+    const cantidad = parseFloat(mov.cantidad);
+    agg.stock = entradaTipos.has(mov.tipo)
+      ? agg.stock + cantidad
+      : Math.max(0, agg.stock - cantidad);
+    const fecha = new Date(mov.fecha);
+    if (!agg.ultimaFecha || fecha > agg.ultimaFecha) agg.ultimaFecha = fecha;
+    aggMap.set(mov.producto_id, agg);
+  }
 
-  return resultados;
+  return productos.map((prod: any) => {
+    const agg = aggMap.get(prod.id);
+    const stockActual = agg ? Math.max(0, agg.stock) : 0;
+    const stockMinimo = configMap.get(prod.id) ?? 0;
+    return {
+      productoId: prod.id,
+      productoNombre: prod.nombre,
+      unidadMedida: prod.unidad_medida,
+      stockActual,
+      stockMinimo,
+      esStockCritico: stockMinimo > 0 && stockActual <= stockMinimo,
+      ultimaActualizacion: agg?.ultimaFecha ?? new Date(0),
+    };
+  });
 };
 
 // ============================================

@@ -26,8 +26,6 @@ export const ConfigStock = ({
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState("");
 
-  const configMap = new Map(configs.map((c) => [c.productoId, c]));
-
   const handleAgregar = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!productoId) {

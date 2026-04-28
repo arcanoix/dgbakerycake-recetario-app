@@ -49,7 +49,6 @@ export const useProductos = () => {
       setError(null);
     } catch (err) {
       setError("Error al cargar los productos");
-      console.error(err);
     } finally {
       setCargando(false);
     }
@@ -113,7 +112,6 @@ export const useProductos = () => {
       }
     } catch (err) {
       setError("Error al crear el producto");
-      console.error(err);
       return false;
     }
   };
@@ -280,7 +278,6 @@ export const useProductos = () => {
           }
         } catch (err) {
           errores++;
-          console.error('Error al importar producto:', err);
         }
       }
 
@@ -301,7 +298,6 @@ export const useProductos = () => {
     } catch (err) {
       const mensaje = "Error durante la importación masiva";
       setError(mensaje);
-      console.error(err);
       return { importados: 0, errores: productosFormData.length, omitidos: 0, mensaje };
     }
   };

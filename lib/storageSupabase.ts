@@ -228,7 +228,7 @@ export const obtenerConfiguracion = async (): Promise<ConfiguracionGlobal | null
       .single();
 
     if (errorCrear) {
-      console.error('Error al crear configuración por defecto:', errorCrear);
+      registrarErrorSistema(`Error al crear configuración por defecto: ${String(errorCrear)}`).catch(() => {});
       return null;
     }
 
@@ -256,7 +256,7 @@ export const guardarConfiguracion = async (config: ConfiguracionGlobal) => {
       .eq('id', existing.id);
 
     if (error) {
-      console.error('Error al actualizar configuración:', error);
+      registrarErrorSistema(`Error al actualizar configuración: ${String(error)}`).catch(() => {});
       return { exitoso: false, error: error.message };
     }
   } else {
@@ -266,7 +266,7 @@ export const guardarConfiguracion = async (config: ConfiguracionGlobal) => {
       .insert([configData]);
 
     if (error) {
-      console.error('Error al crear configuración:', error);
+      registrarErrorSistema(`Error al crear configuración: ${String(error)}`).catch(() => {});
       return { exitoso: false, error: error.message };
     }
   }

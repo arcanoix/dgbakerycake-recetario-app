@@ -33,7 +33,6 @@ export const useConfiguracion = () => {
       setError(null);
     } catch (err) {
       setError("Error al cargar la configuración");
-      console.error(err);
     } finally {
       setCargando(false);
     }
@@ -62,7 +61,6 @@ export const useConfiguracion = () => {
       }
     } catch (err) {
       setError("Error al actualizar la configuración");
-      console.error(err);
       return false;
     }
   };

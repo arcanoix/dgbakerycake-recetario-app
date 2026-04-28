@@ -25,8 +25,8 @@ import { BookOpen, AlertCircle, Lock, ArrowRight } from "lucide-react";
 
 export default function RecetasPage() {
   const router = useRouter();
-  const { recetas, cargando, error, crearReceta, actualizarReceta, eliminar, agregarMaterial } = useRecetas();
-  const { productos } = useProductos();
+  const { recetas, cargando, error, errorCarga: errorCargaRecetas, crearReceta, actualizarReceta, eliminar, agregarMaterial, cargarRecetas } = useRecetas();
+  const { productos, errorCarga: errorCargaProductos, cargarProductos } = useProductos();
   const { configuracion } = useConfiguracion();
   const { getCurrentCount, getPlanDisplayName, getPlanName, cargando: cargandoPlan } = usePlanAccess();
 
@@ -185,7 +185,7 @@ export default function RecetasPage() {
         </motion.div>
       )}
 
-      {!hayProductos && (
+      {!hayProductos && !errorCargaProductos && (
         <Card className="border-amber-500 bg-amber-50">
           <CardContent className="py-6">
             <div className="flex items-start gap-4">
@@ -208,9 +208,33 @@ export default function RecetasPage() {
         </Card>
       )}
 
+      {!cargando && errorCargaProductos && productos.length === 0 && (
+        <Card className="border-amber-200 bg-amber-50/70">
+          <CardContent className="py-4 space-y-3">
+            <p className="font-semibold text-amber-900">No pudimos cargar los productos</p>
+            <p className="text-amber-800 text-sm">{errorCargaProductos}</p>
+            <Button variant="outline" onClick={() => cargarProductos()} className="border-amber-300 text-amber-900 hover:bg-amber-100">
+              Reintentar carga
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {!cargando && errorCargaRecetas && recetas.length === 0 && (
+        <Card className="border-amber-200 bg-amber-50/70">
+          <CardContent className="py-4 space-y-3">
+            <p className="font-semibold text-amber-900">No pudimos cargar las recetas</p>
+            <p className="text-amber-800 text-sm">{errorCargaRecetas}</p>
+            <Button variant="outline" onClick={() => cargarRecetas()} className="border-amber-300 text-amber-900 hover:bg-amber-100">
+              Reintentar carga
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {error && <Card className="border-destructive"><CardContent className="py-4"><p className="text-destructive">{error}</p></CardContent></Card>}
 
-      {mostrarFormulario && hayProductos ? (
+      {(!errorCargaRecetas || recetas.length > 0) && (mostrarFormulario && hayProductos ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-6">
             <Card>
@@ -260,11 +284,13 @@ export default function RecetasPage() {
           <div className="flex gap-4">
             <Input placeholder="Buscar recetas..." value={terminoBusqueda} onChange={(e) => setTerminoBusqueda(e.target.value)} className="max-w-md" />
           </div>
-          <RecetaList recetas={recetasFiltradas} onEdit={handleEdit} onDelete={async (id: string) => {
-            await eliminar(id);
-          }} />
+          {(!errorCargaRecetas || recetas.length > 0) && (
+            <RecetaList recetas={recetasFiltradas} onEdit={handleEdit} onDelete={async (id: string) => {
+              await eliminar(id);
+            }} />
+          )}
         </>
-      )}
+      ))}
       </div>
     </ProtectedRoute>
   );

@@ -19,9 +19,9 @@ import Link from "next/link";
 import { formatearUSD } from "@/lib/currency";
 
 export default function VentasPage() {
-  const { ordenes, cargando, error, crear, actualizar, cambiarEstado, eliminar } = useOrdenes();
-  const { clientes } = useClientes();
-  const { recetas } = useRecetas();
+  const { ordenes, cargando, error, errorCarga, crear, actualizar, cambiarEstado, eliminar, cargarOrdenes } = useOrdenes();
+  const { clientes, errorCarga: errorCargaClientes, cargarClientes } = useClientes();
+  const { recetas, errorCarga: errorCargaRecetas, cargarRecetas } = useRecetas();
   const { configuracion } = useConfiguracion();
   const { canAccess, getPlanDisplayName, cargando: cargandoPlan } = usePlanAccess();
 
@@ -203,6 +203,50 @@ export default function VentasPage() {
           </Card>
         )}
 
+        {!cargando && errorCarga && ordenes.length === 0 && (
+          <Card className="border-amber-200 bg-amber-50/70">
+            <CardContent className="py-4 space-y-3">
+              <p className="font-semibold text-amber-900">No pudimos cargar las órdenes</p>
+              <p className="text-amber-800 text-sm">{errorCarga}</p>
+              <Button variant="outline" onClick={() => cargarOrdenes()} className="border-amber-300 text-amber-900 hover:bg-amber-100">
+                Reintentar carga
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {!cargando && errorCarga && ordenes.length > 0 && (
+          <Card className="border-amber-200 bg-amber-50/50">
+            <CardContent className="py-3 px-4 text-sm text-amber-800">
+              {errorCarga}
+            </CardContent>
+          </Card>
+        )}
+
+        {!cargando && errorCargaClientes && clientes.length === 0 && (
+          <Card className="border-amber-200 bg-amber-50/70">
+            <CardContent className="py-4 space-y-3">
+              <p className="font-semibold text-amber-900">No pudimos cargar los clientes</p>
+              <p className="text-amber-800 text-sm">{errorCargaClientes}</p>
+              <Button variant="outline" onClick={() => cargarClientes()} className="border-amber-300 text-amber-900 hover:bg-amber-100">
+                Reintentar carga
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {!cargando && errorCargaRecetas && recetas.length === 0 && (
+          <Card className="border-amber-200 bg-amber-50/70">
+            <CardContent className="py-4 space-y-3">
+              <p className="font-semibold text-amber-900">No pudimos cargar las recetas</p>
+              <p className="text-amber-800 text-sm">{errorCargaRecetas}</p>
+              <Button variant="outline" onClick={() => cargarRecetas()} className="border-amber-300 text-amber-900 hover:bg-amber-100">
+                Reintentar carga
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Form */}
         {mostrarFormulario && (
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
@@ -217,15 +261,17 @@ export default function VentasPage() {
         )}
 
         {/* List */}
-        <OrdenList
-          ordenes={ordenes}
-          cargando={cargando}
-          onEditar={handleEditar}
-          onEliminar={eliminar}
-          onCambiarEstado={cambiarEstado}
-          onExportarPDF={puedeExportarPDF ? handleExportarPDF : undefined}
-          puedeExportarPDF={puedeExportarPDF}
-        />
+        {!errorCarga || ordenes.length > 0 ? (
+          <OrdenList
+            ordenes={ordenes}
+            cargando={cargando}
+            onEditar={handleEditar}
+            onEliminar={eliminar}
+            onCambiarEstado={cambiarEstado}
+            onExportarPDF={puedeExportarPDF ? handleExportarPDF : undefined}
+            puedeExportarPDF={puedeExportarPDF}
+          />
+        ) : null}
       </div>
     </ProtectedRoute>
   );

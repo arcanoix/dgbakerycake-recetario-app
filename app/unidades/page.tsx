@@ -15,7 +15,7 @@ import { motion } from "motion/react";
 import { Plus, Scale, Search, Filter, X } from "lucide-react";
 
 export default function UnidadesPage() {
-  const { unidades, cargando, error, crearUnidad, actualizarUnidad, eliminar, desactivarUnidad, activarUnidad } = useUnidades();
+  const { unidades, cargando, error, errorCarga, crearUnidad, actualizarUnidad, eliminar, desactivarUnidad, activarUnidad, cargarUnidades } = useUnidades();
   
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [unidadEditando, setUnidadEditando] = useState<UnidadMedidaAdmin | undefined>();
@@ -133,6 +133,26 @@ export default function UnidadesPage() {
           </motion.div>
         )}
 
+        {!cargando && errorCarga && unidades.length === 0 && (
+          <Card className="border-amber-200 bg-amber-50/70">
+            <CardContent className="py-4 space-y-3">
+              <p className="font-semibold text-amber-900">No pudimos cargar las unidades</p>
+              <p className="text-amber-800 text-sm">{errorCarga}</p>
+              <Button variant="outline" onClick={() => cargarUnidades()} className="border-amber-300 text-amber-900 hover:bg-amber-100">
+                Reintentar carga
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {!cargando && errorCarga && unidades.length > 0 && (
+          <Card className="border-amber-200 bg-amber-50/50">
+            <CardContent className="py-3 px-4 text-sm text-amber-800">
+              {errorCarga}
+            </CardContent>
+          </Card>
+        )}
+
         {mostrarFormulario ? (
           <UnidadForm
             unidad={unidadEditando}
@@ -140,7 +160,7 @@ export default function UnidadesPage() {
             onSubmit={handleSubmit}
             onCancel={resetForm}
           />
-        ) : (
+        ) : !errorCarga || unidades.length > 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -231,7 +251,7 @@ export default function UnidadesPage() {
               />
             </div>
           </motion.div>
-        )}
+        ) : null}
       </div>
     </ProtectedRoute>
   );

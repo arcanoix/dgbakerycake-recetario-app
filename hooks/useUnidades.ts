@@ -16,6 +16,7 @@ export const useUnidades = () => {
   const [unidades, setUnidades] = useState<UnidadMedidaAdmin[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [errorCarga, setErrorCarga] = useState<string | null>(null);
 
   useEffect(() => {
     if (loadingAuth) {
@@ -36,10 +37,13 @@ export const useUnidades = () => {
       setCargando(true);
       const unidadesStorage = await obtenerUnidades();
       setUnidades(unidadesStorage);
-      setError(null);
+      setErrorCarga(null);
     } catch (err) {
-      setError("Error al cargar las unidades");
-      console.error(err);
+      setErrorCarga(
+        unidades.length > 0
+          ? "No se pudo actualizar la lista de unidades por una conexión lenta. Se muestran las últimas unidades cargadas."
+          : "No se pudieron cargar las unidades en este momento. Revisa tu conexión e intenta nuevamente."
+      );
     } finally {
       setCargando(false);
     }
@@ -74,7 +78,6 @@ export const useUnidades = () => {
       }
     } catch (err) {
       setError("Error al crear la unidad");
-      console.error(err);
       return false;
     }
   };
@@ -111,7 +114,6 @@ export const useUnidades = () => {
       }
     } catch (err) {
       setError("Error al actualizar la unidad");
-      console.error(err);
       return false;
     }
   };
@@ -129,7 +131,6 @@ export const useUnidades = () => {
       }
     } catch (err) {
       setError("Error al eliminar la unidad");
-      console.error(err);
       return false;
     }
   };
@@ -159,7 +160,6 @@ export const useUnidades = () => {
       }
     } catch (err) {
       setError("Error al desactivar la unidad");
-      console.error(err);
       return false;
     }
   };
@@ -189,7 +189,6 @@ export const useUnidades = () => {
       }
     } catch (err) {
       setError("Error al activar la unidad");
-      console.error(err);
       return false;
     }
   };
@@ -206,6 +205,7 @@ export const useUnidades = () => {
     unidades,
     cargando,
     error,
+    errorCarga,
     cargarUnidades,
     obtenerUnidad,
     crearUnidad,

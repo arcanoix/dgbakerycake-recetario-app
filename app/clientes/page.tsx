@@ -14,7 +14,7 @@ import { Users, Plus, Lock, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function ClientesPage() {
-  const { clientes, cargando, error, crearCliente, actualizarCliente, eliminar } = useClientes();
+  const { clientes, cargando, error, errorCarga, crearCliente, actualizarCliente, eliminar, cargarClientes } = useClientes();
   const { canAccess, getPlanDisplayName, cargando: cargandoPlan } = usePlanAccess();
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -122,6 +122,26 @@ export default function ClientesPage() {
           </Card>
         )}
 
+        {!cargando && errorCarga && clientes.length === 0 && (
+          <Card className="border-amber-200 bg-amber-50/70">
+            <CardContent className="py-4 space-y-3">
+              <p className="font-semibold text-amber-900">No pudimos cargar tus clientes</p>
+              <p className="text-amber-800 text-sm">{errorCarga}</p>
+              <Button variant="outline" onClick={() => cargarClientes()} className="border-amber-300 text-amber-900 hover:bg-amber-100">
+                Reintentar carga
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {!cargando && errorCarga && clientes.length > 0 && (
+          <Card className="border-amber-200 bg-amber-50/50">
+            <CardContent className="py-3 px-4 text-sm text-amber-800">
+              {errorCarga}
+            </CardContent>
+          </Card>
+        )}
+
         {/* Form */}
         {mostrarFormulario && (
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
@@ -134,12 +154,14 @@ export default function ClientesPage() {
         )}
 
         {/* List */}
-        <ClienteList
-          clientes={clientes}
-          cargando={cargando}
-          onEditar={handleEditar}
-          onEliminar={eliminar}
-        />
+        {!errorCarga || clientes.length > 0 ? (
+          <ClienteList
+            clientes={clientes}
+            cargando={cargando}
+            onEditar={handleEditar}
+            onEliminar={eliminar}
+          />
+        ) : null}
       </div>
     </ProtectedRoute>
   );

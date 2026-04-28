@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 import { Cliente, ClienteFormData, Orden, OrdenFormData, OrdenItem } from '@/types';
-import { registrarActividad } from './subscriptionStorage';
+import { registrarActividad, registrarErrorSistema } from './subscriptionStorage';
 
 // ============================================
 // CLIENTES
@@ -17,8 +17,8 @@ export const obtenerClientes = async (): Promise<Cliente[]> => {
     .order('nombre', { ascending: true });
 
   if (error) {
-    console.error('Error al obtener clientes:', error);
-    return [];
+    registrarErrorSistema(`Error al obtener clientes: ${String(error)}`).catch(() => {});
+    throw error;
   }
 
   return (data || []).map(mapClienteFromDB);
@@ -132,8 +132,8 @@ export const obtenerOrdenes = async (): Promise<Orden[]> => {
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Error al obtener órdenes:', error);
-    return [];
+    registrarErrorSistema(`Error al obtener órdenes: ${String(error)}`).catch(() => {});
+    throw error;
   }
 
   return (data || []).map(mapOrdenFromDB);

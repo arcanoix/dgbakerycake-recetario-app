@@ -15,6 +15,7 @@ export const useClientes = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [errorCarga, setErrorCarga] = useState<string | null>(null);
 
   useEffect(() => {
     if (loadingAuth) {
@@ -35,10 +36,13 @@ export const useClientes = () => {
       setCargando(true);
       const data = await obtenerClientes();
       setClientes(data);
-      setError(null);
+      setErrorCarga(null);
     } catch (err) {
-      setError("Error al cargar los clientes");
-      console.error(err);
+      setErrorCarga(
+        clientes.length > 0
+          ? "No se pudo actualizar la lista de clientes por una conexión lenta. Se muestran los últimos clientes cargados."
+          : "No se pudieron cargar los clientes en este momento. Revisa tu conexión e intenta nuevamente."
+      );
     } finally {
       setCargando(false);
     }
@@ -59,7 +63,6 @@ export const useClientes = () => {
       return false;
     } catch (err) {
       setError("Error al crear el cliente");
-      console.error(err);
       return false;
     }
   };
@@ -75,7 +78,6 @@ export const useClientes = () => {
       return false;
     } catch (err) {
       setError("Error al actualizar el cliente");
-      console.error(err);
       return false;
     }
   };
@@ -91,7 +93,6 @@ export const useClientes = () => {
       return false;
     } catch (err) {
       setError("Error al eliminar el cliente");
-      console.error(err);
       return false;
     }
   };
@@ -111,6 +112,7 @@ export const useClientes = () => {
     clientes,
     cargando,
     error,
+    errorCarga,
     cargarClientes,
     obtenerCliente,
     crearCliente,

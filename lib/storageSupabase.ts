@@ -103,7 +103,7 @@ export const obtenerRecetas = async (): Promise<Receta[]> => {
 
   if (error) {
     registrarErrorSistema(`Error al obtener recetas: ${String(error)}`).catch(() => {});
-    return [];
+    throw error;
   }
 
   return (data || []).map(mapRecetaFromDB);
@@ -193,7 +193,7 @@ export const obtenerConfiguracion = async (): Promise<ConfiguracionGlobal | null
 
   if (error) {
     registrarErrorSistema(`Error al obtener configuración: ${String(error)}`).catch(() => {});
-    return null;
+    throw error;
   }
 
   // Si no existe configuración, crear una por defecto
@@ -393,8 +393,8 @@ export const obtenerUnidades = async (): Promise<UnidadMedidaAdmin[]> => {
     .order('nombre', { ascending: true });
 
   if (error) {
-    console.error('Error al obtener unidades:', error);
-    return [];
+    registrarErrorSistema(`Error al obtener unidades: ${String(error)}`).catch(() => {});
+    throw error;
   }
 
   return (data || []).map(mapUnidadFromDB);
@@ -511,7 +511,7 @@ export const obtenerCategorias = async (): Promise<CategoriaAdmin[]> => {
     .order("nombre", { ascending: true });
 
   if (error) {
-    console.error("Error al obtener categorías:", error);
+    registrarErrorSistema(`Error al obtener categorías: ${String(error)}`).catch(() => {});
     throw error;
   }
 

@@ -18,6 +18,7 @@ export const useOrdenes = () => {
   const [ordenes, setOrdenes] = useState<Orden[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [errorCarga, setErrorCarga] = useState<string | null>(null);
 
   useEffect(() => {
     if (loadingAuth) {
@@ -38,10 +39,13 @@ export const useOrdenes = () => {
       setCargando(true);
       const data = await obtenerOrdenes();
       setOrdenes(data);
-      setError(null);
+      setErrorCarga(null);
     } catch (err) {
-      setError("Error al cargar las órdenes");
-      console.error(err);
+      setErrorCarga(
+        ordenes.length > 0
+          ? "No se pudo actualizar la lista de órdenes por una conexión lenta. Se muestran las últimas órdenes cargadas."
+          : "No se pudieron cargar las órdenes en este momento. Revisa tu conexión e intenta nuevamente."
+      );
     } finally {
       setCargando(false);
     }
@@ -62,7 +66,6 @@ export const useOrdenes = () => {
       return false;
     } catch (err) {
       setError("Error al crear la orden");
-      console.error(err);
       return false;
     }
   };
@@ -78,7 +81,6 @@ export const useOrdenes = () => {
       return false;
     } catch (err) {
       setError("Error al actualizar la orden");
-      console.error(err);
       return false;
     }
   };
@@ -94,7 +96,6 @@ export const useOrdenes = () => {
       return false;
     } catch (err) {
       setError("Error al actualizar el estado");
-      console.error(err);
       return false;
     }
   };
@@ -110,7 +111,6 @@ export const useOrdenes = () => {
       return false;
     } catch (err) {
       setError("Error al actualizar la fecha de entrega");
-      console.error(err);
       return false;
     }
   };
@@ -126,7 +126,6 @@ export const useOrdenes = () => {
       return false;
     } catch (err) {
       setError("Error al eliminar la orden");
-      console.error(err);
       return false;
     }
   };
@@ -156,6 +155,7 @@ export const useOrdenes = () => {
     ordenes,
     cargando,
     error,
+    errorCarga,
     cargarOrdenes,
     obtenerOrden,
     crear,

@@ -82,11 +82,11 @@ const estadoLabel: Record<string, string> = {
 
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth();
-  const { productos, cargando: cargandoProductos } = useProductos();
-  const { recetas, cargando: cargandoRecetas } = useRecetas();
-  const { configuracion, cargando: cargandoConfiguracion } = useConfiguracion();
-  const { ordenes, cargando: cargandoOrdenes } = useOrdenes();
-  const { clientes } = useClientes();
+  const { productos, cargando: cargandoProductos, errorCarga: errorCargaProductos } = useProductos();
+  const { recetas, cargando: cargandoRecetas, errorCarga: errorCargaRecetas } = useRecetas();
+  const { configuracion, cargando: cargandoConfiguracion, errorCarga: errorCargaConfiguracion, cargarConfiguracion } = useConfiguracion();
+  const { ordenes, cargando: cargandoOrdenes, errorCarga: errorCargaOrdenes } = useOrdenes();
+  const { clientes, errorCarga: errorCargaClientes, cargarClientes } = useClientes();
   const { canAccess, getPlanDisplayName, cargando: cargandoPlan } = usePlanAccess();
   const [mounted, setMounted] = useState(false);
 
@@ -143,6 +143,19 @@ export default function DashboardPage() {
     );
   }
 
+  if (!configuracion && errorCargaConfiguracion) {
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <div className="text-center max-w-md px-6">
+          <div className="text-4xl mb-4">⚠️</div>
+          <p className="text-gray-700 mb-2 font-semibold">No pudimos cargar la configuración</p>
+          <p className="text-gray-700 mb-4 text-sm">{errorCargaConfiguracion}</p>
+          <Button onClick={() => cargarConfiguracion()}>Reintentar carga</Button>
+        </div>
+      </main>
+    );
+  }
+
   if (!configuracion) {
     return (
       <main className="min-h-screen flex items-center justify-center">
@@ -183,6 +196,18 @@ export default function DashboardPage() {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
           <p className="text-gray-700">Resumen general de tu negocio de repostería</p>
         </div>
+
+        {(errorCargaProductos || errorCargaRecetas || errorCargaOrdenes || errorCargaClientes) && (
+          <Card className="mb-6 border-amber-200 bg-amber-50/70">
+            <CardContent className="py-4 space-y-2 text-sm text-amber-900">
+              <p className="font-semibold">Algunas secciones están usando datos parciales</p>
+              {errorCargaProductos && <p>Productos: {errorCargaProductos}</p>}
+              {errorCargaRecetas && <p>Recetas: {errorCargaRecetas}</p>}
+              {errorCargaOrdenes && <p>Órdenes: {errorCargaOrdenes}</p>}
+              {errorCargaClientes && <p>Clientes: {errorCargaClientes}</p>}
+            </CardContent>
+          </Card>
+        )}
 
         {/* ── Base Stats Cards ─────────────────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

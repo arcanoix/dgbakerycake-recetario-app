@@ -10,6 +10,7 @@ export const useConfiguracion = () => {
   const [configuracion, setConfiguracion] = useState<ConfiguracionGlobal | null>(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [errorCarga, setErrorCarga] = useState<string | null>(null);
 
   useEffect(() => {
     if (loadingAuth) {
@@ -30,9 +31,13 @@ export const useConfiguracion = () => {
       setCargando(true);
       const config = await obtenerConfiguracion();
       setConfiguracion(config);
-      setError(null);
+      setErrorCarga(null);
     } catch (err) {
-      setError("Error al cargar la configuración");
+      setErrorCarga(
+        configuracion
+          ? "No se pudo actualizar la configuración por una conexión lenta. Se mantiene la última configuración cargada."
+          : "No se pudo cargar la configuración en este momento. Revisa tu conexión e intenta nuevamente."
+      );
     } finally {
       setCargando(false);
     }
@@ -69,6 +74,7 @@ export const useConfiguracion = () => {
     configuracion,
     cargando,
     error,
+    errorCarga,
     actualizar,
     cargarConfiguracion,
   };

@@ -27,6 +27,7 @@ export const useRecetas = () => {
   const [recetas, setRecetas] = useState<Receta[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [errorCarga, setErrorCarga] = useState<string | null>(null);
 
   useEffect(() => {
     if (loadingAuth) {
@@ -47,10 +48,13 @@ export const useRecetas = () => {
       setCargando(true);
       const recetasStorage = await obtenerRecetas();
       setRecetas(recetasStorage);
-      setError(null);
+      setErrorCarga(null);
     } catch (err) {
-      setError("Error al cargar las recetas");
-      console.error(err);
+      setErrorCarga(
+        recetas.length > 0
+          ? "No se pudo actualizar la lista de recetas por una conexión lenta. Se muestran las últimas recetas cargadas."
+          : "No se pudieron cargar las recetas en este momento. Revisa tu conexión e intenta nuevamente."
+      );
     } finally {
       setCargando(false);
     }
@@ -135,7 +139,6 @@ export const useRecetas = () => {
       }
     } catch (err) {
       setError("Error al crear la receta");
-      console.error(err);
       return false;
     }
   };
@@ -195,7 +198,6 @@ export const useRecetas = () => {
       }
     } catch (err) {
       setError("Error al actualizar la receta");
-      console.error(err);
       return false;
     }
   };
@@ -222,7 +224,6 @@ export const useRecetas = () => {
       }
     } catch (err) {
       setError("Error al eliminar la receta");
-      console.error(err);
       return false;
     }
   };
@@ -302,7 +303,6 @@ export const useRecetas = () => {
       return material;
     } catch (err) {
       setError("Error al agregar material");
-      console.error(err);
       return null;
     }
   };
@@ -328,6 +328,7 @@ export const useRecetas = () => {
     recetas,
     cargando,
     error,
+    errorCarga,
     cargarRecetas,
     obtenerReceta,
     crearReceta,

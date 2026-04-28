@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { suspenderUsuario, reactivarUsuario, cambiarRolUsuario, eliminarUsuario } from "@/lib/subscriptionStorage";
+import { suspenderUsuario, reactivarUsuario, cambiarRolUsuario, eliminarUsuario, obtenerPlanPorNombre } from "@/lib/subscriptionStorage";
 import { EditUserModal } from "@/components/admin/EditUserModal";
 
 interface UsersTableProps {
@@ -81,16 +81,30 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
     if (!confirm(`¿Estás seguro de reactivar al usuario ${email}?`)) return;
     
     setCargandoAccion(userId);
-    // Nota: Necesitarás el plan_id del usuario para reactivar
-    // Por ahora usaremos el plan free como fallback
-    const resultado = await reactivarUsuario(userId, "plan-free-id");
-    setCargandoAccion(null);
     
-    if (resultado.exitoso) {
-      alert("Usuario reactivado exitosamente");
-      onUpdate?.();
-    } else {
-      alert(`Error al reactivar usuario: ${resultado.error}`);
+    try {
+      // Buscar el ID real del plan "free" para reactivar al usuario
+      const planFree = await obtenerPlanPorNombre('free');
+      
+      if (!planFree || !planFree.id) {
+        alert("Error: No se pudo encontrar el plan gratuito (free) en el sistema.");
+        setCargandoAccion(null);
+        return;
+      }
+      
+      const resultado = await reactivarUsuario(userId, planFree.id);
+      
+      if (resultado.exitoso) {
+        alert("Usuario reactivado exitosamente");
+        onUpdate?.();
+      } else {
+        alert(`Error al reactivar usuario: ${resultado.error}`);
+      }
+    } catch (error) {
+      alert("Error inesperado al reactivar usuario");
+      console.error(error);
+    } finally {
+      setCargandoAccion(null);
     }
   };
 

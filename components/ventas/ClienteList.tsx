@@ -17,6 +17,7 @@ interface ClienteListProps {
 export const ClienteList = ({ clientes, cargando, onEditar, onEliminar }: ClienteListProps) => {
   const [busqueda, setBusqueda] = useState("");
   const [confirmandoEliminar, setConfirmandoEliminar] = useState<string | null>(null);
+  const [eliminandoId, setEliminandoId] = useState<string | null>(null);
 
   const clientesFiltrados = busqueda
     ? clientes.filter(
@@ -28,9 +29,16 @@ export const ClienteList = ({ clientes, cargando, onEditar, onEliminar }: Client
     : clientes;
 
   const handleEliminar = (id: string) => {
+    if (eliminandoId === id) {
+      return;
+    }
+
     if (confirmandoEliminar === id) {
-      onEliminar(id);
-      setConfirmandoEliminar(null);
+      setEliminandoId(id);
+      Promise.resolve(onEliminar(id)).finally(() => {
+        setEliminandoId(null);
+        setConfirmandoEliminar(null);
+      });
     } else {
       setConfirmandoEliminar(id);
       setTimeout(() => setConfirmandoEliminar(null), 3000);
@@ -87,19 +95,33 @@ export const ClienteList = ({ clientes, cargando, onEditar, onEliminar }: Client
                     <button
                       onClick={() => onEditar(cliente)}
                       className="p-1.5 rounded hover:bg-gray-100 text-gray-700 hover:text-violet-600 transition-colors"
+                      disabled={eliminandoId === cliente.id}
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => handleEliminar(cliente.id)}
                       className={`p-1.5 rounded transition-colors ${
-                        confirmandoEliminar === cliente.id
+                        eliminandoId === cliente.id
+                          ? "bg-red-50 text-red-600"
+                          : confirmandoEliminar === cliente.id
                           ? "bg-red-50 text-red-600"
                           : "hover:bg-gray-100 text-gray-700 hover:text-red-500"
                       }`}
-                      title={confirmandoEliminar === cliente.id ? "Confirmar eliminación" : "Eliminar"}
+                      disabled={eliminandoId === cliente.id}
+                      title={
+                        eliminandoId === cliente.id
+                          ? "Eliminando..."
+                          : confirmandoEliminar === cliente.id
+                          ? "Confirmar eliminación"
+                          : "Eliminar"
+                      }
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      {eliminandoId === cliente.id ? (
+                        <span className="animate-spin text-xs">⏳</span>
+                      ) : (
+                        <Trash2 className="w-3.5 h-3.5" />
+                      )}
                     </button>
                   </div>
                 </div>

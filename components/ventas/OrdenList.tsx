@@ -61,6 +61,7 @@ export const OrdenList = ({
   const [filtroEstado, setFiltroEstado] = useState<EstadoOrden | "">("");
   const [expandida, setExpandida] = useState<string | null>(null);
   const [confirmandoEliminar, setConfirmandoEliminar] = useState<string | null>(null);
+  const [accionEnCursoId, setAccionEnCursoId] = useState<string | null>(null);
 
   const ordenesFiltradas = ordenes.filter(o => {
     const matchBusqueda =
@@ -76,13 +77,31 @@ export const OrdenList = ({
   };
 
   const handleEliminar = (id: string) => {
+    if (accionEnCursoId === id) {
+      return;
+    }
+
     if (confirmandoEliminar === id) {
-      onEliminar(id);
-      setConfirmandoEliminar(null);
+      setAccionEnCursoId(id);
+      Promise.resolve(onEliminar(id)).finally(() => {
+        setAccionEnCursoId(null);
+        setConfirmandoEliminar(null);
+      });
     } else {
       setConfirmandoEliminar(id);
       setTimeout(() => setConfirmandoEliminar(null), 3000);
     }
+  };
+
+  const handleCambiarEstado = (ordenId: string, estado: EstadoOrden) => {
+    if (accionEnCursoId === ordenId) {
+      return;
+    }
+
+    setAccionEnCursoId(ordenId);
+    Promise.resolve(onCambiarEstado(ordenId, estado)).finally(() => {
+      setAccionEnCursoId(null);
+    });
   };
 
   if (cargando) {
@@ -246,10 +265,10 @@ export const OrdenList = ({
                         value={orden.estado}
                         onChange={e => {
                           if (bloqueada) return;
-                          onCambiarEstado(orden.id, e.target.value as EstadoOrden);
+                          handleCambiarEstado(orden.id, e.target.value as EstadoOrden);
                         }}
                         className="text-xs h-8 w-auto"
-                        disabled={bloqueada}
+                        disabled={bloqueada || accionEnCursoId === orden.id}
                       >
                         <option value="cotizacion">→ Cotización</option>
                         <option value="confirmada">→ Confirmada</option>
@@ -262,7 +281,7 @@ export const OrdenList = ({
                         variant="outline"
                         onClick={() => onEditar(orden)}
                         className="h-8 text-xs"
-                        disabled={bloqueada}
+                        disabled={bloqueada || accionEnCursoId === orden.id}
                       >
                         <Edit2 className="w-3 h-3 mr-1" /> Editar
                       </Button>
@@ -290,9 +309,13 @@ export const OrdenList = ({
                             ? "border-red-300 bg-red-50 text-red-600"
                             : "text-red-500 border-red-200 hover:bg-red-50"
                         }`}
-                        disabled={bloqueada}
+                        disabled={bloqueada || accionEnCursoId === orden.id}
                       >
-                        <Trash2 className="w-3 h-3 mr-1" />
+                        {accionEnCursoId === orden.id ? (
+                          <span className="animate-spin mr-1">⏳</span>
+                        ) : (
+                          <Trash2 className="w-3 h-3 mr-1" />
+                        )}
                         {confirmandoEliminar === orden.id ? "Confirmar" : "Eliminar"}
                       </Button>
                           </>

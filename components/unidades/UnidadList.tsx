@@ -50,16 +50,33 @@ interface UnidadListProps {
 }
 
 export const UnidadList = ({ unidades, onEdit, onDelete, onToggleEstado }: UnidadListProps) => {
-  const [eliminando, setEliminando] = useState<string | null>(null);
+  const [accionEnCursoId, setAccionEnCursoId] = useState<string | null>(null);
 
   const handleDelete = async (id: string, nombre: string) => {
+    if (accionEnCursoId === id) {
+      return;
+    }
+
     if (confirm(`¿Estás seguro de eliminar la unidad "${nombre}"? Esta acción no se puede deshacer.`)) {
-      setEliminando(id);
+      setAccionEnCursoId(id);
       try {
         await onDelete(id);
       } finally {
-        setEliminando(null);
+        setAccionEnCursoId(null);
       }
+    }
+  };
+
+  const handleToggleEstado = async (unidad: UnidadMedidaAdmin) => {
+    if (accionEnCursoId === unidad.id) {
+      return;
+    }
+
+    setAccionEnCursoId(unidad.id);
+    try {
+      await onToggleEstado(unidad);
+    } finally {
+      setAccionEnCursoId(null);
     }
   };
 
@@ -141,7 +158,7 @@ export const UnidadList = ({ unidades, onEdit, onDelete, onToggleEstado }: Unida
                     size="sm"
                     className="flex-1 gap-1.5 hover:bg-blue-50 border-gray-200"
                     onClick={() => onEdit(unidad)}
-                    disabled={eliminando === unidad.id}
+                    disabled={accionEnCursoId === unidad.id}
                   >
                     <Edit2 className="w-3.5 h-3.5" />
                     Editar
@@ -154,10 +171,14 @@ export const UnidadList = ({ unidades, onEdit, onDelete, onToggleEstado }: Unida
                         ? 'hover:bg-amber-50 text-amber-600' 
                         : 'hover:bg-green-50 text-green-600'
                     }`}
-                    onClick={() => onToggleEstado(unidad)}
-                    disabled={eliminando === unidad.id}
+                    onClick={() => handleToggleEstado(unidad)}
+                    disabled={accionEnCursoId === unidad.id}
                   >
-                    <ToggleLeft className="w-3.5 h-3.5" />
+                    {accionEnCursoId === unidad.id ? (
+                      <span className="animate-spin text-xs">⏳</span>
+                    ) : (
+                      <ToggleLeft className="w-3.5 h-3.5" />
+                    )}
                     {unidad.activo ? 'Desactivar' : 'Activar'}
                   </Button>
                   <Button
@@ -165,9 +186,9 @@ export const UnidadList = ({ unidades, onEdit, onDelete, onToggleEstado }: Unida
                     size="sm"
                     className="gap-1.5 hover:bg-red-50 border-red-200 text-red-600 hover:text-red-700"
                     onClick={() => handleDelete(unidad.id, unidad.nombre)}
-                    disabled={eliminando === unidad.id}
+                    disabled={accionEnCursoId === unidad.id}
                   >
-                    {eliminando === unidad.id ? (
+                    {accionEnCursoId === unidad.id ? (
                       <span className="animate-spin">⏳</span>
                     ) : (
                       <Trash2 className="w-3.5 h-3.5" />

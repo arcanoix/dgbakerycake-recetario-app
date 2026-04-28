@@ -39,6 +39,7 @@ export default function RecetasPage() {
   const [categoria, setCategoria] = useState("");
   const [margenGanancia, setMargenGanancia] = useState(configuracion?.margenGananciaDefecto || 30);
   const [materiales, setMateriales] = useState<MaterialReceta[]>([]);
+  const [guardando, setGuardando] = useState(false);
 
   const recetasFiltradas = terminoBusqueda
     ? recetas.filter(r => r.nombre.toLowerCase().includes(terminoBusqueda.toLowerCase()))
@@ -57,6 +58,9 @@ export default function RecetasPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (guardando) return;
+
+    setGuardando(true);
     const datos = {
       nombre,
       descripcion,
@@ -64,15 +68,19 @@ export default function RecetasPage() {
       margenGanancia,
     };
 
-    let exito = false;
-    if (recetaEditando) {
-      exito = await actualizarReceta(recetaEditando.id, datos, materiales);
-    } else {
-      exito = await crearReceta(datos, materiales);
-    }
+    try {
+      let exito = false;
+      if (recetaEditando) {
+        exito = await actualizarReceta(recetaEditando.id, datos, materiales);
+      } else {
+        exito = await crearReceta(datos, materiales);
+      }
 
-    if (exito) {
-      resetForm();
+      if (exito) {
+        resetForm();
+      }
+    } finally {
+      setGuardando(false);
     }
   };
 
@@ -262,8 +270,8 @@ export default function RecetasPage() {
                       <Input id="margen" type="number" step="0.01" value={margenGanancia} onChange={(e) => setMargenGanancia(parseFloat(e.target.value))} />
                     </div>
                   </div>
-                  <Button type="submit" className="w-full" disabled={materiales.length === 0}>
-                    {recetaEditando ? "Actualizar" : "Crear"} Receta
+                  <Button type="submit" className="w-full" disabled={guardando || materiales.length === 0}>
+                    {guardando ? "Guardando..." : recetaEditando ? "Actualizar" : "Crear"} Receta
                   </Button>
                 </form>
               </CardContent>
@@ -271,6 +279,7 @@ export default function RecetasPage() {
             <MaterialSelector
               productos={productos}
               materiales={materiales}
+              disabled={guardando}
               onAgregarMaterial={handleAgregarMaterial}
               onEliminarMaterial={handleEliminarMaterial}
             />

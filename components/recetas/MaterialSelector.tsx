@@ -18,6 +18,7 @@ const PRODUCTO_OTRO_ID = "__OTRO__";
 interface MaterialSelectorProps {
   productos: Producto[];
   materiales: MaterialReceta[];
+  disabled?: boolean;
   onAgregarMaterial: (
     productoId: string,
     cantidad: number,
@@ -31,6 +32,7 @@ interface MaterialSelectorProps {
 export const MaterialSelector = ({
   productos,
   materiales,
+  disabled = false,
   onAgregarMaterial,
   onEliminarMaterial,
 }: MaterialSelectorProps) => {
@@ -201,6 +203,7 @@ export const MaterialSelector = ({
                     type="button"
                     className="w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors flex items-center gap-2 border-b border-dashed border-muted-foreground/30"
                     onClick={() => seleccionarProducto(PRODUCTO_OTRO_ID, "Otro")}
+                    disabled={disabled}
                   >
                     <span className="text-base">✏️</span>
                     <span className="font-medium">Otro (ingrediente personalizado)</span>
@@ -218,6 +221,7 @@ export const MaterialSelector = ({
                         type="button"
                         className="w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors"
                         onClick={() => seleccionarProducto(producto.id, producto.nombre)}
+                        disabled={disabled}
                       >
                         <span className="font-medium">{producto.nombre}</span>
                         <span className="ml-2 text-gray-700 text-xs">
@@ -347,7 +351,7 @@ export const MaterialSelector = ({
 
           <Button
             onClick={handleAgregar}
-            disabled={!puedeAgregar}
+            disabled={disabled || !puedeAgregar}
             className="w-full"
           >
             + Agregar Material
@@ -394,6 +398,7 @@ export const MaterialSelector = ({
                     variant="destructive"
                     size="sm"
                     onClick={() => onEliminarMaterial(material.id)}
+                    disabled={disabled}
                   >
                     Eliminar
                   </Button>

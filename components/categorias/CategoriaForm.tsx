@@ -27,6 +27,7 @@ const COLORES_PREDEFINIDOS = [
 ];
 
 export const CategoriaForm = ({ categoria, onSubmit, onCancel }: CategoriaFormProps) => {
+  const [guardando, setGuardando] = useState(false);
   const [formData, setFormData] = useState<CategoriaFormData>({
     nombre: "",
     tipo: "producto",
@@ -47,7 +48,12 @@ export const CategoriaForm = ({ categoria, onSubmit, onCancel }: CategoriaFormPr
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    if (guardando) return;
+
+    setGuardando(true);
+    Promise.resolve(onSubmit(formData)).finally(() => {
+      setGuardando(false);
+    });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -146,11 +152,11 @@ export const CategoriaForm = ({ categoria, onSubmit, onCancel }: CategoriaFormPr
           </div>
 
           <div className="flex gap-2 justify-end pt-4">
-            <Button type="button" variant="outline" onClick={onCancel}>
+            <Button type="button" variant="outline" onClick={onCancel} disabled={guardando}>
               Cancelar
             </Button>
-            <Button type="submit">
-              {categoria ? "Actualizar" : "Crear"} Categoría
+            <Button type="submit" disabled={guardando}>
+              {guardando ? "Guardando..." : categoria ? "Actualizar" : "Crear"} Categoría
             </Button>
           </div>
         </form>

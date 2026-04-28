@@ -8,7 +8,6 @@ async function obtenerPrecioBCVDesdeAPI(): Promise<number | null> {
     const apiKey = process.env.NEXT_PUBLIC_BCV_API_KEY;
 
     if (!apiKey) {
-      console.error('[BCV Sync] BCV_API_KEY no configurada');
       return null;
     }
 
@@ -25,7 +24,6 @@ async function obtenerPrecioBCVDesdeAPI(): Promise<number | null> {
     );
 
     if (!response.ok) {
-      console.error(`[BCV Sync] HTTP ${response.status}: ${response.statusText}`);
       return null;
     }
 
@@ -33,21 +31,17 @@ async function obtenerPrecioBCVDesdeAPI(): Promise<number | null> {
     const precio = data.price || data.rate || data.value || data.tasa;
 
     if (!precio) {
-      console.error('[BCV Sync] No se encontró el precio en la respuesta:', data);
       return null;
     }
 
     const precioNumero = typeof precio === 'string' ? parseFloat(precio.replace(',', '.')) : precio;
     
     if (isNaN(precioNumero) || precioNumero <= 0) {
-      console.error(`[BCV Sync] Precio inválido: ${precioNumero}`);
       return null;
     }
 
     return precioNumero;
   } catch (error) {
-    const mensaje = error instanceof Error ? error.message : String(error);
-    console.error('[BCV Sync] Error al obtener precio:', mensaje);
     return null;
   }
 }
@@ -69,7 +63,6 @@ export async function sincronizarPrecioBCVAlLogin(): Promise<void> {
       .maybeSingle();
 
     if (errorConfig) {
-      console.error('[BCV Sync] Error al obtener configuración:', errorConfig);
       return;
     }
 
@@ -99,7 +92,6 @@ export async function sincronizarPrecioBCVAlLogin(): Promise<void> {
         .eq('id', configActual.id);
 
       if (errorUpdate) {
-        console.error('[BCV Sync] Error al actualizar configuración:', errorUpdate);
         return;
       }
 
@@ -116,14 +108,12 @@ export async function sincronizarPrecioBCVAlLogin(): Promise<void> {
         }]);
 
       if (errorCreate) {
-        console.error('[BCV Sync] Error al crear configuración:', errorCreate);
         return;
       }
 
       console.log(`[BCV Sync] ✓ Configuración creada con precio: ${precioAPI} Bs/USD`);
     }
   } catch (error) {
-    const mensaje = error instanceof Error ? error.message : String(error);
-    console.error('[BCV Sync] Error en sincronización:', mensaje);
+    return;
   }
 }

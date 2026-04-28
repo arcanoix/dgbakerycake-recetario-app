@@ -108,7 +108,6 @@ export const useRole = () => {
               return;
             }
           } else {
-            console.error('Error al cargar rol:', error);
             registrarErrorSistema(
               `Error al cargar rol: ${String(error)}`,
               user.id,
@@ -152,7 +151,6 @@ export const useRole = () => {
         setRole(userRole);
         setIsAdmin(userRole === 'admin');
       } catch (error) {
-        console.error('Error al cargar rol:', error);
         setRole('cliente');
         setIsAdmin(false);
       } finally {

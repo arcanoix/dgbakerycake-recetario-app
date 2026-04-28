@@ -10,6 +10,14 @@ import {
 } from '@/types/subscription';
 import { ActivityLog } from '@/types/user';
 
+const registrarErrorSistemaInterno = async (description: string, entityId?: string, entityName?: string) => {
+  try {
+    await registrarActividad('error', 'system', description, entityId, entityName);
+  } catch {
+    // Never break the caller if logging fails.
+  }
+};
+
 // ============================================
 // PLANES DE SUSCRIPCIÓN (desde tabla plans)
 // ============================================
@@ -22,7 +30,7 @@ export const obtenerPlanes = async (): Promise<Plan[]> => {
     .order('sort_order', { ascending: true });
 
   if (error) {
-    console.error('Error al obtener planes:', error);
+    registrarErrorSistemaInterno(`Error al obtener planes: ${String(error)}`).catch(() => {});
     return [];
   }
 
@@ -141,7 +149,7 @@ export const obtenerSuscripcionActual = async (): Promise<UserSubscription | nul
     .single();
 
   if (error) {
-    console.error('Error al obtener suscripción:', error);
+    registrarErrorSistemaInterno(`Error al obtener suscripción: ${String(error)}`).catch(() => {});
     return null;
   }
 
@@ -158,7 +166,7 @@ export const obtenerInfoSuscripcion = async (): Promise<UserSubscriptionInfo | n
     .single();
 
   if (error) {
-    console.error('Error al obtener info de suscripción:', error);
+    registrarErrorSistemaInterno(`Error al obtener info de suscripción: ${String(error)}`).catch(() => {});
     return null;
   }
 
@@ -188,7 +196,7 @@ export const crearSolicitudPago = async (
     .single();
 
   if (error) {
-    console.error('Error al crear solicitud de pago:', error);
+    registrarErrorSistemaInterno(`Error al crear solicitud de pago: ${String(error)}`).catch(() => {});
     return { exitoso: false, error: error.message };
   }
 
@@ -210,7 +218,7 @@ export const obtenerMisSolicitudes = async (): Promise<PaymentRequest[]> => {
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Error al obtener solicitudes:', error);
+    registrarErrorSistemaInterno(`Error al obtener solicitudes: ${String(error)}`).catch(() => {});
     return [];
   }
 

@@ -15,7 +15,7 @@ export interface CambiarPasswordData {
 }
 
 export const usePerfil = () => {
-  const { user } = useAuth();
+  const { user, loading: loadingAuth } = useAuth();
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mensaje, setMensaje] = useState<string | null>(null);
@@ -27,6 +27,7 @@ export const usePerfil = () => {
 
   const actualizarDatos = useCallback(
     async (datos: PerfilFormData): Promise<boolean> => {
+      if (loadingAuth) return false;
       if (!user) return false;
 
       limpiarMensajes();
@@ -72,11 +73,12 @@ export const usePerfil = () => {
         setGuardando(false);
       }
     },
-    [user]
+    [user, loadingAuth]
   );
 
   const cambiarPassword = useCallback(
     async (datos: CambiarPasswordData): Promise<boolean> => {
+      if (loadingAuth) return false;
       limpiarMensajes();
 
       if (!user?.email) {
@@ -113,7 +115,7 @@ export const usePerfil = () => {
         setGuardando(false);
       }
     },
-    [user]
+    [user, loadingAuth]
   );
 
   return {

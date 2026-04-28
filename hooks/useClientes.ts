@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Cliente, ClienteFormData } from "@/types";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   obtenerClientes,
   obtenerClientePorId,
@@ -10,13 +11,24 @@ import {
 } from "@/lib/storageVentas";
 
 export const useClientes = () => {
+  const { user, loading: loadingAuth } = useAuth();
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (loadingAuth) {
+      return;
+    }
+
+    if (!user) {
+      setClientes([]);
+      setCargando(false);
+      return;
+    }
+
     cargarClientes();
-  }, []);
+  }, [loadingAuth, user]);
 
   const cargarClientes = async () => {
     try {

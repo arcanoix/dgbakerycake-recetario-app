@@ -6,12 +6,16 @@ import { UserRole } from "@/types/subscription";
 import { supabase } from "@/lib/supabase";
 
 export const useRole = () => {
-  const { user } = useAuth();
+  const { user, loading: loadingAuth } = useAuth();
   const [role, setRole] = useState<UserRole | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
+    if (loadingAuth) {
+      return;
+    }
+
     if (user) {
       cargarRole();
     } else {
@@ -19,7 +23,7 @@ export const useRole = () => {
       setIsAdmin(false);
       setCargando(false);
     }
-  }, [user]);
+  }, [user, loadingAuth]);
 
   const cargarRole = async () => {
     try {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Producto, ProductoFormData } from "@/types";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   obtenerProductos,
   obtenerProductoPorId,
@@ -20,14 +21,25 @@ export interface ResultadoImportacionMasiva {
 }
 
 export const useProductos = () => {
+  const { user, loading: loadingAuth } = useAuth();
   const [productos, setProductos] = useState<Producto[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Cargar productos al montar el componente
   useEffect(() => {
+    if (loadingAuth) {
+      return;
+    }
+
+    if (!user) {
+      setProductos([]);
+      setCargando(false);
+      return;
+    }
+
     cargarProductos();
-  }, []);
+  }, [loadingAuth, user]);
 
   const cargarProductos = async () => {
     try {

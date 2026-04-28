@@ -3,15 +3,27 @@
 import { useState, useEffect } from "react";
 import { ConfiguracionGlobal, ConfiguracionFormData } from "@/types";
 import { obtenerConfiguracion, guardarConfiguracion } from "@/lib/storageSupabase";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const useConfiguracion = () => {
+  const { user, loading: loadingAuth } = useAuth();
   const [configuracion, setConfiguracion] = useState<ConfiguracionGlobal | null>(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (loadingAuth) {
+      return;
+    }
+
+    if (!user) {
+      setConfiguracion(null);
+      setCargando(false);
+      return;
+    }
+
     cargarConfiguracion();
-  }, []);
+  }, [loadingAuth, user]);
 
   const cargarConfiguracion = async () => {
     try {

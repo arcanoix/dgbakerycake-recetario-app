@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Orden, OrdenFormData, EstadoOrden } from "@/types";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   obtenerOrdenes,
   obtenerOrdenPorId,
@@ -13,13 +14,24 @@ import {
 } from "@/lib/storageVentas";
 
 export const useOrdenes = () => {
+  const { user, loading: loadingAuth } = useAuth();
   const [ordenes, setOrdenes] = useState<Orden[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (loadingAuth) {
+      return;
+    }
+
+    if (!user) {
+      setOrdenes([]);
+      setCargando(false);
+      return;
+    }
+
     cargarOrdenes();
-  }, []);
+  }, [loadingAuth, user]);
 
   const cargarOrdenes = async () => {
     try {

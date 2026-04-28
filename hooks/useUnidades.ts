@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { UnidadMedidaAdmin, UnidadMedidaFormData } from "@/types";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   obtenerUnidades,
   obtenerUnidadPorId,
@@ -11,13 +12,24 @@ import {
 } from "@/lib/storageSupabase";
 
 export const useUnidades = () => {
+  const { user, loading: loadingAuth } = useAuth();
   const [unidades, setUnidades] = useState<UnidadMedidaAdmin[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (loadingAuth) {
+      return;
+    }
+
+    if (!user) {
+      setUnidades([]);
+      setCargando(false);
+      return;
+    }
+
     cargarUnidades();
-  }, []);
+  }, [loadingAuth, user]);
 
   const cargarUnidades = async () => {
     try {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Receta, RecetaFormData, MaterialReceta, Producto } from "@/types";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   obtenerRecetas,
   obtenerRecetaPorId,
@@ -22,13 +23,24 @@ import {
 import { verificarLimite, registrarActividad } from "@/lib/subscriptionStorage";
 
 export const useRecetas = () => {
+  const { user, loading: loadingAuth } = useAuth();
   const [recetas, setRecetas] = useState<Receta[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (loadingAuth) {
+      return;
+    }
+
+    if (!user) {
+      setRecetas([]);
+      setCargando(false);
+      return;
+    }
+
     cargarRecetas();
-  }, []);
+  }, [loadingAuth, user]);
 
   const cargarRecetas = async () => {
     try {

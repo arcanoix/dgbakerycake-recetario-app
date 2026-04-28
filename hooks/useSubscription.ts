@@ -18,7 +18,7 @@ import {
 } from "@/lib/subscriptionStorage";
 
 export const useSubscription = () => {
-  const { user } = useAuth();
+  const { user, loading: loadingAuth } = useAuth();
   const [planes, setPlanes] = useState<Plan[]>([]);
   const [suscripcionActual, setSuscripcionActual] = useState<UserSubscription | null>(null);
   const [infoSuscripcion, setInfoSuscripcion] = useState<UserSubscriptionInfo | null>(null);
@@ -27,10 +27,20 @@ export const useSubscription = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (loadingAuth) {
+      return;
+    }
+
     if (user) {
       cargarDatos();
+    } else {
+      setPlanes([]);
+      setSuscripcionActual(null);
+      setInfoSuscripcion(null);
+      setSolicitudes([]);
+      setCargando(false);
     }
-  }, [user]);
+  }, [user, loadingAuth]);
 
   const cargarDatos = async () => {
     try {

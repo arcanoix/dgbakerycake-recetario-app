@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { User } from '@supabase/supabase-js';
-import { supabaseAuth, getCurrentUser } from '@/lib/supabase-auth';
+import { supabaseAuth, getSession } from '@/lib/supabase-auth';
 import { useRouter } from 'next/navigation';
 import { sincronizarPrecioBCVAlLogin } from '@/lib/bcvSync';
 import { registrarActividad } from '@/lib/subscriptionStorage';
@@ -38,10 +38,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Verificar sesión actual
     const checkUser = async () => {
       try {
-        const currentUser = await getCurrentUser();
-        setUser(currentUser);
+        const session = await getSession();
+        setUser(session?.user ?? null);
       } catch (error) {
         console.error('Error al verificar usuario:', error);
+        setUser(null);
       } finally {
         setLoading(false);
       }

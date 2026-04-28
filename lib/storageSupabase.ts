@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 import { Producto, Receta, ConfiguracionGlobal, UnidadMedidaAdmin, CategoriaAdmin } from '@/types';
-import { registrarActividad } from './subscriptionStorage';
+import { registrarActividad, registrarErrorSistema } from './subscriptionStorage';
 
 // ============================================
 // PRODUCTOS
@@ -13,7 +13,7 @@ export const obtenerProductos = async (): Promise<Producto[]> => {
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Error al obtener productos:', error);
+    registrarErrorSistema(`Error al obtener productos: ${String(error)}`).catch(() => {});
     return [];
   }
 
@@ -30,7 +30,7 @@ export const obtenerProductoPorId = async (id: string): Promise<Producto | null>
   if (error) {
     // PGRST116 es esperado cuando no se encuentra el registro
     if (error.code !== 'PGRST116') {
-      console.error('Error al obtener producto:', error);
+      registrarErrorSistema(`Error al obtener producto: ${String(error)}`).catch(() => {});
     }
     return null;
   }
@@ -56,7 +56,7 @@ export const guardarProducto = async (producto: Producto) => {
       .eq('id', producto.id);
 
     if (error) {
-      console.error('Error al actualizar producto:', error);
+      registrarErrorSistema(`Error al actualizar producto: ${String(error)}`).catch(() => {});
       return { exitoso: false, error: error.message };
     }
     registrarActividad('update', 'productos', `Producto actualizado: ${producto.nombre}`, producto.id, producto.nombre);
@@ -67,7 +67,7 @@ export const guardarProducto = async (producto: Producto) => {
       .insert([productoData]);
 
     if (error) {
-      console.error('Error al crear producto:', error);
+      registrarErrorSistema(`Error al crear producto: ${String(error)}`).catch(() => {});
       return { exitoso: false, error: error.message };
     }
     registrarActividad('create', 'productos', `Producto creado: ${producto.nombre}`, producto.id, producto.nombre);
@@ -83,7 +83,7 @@ export const eliminarProducto = async (id: string) => {
     .eq('id', id);
 
   if (error) {
-    console.error('Error al eliminar producto:', error);
+    registrarErrorSistema(`Error al eliminar producto: ${String(error)}`).catch(() => {});
     return { exitoso: false, error: error.message };
   }
 
@@ -102,7 +102,7 @@ export const obtenerRecetas = async (): Promise<Receta[]> => {
     .order('fecha_creacion', { ascending: false });
 
   if (error) {
-    console.error('Error al obtener recetas:', error);
+    registrarErrorSistema(`Error al obtener recetas: ${String(error)}`).catch(() => {});
     return [];
   }
 
@@ -119,7 +119,7 @@ export const obtenerRecetaPorId = async (id: string): Promise<Receta | null> => 
   if (error) {
     // PGRST116 es esperado cuando no se encuentra el registro
     if (error.code !== 'PGRST116') {
-      console.error('Error al obtener receta:', error);
+      registrarErrorSistema(`Error al obtener receta: ${String(error)}`).catch(() => {});
     }
     return null;
   }
@@ -145,7 +145,7 @@ export const guardarReceta = async (receta: Receta) => {
       .eq('id', receta.id);
 
     if (error) {
-      console.error('Error al actualizar receta:', error);
+      registrarErrorSistema(`Error al actualizar receta: ${String(error)}`).catch(() => {});
       return { exitoso: false, error: error.message };
     }
     registrarActividad('update', 'recetas', `Receta actualizada: ${receta.nombre}`, receta.id, receta.nombre);
@@ -156,7 +156,7 @@ export const guardarReceta = async (receta: Receta) => {
       .insert([recetaData]);
 
     if (error) {
-      console.error('Error al crear receta:', error);
+      registrarErrorSistema(`Error al crear receta: ${String(error)}`).catch(() => {});
       return { exitoso: false, error: error.message };
     }
     registrarActividad('create', 'recetas', `Receta creada: ${receta.nombre}`, receta.id, receta.nombre);
@@ -172,7 +172,7 @@ export const eliminarReceta = async (id: string) => {
     .eq('id', id);
 
   if (error) {
-    console.error('Error al eliminar receta:', error);
+    registrarErrorSistema(`Error al eliminar receta: ${String(error)}`).catch(() => {});
     return { exitoso: false, error: error.message };
   }
 
@@ -192,7 +192,7 @@ export const obtenerConfiguracion = async (): Promise<ConfiguracionGlobal | null
     .maybeSingle();
 
   if (error) {
-    console.error('Error al obtener configuración:', error);
+    registrarErrorSistema(`Error al obtener configuración: ${String(error)}`).catch(() => {});
     return null;
   }
 

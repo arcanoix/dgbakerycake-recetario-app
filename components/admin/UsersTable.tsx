@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Edit, Ban, Play, UserCog, ShieldAlert, Trash2 } from "lucide-react";
 import { suspenderUsuario, reactivarUsuario, cambiarRolUsuario, eliminarUsuario, obtenerPlanPorNombre } from "@/lib/subscriptionStorage";
 import { EditUserModal } from "@/components/admin/EditUserModal";
 
@@ -241,50 +242,59 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
                       {formatDate(usuario.end_date)}
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex gap-2 justify-end flex-wrap">
+                      <div className="flex gap-1 justify-end flex-wrap">
                         <Button
-                          size="sm"
+                          size="icon"
                           variant="outline"
+                          title="Editar usuario"
                           onClick={() => setUsuarioEditando(usuario)}
                           disabled={cargandoAccion === usuario.id}
+                          className="h-8 w-8"
                         >
-                          ✏️ Editar
+                          <Edit className="h-4 w-4 text-gray-600" />
                         </Button>
                         {usuario.subscription_status === "active" ? (
                           <Button
-                            size="sm"
+                            size="icon"
                             variant="destructive"
+                            title="Suspender suscripción"
                             onClick={() => handleSuspenderUsuario(usuario.id, usuario.email)}
                             disabled={cargandoAccion === usuario.id}
+                            className="h-8 w-8"
                           >
-                            {cargandoAccion === usuario.id ? "..." : "Suspender"}
+                            <Ban className="h-4 w-4" />
                           </Button>
                         ) : (
                           <Button
-                            size="sm"
+                            size="icon"
                             variant="default"
+                            title="Reactivar suscripción"
                             onClick={() => handleReactivarUsuario(usuario.id, usuario.email)}
                             disabled={cargandoAccion === usuario.id}
+                            className="h-8 w-8"
                           >
-                            {cargandoAccion === usuario.id ? "..." : "Reactivar"}
+                            <Play className="h-4 w-4" />
                           </Button>
                         )}
                         <Button
-                          size="sm"
+                          size="icon"
                           variant="outline"
+                          title={usuario.role === "admin" ? "Hacer Cliente" : "Hacer Admin"}
                           onClick={() => handleCambiarRol(usuario.id, usuario.email, usuario.role)}
                           disabled={cargandoAccion === usuario.id}
+                          className="h-8 w-8"
                         >
-                          {usuario.role === "admin" ? "→ Cliente" : "→ Admin"}
+                          {usuario.role === "admin" ? <UserCog className="h-4 w-4 text-gray-600" /> : <ShieldAlert className="h-4 w-4 text-blue-600" />}
                         </Button>
                         <Button
-                          size="sm"
+                          size="icon"
                           variant="destructive"
+                          title="Eliminar usuario"
                           onClick={() => handleEliminarUsuario(usuario.id, usuario.email)}
                           disabled={cargandoAccion === usuario.id}
-                          className="bg-red-700 hover:bg-red-800"
+                          className="h-8 w-8 bg-red-700 hover:bg-red-800"
                         >
-                          {cargandoAccion === usuario.id ? "..." : "🗑️ Eliminar"}
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </TableCell>

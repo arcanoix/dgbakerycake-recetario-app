@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRole } from "@/hooks/useRole";
 import { usePlanAccess } from "@/hooks/usePlanAccess";
 import { Button } from "@/components/ui/button";
 
@@ -39,8 +38,7 @@ export const Navbar = () => {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, signOut } = useAuth();
-  const { isAdmin } = useRole();
-  const { canAccess, getPlanDisplayName } = usePlanAccess();
+  const { canAccess, getPlanDisplayName, isAdmin } = usePlanAccess();
 
   if (pathname.startsWith('/auth/') || !user) {
     return null;

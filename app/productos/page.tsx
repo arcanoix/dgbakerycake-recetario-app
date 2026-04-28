@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loading } from "@/components/ui/loading";
 import { motion } from "motion/react";
-import { Package, AlertCircle, Lock, ArrowRight, Upload } from "lucide-react";
+import { Package, AlertCircle, Lock, ArrowRight, Upload, RefreshCw } from "lucide-react";
 
 export default function ProductosPage() {
   const router = useRouter();
@@ -27,6 +27,7 @@ export default function ProductosPage() {
     eliminar,
     buscarProductos,
     importarProductosMasivo,
+    cargarProductos,
   } = useProductos();
 
   const { getCurrentCount, getPlanDisplayName, getPlanName, cargando: cargandoPlan } = usePlanAccess();
@@ -42,6 +43,7 @@ export default function ProductosPage() {
 
   const limitInfo = getCurrentCount('productos', productos.length);
   const canCreate = limitInfo.canCreate && getPlanName() !== 'free';
+  const isDataLoading = cargando || cargandoPlan;
 
   const handleSubmit = async (datos: ProductoFormData): Promise<void> => {
     let exito = false;
@@ -88,10 +90,6 @@ export default function ProductosPage() {
     setMostrarImportacion(true);
   };
 
-  if (cargando || cargandoPlan) {
-    return <Loading text="Cargando productos..." />;
-  }
-
   const planName = getPlanName();
   const isLimited = planName === 'free' || planName === 'basico';
 
@@ -118,10 +116,15 @@ export default function ProductosPage() {
             <Button 
               onClick={handleNuevo} 
               size="lg"
-              disabled={!canCreate}
-              className={`gap-2 ${canCreate ? 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 border-0' : ''}`}
+              disabled={isDataLoading || !canCreate}
+              className={`gap-2 ${canCreate && !isDataLoading ? 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 border-0' : ''}`}
             >
-              {canCreate ? (
+              {isDataLoading ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  Cargando...
+                </>
+              ) : canCreate ? (
                 <> + Nuevo Producto</>
               ) : (
                 <>
@@ -134,7 +137,7 @@ export default function ProductosPage() {
               onClick={handleImportar}
               size="lg"
               variant="outline"
-              disabled={!canCreate}
+              disabled={isDataLoading || !canCreate}
               className="gap-2"
             >
               <Upload className="w-4 h-4" />
@@ -143,7 +146,7 @@ export default function ProductosPage() {
           </div>
         </motion.div>
 
-        {isLimited && (
+        {!cargandoPlan && isLimited && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -178,6 +181,9 @@ export default function ProductosPage() {
           <Card className="border-red-200">
             <CardContent className="py-4">
               <p className="text-red-600">{error}</p>
+              <Button variant="link" onClick={() => cargarProductos()} className="px-0 mt-2">
+                Intentar nuevamente
+              </Button>
             </CardContent>
           </Card>
         )}
@@ -205,6 +211,7 @@ export default function ProductosPage() {
               value={terminoBusqueda}
               onChange={(e) => setTerminoBusqueda(e.target.value)}
               className="max-w-md"
+              disabled={cargando}
             />
             {terminoBusqueda && (
               <Button variant="outline" onClick={() => setTerminoBusqueda("")}>
@@ -214,7 +221,7 @@ export default function ProductosPage() {
           </div>
         )}
 
-        {!mostrarFormulario && !mostrarImportacion && productos.length > 0 && (
+        {!mostrarFormulario && !mostrarImportacion && !cargando && productos.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card>
               <CardContent className="py-4">
@@ -239,7 +246,11 @@ export default function ProductosPage() {
           </div>
         )}
 
-        {!mostrarFormulario && !mostrarImportacion && (
+        {cargando ? (
+          <div className="py-12 flex justify-center">
+            <Loading text="Cargando tus productos..." />
+          </div>
+        ) : !mostrarFormulario && !mostrarImportacion && (
           <ProductoList
             productos={productosFiltrados}
             onEdit={handleEdit}
@@ -252,3 +263,4 @@ export default function ProductosPage() {
     </ProtectedRoute>
   );
 }
+

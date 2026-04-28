@@ -74,3 +74,9 @@ EXCEPTION WHEN OTHERS THEN
   RETURN NEW;
 END;
 $function$;
+
+-- Añadir politicas para que los admins puedan leer los datos (conteos, etc) de todos los usuarios
+CREATE POLICY "Admins pueden ver todos los productos" ON public.productos FOR SELECT TO authenticated USING (public.is_admin(auth.uid()));
+CREATE POLICY "Admins pueden ver todas las recetas" ON public.recetas FOR SELECT TO authenticated USING (public.is_admin(auth.uid()));
+CREATE POLICY "Admins pueden ver todos los clientes" ON public.clientes FOR SELECT TO authenticated USING (public.is_admin(auth.uid()));
+CREATE POLICY "Admins pueden ver todas las ordenes" ON public.ordenes FOR SELECT TO authenticated USING (public.is_admin(auth.uid()));

@@ -14,7 +14,7 @@ export const obtenerProductos = async (): Promise<Producto[]> => {
 
   if (error) {
     registrarErrorSistema(`Error al obtener productos: ${String(error)}`).catch(() => {});
-    return [];
+    throw error;
   }
 
   return (data || []).map(mapProductoFromDB);

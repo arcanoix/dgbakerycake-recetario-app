@@ -25,6 +25,7 @@ export const useProductos = () => {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [errorCarga, setErrorCarga] = useState<string | null>(null);
 
   // Cargar productos al montar el componente
   useEffect(() => {
@@ -46,9 +47,13 @@ export const useProductos = () => {
       setCargando(true);
       const productosStorage = await obtenerProductos();
       setProductos(productosStorage);
-      setError(null);
+      setErrorCarga(null);
     } catch (err) {
-      setError("Error al cargar los productos");
+      setErrorCarga(
+        productos.length > 0
+          ? "No se pudo actualizar la lista por una conexión lenta. Se muestran los últimos productos cargados."
+          : "No se pudieron cargar los productos en este momento. Revisa tu conexión e intenta nuevamente."
+      );
     } finally {
       setCargando(false);
     }
@@ -306,6 +311,7 @@ export const useProductos = () => {
     productos,
     cargando,
     error,
+    errorCarga,
     cargarProductos,
     obtenerProducto,
     crearProducto,

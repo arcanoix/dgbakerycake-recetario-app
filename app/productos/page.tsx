@@ -22,6 +22,7 @@ export default function ProductosPage() {
     productos,
     cargando,
     error,
+    errorCarga,
     crearProducto,
     actualizarProducto,
     eliminar,
@@ -188,6 +189,28 @@ export default function ProductosPage() {
           </Card>
         )}
 
+        {!cargando && errorCarga && productos.length === 0 && (
+          <Card className="border-amber-200 bg-amber-50/70">
+            <CardContent className="py-6 space-y-3">
+              <p className="font-semibold text-amber-900">No pudimos cargar tus productos</p>
+              <p className="text-amber-800">{errorCarga}</p>
+              <Button variant="outline" onClick={() => cargarProductos()} className="gap-2 border-amber-300 text-amber-900 hover:bg-amber-100">
+                <RefreshCw className="w-4 h-4" />
+                Reintentar carga
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {!cargando && errorCarga && productos.length > 0 && (
+          <Card className="border-amber-200 bg-amber-50/50">
+            <CardContent className="py-4">
+              <p className="text-amber-900 font-medium">Conexión lenta detectada</p>
+              <p className="text-amber-800 text-sm">{errorCarga}</p>
+            </CardContent>
+          </Card>
+        )}
+
         {mostrarFormulario && (
           <ProductoForm
             producto={productoEditando}
@@ -250,15 +273,21 @@ export default function ProductosPage() {
           <div className="py-12 flex justify-center">
             <Loading text="Cargando tus productos..." />
           </div>
-        ) : !mostrarFormulario && !mostrarImportacion && (
+        ) : !mostrarFormulario && !mostrarImportacion && !(errorCarga && productos.length === 0) ? (
           <ProductoList
             productos={productosFiltrados}
             onEdit={handleEdit}
             onDelete={async (id: string) => {
               await eliminar(id);
             }}
+            emptyTitle={terminoBusqueda ? 'No encontramos productos' : 'No hay productos registrados'}
+            emptyDescription={
+              terminoBusqueda
+                ? `No hay resultados para “${terminoBusqueda}”. Prueba con otro nombre, categoría o proveedor.`
+                : 'Crea tu primer producto para comenzar a gestionar tus costos de producción'
+            }
           />
-        )}
+        ) : null}
       </div>
     </ProtectedRoute>
   );

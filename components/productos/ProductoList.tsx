@@ -31,9 +31,17 @@ interface ProductoListProps {
   productos: Producto[];
   onEdit: (producto: Producto) => void;
   onDelete: (id: string) => Promise<void>;
+  emptyTitle?: string;
+  emptyDescription?: string;
 }
 
-export const ProductoList = ({ productos, onEdit, onDelete }: ProductoListProps) => {
+export const ProductoList = ({
+  productos,
+  onEdit,
+  onDelete,
+  emptyTitle = 'No hay productos registrados',
+  emptyDescription = 'Crea tu primer producto para comenzar a gestionar tus costos de producción',
+}: ProductoListProps) => {
   const { configuracion } = useConfiguracion();
   const [eliminando, setEliminando] = useState<string | null>(null);
 
@@ -57,10 +65,10 @@ export const ProductoList = ({ productos, onEdit, onDelete }: ProductoListProps)
           <Package className="w-10 h-10 text-violet-500" />
         </div>
         <h3 className="text-xl font-semibold text-gray-900 mb-2">
-          No hay productos registrados
+          {emptyTitle}
         </h3>
         <p className="text-gray-700 text-center max-w-md">
-          Crea tu primer producto para comenzar a gestionar tus costos de producción
+          {emptyDescription}
         </p>
       </motion.div>
     );

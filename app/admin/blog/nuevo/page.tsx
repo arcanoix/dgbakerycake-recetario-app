@@ -1,7 +1,12 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { BlogPostForm } from "@/components/blog/BlogPostForm";
+
+const BlogPostForm = dynamic(
+  () => import("@/components/blog/BlogPostForm").then((mod) => mod.BlogPostForm),
+  { ssr: false }
+);
 
 export default function NuevoPostPage() {
   return (

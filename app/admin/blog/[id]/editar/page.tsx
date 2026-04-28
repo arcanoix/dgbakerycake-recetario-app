@@ -2,11 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { BlogPostForm } from "@/components/blog/BlogPostForm";
 import { useRole } from "@/hooks/useRole";
 import { obtenerPostPorId } from "@/lib/blog";
 import { BlogPost } from "@/types/blog";
+
+const BlogPostForm = dynamic(
+  () => import("@/components/blog/BlogPostForm").then((mod) => mod.BlogPostForm),
+  { ssr: false }
+);
 
 export default function EditarPostPage() {
   const params = useParams();

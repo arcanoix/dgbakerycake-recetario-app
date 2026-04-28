@@ -293,7 +293,7 @@ function mapProductoFromDB(data: any): Producto {
     proveedor: data.proveedor || '',
     notas: data.notas || '',
     fechaCreacion: new Date(data.created_at),
-    fechaActualizacion: new Date(data.fecha_actualizacion),
+    fechaActualizacion: new Date(data.updated_at),
   };
 }
 
@@ -312,7 +312,7 @@ function mapProductoToDB(producto: Producto) {
     proveedor: producto.proveedor || null,
     notas: producto.notas || null,
     created_at: producto.fechaCreacion.toISOString(),
-    fecha_actualizacion: producto.fechaActualizacion.toISOString(),
+    updated_at: producto.fechaActualizacion.toISOString(),
   };
 }
 

@@ -1,5 +1,6 @@
+"use client";
+
 import { Loader2 } from "lucide-react";
-import { motion } from "motion/react";
 
 interface LoadingProps {
   text?: string;
@@ -14,11 +15,7 @@ export function Loading({ text = "Cargando...", fullScreen = false, icon }: Load
 
   return (
     <div className={containerClasses}>
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="flex flex-col items-center gap-4"
-      >
+      <div className="flex flex-col items-center gap-4">
         <div className="relative">
           <div className="absolute inset-0 bg-blue-100 rounded-full blur-xl opacity-50 animate-pulse"></div>
           {icon ? (
@@ -28,7 +25,7 @@ export function Loading({ text = "Cargando...", fullScreen = false, icon }: Load
           )}
         </div>
         <p className="text-gray-600 font-medium animate-pulse">{text}</p>
-      </motion.div>
+      </div>
     </div>
   );
 }

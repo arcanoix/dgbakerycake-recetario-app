@@ -501,24 +501,57 @@ export const reactivarUsuario = async (
   planId?: string
 ): Promise<{ exitoso: boolean; error?: string }> => {
   try {
-    const updateData: any = { 
-      status: 'active',
-      updated_at: new Date().toISOString()
-    };
-    
-    if (planId) {
-      updateData.plan_id = planId;
+    // Primero, verificamos si existe alguna suscripción para el usuario
+    const { data: subs, error: checkError } = await supabase
+      .from('user_subscriptions')
+      .select('id')
+      .eq('user_id', userId)
+      .limit(1);
+
+    if (checkError) {
+      console.error('Error al verificar suscripción:', checkError);
+      return { exitoso: false, error: checkError.message };
     }
 
-    // Reactivar la suscripción del usuario
-    const { error } = await supabase
-      .from('user_subscriptions')
-      .update(updateData)
-      .eq('user_id', userId);
+    if (subs && subs.length > 0) {
+      // El usuario ya tiene al menos una suscripción (quizás cancelada), la actualizamos
+      const updateData: any = { 
+        status: 'active',
+        updated_at: new Date().toISOString()
+      };
+      
+      if (planId) {
+        updateData.plan_id = planId;
+      }
 
-    if (error) {
-      console.error('Error al reactivar usuario:', error);
-      return { exitoso: false, error: error.message };
+      const { error } = await supabase
+        .from('user_subscriptions')
+        .update(updateData)
+        .eq('user_id', userId);
+
+      if (error) {
+        console.error('Error al actualizar suscripción:', error);
+        return { exitoso: false, error: error.message };
+      }
+    } else {
+      // El usuario nunca tuvo una suscripción, debemos insertarla
+      if (!planId) {
+        return { exitoso: false, error: 'No se puede reactivar: el usuario no tiene suscripción y no se proporcionó un plan por defecto.' };
+      }
+
+      const { error } = await supabase
+        .from('user_subscriptions')
+        .insert({
+          user_id: userId,
+          plan_id: planId,
+          status: 'active',
+          start_date: new Date().toISOString()
+        });
+
+      if (error) {
+        console.error('Error al insertar nueva suscripción:', error);
+        return { exitoso: false, error: error.message };
+      }
     }
 
     return { exitoso: true };

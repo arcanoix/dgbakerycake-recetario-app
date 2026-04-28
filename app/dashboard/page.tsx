@@ -62,6 +62,7 @@ import {
   Crown,
   CheckCircle2,
   Sparkles,
+  RefreshCw,
 } from "lucide-react";
 
 const estadoBadge: Record<string, string> = {
@@ -82,13 +83,14 @@ const estadoLabel: Record<string, string> = {
 
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth();
-  const { productos, cargando: cargandoProductos, errorCarga: errorCargaProductos } = useProductos();
-  const { recetas, cargando: cargandoRecetas, errorCarga: errorCargaRecetas } = useRecetas();
+  const { productos, cargando: cargandoProductos, errorCarga: errorCargaProductos, cargarProductos } = useProductos();
+  const { recetas, cargando: cargandoRecetas, errorCarga: errorCargaRecetas, cargarRecetas } = useRecetas();
   const { configuracion, cargando: cargandoConfiguracion, errorCarga: errorCargaConfiguracion, cargarConfiguracion } = useConfiguracion();
-  const { ordenes, cargando: cargandoOrdenes, errorCarga: errorCargaOrdenes } = useOrdenes();
+  const { ordenes, cargando: cargandoOrdenes, errorCarga: errorCargaOrdenes, cargarOrdenes } = useOrdenes();
   const { clientes, errorCarga: errorCargaClientes, cargarClientes } = useClientes();
   const { canAccess, getPlanDisplayName, cargando: cargandoPlan } = usePlanAccess();
   const [mounted, setMounted] = useState(false);
+  const [recargandoDatos, setRecargandoDatos] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -100,6 +102,21 @@ export default function DashboardPage() {
       window.location.href = "/";
     }
   }, [user, authLoading]);
+
+  const recargarDashboard = async () => {
+    setRecargandoDatos(true);
+    try {
+      await Promise.all([
+        cargarConfiguracion(),
+        cargarProductos(),
+        cargarRecetas(),
+        cargarOrdenes(),
+        cargarClientes(),
+      ]);
+    } finally {
+      setRecargandoDatos(false);
+    }
+  };
 
   // Mostrar skeleton si auth aún no resolvió o configuración no cargó
   // Los charts tienen su propio skeleton via dynamic() loading
@@ -199,8 +216,19 @@ export default function DashboardPage() {
 
         {(errorCargaProductos || errorCargaRecetas || errorCargaOrdenes || errorCargaClientes) && (
           <Card className="mb-6 border-amber-200 bg-amber-50/70">
-            <CardContent className="py-4 space-y-2 text-sm text-amber-900">
-              <p className="font-semibold">Algunas secciones están usando datos parciales</p>
+            <CardContent className="py-4 space-y-3 text-sm text-amber-900">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <p className="font-semibold">Algunas secciones están usando datos parciales</p>
+                <Button
+                  variant="outline"
+                  onClick={recargarDashboard}
+                  disabled={recargandoDatos}
+                  className="gap-2 border-amber-300 text-amber-900 hover:bg-amber-100"
+                >
+                  <RefreshCw className={`w-4 h-4 ${recargandoDatos ? 'animate-spin' : ''}`} />
+                  {recargandoDatos ? 'Recargando...' : 'Recargar datos'}
+                </Button>
+              </div>
               {errorCargaProductos && <p>Productos: {errorCargaProductos}</p>}
               {errorCargaRecetas && <p>Recetas: {errorCargaRecetas}</p>}
               {errorCargaOrdenes && <p>Órdenes: {errorCargaOrdenes}</p>}

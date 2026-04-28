@@ -35,7 +35,7 @@ export const StockList = ({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {stocksMostrados.map((s) => {
-        const tieneAlerta = s.stockMinimo > 0 && s.stockActual <= s.stockMinimo;
+        const tieneAlerta = s.esStockCritico;
         return (
           <Card
             key={s.productoId}

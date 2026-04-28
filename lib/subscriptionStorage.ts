@@ -498,18 +498,23 @@ export const suspenderUsuario = async (
 
 export const reactivarUsuario = async (
   userId: string,
-  planId: string
+  planId?: string
 ): Promise<{ exitoso: boolean; error?: string }> => {
   try {
+    const updateData: any = { 
+      status: 'active',
+      updated_at: new Date().toISOString()
+    };
+    
+    if (planId) {
+      updateData.plan_id = planId;
+    }
+
     // Reactivar la suscripción del usuario
     const { error } = await supabase
       .from('user_subscriptions')
-      .update({ 
-        status: 'active',
-        updated_at: new Date().toISOString()
-      })
-      .eq('user_id', userId)
-      .eq('plan_id', planId);
+      .update(updateData)
+      .eq('user_id', userId);
 
     if (error) {
       console.error('Error al reactivar usuario:', error);

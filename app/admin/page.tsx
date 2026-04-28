@@ -19,6 +19,7 @@ import {
 } from "@/lib/subscriptionStorage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Loading } from "@/components/ui/loading";
 import { motion } from "motion/react";
 import { 
   CreditCard, Users, BarChart3, Activity, RefreshCw, 
@@ -129,16 +130,7 @@ export default function AdminPage() {
   if (cargandoRole || cargando) {
     return (
       <ProtectedRoute>
-        <div className="min-h-screen flex items-center justify-center">
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center"
-          >
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full border-4 border-t-transparent border-violet-500 animate-spin"></div>
-            <p className="text-gray-700">Cargando panel de administrador...</p>
-          </motion.div>
-        </div>
+        <Loading text="Cargando panel de administrador..." fullScreen />
       </ProtectedRoute>
     );
   }

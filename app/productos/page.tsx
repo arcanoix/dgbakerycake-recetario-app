@@ -12,6 +12,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { Loading } from "@/components/ui/loading";
 import { motion } from "motion/react";
 import { Package, AlertCircle, Lock, ArrowRight, Upload } from "lucide-react";
 
@@ -28,7 +29,7 @@ export default function ProductosPage() {
     importarProductosMasivo,
   } = useProductos();
 
-  const { getCurrentCount, getPlanDisplayName, getPlanName } = usePlanAccess();
+  const { getCurrentCount, getPlanDisplayName, getPlanName, cargando: cargandoPlan } = usePlanAccess();
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [mostrarImportacion, setMostrarImportacion] = useState(false);
@@ -87,12 +88,8 @@ export default function ProductosPage() {
     setMostrarImportacion(true);
   };
 
-  if (cargando) {
-    return (
-      <div className="container mx-auto p-6">
-        <p className="text-center">Cargando productos...</p>
-      </div>
-    );
+  if (cargando || cargandoPlan) {
+    return <Loading text="Cargando productos..." />;
   }
 
   const planName = getPlanName();

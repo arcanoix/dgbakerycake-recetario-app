@@ -7,6 +7,7 @@ import { PricingCard } from "@/components/subscription/PricingCard";
 import { useSubscription } from "@/hooks/useSubscription";
 import { SubscriptionPlan } from "@/types/subscription";
 import { Card, CardContent } from "@/components/ui/card";
+import { Loading } from "@/components/ui/loading";
 import { motion } from "motion/react";
 import { Crown, CreditCard, Wallet, Globe, Check, Sparkles } from "lucide-react";
 
@@ -23,16 +24,7 @@ export default function PricingPage() {
   if (cargando) {
     return (
       <ProtectedRoute>
-        <div className="min-h-screen flex items-center justify-center">
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center"
-          >
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full border-4 border-t-transparent border-violet-500 animate-spin"></div>
-            <p className="text-gray-700">Cargando planes...</p>
-          </motion.div>
-        </div>
+        <Loading text="Cargando planes..." fullScreen />
       </ProtectedRoute>
     );
   }

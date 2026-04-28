@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loading } from "@/components/ui/loading";
 import { CATEGORIAS_RECETAS } from "@/lib/constants";
 import { generarDesgloseCostos } from "@/lib/calculations";
 import { motion } from "motion/react";
@@ -27,7 +28,7 @@ export default function RecetasPage() {
   const { recetas, cargando, error, crearReceta, actualizarReceta, eliminar, agregarMaterial } = useRecetas();
   const { productos } = useProductos();
   const { configuracion } = useConfiguracion();
-  const { getCurrentCount, getPlanDisplayName, getPlanName } = usePlanAccess();
+  const { getCurrentCount, getPlanDisplayName, getPlanName, cargando: cargandoPlan } = usePlanAccess();
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [recetaEditando, setRecetaEditando] = useState<Receta | undefined>();
@@ -110,7 +111,7 @@ export default function RecetasPage() {
     fechaActualizacion: new Date(),
   }) : null;
 
-  if (cargando) return <div className="container mx-auto p-6">Cargando...</div>;
+  if (cargando || cargandoPlan) return <Loading text="Cargando recetas..." />;
 
   const hayProductos = productos.length > 0;
   const limitInfo = getCurrentCount('recetas', recetas.length);

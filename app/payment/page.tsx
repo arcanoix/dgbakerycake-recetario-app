@@ -6,6 +6,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PaymentRequestForm } from "@/components/subscription/PaymentRequestForm";
 import { Plan } from "@/types/subscription";
 import { obtenerPlanPorId } from "@/lib/subscriptionStorage";
+import { Loading } from "@/components/ui/loading";
 
 function PaymentContent() {
   const searchParams = useSearchParams();
@@ -44,11 +45,7 @@ function PaymentContent() {
   };
 
   if (cargando) {
-    return (
-      <div className="container mx-auto p-6">
-        <p className="text-center">Cargando...</p>
-      </div>
-    );
+    return <Loading fullScreen />;
   }
 
   if (!plan) {
@@ -69,11 +66,7 @@ function PaymentContent() {
 export default function PaymentPage() {
   return (
     <ProtectedRoute>
-      <Suspense fallback={
-        <div className="container mx-auto p-6">
-          <p className="text-center">Cargando...</p>
-        </div>
-      }>
+      <Suspense fallback={<Loading fullScreen />}>
         <PaymentContent />
       </Suspense>
     </ProtectedRoute>

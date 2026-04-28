@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { Loading } from "@/components/ui/loading";
 import { motion } from "motion/react";
 import { Plus, Scale, Search, Filter, X } from "lucide-react";
 
@@ -85,18 +86,7 @@ export default function UnidadesPage() {
   if (cargando) {
     return (
       <ProtectedRoute>
-        <div className="container mx-auto p-6">
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }}
-            className="flex items-center justify-center h-64"
-          >
-            <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-4 rounded-full border-4 border-t-transparent border-violet-500 animate-spin"></div>
-              <p className="text-gray-700">Cargando unidades...</p>
-            </div>
-          </motion.div>
-        </div>
+        <Loading text="Cargando unidades..." fullScreen />
       </ProtectedRoute>
     );
   }

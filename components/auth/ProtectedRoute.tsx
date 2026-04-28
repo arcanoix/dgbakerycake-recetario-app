@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { Loading } from '@/components/ui/loading';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -16,14 +17,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }, []);
 
   if (!mounted) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-4xl mb-4">⏳</div>
-          <p className="text-gray-700">Cargando...</p>
-        </div>
-      </div>
-    );
+    return <Loading fullScreen icon={<div className="text-4xl">⏳</div>} />;
   }
 
   return <ProtectedContent>{children}</ProtectedContent>;
@@ -40,14 +34,7 @@ const ProtectedContent = ({ children }: ProtectedRouteProps) => {
   }, [user, loading, router]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-4xl mb-4">⏳</div>
-          <p className="text-gray-700">Verificando autenticación...</p>
-        </div>
-      </div>
-    );
+    return <Loading text="Verificando autenticación..." fullScreen icon={<div className="text-4xl">⏳</div>} />;
   }
 
   if (!user) {

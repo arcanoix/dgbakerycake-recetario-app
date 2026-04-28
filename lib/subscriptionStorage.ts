@@ -602,12 +602,19 @@ export const eliminarUsuario = async (
     }
 
     // 7. Finalmente, eliminar el usuario de auth.users
-    // Nota: Esto requiere privilegios de admin en Supabase
-    const { error: errorAuth } = await supabase.auth.admin.deleteUser(userId);
+    // Nota: Esto llama a un endpoint protegido que usa SUPABASE_SERVICE_ROLE_KEY
+    const resAuth = await fetch('/api/admin/delete-user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId }),
+    });
 
-    if (errorAuth) {
-      console.error('Error al eliminar usuario de auth:', errorAuth);
-      return { exitoso: false, error: `Error al eliminar usuario: ${errorAuth.message}` };
+    if (!resAuth.ok) {
+      const errorData = await resAuth.json().catch(() => ({}));
+      console.error('Error al eliminar usuario de auth:', errorData);
+      return { exitoso: false, error: `Error al eliminar usuario: ${errorData.error || resAuth.statusText}` };
     }
 
     return { exitoso: true };

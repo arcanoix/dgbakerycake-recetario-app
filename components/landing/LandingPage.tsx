@@ -143,31 +143,28 @@ export const LandingPage = () => {
   const { planes, cargando: cargandoPlanes } = usePublicPlanes();
 
   return (
-    <div className={`min-h-screen bg-white ${inter.variable}`} style={{ fontFamily: 'var(--font-inter)' }}>
+    <div className={`min-h-screen bg-slate-50 ${inter.variable}`} style={{ fontFamily: 'var(--font-inter)' }}>
       {/* Navigation */}
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-300"
+        className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200"
       >
-        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
+        <div className="container mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2 sm:gap-3">
-              <span className="text-2xl sm:text-3xl">🧁</span>
-              <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-amber-700 to-orange-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-inter)' }}>
+            <Link href="/" className="flex items-center gap-2">
+              <span className="text-2xl">🧁</span>
+              <span className="text-xl font-bold text-slate-900">
                 DGcost
               </span>
-              <span className="hidden sm:inline-block bg-gradient-to-r from-amber-600 to-orange-600 text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
-                BETA
-              </span>
             </Link>
-            <div className="flex items-center gap-2 sm:gap-4">
-              <Link href="/auth/login" className="text-sm sm:text-base text-gray-700 hover:text-amber-700 font-medium transition-colors">
+            <div className="flex items-center gap-4">
+              <Link href="/auth/login" className="text-sm text-slate-600 hover:text-slate-900 font-medium transition-colors">
                 Iniciar sesión
               </Link>
               <Link href="/auth/register">
-                <Button className="text-sm sm:text-base px-3 sm:px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 shadow-lg shadow-amber-200/50 transition-all">
+                <Button className="text-sm px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg transition-all">
                   Comenzar gratis
                 </Button>
               </Link>
@@ -177,38 +174,16 @@ export const LandingPage = () => {
       </motion.nav>
 
       {/* Hero Section */}
-      <section className="pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-6 relative overflow-hidden">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-          className="absolute inset-0 bg-gradient-to-br from-amber-50 via-orange-50/30 to-white"
-        />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="absolute top-20 right-0 w-96 h-96 bg-amber-300 rounded-full blur-3xl opacity-20"
-        />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="absolute bottom-0 left-0 w-96 h-96 bg-orange-300 rounded-full blur-3xl opacity-20"
-        />
-
-        <div className="container mx-auto relative">
+      <section className="pt-24 sm:pt-32 pb-16 sm:pb-24 px-4 sm:px-6">
+        <div className="container mx-auto">
           <div className="max-w-4xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <div 
-                className="inline-flex items-center gap-2 bg-amber-100 text-amber-800 px-5 py-2.5 text-sm font-semibold mb-8 shadow-sm"
-                style={{ borderRadius: '20px 8px 20px 8px' }}
-              >
-                <span>✨</span>
+              <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 px-4 py-2 rounded-full text-sm font-medium mb-8">
+                <Sparkles className="w-4 h-4" />
                 <span>100% Gratis para empezar</span>
               </div>
             </motion.div>
@@ -217,21 +192,17 @@ export const LandingPage = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 sm:mb-8 leading-tight"
-              style={{ fontFamily: 'var(--font-inter)' }}
+              className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 sm:mb-8 leading-tight tracking-tight text-slate-900"
             >
-              <span className="bg-gradient-to-r from-amber-700 via-orange-600 to-amber-700 bg-[length:200%_auto] bg-clip-text text-transparent">
-                Menos trabajo,
-              </span>
-              <br />
-              <span className="text-gray-900">más ganancias</span>
+              Calcula tus costos,<br />
+              <span className="text-indigo-600">gana más</span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="text-lg sm:text-xl md:text-2xl text-gray-600 mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed font-normal px-4 sm:px-0"
+              className="text-lg sm:text-xl text-slate-600 mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed px-4 sm:px-0"
             >
               DGcost calcula automáticamente el costo de tus recetas.
               Deja de adivinar precios y empieza a ganar más con cada venta.
@@ -245,27 +216,21 @@ export const LandingPage = () => {
             >
               <Link href="/auth/register">
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="h-12 sm:h-14 text-base sm:text-lg px-6 sm:px-8 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 shadow-lg shadow-amber-300/50 font-semibold flex items-center justify-center gap-2 text-white w-full sm:w-auto"
-                  style={{ borderRadius: '28px 12px 28px 12px' }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="h-12 px-8 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition-colors w-full sm:w-auto"
                 >
                   Comenzar Gratis
-                  <span>→</span>
+                  <ArrowRight className="w-4 h-4" />
                 </motion.button>
               </Link>
               <Link href="/auth/login">
                 <motion.button
-                  whileHover={{ scale: 1.05, backgroundColor: 'rgba(217, 119, 6, 0.1)' }}
-                  whileTap={{ scale: 0.95 }}
-                  className="h-12 sm:h-14 text-base sm:text-lg px-6 sm:px-8 border-2 border-amber-300 text-amber-700 font-semibold flex items-center justify-center gap-2 hover:border-amber-400 hover:shadow-md transition-all w-full sm:w-auto"
-                  style={{ borderRadius: '12px 28px 12px 28px' }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="h-12 px-8 border border-slate-200 text-slate-700 font-medium rounded-lg flex items-center justify-center gap-2 hover:border-slate-300 hover:bg-slate-50 transition-all w-full sm:w-auto"
                 >
                   Ver demo
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
                 </motion.button>
               </Link>
             </motion.div>
@@ -274,7 +239,7 @@ export const LandingPage = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
-              className="grid grid-cols-3 gap-4 sm:gap-8 max-w-2xl mx-auto px-4 sm:px-0"
+              className="grid grid-cols-3 gap-4 sm:gap-8 max-w-2xl mx-auto px-4 sm:px-0 pt-8 border-t border-slate-200"
             >
               {[
                 { value: "500+", label: "Usuarios" },
@@ -287,10 +252,10 @@ export const LandingPage = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.4, delay: 0.6 + i * 0.1 }}
                 >
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-amber-700 to-orange-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-inter)' }}>
+                  <div className="text-2xl sm:text-3xl font-bold text-slate-900">
                     {stat.value}
                   </div>
-                  <div className="text-gray-600 text-xs sm:text-sm font-medium">{stat.label}</div>
+                  <div className="text-slate-500 text-xs sm:text-sm font-medium">{stat.label}</div>
                 </motion.div>
               ))}
             </motion.div>
@@ -300,13 +265,13 @@ export const LandingPage = () => {
 
       {/* Problems Section */}
       <AnimatedSection>
-        <section className="py-12 sm:py-20 px-4 sm:px-6 bg-gray-100">
+        <section className="py-16 sm:py-24 px-4 sm:px-6 bg-white">
           <div className="container mx-auto">
             <div className="max-w-3xl mx-auto">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4 text-gray-900" style={{ fontFamily: 'var(--font-inter)' }}>
-              ¿Te suena conocido?
-            </h2>
-            <p className="text-base sm:text-xl text-gray-600 text-center mb-8 sm:mb-12 px-4 sm:px-0">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-4 text-slate-900">
+                ¿Te suena conocido?
+              </h2>
+              <p className="text-base sm:text-lg text-slate-600 text-center mb-12 px-4 sm:px-0">
                 Estos son los problemas que enfrentan los reposteros cada día
               </p>
 
@@ -361,42 +326,33 @@ export const LandingPage = () => {
 
       {/* Features Section */}
       <AnimatedSection>
-        <section className="py-12 sm:py-20 px-4 sm:px-6">
+        <section className="py-16 sm:py-24 px-4 sm:px-6 bg-slate-50">
           <div className="container mx-auto">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4 text-gray-900" style={{ fontFamily: 'var(--font-inter)' }}>
-              DGcost lo resuelve todo
-            </h2>
-            <p className="text-base sm:text-xl text-gray-600 text-center mb-10 sm:mb-16 max-w-2xl mx-auto px-4 sm:px-0">
-              La herramienta que todo repostero necesita
-            </p>
+            <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-slate-900">
+                Todo lo que necesitas
+              </h2>
+              <p className="text-base sm:text-lg text-slate-600">
+                Herramientas pensadas para reposteros profesionales
+              </p>
+            </div>
 
             <motion.div
               variants={staggerContainer}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-6xl mx-auto"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto"
             >
               {features.map((feature, index) => (
                 <motion.div key={index} variants={scaleIn}>
-                  <Card 
-                    className="bg-white border-0 shadow-xl shadow-amber-100/50 hover:shadow-2xl hover:shadow-amber-200/50 transition-all duration-300 h-full overflow-hidden"
-                    style={{
-                      borderRadius: index % 3 === 0 ? '35px 15px 35px 15px' : index % 3 === 1 ? '15px 35px 15px 35px' : '28px 18px 28px 18px'
-                    }}
-                  >
-                    <CardContent className="p-6 sm:p-8">
-                      <motion.div
-                        whileHover={{ scale: 1.1, rotate: 5 }}
-                        className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-xl sm:text-2xl mb-4 sm:mb-6"
-                        style={{
-                          borderRadius: index % 3 === 0 ? '18px 8px 18px 8px' : index % 3 === 1 ? '8px 18px 8px 18px' : '15px 10px 15px 10px'
-                        }}
-                      >
+                  <Card className="bg-white border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 h-full rounded-xl">
+                    <CardContent className="p-6">
+                      <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-xl mb-4">
                         {feature.icon}
-                      </motion.div>
-                      <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-gray-900">{feature.title}</h3>
-                      <p className="text-sm sm:text-base text-gray-700">{feature.description}</p>
+                      </div>
+                      <h3 className="text-lg font-semibold mb-2 text-slate-900">{feature.title}</h3>
+                      <p className="text-sm text-slate-600 leading-relaxed">{feature.description}</p>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -408,50 +364,36 @@ export const LandingPage = () => {
 
       {/* Mobile App Section */}
       <AnimatedSection>
-        <section className="py-12 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-amber-50 to-orange-50/30">
+        <section className="py-16 sm:py-24 px-4 sm:px-6 bg-white border-y border-slate-100">
           <div className="container mx-auto max-w-4xl">
             <div className="text-center">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true }}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white px-4 py-2 text-sm font-semibold mb-6 shadow-sm"
-                style={{ borderRadius: '18px 8px 18px 8px' }}
-              >
+              <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-sm font-medium mb-6">
                 <span>📱</span>
                 <span>Próximamente</span>
-              </motion.div>
+              </div>
               
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-gray-900" style={{ fontFamily: 'var(--font-inter)' }}>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-slate-900">
                 App Móvil en Camino
               </h2>
               
-              <p className="text-base sm:text-xl text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto px-4 sm:px-0">
-                Muy pronto podrás gestionar tus recetas y costos desde tu celular. 
-                Estamos trabajando en aplicaciones nativas para Android e iOS.
+              <p className="text-base sm:text-lg text-slate-600 mb-8 max-w-2xl mx-auto px-4 sm:px-0">
+                Muy pronto podrás gestionar tus recetas y costos desde tu celular.
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-                <div 
-                  className="flex items-center gap-3 bg-white px-5 sm:px-6 py-3 sm:py-4 shadow-lg w-full sm:w-auto max-w-xs sm:max-w-none"
-                  style={{ borderRadius: '22px 10px 22px 10px' }}
-                >
-                  <span className="text-2xl sm:text-3xl">🤖</span>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <div className="flex items-center gap-3 bg-slate-50 px-5 py-3 rounded-lg border border-slate-200">
+                  <span className="text-2xl">🤖</span>
                   <div className="text-left">
-                    <p className="text-xs text-muted-foreground">Disponible pronto en</p>
-                    <p className="font-bold text-sm sm:text-base text-gray-900">Google Play</p>
+                    <p className="text-xs text-slate-500">Disponible pronto</p>
+                    <p className="font-semibold text-sm text-slate-900">Google Play</p>
                   </div>
                 </div>
                 
-                <div 
-                  className="flex items-center gap-3 bg-white px-5 sm:px-6 py-3 sm:py-4 shadow-lg w-full sm:w-auto max-w-xs sm:max-w-none"
-                  style={{ borderRadius: '10px 22px 10px 22px' }}
-                >
-                  <span className="text-2xl sm:text-3xl">🍎</span>
+                <div className="flex items-center gap-3 bg-slate-50 px-5 py-3 rounded-lg border border-slate-200">
+                  <span className="text-2xl">🍎</span>
                   <div className="text-left">
-                    <p className="text-xs text-muted-foreground">Disponible pronto en</p>
-                    <p className="font-bold text-sm sm:text-base text-gray-900">App Store</p>
+                    <p className="text-xs text-slate-500">Disponible pronto</p>
+                    <p className="font-semibold text-sm text-slate-900">App Store</p>
                   </div>
                 </div>
               </div>
@@ -462,52 +404,47 @@ export const LandingPage = () => {
 
       {/* Testimonials Section */}
       <AnimatedSection>
-        <section className="py-12 sm:py-20 px-4 sm:px-6 bg-gray-100">
+        <section className="py-16 sm:py-24 px-4 sm:px-6 bg-slate-50">
           <div className="container mx-auto">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4 text-gray-900" style={{ fontFamily: 'var(--font-inter)' }}>
-              Lo que dicen nuestros usuarios
-            </h2>
-            <p className="text-base sm:text-xl text-gray-600 text-center mb-10 sm:mb-16 px-4 sm:px-0">
-              Reposteros como tú ya están mejorando sus negocios
-            </p>
+            <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-slate-900">
+                Lo que dicen nuestros usuarios
+              </h2>
+              <p className="text-base sm:text-lg text-slate-600">
+                Reposteros como tú ya están mejorando sus negocios
+              </p>
+            </div>
 
             <motion.div
               variants={staggerContainer}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-6xl mx-auto"
+              className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto"
             >
               {testimonials.map((testimonial, index) => (
                 <motion.div key={index} variants={scaleIn}>
-                  <Card 
-                    className="bg-white border-0 shadow-xl h-full overflow-hidden"
-                    style={{
-                      borderRadius: index === 0 ? '32px 12px 32px 12px' : index === 1 ? '12px 32px 12px 32px' : '26px 16px 26px 16px'
-                    }}
-                  >
-                    <CardContent className="p-6 sm:p-8">
-                      <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                  <Card className="bg-white border border-slate-100 shadow-sm h-full rounded-xl">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-3 mb-4">
                         <Image
                           src={testimonial.image}
                           alt={testimonial.name}
-                          width={48}
-                          height={48}
-                          className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover"
+                          width={40}
+                          height={40}
+                          className="w-10 h-10 rounded-full object-cover"
                           loading="lazy"
                           unoptimized={false}
                         />
                         <div>
-                          <h4 className="font-bold text-sm sm:text-base text-gray-900">{testimonial.name}</h4>
-                          <p className="text-muted-foreground text-xs sm:text-sm">{testimonial.role}</p>
+                          <h4 className="font-semibold text-sm text-slate-900">{testimonial.name}</h4>
+                          <p className="text-slate-500 text-xs">{testimonial.role}</p>
                         </div>
                       </div>
-                      <p className="text-sm sm:text-base text-gray-700 mb-4 sm:mb-6 italic">"{testimonial.quote}"</p>
+                      <p className="text-sm text-slate-600 mb-4 leading-relaxed">"{testimonial.quote}"</p>
                       <div className="flex items-baseline gap-2">
-                        <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-amber-700 to-orange-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-inter)' }}>
-                          {testimonial.metric}
-                        </span>
-                        <span className="text-muted-foreground text-xs sm:text-sm">{testimonial.metricLabel}</span>
+                        <span className="text-xl font-bold text-indigo-600">{testimonial.metric}</span>
+                        <span className="text-slate-500 text-xs">{testimonial.metricLabel}</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -520,26 +457,23 @@ export const LandingPage = () => {
 
       {/* Pricing Section */}
       <AnimatedSection>
-        <section className="py-12 sm:py-20 px-4 sm:px-6">
+        <section className="py-16 sm:py-24 px-4 sm:px-6 bg-white">
           <div className="container mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
-              className="text-center mb-10 sm:mb-16"
+              className="text-center mb-12 sm:mb-16 max-w-2xl mx-auto"
             >
-              <div 
-                className="inline-flex items-center gap-2 bg-amber-100 text-amber-800 px-4 py-2 text-sm font-semibold mb-6 shadow-sm"
-                style={{ borderRadius: '18px 8px 18px 8px' }}
-              >
+              <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-sm font-medium mb-6">
                 <Sparkles className="w-4 h-4" />
                 <span>Planes flexibles</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-gray-900" style={{ fontFamily: 'var(--font-inter)' }}>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-slate-900">
                 Planes para cada etapa
               </h2>
-              <p className="text-base sm:text-xl text-gray-600 max-w-2xl mx-auto px-4 sm:px-0">
+              <p className="text-base sm:text-lg text-slate-600">
                 Empieza gratis, escala cuando quieras. Todos los planes incluyen actualizaciones gratuitas.
               </p>
             </motion.div>
@@ -653,16 +587,18 @@ export const LandingPage = () => {
 
       {/* FAQ Section */}
       <AnimatedSection>
-        <section className="py-12 sm:py-20 px-4 sm:px-6 bg-gray-100">
+        <section className="py-16 sm:py-24 px-4 sm:px-6 bg-slate-50">
           <div className="container mx-auto">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4 text-gray-900" style={{ fontFamily: 'var(--font-inter)' }}>
-              Preguntas Frecuentes
-            </h2>
-            <p className="text-base sm:text-xl text-gray-600 text-center mb-10 sm:mb-16 px-4 sm:px-0">
-              Todo lo que necesitas saber
-            </p>
+            <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-slate-900">
+                Preguntas Frecuentes
+              </h2>
+              <p className="text-base sm:text-lg text-slate-600">
+                Todo lo que necesitas saber
+              </p>
+            </div>
 
-            <div className="max-w-3xl mx-auto space-y-3 sm:space-y-4">
+            <div className="max-w-3xl mx-auto space-y-4">
               {faqs.map((faq, index) => (
                 <motion.div
                   key={index}
@@ -670,23 +606,19 @@ export const LandingPage = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: index * 0.1 }}
                   viewport={{ once: true }}
-                  className="bg-white shadow-sm border border-gray-200 overflow-hidden"
-                  style={{
-                    borderRadius: index % 2 === 0 ? '24px 10px 24px 10px' : '10px 24px 10px 24px'
-                  }}
+                  className="bg-white border border-slate-200 rounded-xl overflow-hidden"
                 >
                   <button
-                    className="w-full px-4 sm:px-6 py-3 sm:py-4 text-left flex items-center justify-between gap-3"
+                    className="w-full px-6 py-4 text-left flex items-center justify-between gap-3"
                     onClick={() => setOpenFaq(openFaq === index ? null : index)}
                   >
-                    <span className="font-semibold text-sm sm:text-base text-gray-900">{faq.question}</span>
-                    <motion.span
+                    <span className="font-medium text-sm text-slate-900">{faq.question}</span>
+                    <motion.div
                       animate={{ rotate: openFaq === index ? 180 : 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="text-xl sm:text-2xl flex-shrink-0"
+                      transition={{ duration: 0.2 }}
                     >
-                      ▼
-                    </motion.span>
+                      <ChevronDown className="w-5 h-5 text-slate-400" />
+                    </motion.div>
                   </button>
                   <motion.div
                     initial={false}
@@ -694,10 +626,10 @@ export const LandingPage = () => {
                       height: openFaq === index ? "auto" : 0,
                       opacity: openFaq === index ? 1 : 0
                     }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.2 }}
                     className="overflow-hidden"
                   >
-                    <div className="px-4 sm:px-6 pb-3 sm:pb-4 text-sm sm:text-base text-gray-700">
+                    <div className="px-6 pb-4 text-sm text-slate-600 leading-relaxed">
                       {faq.answer}
                     </div>
                   </motion.div>
@@ -710,88 +642,75 @@ export const LandingPage = () => {
 
       {/* CTA Final */}
       <AnimatedSection>
-        <section className="py-12 sm:py-20 px-4 sm:px-6">
+        <section className="py-16 sm:py-24 px-4 sm:px-6 bg-white">
           <div className="container mx-auto">
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="max-w-3xl mx-auto text-center bg-gradient-to-br from-amber-600 to-orange-600 p-8 sm:p-12 text-white shadow-2xl shadow-amber-300/30"
-              style={{
-                borderRadius: '45px 20px 45px 20px'
-              }}
-            >
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'var(--font-inter)' }}>
+            <div className="max-w-3xl mx-auto text-center bg-slate-900 rounded-2xl p-8 sm:p-12 text-white">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
                 ¿Listo para empezar?
               </h2>
-              <p className="text-base sm:text-xl mb-6 sm:mb-8 opacity-95">
+              <p className="text-base sm:text-lg mb-8 text-slate-300">
                 Únete a más de 500 reposteros que ya están ganando más con cada venta
               </p>
               <Link href="/auth/register">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 bg-white text-amber-700 font-bold shadow-lg hover:shadow-xl transition-shadow w-full sm:w-auto"
-                  style={{
-                    borderRadius: '25px 12px 25px 12px'
-                  }}
-                >
+                <Button className="h-12 px-8 bg-white text-slate-900 hover:bg-slate-100 font-medium rounded-lg">
                   Crear Cuenta Gratis
-                  <span className="ml-2">→</span>
-                </motion.button>
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
               </Link>
-            </motion.div>
+            </div>
           </div>
         </section>
       </AnimatedSection>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 sm:py-16">
+      <footer className="bg-slate-900 text-white py-12 sm:py-16">
         <div className="container mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 md:gap-12 mb-8 sm:mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12 mb-12">
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <span className="text-2xl">🧁</span>
-                <span className="text-xl font-bold" style={{ fontFamily: 'var(--font-inter)' }}>DGcost</span>
+                <span className="text-xl font-semibold">DGcost</span>
               </div>
-              <p className="text-gray-400">
+              <p className="text-slate-400 text-sm">
                 La herramienta de gestión de costos para reposteros profesionales.
               </p>
             </div>
 
             <div>
-              <h4 className="font-bold mb-3 sm:mb-4 text-white text-sm sm:text-base">Producto</h4>
-              <ul className="space-y-2 text-sm sm:text-base text-gray-400">
-                <li><a href="#" className="hover:text-amber-400 transition-colors">Características</a></li>
-                <li><a href="#" className="hover:text-amber-400 transition-colors">Precios</a></li>
-                <li><a href="#" className="hover:text-amber-400 transition-colors">Tutorial</a></li>
+              <h4 className="font-semibold mb-4 text-white text-sm">Producto</h4>
+              <ul className="space-y-2 text-sm text-slate-400">
+                <li><a href="#" className="hover:text-white transition-colors">Características</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Precios</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Tutorial</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-bold mb-3 sm:mb-4 text-white text-sm sm:text-base">Empresa</h4>
-              <ul className="space-y-2 text-sm sm:text-base text-gray-400">
-                <li><a href="#" className="hover:text-amber-400 transition-colors">Sobre nosotros</a></li>
-                <li><a href="#" className="hover:text-amber-400 transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-amber-400 transition-colors">Contacto</a></li>
+              <h4 className="font-semibold mb-4 text-white text-sm">Empresa</h4>
+              <ul className="space-y-2 text-sm text-slate-400">
+                <li><a href="#" className="hover:text-white transition-colors">Sobre nosotros</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Contacto</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-bold mb-3 sm:mb-4 text-white text-sm sm:text-base">Legal</h4>
-              <ul className="space-y-2 text-sm sm:text-base text-gray-400">
-                <li><Link href="/terminos" className="hover:text-amber-400 transition-colors">Términos y Condiciones</Link></li>
-                <li><a href="#" className="hover:text-amber-400 transition-colors">Privacidad</a></li>
+              <h4 className="font-semibold mb-4 text-white text-sm">Legal</h4>
+              <ul className="space-y-2 text-sm text-slate-400">
+                <li><Link href="/terminos" className="hover:text-white transition-colors">Términos</Link></li>
+                <li><a href="#" className="hover:text-white transition-colors">Privacidad</a></li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-gray-800 pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-gray-400 text-xs sm:text-sm text-center md:text-left">
+          <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-slate-500 text-sm text-center md:text-left">
               © 2026 DGcost. Todos los derechos reservados.
             </p>
-            <div className="flex gap-3 sm:gap-4">
-              <a href="#" className="text-gray-400 hover:text-amber-400 text-xl sm:text-2xl transition-colors" aria-label="Facebook">📘</a>
-              <a href="#" className="text-gray-400 hover:text-amber-400 text-2xl transition-colors" aria-label="Instagram">📸</a>
-              <a href="#" className="text-gray-400 hover:text-amber-400 text-2xl transition-colors" aria-label="Twitter">🐦</a>
+            <div className="flex gap-4">
+              <a href="#" className="text-slate-400 hover:text-white transition-colors" aria-label="Facebook">📘</a>
+              <a href="#" className="text-slate-400 hover:text-white transition-colors" aria-label="Instagram">📸</a>
+              <a href="#" className="text-slate-400 hover:text-white transition-colors" aria-label="Twitter">🐦</a>
             </div>
           </div>
         </div>

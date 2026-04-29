@@ -14,6 +14,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Eye, Copy, Check } from "lucide-react";
 
 interface ActivityLogsTableProps {
   logs: ActivityLog[];
@@ -47,6 +56,8 @@ export const ActivityLogsTable = ({ logs, title, emptyMessage }: ActivityLogsTab
   const [filtroModulo, setFiltroModulo] = useState("all");
   const [filtroAccion, setFiltroAccion] = useState("all");
   const [paginaActual, setPaginaActual] = useState(1);
+  const [selectedLog, setSelectedLog] = useState<ActivityLog | null>(null);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
   const registrosPorPagina = 25;
 
   const logsFiltrados = logs.filter((log) => {
@@ -95,6 +106,12 @@ export const ActivityLogsTable = ({ logs, title, emptyMessage }: ActivityLogsTab
         {label}
       </Badge>
     );
+  };
+
+  const copyToClipboard = (text: string, field: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedField(field);
+    setTimeout(() => setCopiedField(null), 2000);
   };
 
   return (
@@ -169,6 +186,7 @@ export const ActivityLogsTable = ({ logs, title, emptyMessage }: ActivityLogsTab
                     <TableHead>Descripción</TableHead>
                     <TableHead>IP</TableHead>
                     <TableHead>Navegador</TableHead>
+                    <TableHead className="text-right">Acciones</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -199,6 +217,160 @@ export const ActivityLogsTable = ({ logs, title, emptyMessage }: ActivityLogsTab
                         {log.user_agent
                           ? log.user_agent.split(" ").slice(0, 2).join(" ")
                           : "—"}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setSelectedLog(log)}
+                              className="h-8 gap-2"
+                            >
+                              <Eye className="h-4 w-4" />
+                              <span className="hidden sm:inline">Ver detalle</span>
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                            <DialogHeader>
+                              <DialogTitle className="flex items-center gap-2">
+                                Detalle del Log
+                                {getActionBadge(log.action)}
+                              </DialogTitle>
+                              <DialogDescription>
+                                Información completa del registro de actividad
+                              </DialogDescription>
+                            </DialogHeader>
+                            
+                            <div className="space-y-4 mt-4">
+                              {/* Fecha y hora */}
+                              <div className="grid grid-cols-3 gap-4 p-4 rounded-lg bg-muted/50">
+                                <div className="col-span-3">
+                                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                                    Fecha y hora
+                                  </label>
+                                  <p className="text-sm font-mono mt-1">
+                                    {formatDate(log.created_at)}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* Usuario e IP */}
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="p-4 rounded-lg border">
+                                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                                    Usuario
+                                  </label>
+                                  <p className="text-sm font-medium mt-1 break-all">
+                                    {log.email || (
+                                      <span className="text-muted-foreground font-mono text-xs">
+                                        {log.user_id}
+                                      </span>
+                                    )}
+                                  </p>
+                                </div>
+                                <div className="p-4 rounded-lg border">
+                                  <div className="flex items-center justify-between mb-1">
+                                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                                      Dirección IP
+                                    </label>
+                                    {log.ip_address && (
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-6 w-6 p-0"
+                                        onClick={() => copyToClipboard(log.ip_address!, 'ip')}
+                                      >
+                                        {copiedField === 'ip' ? (
+                                          <Check className="h-3 w-3 text-green-600" />
+                                        ) : (
+                                          <Copy className="h-3 w-3" />
+                                        )}
+                                      </Button>
+                                    )}
+                                  </div>
+                                  <p className="text-sm font-mono mt-1">
+                                    {log.ip_address || "—"}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* Módulo y Acción */}
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="p-4 rounded-lg border">
+                                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                                    Módulo
+                                  </label>
+                                  <div className="mt-2">
+                                    {getModuleBadge(log.module)}
+                                  </div>
+                                </div>
+                                <div className="p-4 rounded-lg border">
+                                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                                    Acción
+                                  </label>
+                                  <div className="mt-2">
+                                    {getActionBadge(log.action)}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Descripción */}
+                              <div className="p-4 rounded-lg border">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                                  Descripción
+                                </label>
+                                <p className="text-sm mt-2 whitespace-pre-wrap break-words">
+                                  {log.description || "Sin descripción"}
+                                </p>
+                              </div>
+
+                              {/* Entidad */}
+                              {log.entity_name && (
+                                <div className="p-4 rounded-lg border">
+                                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                                    Entidad afectada
+                                  </label>
+                                  <p className="text-sm font-medium mt-2">
+                                    {log.entity_name}
+                                  </p>
+                                  {log.entity_id && (
+                                    <p className="text-xs text-muted-foreground font-mono mt-1">
+                                      ID: {log.entity_id}
+                                    </p>
+                                  )}
+                                </div>
+                              )}
+
+                              {/* User Agent */}
+                              <div className="p-4 rounded-lg border">
+                                <div className="flex items-center justify-between mb-1">
+                                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                                    Navegador / User Agent
+                                  </label>
+                                  {log.user_agent && (
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-6 w-6 p-0"
+                                      onClick={() => copyToClipboard(log.user_agent!, 'ua')}
+                                    >
+                                      {copiedField === 'ua' ? (
+                                        <Check className="h-3 w-3 text-green-600" />
+                                      ) : (
+                                        <Copy className="h-3 w-3" />
+                                      )}
+                                    </Button>
+                                  )}
+                                </div>
+                                <p className="text-xs font-mono mt-2 break-all text-muted-foreground">
+                                  {log.user_agent || "—"}
+                                </p>
+                              </div>
+
+                            </div>
+                          </DialogContent>
+                        </Dialog>
                       </TableCell>
                     </TableRow>
                   ))}

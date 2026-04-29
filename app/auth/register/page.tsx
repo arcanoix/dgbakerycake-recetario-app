@@ -49,9 +49,6 @@ export default function RegisterPage() {
 
       if (result.success) {
         setSuccess(true);
-        setTimeout(() => {
-          router.push('/auth/login');
-        }, 2000);
       } else {
         setError(result.error || 'Error al registrar usuario');
       }
@@ -118,7 +115,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {!success && <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-lg text-sm">
                 {error}
@@ -126,9 +123,24 @@ export default function RegisterPage() {
             )}
 
             {success && (
-              <div className="bg-green-50 border border-green-100 text-green-600 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
-                <Check className="w-4 h-4" />
-                ¡Cuenta creada! Redirigiendo...
+              <div className="bg-indigo-50 border border-indigo-100 px-4 py-4 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Check className="w-4 h-4 text-indigo-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-900 mb-1">
+                      ¡Registro exitoso!
+                    </p>
+                    <p className="text-sm text-slate-600">
+                      Te hemos enviado un correo a <span className="font-medium">{email}</span> para confirmar tu cuenta. Por favor revisa tu bandeja de entrada y sigue las instrucciones.
+                    </p>
+                    <Link href="/auth/login" className="inline-flex items-center gap-1 text-sm text-indigo-600 font-medium mt-3 hover:text-indigo-700">
+                      Ir al inicio de sesión
+                      <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -209,16 +221,18 @@ export default function RegisterPage() {
                 </>
               )}
             </Button>
-          </form>
+          </form>}
 
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              ¿Ya tienes cuenta?{' '}
-              <Link href="/auth/login" className="text-gray-900 font-semibold hover:underline">
-                Inicia sesión
-              </Link>
-            </p>
-          </div>
+          {!success && (
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                ¿Ya tienes cuenta?{' '}
+                <Link href="/auth/login" className="text-gray-900 font-semibold hover:underline">
+                  Inicia sesión
+                </Link>
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Producto } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { formatearNumero } from "@/lib/constants";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
 import { PrecioDual } from "@/components/ui/precio-dual";
@@ -61,13 +62,13 @@ export const ProductoList = ({
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col items-center justify-center py-16 px-4"
       >
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-violet-100 to-fuchsia-100 flex items-center justify-center mb-4">
-          <Package className="w-10 h-10 text-violet-500" />
+        <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-4">
+          <Package className="w-10 h-10 text-muted-foreground" />
         </div>
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">
+        <h3 className="text-xl font-semibold mb-2">
           {emptyTitle}
         </h3>
-        <p className="text-gray-700 text-center max-w-md">
+        <p className="text-muted-foreground text-center max-w-md">
           {emptyDescription}
         </p>
       </motion.div>
@@ -86,29 +87,28 @@ export const ProductoList = ({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05, duration: 0.3 }}
           >
-            <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-sm hover:-translate-y-1 bg-white overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-rose-500" />
+            <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden">
               
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
-                    <CardTitle className="text-lg font-bold text-gray-900 truncate flex items-center gap-2">
-                      <Package className="w-5 h-5 text-violet-500 flex-shrink-0" />
+                    <CardTitle className="text-lg truncate flex items-center gap-2">
+                      <Package className="w-5 h-5 text-primary flex-shrink-0" />
                       <span className="truncate">{producto.nombre}</span>
                     </CardTitle>
                   </div>
                   {producto.categoria && (
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${categoryStyle.bg} ${categoryStyle.text} border ${categoryStyle.border} flex-shrink-0`}>
+                    <Badge variant="secondary" className="flex-shrink-0">
                       {producto.categoria}
-                    </span>
+                    </Badge>
                   )}
                 </div>
               </CardHeader>
               
               <CardContent className="space-y-4">
-                <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-4 space-y-3 border border-slate-200">
+                <div className="bg-muted/50 rounded-lg p-4 space-y-3 border">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                    <span className="text-sm font-semibold flex items-center gap-1.5">
                       <DollarSign className="w-4 h-4" />
                       Precio Total
                     </span>
@@ -120,15 +120,15 @@ export const ProductoList = ({
                     />
                   </div>
                   
-                  <div className="h-px bg-slate-300" />
+                  <div className="h-px bg-border" />
                   
                   <div className="grid grid-cols-3 gap-2">
                     <div className="text-center">
                       <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-100 mx-auto mb-1">
                         <Scale className="w-4 h-4 text-blue-600" />
                       </div>
-                      <p className="text-xs font-medium text-slate-700">Presentación</p>
-                      <p className="text-xs font-bold text-slate-900">
+                      <p className="text-xs font-medium text-muted-foreground">Presentación</p>
+                      <p className="text-xs font-bold">
                         {formatearNumero(producto.tamañoPresentacion)}
                       </p>
                       <p className="text-[10px] text-slate-600">{producto.unidadMedidaSimbolo || 'u'}</p>
@@ -137,8 +137,8 @@ export const ProductoList = ({
                       <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-100 mx-auto mb-1">
                         <ShoppingCart className="w-4 h-4 text-emerald-600" />
                       </div>
-                      <p className="text-xs font-medium text-slate-700">Cantidad</p>
-                      <p className="text-xs font-bold text-slate-900">
+                      <p className="text-xs font-medium text-muted-foreground">Cantidad</p>
+                      <p className="text-xs font-bold">
                         {producto.cantidadPresentaciones}
                       </p>
                       <p className="text-[10px] text-slate-600">unds</p>
@@ -147,8 +147,8 @@ export const ProductoList = ({
                       <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-violet-100 mx-auto mb-1">
                         <Package className="w-4 h-4 text-violet-600" />
                       </div>
-                      <p className="text-xs font-medium text-slate-700">Total</p>
-                      <p className="text-xs font-bold text-slate-900">
+                      <p className="text-xs font-medium text-muted-foreground">Total</p>
+                      <p className="text-xs font-bold">
                         {formatearNumero(producto.cantidadTotal)}
                       </p>
                       <p className="text-[10px] text-slate-600">{producto.unidadMedidaSimbolo || 'u'}</p>
@@ -178,15 +178,15 @@ export const ProductoList = ({
                 </div>
 
                 {(producto.proveedor || producto.notas) && (
-                  <div className="border-t border-gray-200 pt-3 space-y-2">
+                  <div className="border-t pt-3 space-y-2">
                     {producto.proveedor && (
-                      <div className="flex items-center gap-2 text-xs text-gray-700">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <Building2 className="w-3.5 h-3.5" />
                         <span className="truncate">{producto.proveedor}</span>
                       </div>
                     )}
                     {producto.notas && (
-                      <div className="flex items-start gap-2 text-xs text-gray-700">
+                      <div className="flex items-start gap-2 text-xs text-muted-foreground">
                         <FileText className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
                         <span className="line-clamp-2">{producto.notas}</span>
                       </div>
@@ -198,7 +198,7 @@ export const ProductoList = ({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1 gap-1.5 hover:bg-violet-50 border-gray-200"
+                    className="flex-1 gap-1.5"
                     onClick={() => onEdit(producto)}
                     disabled={eliminando === producto.id}
                   >
@@ -208,7 +208,7 @@ export const ProductoList = ({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="gap-1.5 hover:bg-red-50 border-red-200 text-red-600 hover:text-red-700"
+                    className="gap-1.5 text-destructive hover:bg-destructive/10"
                     onClick={() => {
                       if (confirm(`¿Estás seguro de eliminar "${producto.nombre}"?`)) {
                         handleDelete(producto.id);

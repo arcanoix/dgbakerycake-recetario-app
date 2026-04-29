@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CategoriaAdmin } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface CategoriaListProps {
   categorias: CategoriaAdmin[];
@@ -36,7 +37,7 @@ export const CategoriaList = ({ categorias, onEdit, onDelete, onToggleEstado }: 
     return (
       <Card>
         <CardContent className="py-8">
-          <p className="text-center text-gray-700">
+          <p className="text-center text-muted-foreground">
             No hay categorías que coincidan con los filtros seleccionados.
           </p>
         </CardContent>
@@ -59,23 +60,19 @@ export const CategoriaList = ({ categorias, onEdit, onDelete, onToggleEstado }: 
                   />
                   <div>
                     <h3 className="font-bold text-lg">{categoria.nombre}</h3>
-                    <span className={`text-xs px-2 py-1 rounded-full ${getTipoBadge(categoria.tipo)}`}>
+                    <Badge variant="secondary">
                       {categoria.tipo === 'producto' ? '📦 Producto' : '📝 Receta'}
-                    </span>
+                    </Badge>
                   </div>
                 </div>
-                <span className={`text-xs px-2 py-1 rounded-full ${
-                  categoria.activo 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-gray-100 text-gray-800'
-                }`}>
+                <Badge variant={categoria.activo ? "default" : "secondary"}>
                   {categoria.activo ? 'Activo' : 'Inactivo'}
-                </span>
+                </Badge>
               </div>
 
               {/* Descripción */}
               {categoria.descripcion && (
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-muted-foreground">
                   {categoria.descripcion}
                 </p>
               )}

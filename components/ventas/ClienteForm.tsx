@@ -66,8 +66,8 @@ export const ClienteForm = ({ cliente, onGuardar, onCancelar }: ClienteFormProps
         <CardTitle className="text-lg">
           {cliente ? "Editar Cliente" : "Nuevo Cliente"}
         </CardTitle>
-        <button onClick={onCancelar} className="p-1 rounded hover:bg-gray-100">
-          <X className="w-5 h-5 text-gray-700" />
+        <button onClick={onCancelar} className="p-1 rounded hover:bg-accent">
+          <X className="w-5 h-5 text-muted-foreground" />
         </button>
       </CardHeader>
       <CardContent>
@@ -80,7 +80,7 @@ export const ClienteForm = ({ cliente, onGuardar, onCancelar }: ClienteFormProps
               onChange={e => setNombre(e.target.value)}
               placeholder="Nombre completo del cliente"
             />
-            {errores.nombre && <p className="text-sm text-red-500">{errores.nombre}</p>}
+            {errores.nombre && <p className="text-sm text-destructive">{errores.nombre}</p>}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -93,7 +93,7 @@ export const ClienteForm = ({ cliente, onGuardar, onCancelar }: ClienteFormProps
                 onChange={e => setEmail(e.target.value)}
                 placeholder="correo@ejemplo.com"
               />
-              {errores.email && <p className="text-sm text-red-500">{errores.email}</p>}
+              {errores.email && <p className="text-sm text-destructive">{errores.email}</p>}
             </div>
             <div className="space-y-1">
               <Label htmlFor="telefono">Teléfono</Label>
@@ -128,7 +128,7 @@ export const ClienteForm = ({ cliente, onGuardar, onCancelar }: ClienteFormProps
           </div>
 
           <div className="flex gap-3 pt-2">
-            <Button type="submit" disabled={guardando} className="flex-1 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700">
+            <Button type="submit" disabled={guardando} className="flex-1">
               {guardando ? "Guardando..." : cliente ? "Actualizar" : "Crear Cliente"}
             </Button>
             <Button type="button" variant="outline" onClick={onCancelar} className="flex-1">

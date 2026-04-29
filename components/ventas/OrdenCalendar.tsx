@@ -143,7 +143,17 @@ export const OrdenCalendar = ({ ordenes, cargando, onActualizarFecha }: OrdenCal
 
   const confirmarMovimiento = async () => {
     if (!pendingMove) return;
+    
     const fechaEntrega = construirFechaEntrega(pendingMove.orden, pendingMove.fecha);
+    
+    // Validar que la fecha no sea en el pasado
+    const ahora = new Date();
+    if (fechaEntrega < ahora) {
+      alert("❌ No puedes mover una orden al pasado\n\nLa fecha de entrega debe ser hoy o posterior.");
+      setPendingMove(null);
+      return;
+    }
+    
     setGuardandoMovimiento(true);
     const ok = await onActualizarFecha(pendingMove.orden.id, fechaEntrega);
     setGuardandoMovimiento(false);
@@ -231,21 +241,22 @@ export const OrdenCalendar = ({ ordenes, cargando, onActualizarFecha }: OrdenCal
                 );
               }
 
+              const esHoy = isSameDay(date, new Date());
+              const esPasado = date < new Date(new Date().setHours(0, 0, 0, 0));
               const key = getDateKey(date);
               const pedidos = ordenesPorFecha.get(key) || [];
               const visible = pedidos.slice(0, 3);
-              const ocultos = pedidos.length - visible.length;
-              const esHoy = isSameDay(date, new Date());
-              const esHover = hoverDateKey === key;
+              const ocultos = Math.max(0, pedidos.length - 3);
+              const esHover = hoverDateKey === key && !esPasado;
 
               return (
                 <div
                   key={key}
                   className={`min-h-[120px] border-b border-r border-gray-100 p-2 space-y-2 transition-colors ${
-                    esHover ? "bg-violet-50/40" : ""
+                    esPasado ? "bg-gray-50/50 opacity-60" : esHover ? "bg-violet-50/40" : ""
                   }`}
                   onDragOver={e => {
-                    if (!draggingId) return;
+                    if (!draggingId || esPasado) return;
                     e.preventDefault();
                     setHoverDateKey(key);
                   }}
@@ -254,6 +265,15 @@ export const OrdenCalendar = ({ ordenes, cargando, onActualizarFecha }: OrdenCal
                   }}
                   onDrop={e => {
                     e.preventDefault();
+                    
+                    // Evitar drop en días pasados
+                    if (esPasado) {
+                      alert("❌ No puedes mover una orden al pasado\n\nLa fecha de entrega debe ser hoy o posterior.");
+                      setHoverDateKey(null);
+                      setDraggingId(null);
+                      return;
+                    }
+                    
                     const ordenId = e.dataTransfer.getData("text/plain");
                     setHoverDateKey(null);
                     setDraggingId(null);
@@ -265,12 +285,19 @@ export const OrdenCalendar = ({ ordenes, cargando, onActualizarFecha }: OrdenCal
                   }}
                 >
                   <div className="flex items-center justify-between">
-                    <span className={`text-xs font-semibold ${esHoy ? "text-violet-700" : "text-gray-700"}`}>
+                    <span className={`text-xs font-semibold ${
+                      esHoy ? "text-violet-700" : esPasado ? "text-gray-400" : "text-gray-700"
+                    }`}>
                       {date.getDate()}
                     </span>
                     {esHoy && (
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-violet-100 text-violet-700">
                         Hoy
+                      </span>
+                    )}
+                    {esPasado && (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
+                        Pasado
                       </span>
                     )}
                   </div>

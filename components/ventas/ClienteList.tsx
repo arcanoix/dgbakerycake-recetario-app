@@ -4,8 +4,9 @@ import { useState } from "react";
 import { Cliente } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Search, Edit2, Trash2, User, Mail, Phone, MapPin } from "lucide-react";
+import { motion } from "motion/react";
 
 interface ClienteListProps {
   clientes: Cliente[];
@@ -56,7 +57,7 @@ export const ClienteList = ({ clientes, cargando, onEditar, onEliminar }: Client
   return (
     <div className="space-y-4">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-700" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
           value={busqueda}
           onChange={e => setBusqueda(e.target.value)}
@@ -66,7 +67,7 @@ export const ClienteList = ({ clientes, cargando, onEditar, onEliminar }: Client
       </div>
 
       {clientesFiltrados.length === 0 ? (
-        <div className="text-center py-12 text-gray-700">
+        <div className="text-center py-12 text-muted-foreground">
           <User className="w-12 h-12 mx-auto mb-3 opacity-30" />
           <p className="font-medium">
             {busqueda ? "No se encontraron clientes" : "Sin clientes registrados"}
@@ -76,84 +77,100 @@ export const ClienteList = ({ clientes, cargando, onEditar, onEliminar }: Client
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {clientesFiltrados.map(cliente => (
-            <Card key={cliente.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-r from-violet-100 to-fuchsia-100 flex items-center justify-center text-violet-700 font-bold text-sm">
-                      {cliente.nombre.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900 text-sm">
-                        {cliente.nombre}
-                      </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {clientesFiltrados.map((cliente, index) => (
+            <motion.div
+              key={cliente.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05, duration: 0.3 }}
+            >
+              <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="text-lg truncate flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-violet-100 to-fuchsia-100 flex items-center justify-center text-violet-700 font-bold text-sm flex-shrink-0">
+                          {cliente.nombre.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="truncate">{cliente.nombre}</span>
+                      </CardTitle>
                     </div>
                   </div>
-                  <div className="flex gap-1">
-                    <button
+                  {(cliente.email || cliente.telefono) && (
+                    <CardDescription className="line-clamp-1 mt-2">
+                      {cliente.email || cliente.telefono}
+                    </CardDescription>
+                  )}
+                </CardHeader>
+
+                <CardContent className="space-y-4">
+                  {(cliente.email || cliente.telefono || cliente.direccion) && (
+                    <div className="bg-muted/50 rounded-lg p-4 space-y-3 border">
+                      {cliente.email && (
+                        <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                          <p className="text-[11px] uppercase tracking-wider text-blue-700 font-semibold mb-1 flex items-center gap-1">
+                            <Mail className="w-3.5 h-3.5" />
+                            Email
+                          </p>
+                          <p className="text-sm font-medium text-blue-800 truncate">{cliente.email}</p>
+                        </div>
+                      )}
+                      {cliente.telefono && (
+                        <div className="bg-green-50 rounded-lg p-3 border border-green-200">
+                          <p className="text-[11px] uppercase tracking-wider text-green-700 font-semibold mb-1 flex items-center gap-1">
+                            <Phone className="w-3.5 h-3.5" />
+                            Teléfono
+                          </p>
+                          <p className="text-sm font-medium text-green-800">{cliente.telefono}</p>
+                        </div>
+                      )}
+                      {cliente.direccion && (
+                        <div className="bg-violet-50 rounded-lg p-3 border border-violet-200">
+                          <p className="text-[11px] uppercase tracking-wider text-violet-700 font-semibold mb-1 flex items-center gap-1">
+                            <MapPin className="w-3.5 h-3.5" />
+                            Dirección
+                          </p>
+                          <p className="text-sm font-medium text-violet-800 truncate">{cliente.direccion}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 gap-1.5"
                       onClick={() => onEditar(cliente)}
-                      className="p-1.5 rounded hover:bg-gray-100 text-gray-700 hover:text-violet-600 transition-colors"
                       disabled={eliminandoId === cliente.id}
                     >
                       <Edit2 className="w-3.5 h-3.5" />
-                    </button>
-                    <button
+                      Editar
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5 text-destructive hover:bg-destructive/10"
                       onClick={() => handleEliminar(cliente.id)}
-                      className={`p-1.5 rounded transition-colors ${
-                        eliminandoId === cliente.id
-                          ? "bg-red-50 text-red-600"
-                          : confirmandoEliminar === cliente.id
-                          ? "bg-red-50 text-red-600"
-                          : "hover:bg-gray-100 text-gray-700 hover:text-red-500"
-                      }`}
                       disabled={eliminandoId === cliente.id}
-                      title={
-                        eliminandoId === cliente.id
-                          ? "Eliminando..."
-                          : confirmandoEliminar === cliente.id
-                          ? "Confirmar eliminación"
-                          : "Eliminar"
-                      }
                     >
                       {eliminandoId === cliente.id ? (
-                        <span className="animate-spin text-xs">⏳</span>
+                        <span className="animate-spin">⏳</span>
                       ) : (
                         <Trash2 className="w-3.5 h-3.5" />
                       )}
-                    </button>
+                    </Button>
                   </div>
-                </div>
 
-                <div className="space-y-1.5 text-xs text-gray-600">
-                  {cliente.email && (
-                    <div className="flex items-center gap-1.5">
-                      <Mail className="w-3 h-3 shrink-0" />
-                      <span className="truncate">{cliente.email}</span>
-                    </div>
+                  {confirmandoEliminar === cliente.id && (
+                    <p className="text-xs text-destructive font-medium text-center">
+                      Haz clic de nuevo para confirmar
+                    </p>
                   )}
-                  {cliente.telefono && (
-                    <div className="flex items-center gap-1.5">
-                      <Phone className="w-3 h-3 shrink-0" />
-                      <span>{cliente.telefono}</span>
-                    </div>
-                  )}
-                  {cliente.direccion && (
-                    <div className="flex items-center gap-1.5">
-                      <MapPin className="w-3 h-3 shrink-0" />
-                      <span className="truncate">{cliente.direccion}</span>
-                    </div>
-                  )}
-                </div>
-
-                {confirmandoEliminar === cliente.id && (
-                  <p className="mt-2 text-xs text-red-500 font-medium">
-                    Haz clic de nuevo para confirmar la eliminación
-                  </p>
-                )}
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
         </div>
       )}

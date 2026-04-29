@@ -95,6 +95,16 @@ export const OrdenForm = ({ orden, clientes, recetas, onGuardar, onCancelar }: O
     const nuevosErrores: Record<string, string> = {};
     if (!clienteId) nuevosErrores.clienteId = "Selecciona un cliente";
     if (items.length === 0) nuevosErrores.items = "Agrega al menos un artículo";
+    
+    // Validar que la fecha de entrega no sea en el pasado
+    if (fechaEntrega) {
+      const fechaSeleccionada = new Date(fechaEntrega);
+      const ahora = new Date();
+      if (fechaSeleccionada < ahora) {
+        nuevosErrores.fechaEntrega = "La fecha de entrega no puede ser en el pasado";
+      }
+    }
+    
     items.forEach((item, i) => {
       if (!item.nombreItem.trim()) nuevosErrores[`item_${i}_nombre`] = "Nombre requerido";
       if (item.cantidad <= 0) nuevosErrores[`item_${i}_cantidad`] = "Cantidad inválida";
@@ -176,7 +186,10 @@ export const OrdenForm = ({ orden, clientes, recetas, onGuardar, onCancelar }: O
               type="datetime-local"
               value={fechaEntrega}
               onChange={e => setFechaEntrega(e.target.value)}
+              min={formatDateTimeLocal(new Date())}
             />
+            {errores.fechaEntrega && <p className="text-sm text-destructive">{errores.fechaEntrega}</p>}
+            <p className="text-xs text-muted-foreground">La fecha debe ser hoy o posterior</p>
           </div>
 
           {/* Items */}

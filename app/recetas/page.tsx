@@ -123,7 +123,7 @@ export default function RecetasPage() {
 
   const hayProductos = productos.length > 0;
   const limitInfo = getCurrentCount('recetas', recetas.length);
-  const canCreate = limitInfo.canCreate && getPlanName() !== 'free';
+  const canCreate = limitInfo.canCreate;
   const isLimited = getPlanName() === 'free' || getPlanName() === 'basico';
 
   const handleNuevo = () => {

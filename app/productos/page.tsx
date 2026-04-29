@@ -43,7 +43,7 @@ export default function ProductosPage() {
     : productos;
 
   const limitInfo = getCurrentCount('productos', productos.length);
-  const canCreate = limitInfo.canCreate && getPlanName() !== 'free';
+  const canCreate = limitInfo.canCreate;
   const isDataLoading = cargando || cargandoPlan;
 
   const handleSubmit = async (datos: ProductoFormData): Promise<void> => {

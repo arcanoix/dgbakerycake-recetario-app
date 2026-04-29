@@ -21,14 +21,14 @@ interface ActivityLogsTableProps {
   emptyMessage?: string;
 }
 
-const ACTION_LABELS: Record<string, { label: string; color: string }> = {
-  create: { label: "Creación", color: "bg-green-500" },
-  update: { label: "Edición", color: "bg-blue-500" },
-  delete: { label: "Eliminación", color: "bg-red-500" },
-  login: { label: "Inicio sesión", color: "bg-purple-500" },
-  logout: { label: "Cierre sesión", color: "bg-gray-1000" },
-  view: { label: "Consulta", color: "bg-yellow-500" },
-  error: { label: "Error", color: "bg-red-600" },
+const ACTION_LABELS: Record<string, { label: string; variant: "default" | "destructive" | "outline" | "secondary" }> = {
+  create: { label: "Creación", variant: "default" },
+  update: { label: "Edición", variant: "outline" },
+  delete: { label: "Eliminación", variant: "destructive" },
+  login: { label: "Inicio sesión", variant: "default" },
+  logout: { label: "Cierre sesión", variant: "secondary" },
+  view: { label: "Consulta", variant: "outline" },
+  error: { label: "Error", variant: "destructive" },
 };
 
 const MODULE_LABELS: Record<string, string> = {
@@ -84,8 +84,8 @@ export const ActivityLogsTable = ({ logs, title, emptyMessage }: ActivityLogsTab
   };
 
   const getActionBadge = (action: string) => {
-    const info = ACTION_LABELS[action] || { label: action, color: "bg-gray-400" };
-    return <Badge className={`${info.color} text-white text-xs`}>{info.label}</Badge>;
+    const info = ACTION_LABELS[action] || { label: action, variant: "secondary" as const };
+    return <Badge variant={info.variant} className="text-xs">{info.label}</Badge>;
   };
 
   const getModuleBadge = (module: string) => {
@@ -123,7 +123,7 @@ export const ActivityLogsTable = ({ logs, title, emptyMessage }: ActivityLogsTab
               setFiltroModulo(e.target.value);
               setPaginaActual(1);
             }}
-            className="border rounded-md px-3 py-2 text-sm bg-background"
+            className="flex h-10 w-[200px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             <option value="all">Todos los módulos</option>
             {modulosUnicos.map((m) => (
@@ -139,7 +139,7 @@ export const ActivityLogsTable = ({ logs, title, emptyMessage }: ActivityLogsTab
               setFiltroAccion(e.target.value);
               setPaginaActual(1);
             }}
-            className="border rounded-md px-3 py-2 text-sm bg-background"
+            className="flex h-10 w-[200px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             <option value="all">Todas las acciones</option>
             {accionesUnicas.map((a) => (
@@ -153,7 +153,7 @@ export const ActivityLogsTable = ({ logs, title, emptyMessage }: ActivityLogsTab
 
       <CardContent>
         {logsFiltrados.length === 0 ? (
-          <p className="text-center text-gray-700 py-8">
+          <p className="text-center text-muted-foreground py-8">
             {emptyMessage || "No se encontraron registros de actividad."}
           </p>
         ) : (
@@ -174,12 +174,12 @@ export const ActivityLogsTable = ({ logs, title, emptyMessage }: ActivityLogsTab
                 <TableBody>
                   {logsEnPagina.map((log) => (
                     <TableRow key={log.id}>
-                      <TableCell className="text-xs whitespace-nowrap text-gray-700">
+                      <TableCell className="text-xs whitespace-nowrap text-muted-foreground">
                         {formatDate(log.created_at)}
                       </TableCell>
                       <TableCell className="text-sm font-medium max-w-[180px] truncate">
                         {log.email || (
-                          <span className="text-gray-700 text-xs font-mono">
+                          <span className="text-muted-foreground text-xs font-mono">
                             {log.user_id?.slice(0, 8)}…
                           </span>
                         )}
@@ -189,11 +189,11 @@ export const ActivityLogsTable = ({ logs, title, emptyMessage }: ActivityLogsTab
                       <TableCell className="text-sm max-w-[240px] truncate" title={log.description}>
                         {log.description || "—"}
                       </TableCell>
-                      <TableCell className="text-xs font-mono text-gray-700 whitespace-nowrap">
+                      <TableCell className="text-xs font-mono text-muted-foreground whitespace-nowrap">
                         {log.ip_address || "—"}
                       </TableCell>
                       <TableCell
-                        className="text-xs text-gray-700 max-w-[160px] truncate"
+                        className="text-xs text-muted-foreground max-w-[160px] truncate"
                         title={log.user_agent}
                       >
                         {log.user_agent
@@ -208,7 +208,7 @@ export const ActivityLogsTable = ({ logs, title, emptyMessage }: ActivityLogsTab
 
             {/* Pagination */}
             {totalPaginas > 1 && (
-              <div className="mt-4 flex items-center justify-between text-sm text-gray-700">
+              <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
                 <span>
                   Página {paginaActual} de {totalPaginas} ·{" "}
                   {logsFiltrados.length} registros

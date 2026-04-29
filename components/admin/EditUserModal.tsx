@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CheckCircle2, AlertCircle } from "lucide-react";
 
 interface EditUserModalProps {
   usuario: UserData | null;
@@ -70,7 +71,7 @@ export const EditUserModal = ({ usuario, onClose, onUpdate }: EditUserModalProps
       <Card className="w-full max-w-md mx-4">
         <CardHeader>
           <CardTitle>Editar Usuario</CardTitle>
-          <p className="text-sm text-gray-700">{usuario.email}</p>
+          <p className="text-sm text-muted-foreground">{usuario.email}</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -91,23 +92,25 @@ export const EditUserModal = ({ usuario, onClose, onUpdate }: EditUserModalProps
 
             <div className="space-y-2">
               <Label>Email</Label>
-              <p className="text-sm text-gray-700 px-3 py-2 bg-muted rounded-md">
+              <p className="text-sm text-muted-foreground px-3 py-2 bg-muted rounded-md">
                 {usuario.email}
               </p>
-              <p className="text-xs text-gray-700">
+              <p className="text-xs text-muted-foreground">
                 El email no puede modificarse desde el panel de administrador.
               </p>
             </div>
 
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-sm text-red-800">{error}</p>
+              <div className="flex items-center gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive">
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <p className="text-sm">{error}</p>
               </div>
             )}
 
             {guardado && (
-              <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                <p className="text-sm text-green-800">✓ Usuario actualizado exitosamente</p>
+              <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-green-800">
+                <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
+                <p className="text-sm">Usuario actualizado exitosamente</p>
               </div>
             )}
 

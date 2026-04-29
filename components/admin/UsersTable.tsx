@@ -35,21 +35,21 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
   const getStatusBadge = (status?: string) => {
     switch (status) {
       case "active":
-        return <Badge className="bg-green-500">Activo</Badge>;
+        return <Badge variant="default">Activo</Badge>;
       case "expired":
-        return <Badge className="bg-red-500">Expirado</Badge>;
+        return <Badge variant="destructive">Expirado</Badge>;
       case "pending":
-        return <Badge className="bg-yellow-500">Pendiente</Badge>;
+        return <Badge variant="outline" className="border-yellow-500 text-yellow-700">Pendiente</Badge>;
       case "canceled":
-        return <Badge className="bg-gray-1000">Cancelado</Badge>;
+        return <Badge variant="secondary">Cancelado</Badge>;
       default:
-        return <Badge className="bg-gray-400">N/A</Badge>;
+        return <Badge variant="secondary">N/A</Badge>;
     }
   };
 
   const getRoleBadge = (role?: string) => {
     if (role === "admin") {
-      return <Badge className="bg-purple-500">Admin</Badge>;
+      return <Badge variant="default" className="bg-violet-600">Admin</Badge>;
     }
     return <Badge variant="outline">Cliente</Badge>;
   };
@@ -193,7 +193,7 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
             <TableBody>
               {usuariosFiltrados.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={10} className="text-center text-gray-700">
+                  <TableCell colSpan={10} className="text-center text-muted-foreground">
                     No se encontraron usuarios
                   </TableCell>
                 </TableRow>
@@ -209,7 +209,7 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
                         <span className="font-medium">
                           {usuario.plan_display_name || "N/A"}
                         </span>
-                        <span className="text-xs text-gray-700">
+                        <span className="text-xs text-muted-foreground">
                           {usuario.plan_name}
                         </span>
                       </div>
@@ -227,18 +227,18 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
                         {usuario.recetas_count || 0}
                       </span>
                     </TableCell>
-                    <TableCell className="text-sm text-gray-700 whitespace-nowrap">
+                    <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
                       {formatDate(usuario.last_sign_in_at) !== "N/A"
                         ? formatDate(usuario.last_sign_in_at)
                         : formatDate(usuario.start_date)}
                     </TableCell>
-                    <TableCell className="text-xs font-mono text-gray-700">
+                    <TableCell className="text-xs font-mono text-muted-foreground">
                       {usuario.last_ip || "—"}
                       {usuario.country && (
                         <span className="ml-1 text-blue-600">({usuario.country})</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-sm text-gray-700">
+                    <TableCell className="text-sm text-muted-foreground">
                       {formatDate(usuario.end_date)}
                     </TableCell>
                     <TableCell className="text-right">
@@ -251,7 +251,7 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
                           disabled={cargandoAccion === usuario.id}
                           className="h-8 w-8"
                         >
-                          <Edit className="h-4 w-4 text-gray-600" />
+                          <Edit className="h-4 w-4" />
                         </Button>
                         {usuario.subscription_status === "active" ? (
                           <Button
@@ -284,7 +284,7 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
                           disabled={cargandoAccion === usuario.id}
                           className="h-8 w-8"
                         >
-                          {usuario.role === "admin" ? <UserCog className="h-4 w-4 text-gray-600" /> : <ShieldAlert className="h-4 w-4 text-blue-600" />}
+                          {usuario.role === "admin" ? <UserCog className="h-4 w-4" /> : <ShieldAlert className="h-4 w-4 text-primary" />}
                         </Button>
                         <Button
                           size="icon"
@@ -306,7 +306,7 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
         </div>
 
         {usuariosFiltrados.length > 0 && (
-          <div className="mt-4 text-sm text-gray-700">
+          <div className="mt-4 text-sm text-muted-foreground">
             Mostrando {usuariosFiltrados.length} de {usuarios.length} usuarios
           </div>
         )}

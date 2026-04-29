@@ -4,6 +4,7 @@ import { useState } from "react";
 import { PaymentRequest, PaymentStatus } from "@/types/subscription";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { actualizarEstadoPago } from "@/lib/subscriptionStorage";
 
@@ -36,23 +37,20 @@ export const PaymentRequestsTable = ({ solicitudes, onUpdate }: PaymentRequestsT
   };
 
   const getStatusBadge = (status: PaymentStatus) => {
-    const badges = {
-      pending: "bg-yellow-100 text-yellow-800",
-      approved: "bg-green-100 text-green-800",
-      rejected: "bg-red-100 text-red-800",
-    };
-    
     const labels = {
       pending: "Pendiente",
       approved: "Aprobado",
       rejected: "Rechazado",
     };
 
-    return (
-      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${badges[status]}`}>
-        {labels[status]}
-      </span>
-    );
+    switch (status) {
+      case "pending":
+        return <Badge variant="outline" className="border-yellow-500 text-yellow-700">{labels[status]}</Badge>;
+      case "approved":
+        return <Badge variant="default">{labels[status]}</Badge>;
+      case "rejected":
+        return <Badge variant="destructive">{labels[status]}</Badge>;
+    }
   };
 
   const getPaymentMethodLabel = (method: string) => {
@@ -80,7 +78,7 @@ export const PaymentRequestsTable = ({ solicitudes, onUpdate }: PaymentRequestsT
     return (
       <Card>
         <CardContent className="py-12 text-center">
-          <p className="text-gray-700">No hay solicitudes de pago</p>
+          <p className="text-muted-foreground">No hay solicitudes de pago</p>
         </CardContent>
       </Card>
     );
@@ -96,7 +94,7 @@ export const PaymentRequestsTable = ({ solicitudes, onUpdate }: PaymentRequestsT
                 <CardTitle className="text-lg">
                   {solicitud.user_email || "Usuario"}
                 </CardTitle>
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-muted-foreground">
                   Plan: {solicitud.plan?.display_name}
                 </p>
               </div>
@@ -108,21 +106,21 @@ export const PaymentRequestsTable = ({ solicitudes, onUpdate }: PaymentRequestsT
             {/* Información del Pago */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-muted rounded-lg">
               <div>
-                <p className="text-xs text-gray-700">Método</p>
+                <p className="text-xs text-muted-foreground">Método</p>
                 <p className="font-semibold">{getPaymentMethodLabel(solicitud.payment_method)}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-700">Monto</p>
+                <p className="text-xs text-muted-foreground">Monto</p>
                 <p className="font-semibold">
                   {solicitud.currency} {solicitud.amount.toLocaleString('es-VE')}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-gray-700">Fecha Solicitud</p>
+                <p className="text-xs text-muted-foreground">Fecha Solicitud</p>
                 <p className="font-semibold text-sm">{formatDate(solicitud.created_at)}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-700">ID</p>
+                <p className="text-xs text-muted-foreground">ID</p>
                 <p className="font-mono text-xs">{solicitud.id.slice(0, 8)}...</p>
               </div>
             </div>
@@ -152,11 +150,11 @@ export const PaymentRequestsTable = ({ solicitudes, onUpdate }: PaymentRequestsT
 
             {/* Notas del Admin (si ya fue revisado) */}
             {solicitud.admin_notes && (
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="p-4 bg-blue-50/50 border border-blue-200 rounded-lg">
                 <p className="text-sm font-semibold mb-1">Notas del Administrador:</p>
                 <p className="text-sm">{solicitud.admin_notes}</p>
                 {solicitud.reviewed_at && (
-                  <p className="text-xs text-gray-700 mt-2">
+                  <p className="text-xs text-muted-foreground mt-2">
                     Revisado: {formatDate(solicitud.reviewed_at)}
                   </p>
                 )}

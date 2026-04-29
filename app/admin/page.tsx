@@ -58,10 +58,10 @@ const StatCard = ({ title, value, icon, color, gradient, subtitle }: StatCardPro
       <CardContent className="pt-6">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-sm font-medium text-gray-700">{title}</p>
-            <p className="text-3xl font-bold mt-1 text-gray-900">{value}</p>
+            <p className="text-sm font-medium text-muted-foreground">{title}</p>
+            <p className="text-3xl font-bold mt-1">{value}</p>
             {subtitle && (
-              <p className="text-xs text-gray-700 mt-1">{subtitle}</p>
+              <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
             )}
           </div>
           <div className={`w-12 h-12 rounded-xl ${color} flex items-center justify-center`}>
@@ -167,7 +167,7 @@ export default function AdminPage() {
               </div>
               Panel de Administrador
             </h1>
-            <p className="text-gray-700 mt-1">
+            <p className="text-muted-foreground mt-1">
               Gestiona solicitudes, usuarios y auditoría del sistema
             </p>
           </div>
@@ -186,7 +186,7 @@ export default function AdminPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="flex gap-2 border-b border-gray-200 pb-1 flex-wrap"
+          className="flex gap-2 border-b pb-1 flex-wrap"
         >
           {TABS.map((tab) => (
             <Button
@@ -195,14 +195,14 @@ export default function AdminPage() {
               onClick={() => setVistaActual(tab.id)}
               className={`gap-2 rounded-lg ${
                 vistaActual === tab.id 
-                  ? "bg-violet-100/50 text-violet-700" 
-                  : "text-gray-600 hover:bg-gray-100"
+                  ? "bg-primary/10 text-primary" 
+                  : "text-muted-foreground hover:bg-muted"
               }`}
             >
               {tab.icon}
               {tab.label}
               {tab.id === "solicitudes" && pendingCount > 0 && (
-                <span className="ml-1 px-1.5 py-0.5 text-xs bg-yellow-500 text-white rounded-full">
+                <span className="ml-1 px-1.5 py-0.5 text-xs bg-yellow-500/90 text-white rounded-full">
                   {pendingCount}
                 </span>
               )}
@@ -257,7 +257,7 @@ export default function AdminPage() {
               <Button
                 variant={filtro === "pending" ? "default" : "outline"}
                 onClick={() => setFiltro("pending")}
-                className={`gap-2 ${filtro === "pending" ? "bg-yellow-500 hover:bg-yellow-600" : ""}`}
+                className={`gap-2 ${filtro === "pending" ? "bg-yellow-500/90 hover:bg-yellow-600" : ""}`}
               >
                 <Clock className="w-4 h-4" />
                 Pendientes ({pendingCount})
@@ -265,7 +265,7 @@ export default function AdminPage() {
               <Button
                 variant={filtro === "approved" ? "default" : "outline"}
                 onClick={() => setFiltro("approved")}
-                className={`gap-2 ${filtro === "approved" ? "bg-green-500 hover:bg-green-600" : ""}`}
+                className={`gap-2 ${filtro === "approved" ? "bg-green-500/90 hover:bg-green-600" : ""}`}
               >
                 <CheckCircle className="w-4 h-4" />
                 Aprobadas ({approvedCount})
@@ -273,7 +273,7 @@ export default function AdminPage() {
               <Button
                 variant={filtro === "rejected" ? "default" : "outline"}
                 onClick={() => setFiltro("rejected")}
-                className={`gap-2 ${filtro === "rejected" ? "bg-red-500 hover:bg-red-600" : ""}`}
+                className={`gap-2 ${filtro === "rejected" ? "bg-destructive hover:bg-destructive/90" : ""}`}
               >
                 <XCircle className="w-4 h-4" />
                 Rechazadas ({rejectedCount})

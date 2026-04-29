@@ -113,9 +113,6 @@ export default function PricingPage() {
                       <Check className="w-4 h-4" /> Pago Móvil
                     </li>
                     <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4" /> Transferencia Bancaria
-                    </li>
-                    <li className="flex items-center gap-2">
                       <Check className="w-4 h-4" /> Binance (USDT)
                     </li>
                   </ul>
@@ -127,9 +124,6 @@ export default function PricingPage() {
                     <h4 className="font-semibold text-blue-900">🌎 Internacional</h4>
                   </div>
                   <ul className="space-y-2 text-sm text-blue-700">
-                    <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4" /> Zelle
-                    </li>
                     <li className="flex items-center gap-2">
                       <Check className="w-4 h-4" /> PayPal
                     </li>

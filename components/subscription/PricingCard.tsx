@@ -1,8 +1,10 @@
 "use client";
 
 import { Plan, SubscriptionPlan } from "@/types/subscription";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Check } from "lucide-react";
 import { formatearMoneda } from "@/lib/constants";
 
 interface PricingCardProps {
@@ -34,18 +36,26 @@ export const PricingCard = ({ plan, isCurrentPlan, onSelect }: PricingCardProps)
   const isPremium = plan.name === 'empresarial';
 
   return (
-    <Card className={`relative ${isPremium ? 'border-primary border-2' : ''} ${isCurrentPlan ? 'bg-muted' : ''}`}>
+    <Card className={`relative ${isPremium ? 'border-primary border-2 shadow-lg' : ''} ${isCurrentPlan ? 'bg-muted/50' : ''} transition-all hover:shadow-md`}>
       {isPremium && (
-        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-          <span className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold">
+        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+          <Badge className="bg-primary text-primary-foreground shadow-md">
             Más Popular
-          </span>
+          </Badge>
         </div>
       )}
       
-      <CardHeader>
+      {isCurrentPlan && (
+        <div className="absolute -top-3 right-4">
+          <Badge variant="secondary" className="shadow-md">
+            Plan Actual
+          </Badge>
+        </div>
+      )}
+      
+      <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">{plan.display_name}</CardTitle>
-        <p className="text-gray-700 text-sm">{plan.description}</p>
+        <CardDescription>{plan.description}</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-6">
@@ -55,10 +65,10 @@ export const PricingCard = ({ plan, isCurrentPlan, onSelect }: PricingCardProps)
             <span className="text-4xl font-bold">
               {plan.price_usd === 0 ? 'Gratis' : `$${plan.price_usd}`}
             </span>
-            {plan.price_usd > 0 && <span className="text-gray-700">/mes</span>}
+            {plan.price_usd > 0 && <span className="text-muted-foreground">/mes</span>}
           </div>
           {plan.price_bs > 0 && (
-            <p className="text-sm text-gray-700 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               Bs. {plan.price_bs.toLocaleString('es-VE')} /mes
             </p>
           )}
@@ -68,8 +78,8 @@ export const PricingCard = ({ plan, isCurrentPlan, onSelect }: PricingCardProps)
         <ul className="space-y-3">
           {features.map((feature, index) => (
             <li key={index} className="flex items-start gap-2">
-              <span className="text-primary mt-1">✓</span>
-              <span className="text-sm">{feature}</span>
+              <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+              <span className="text-sm text-muted-foreground">{feature}</span>
             </li>
           ))}
         </ul>

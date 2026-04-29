@@ -67,10 +67,10 @@ export const Navbar = () => {
       )}
 
       <aside className={`
-        fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-gray-300 transform transition-transform duration-300 lg:translate-x-0
+        fixed top-0 left-0 z-50 h-full w-64 bg-background border-r transform transition-transform duration-300 lg:translate-x-0
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <div className="h-16 flex items-center px-6 border-b border-gray-300">
+        <div className="h-16 flex items-center px-6 border-b">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-2xl">🧁</span>
             <span className="text-xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
@@ -86,10 +86,10 @@ export const Navbar = () => {
               href={item.href}
               onClick={() => setSidebarOpen(false)}
               className={`
-                flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200
+                flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
                 ${isActive(item.href)
-                  ? "bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 border-l-4 border-violet-600"
-                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 }
               `}
             >
@@ -101,7 +101,7 @@ export const Navbar = () => {
           {(isAdmin || visibleAdminItems.length > 0) && (
             <>
               <div className="pt-4 pb-2">
-                <p className="px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   Administración
                 </p>
               </div>
@@ -111,10 +111,10 @@ export const Navbar = () => {
                   href={item.href}
                   onClick={() => setSidebarOpen(false)}
                   className={`
-                    flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200
+                    flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
                     ${isActive(item.href)
-                      ? "bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 border-l-4 border-violet-600"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      ? "bg-accent text-accent-foreground"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                     }
                   `}
                 >
@@ -127,16 +127,16 @@ export const Navbar = () => {
         </nav>
 
         {user && (
-          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-300 bg-white">
+          <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-background">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 flex items-center justify-center text-white font-bold">
                 {user.email?.charAt(0).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium truncate">
                   {user.email?.split('@')[0]}
                 </p>
-                <p className="text-xs text-gray-700 truncate">
+                <p className="text-xs text-muted-foreground truncate">
                   {getPlanDisplayName()}
                 </p>
               </div>
@@ -145,7 +145,7 @@ export const Navbar = () => {
               onClick={signOut}
               variant="outline"
               size="sm"
-              className="w-full rounded-lg"
+              className="w-full"
             >
               Cerrar Sesión
             </Button>
@@ -153,10 +153,10 @@ export const Navbar = () => {
         )}
       </aside>
 
-      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-300 z-30 flex items-center px-4">
+      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-background border-b z-30 flex items-center px-4">
         <button
           onClick={() => setSidebarOpen(true)}
-          className="p-2 rounded-lg hover:bg-gray-100"
+          className="p-2 rounded-lg hover:bg-accent"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />

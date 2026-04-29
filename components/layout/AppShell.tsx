@@ -24,14 +24,14 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
     pathname === "/";
 
   if (isPublicRoute || !user) {
-    return <main className="min-h-screen">{children}</main>;
+    return <main className="min-h-screen bg-background">{children}</main>;
   }
 
   return (
     <>
       <Navbar />
-      <main className="min-h-screen pt-20 lg:pt-0 lg:pl-64">
-        <div className="p-4 lg:p-8">{children}</div>
+      <main className="min-h-screen pt-20 lg:pt-0 lg:pl-64 bg-background">
+        <div className="container mx-auto p-4 lg:p-8">{children}</div>
       </main>
     </>
   );

@@ -480,13 +480,12 @@ export const LandingPage = () => {
 
             {cargandoPlanes ? (
               <div className="flex justify-center items-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
                 {planes.filter(p => p.is_active).sort((a, b) => a.sort_order - b.sort_order).map((plan, i) => {
                   const isPopular = plan.name === 'profesional';
-                  const isPremium = plan.name === 'empresarial';
                   const features = [
                     `${plan.max_recetas === -1 ? 'Recetas ilimitadas' : `${plan.max_recetas} recetas`}`,
                     `${plan.max_productos === -1 ? 'Productos ilimitados' : `${plan.max_productos} productos`}`,
@@ -507,44 +506,36 @@ export const LandingPage = () => {
                     >
                       {isPopular && (
                         <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
-                          <div 
-                            className="bg-gradient-to-r from-amber-600 to-orange-600 text-white px-4 py-1.5 text-sm font-semibold shadow-lg flex items-center gap-1"
-                            style={{ borderRadius: '15px 8px 15px 8px' }}
-                          >
+                          <div className="bg-indigo-600 text-white px-4 py-1.5 text-sm font-medium rounded-full flex items-center gap-1">
                             <Sparkles className="w-3.5 h-3.5" />
                             Más popular
                           </div>
                         </div>
                       )}
                       <Card 
-                        className={`h-full overflow-hidden transition-all duration-300 ${
+                        className={`h-full transition-all duration-300 rounded-xl ${
                           isPopular 
-                            ? 'border-2 border-amber-500 shadow-2xl shadow-amber-200/50 scale-105' 
-                            : isPremium
-                            ? 'border-2 border-orange-300 shadow-xl'
-                            : 'border-2 border-gray-200 shadow-lg hover:shadow-xl'
+                            ? 'border-2 border-indigo-200 shadow-lg' 
+                            : 'border border-slate-200 shadow-sm hover:shadow-md'
                         }`}
-                        style={{
-                          borderRadius: i % 2 === 0 ? '32px 12px 32px 12px' : '12px 32px 12px 32px'
-                        }}
                       >
                         <CardContent className="p-6">
                           <div className="text-center mb-6">
-                            <h3 className="text-2xl font-bold mb-2 text-gray-900" style={{ fontFamily: 'var(--font-inter)' }}>
+                            <h3 className="text-xl font-bold mb-1 text-slate-900">
                               {plan.display_name}
                             </h3>
-                            <p className="text-sm text-gray-600">{plan.description || 'Plan completo'}</p>
+                            <p className="text-sm text-slate-500">{plan.description || 'Plan completo'}</p>
                           </div>
 
                           <div className="text-center mb-6">
                             <div className="flex items-baseline justify-center gap-1">
-                              <span className="text-5xl font-black text-gray-900" style={{ fontFamily: 'var(--font-inter)' }}>
+                              <span className="text-4xl font-bold text-slate-900">
                                 ${plan.price_usd}
                               </span>
-                              <span className="text-gray-600 text-sm">/mes</span>
+                              <span className="text-slate-500 text-sm">/mes</span>
                             </div>
                             {plan.price_bs > 0 && (
-                              <p className="text-sm text-gray-500 mt-1">
+                              <p className="text-sm text-slate-500 mt-1">
                                 Bs. {plan.price_bs.toLocaleString('es-VE')}
                               </p>
                             )}
@@ -553,23 +544,20 @@ export const LandingPage = () => {
                           <ul className="space-y-3 mb-8">
                             {features.map((feat, j) => (
                               <li key={j} className="flex items-start gap-2">
-                                <Check className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                                <span className="text-sm text-gray-700">{feat}</span>
+                                <Check className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
+                                <span className="text-sm text-slate-700">{feat}</span>
                               </li>
                             ))}
                           </ul>
 
                           <Link href="/auth/register" className="block">
                             <Button
-                              className={`w-full h-12 font-semibold transition-all ${
-                                isPopular || isPremium
-                                  ? 'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 shadow-lg shadow-amber-200/50 text-white'
-                                  : 'border-2 border-amber-300 text-amber-700 hover:bg-amber-50'
+                              className={`w-full h-11 font-medium rounded-lg ${
+                                isPopular
+                                  ? 'bg-slate-900 hover:bg-slate-800 text-white'
+                                  : 'border border-slate-200 text-slate-700 hover:bg-slate-50'
                               }`}
-                              variant={isPopular || isPremium ? 'default' : 'outline'}
-                              style={{
-                                borderRadius: i % 2 === 0 ? '20px 8px 20px 8px' : '8px 20px 8px 20px'
-                              }}
+                              variant={isPopular ? 'default' : 'outline'}
                             >
                               {plan.price_usd === 0 ? 'Comenzar Gratis' : 'Empezar Ahora'}
                             </Button>

@@ -82,7 +82,7 @@ const testimonials = [
   {
     name: "María González",
     role: "Repostera profesional",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
+    image: "/images/testimonial-1.jpg",
     quote: "Desde que uso DGcost puedo calcular mis precios de forma precisa. Mis ganancias aumentaron un 30%",
     metric: "+30%",
     metricLabel: "en ganancias"
@@ -90,7 +90,7 @@ const testimonials = [
   {
     name: "Carlos Rodríguez",
     role: "Dueño de panadería",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
+    image: "/images/testimonial-2.jpg",
     quote: "Me encantó la facilidad de uso. En 5 minutos configuré todas mis recetas del menú",
     metric: "5 min",
     metricLabel: "para empezar"
@@ -98,7 +98,7 @@ const testimonials = [
   {
     name: "Ana Pérez",
     role: "Emprendedora pasteles",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
+    image: "/images/testimonial-3.jpg",
     quote: "El mejor investimento que hice para mi negocio. Ahora sé exactamente cuánto gano en cada pedido",
     metric: "100%",
     metricLabel: "control total"
@@ -433,8 +433,8 @@ export const LandingPage = () => {
                           width={40}
                           height={40}
                           className="w-10 h-10 rounded-full object-cover"
-                          loading="lazy"
-                          unoptimized={false}
+                          priority={index === 1}
+                          loading={index === 1 ? "eager" : "lazy"}
                         />
                         <div>
                           <h4 className="font-semibold text-sm text-slate-900">{testimonial.name}</h4>

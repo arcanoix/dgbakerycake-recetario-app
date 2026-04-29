@@ -7,21 +7,14 @@ import { motion, useInView } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRef } from "react";
-import { Playfair_Display, DM_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import { usePublicPlanes } from "@/hooks/usePublicPlanes";
-import { Check, Sparkles, Zap } from "lucide-react";
+import { Check, Sparkles, ArrowRight, Menu, X, ChevronDown } from "lucide-react";
 
-const playfair = Playfair_Display({ 
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "700", "900"],
-  variable: "--font-playfair",
-  display: "swap"
-});
-
-const dmSans = DM_Sans({ 
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-dm-sans",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter",
   display: "swap"
 });
 
@@ -150,7 +143,7 @@ export const LandingPage = () => {
   const { planes, cargando: cargandoPlanes } = usePublicPlanes();
 
   return (
-    <div className={`min-h-screen bg-white ${playfair.variable} ${dmSans.variable}`} style={{ fontFamily: 'var(--font-dm-sans)' }}>
+    <div className={`min-h-screen bg-white ${inter.variable}`} style={{ fontFamily: 'var(--font-inter)' }}>
       {/* Navigation */}
       <motion.nav
         initial={{ y: -100 }}
@@ -162,7 +155,7 @@ export const LandingPage = () => {
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 sm:gap-3">
               <span className="text-2xl sm:text-3xl">🧁</span>
-              <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-amber-700 to-orange-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-playfair)' }}>
+              <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-amber-700 to-orange-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-inter)' }}>
                 DGcost
               </span>
               <span className="hidden sm:inline-block bg-gradient-to-r from-amber-600 to-orange-600 text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
@@ -225,7 +218,7 @@ export const LandingPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 sm:mb-8 leading-tight"
-              style={{ fontFamily: 'var(--font-playfair)' }}
+              style={{ fontFamily: 'var(--font-inter)' }}
             >
               <span className="bg-gradient-to-r from-amber-700 via-orange-600 to-amber-700 bg-[length:200%_auto] bg-clip-text text-transparent">
                 Menos trabajo,
@@ -294,7 +287,7 @@ export const LandingPage = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.4, delay: 0.6 + i * 0.1 }}
                 >
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-amber-700 to-orange-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-playfair)' }}>
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-amber-700 to-orange-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-inter)' }}>
                     {stat.value}
                   </div>
                   <div className="text-gray-600 text-xs sm:text-sm font-medium">{stat.label}</div>
@@ -310,7 +303,7 @@ export const LandingPage = () => {
         <section className="py-12 sm:py-20 px-4 sm:px-6 bg-gray-100">
           <div className="container mx-auto">
             <div className="max-w-3xl mx-auto">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4 text-gray-900" style={{ fontFamily: 'var(--font-playfair)' }}>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4 text-gray-900" style={{ fontFamily: 'var(--font-inter)' }}>
               ¿Te suena conocido?
             </h2>
             <p className="text-base sm:text-xl text-gray-600 text-center mb-8 sm:mb-12 px-4 sm:px-0">
@@ -370,7 +363,7 @@ export const LandingPage = () => {
       <AnimatedSection>
         <section className="py-12 sm:py-20 px-4 sm:px-6">
           <div className="container mx-auto">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4 text-gray-900" style={{ fontFamily: 'var(--font-playfair)' }}>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4 text-gray-900" style={{ fontFamily: 'var(--font-inter)' }}>
               DGcost lo resuelve todo
             </h2>
             <p className="text-base sm:text-xl text-gray-600 text-center mb-10 sm:mb-16 max-w-2xl mx-auto px-4 sm:px-0">
@@ -430,7 +423,7 @@ export const LandingPage = () => {
                 <span>Próximamente</span>
               </motion.div>
               
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-gray-900" style={{ fontFamily: 'var(--font-playfair)' }}>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-gray-900" style={{ fontFamily: 'var(--font-inter)' }}>
                 App Móvil en Camino
               </h2>
               
@@ -471,7 +464,7 @@ export const LandingPage = () => {
       <AnimatedSection>
         <section className="py-12 sm:py-20 px-4 sm:px-6 bg-gray-100">
           <div className="container mx-auto">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4 text-gray-900" style={{ fontFamily: 'var(--font-playfair)' }}>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4 text-gray-900" style={{ fontFamily: 'var(--font-inter)' }}>
               Lo que dicen nuestros usuarios
             </h2>
             <p className="text-base sm:text-xl text-gray-600 text-center mb-10 sm:mb-16 px-4 sm:px-0">
@@ -511,7 +504,7 @@ export const LandingPage = () => {
                       </div>
                       <p className="text-sm sm:text-base text-gray-700 mb-4 sm:mb-6 italic">"{testimonial.quote}"</p>
                       <div className="flex items-baseline gap-2">
-                        <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-amber-700 to-orange-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-playfair)' }}>
+                        <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-amber-700 to-orange-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-inter)' }}>
                           {testimonial.metric}
                         </span>
                         <span className="text-muted-foreground text-xs sm:text-sm">{testimonial.metricLabel}</span>
@@ -543,7 +536,7 @@ export const LandingPage = () => {
                 <Sparkles className="w-4 h-4" />
                 <span>Planes flexibles</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-gray-900" style={{ fontFamily: 'var(--font-playfair)' }}>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-gray-900" style={{ fontFamily: 'var(--font-inter)' }}>
                 Planes para cada etapa
               </h2>
               <p className="text-base sm:text-xl text-gray-600 max-w-2xl mx-auto px-4 sm:px-0">
@@ -584,7 +577,7 @@ export const LandingPage = () => {
                             className="bg-gradient-to-r from-amber-600 to-orange-600 text-white px-4 py-1.5 text-sm font-semibold shadow-lg flex items-center gap-1"
                             style={{ borderRadius: '15px 8px 15px 8px' }}
                           >
-                            <Zap className="w-3.5 h-3.5" />
+                            <Sparkles className="w-3.5 h-3.5" />
                             Más popular
                           </div>
                         </div>
@@ -603,7 +596,7 @@ export const LandingPage = () => {
                       >
                         <CardContent className="p-6">
                           <div className="text-center mb-6">
-                            <h3 className="text-2xl font-bold mb-2 text-gray-900" style={{ fontFamily: 'var(--font-playfair)' }}>
+                            <h3 className="text-2xl font-bold mb-2 text-gray-900" style={{ fontFamily: 'var(--font-inter)' }}>
                               {plan.display_name}
                             </h3>
                             <p className="text-sm text-gray-600">{plan.description || 'Plan completo'}</p>
@@ -611,7 +604,7 @@ export const LandingPage = () => {
 
                           <div className="text-center mb-6">
                             <div className="flex items-baseline justify-center gap-1">
-                              <span className="text-5xl font-black text-gray-900" style={{ fontFamily: 'var(--font-playfair)' }}>
+                              <span className="text-5xl font-black text-gray-900" style={{ fontFamily: 'var(--font-inter)' }}>
                                 ${plan.price_usd}
                               </span>
                               <span className="text-gray-600 text-sm">/mes</span>
@@ -662,7 +655,7 @@ export const LandingPage = () => {
       <AnimatedSection>
         <section className="py-12 sm:py-20 px-4 sm:px-6 bg-gray-100">
           <div className="container mx-auto">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4 text-gray-900" style={{ fontFamily: 'var(--font-playfair)' }}>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4 text-gray-900" style={{ fontFamily: 'var(--font-inter)' }}>
               Preguntas Frecuentes
             </h2>
             <p className="text-base sm:text-xl text-gray-600 text-center mb-10 sm:mb-16 px-4 sm:px-0">
@@ -726,7 +719,7 @@ export const LandingPage = () => {
                 borderRadius: '45px 20px 45px 20px'
               }}
             >
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'var(--font-playfair)' }}>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'var(--font-inter)' }}>
                 ¿Listo para empezar?
               </h2>
               <p className="text-base sm:text-xl mb-6 sm:mb-8 opacity-95">
@@ -757,7 +750,7 @@ export const LandingPage = () => {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <span className="text-2xl">🧁</span>
-                <span className="text-xl font-bold" style={{ fontFamily: 'var(--font-playfair)' }}>DGcost</span>
+                <span className="text-xl font-bold" style={{ fontFamily: 'var(--font-inter)' }}>DGcost</span>
               </div>
               <p className="text-gray-400">
                 La herramienta de gestión de costos para reposteros profesionales.

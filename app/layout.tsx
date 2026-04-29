@@ -19,10 +19,12 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
-        {/* Preconnect para recursos externos críticos */}
-        <link rel="preconnect" href="https://images.unsplash.com" />
-        <link rel="dns-prefetch" href="https://images.unsplash.com" />
+        {/* Preconnect para fuentes de Google */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Precargar recursos críticos */}
+        <link rel="preload" href="/images/testimonial-1.jpg" as="image" type="image/webp" />
+        <link rel="preload" href="/images/testimonial-2.jpg" as="image" type="image/webp" />
       </head>
       <body className="antialiased bg-gray-100">
         <AuthProvider>

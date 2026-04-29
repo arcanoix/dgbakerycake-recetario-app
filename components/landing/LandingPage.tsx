@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useInView } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useRef } from "react";
 import { Inter } from "next/font/google";
 import { usePublicPlanes } from "@/hooks/usePublicPlanes";
 import { Check, Sparkles, ArrowRight, Menu, X, ChevronDown } from "lucide-react";
@@ -15,7 +14,8 @@ const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-inter",
-  display: "swap"
+  display: "swap",
+  preload: true
 });
 
 const fadeInUp = {
@@ -43,16 +43,9 @@ function AnimatedSection({ children, delay = 0 }: { children: React.ReactNode; d
   return (
     <motion.div
       ref={ref}
-      initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
-      variants={{
-        hidden: { opacity: 0, y: 30 },
-        visible: {
-          opacity: 1,
-          y: 0,
-          transition: { duration: 0.6, delay, ease: "easeOut" }
-        }
-      }}
+      initial={{ opacity: 0, y: 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      transition={{ duration: 0.5, delay }}
     >
       {children}
     </motion.div>
@@ -432,9 +425,11 @@ export const LandingPage = () => {
                           alt={testimonial.name}
                           width={40}
                           height={40}
-                          className="w-10 h-10 rounded-full object-cover"
-                          priority={index === 1}
-                          loading={index === 1 ? "eager" : "lazy"}
+                          className="w-10 h-10 rounded-full object-cover bg-slate-200"
+                          placeholder="blur"
+                          blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2UxZTVlYiIvPjwvc3ZnPg=="
+                          priority={index < 2}
+                          loading={index < 2 ? "eager" : "lazy"}
                         />
                         <div>
                           <h4 className="font-semibold text-sm text-slate-900">{testimonial.name}</h4>
@@ -479,8 +474,23 @@ export const LandingPage = () => {
             </motion.div>
 
             {cargandoPlanes ? (
-              <div className="flex justify-center items-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="bg-white border border-slate-100 rounded-xl p-6 animate-pulse">
+                    <div className="h-6 bg-slate-200 rounded w-3/4 mx-auto mb-2"></div>
+                    <div className="h-4 bg-slate-100 rounded w-1/2 mx-auto mb-6"></div>
+                    <div className="h-10 bg-slate-200 rounded w-1/2 mx-auto mb-6"></div>
+                    <div className="space-y-3 mb-8">
+                      {[1, 2, 3, 4, 5].map((j) => (
+                        <div key={j} className="flex items-center gap-2">
+                          <div className="w-5 h-5 bg-slate-200 rounded-full"></div>
+                          <div className="h-4 bg-slate-100 rounded flex-1"></div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="h-11 bg-slate-200 rounded-lg w-full"></div>
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">

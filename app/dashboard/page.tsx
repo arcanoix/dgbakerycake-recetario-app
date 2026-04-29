@@ -7,12 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import dynamic from "next/dynamic";
-import { StatsCard } from "@/components/dashboard/StatsCard";
+import { StatsCard } from "@/components/dashboard/StatsCardImproved";
 import { RecetasRentablesTable } from "@/components/dashboard/RecetasRentablesTable";
+import { RecentSales } from "@/components/dashboard/RecentSales";
 
 // Recharts es ~300 KB — se carga de forma lazy para no bloquear el bundle inicial
 const CostosChart = dynamic(
-  () => import("@/components/dashboard/CostosChart").then((m) => ({ default: m.CostosChart })),
+  () => import("@/components/dashboard/CostosChartImproved").then((m) => ({ default: m.CostosChart })),
   {
     ssr: false,
     loading: () => (
@@ -30,7 +31,7 @@ const CostosChart = dynamic(
 );
 
 const ProductosChart = dynamic(
-  () => import("@/components/dashboard/ProductosChart").then((m) => ({ default: m.ProductosChart })),
+  () => import("@/components/dashboard/ProductosChartImproved").then((m) => ({ default: m.ProductosChart })),
   {
     ssr: false,
     loading: () => (
@@ -195,16 +196,18 @@ export default function DashboardPage() {
     .slice(0, 5);
 
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+    <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
       {/* Header */}
-      <div className="flex items-center justify-between space-y-2">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-          <p className="text-muted-foreground">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="space-y-1">
+          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+            Dashboard
+          </h2>
+          <p className="text-sm text-muted-foreground">
             Resumen general de tu negocio de repostería
           </p>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
@@ -213,12 +216,12 @@ export default function DashboardPage() {
             className="gap-2"
           >
             <RefreshCw className={`h-4 w-4 ${recargandoDatos ? 'animate-spin' : ''}`} />
-            Actualizar
+            <span className="hidden sm:inline">Actualizar</span>
           </Button>
           <Link href="/pricing">
-            <Button size="sm" className="gap-2">
+            <Button size="sm" className="gap-2 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-sm">
               <TrendingUp className="h-4 w-4" />
-              Mejorar Plan
+              <span className="hidden sm:inline">Mejorar Plan</span>
             </Button>
           </Link>
         </div>
@@ -242,112 +245,106 @@ export default function DashboardPage() {
       )}
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Valor Inventario</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatearDualMoneda(valorInventario, configuracion.tasaCambioUSD || 50, configuracion.moneda === "USD")}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Inversión total en productos
-            </p>
-          </CardContent>
-        </Card>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatsCard
+          title="Valor Inventario"
+          value={formatearDualMoneda(valorInventario, configuracion.tasaCambioUSD || 50, configuracion.moneda === "USD")}
+          icon={DollarSign}
+          description="Inversión total en productos"
+          variant="success"
+          trend={{
+            value: 12.5,
+            isPositive: true,
+            label: "vs mes anterior"
+          }}
+          sparklineData={[45, 52, 48, 61, 58, 65, 70]}
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Recetas</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{estadisticas.totalRecetas}</div>
-            <p className="text-xs text-muted-foreground">
-              Recetas creadas
-            </p>
-          </CardContent>
-        </Card>
+        <StatsCard
+          title="Total Recetas"
+          value={estadisticas.totalRecetas}
+          icon={Package}
+          description="Recetas creadas"
+          variant="primary"
+          trend={{
+            value: 8.2,
+            isPositive: true,
+            label: "nuevas este mes"
+          }}
+        />
 
         {tieneVentas ? (
           <>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Ventas Totales</CardTitle>
-                <CreditCard className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {formatearDualMoneda(totalVentas, configuracion.tasaCambioUSD || 50, configuracion.moneda === "USD")}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  +{ordenesEntregadas} órdenes entregadas
-                </p>
-              </CardContent>
-            </Card>
+            <StatsCard
+              title="Ventas Totales"
+              value={formatearDualMoneda(totalVentas, configuracion.tasaCambioUSD || 50, configuracion.moneda === "USD")}
+              icon={CreditCard}
+              description={`+${ordenesEntregadas} órdenes entregadas`}
+              variant="success"
+              trend={{
+                value: 15.3,
+                isPositive: true,
+                label: "vs mes anterior"
+              }}
+              sparklineData={[30, 40, 35, 50, 49, 60, 70]}
+            />
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Órdenes Activas</CardTitle>
-                <Activity className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{ordenesConfirmadas}</div>
-                <p className="text-xs text-muted-foreground">
-                  {ordenesPendientes} cotizaciones pendientes
-                </p>
-              </CardContent>
-            </Card>
+            <StatsCard
+              title="Órdenes Activas"
+              value={ordenesConfirmadas}
+              icon={Activity}
+              description={`${ordenesPendientes} cotizaciones pendientes`}
+              variant="warning"
+              trend={{
+                value: 5.1,
+                isPositive: false,
+                label: "vs semana anterior"
+              }}
+            />
           </>
         ) : (
           <>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Productos</CardTitle>
-                <Package className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{estadisticas.totalProductos}</div>
-                <p className="text-xs text-muted-foreground">
-                  Insumos registrados
-                </p>
-              </CardContent>
-            </Card>
+            <StatsCard
+              title="Total Productos"
+              value={estadisticas.totalProductos}
+              icon={Package}
+              description="Insumos registrados"
+              variant="primary"
+            />
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Costo Promedio</CardTitle>
-                <BarChart3 className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {formatearDualMoneda(estadisticas.costoPromedioReceta, configuracion.tasaCambioUSD || 50, configuracion.moneda === "USD")}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Promedio de recetas
-                </p>
-              </CardContent>
-            </Card>
+            <StatsCard
+              title="Costo Promedio"
+              value={formatearDualMoneda(estadisticas.costoPromedioReceta, configuracion.tasaCambioUSD || 50, configuracion.moneda === "USD")}
+              icon={BarChart3}
+              description="Promedio de recetas"
+              variant="default"
+            />
           </>
         )}
       </div>
 
       {/* Main Content */}
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Resumen</TabsTrigger>
-          <TabsTrigger value="analytics">Análisis</TabsTrigger>
-          {tieneVentas && <TabsTrigger value="sales">Ventas</TabsTrigger>}
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="grid w-full max-w-md grid-cols-3">
+          <TabsTrigger value="overview" className="data-[state=active]:bg-background">
+            Resumen
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="data-[state=active]:bg-background">
+            Análisis
+          </TabsTrigger>
+          {tieneVentas && (
+            <TabsTrigger value="sales" className="data-[state=active]:bg-background">
+              Ventas
+            </TabsTrigger>
+          )}
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="col-span-4">
-              <CardHeader>
-                <CardTitle>Distribución de Costos</CardTitle>
-                <CardDescription>
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+            <Card className="col-span-4 border-0 shadow-md">
+              <CardHeader className="space-y-1">
+                <CardTitle className="text-xl font-semibold">Distribución de Costos</CardTitle>
+                <CardDescription className="text-sm">
                   Análisis de costos por receta
                 </CardDescription>
               </CardHeader>
@@ -355,10 +352,10 @@ export default function DashboardPage() {
                 <CostosChart recetas={recetas} moneda={configuracion.moneda} />
               </CardContent>
             </Card>
-            <Card className="col-span-3">
-              <CardHeader>
-                <CardTitle>Productos por Categoría</CardTitle>
-                <CardDescription>
+            <Card className="col-span-3 border-0 shadow-md">
+              <CardHeader className="space-y-1">
+                <CardTitle className="text-xl font-semibold">Productos por Categoría</CardTitle>
+                <CardDescription className="text-sm">
                   Distribución de insumos
                 </CardDescription>
               </CardHeader>
@@ -368,11 +365,11 @@ export default function DashboardPage() {
             </Card>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="col-span-4">
-              <CardHeader>
-                <CardTitle>Recetas Más Rentables</CardTitle>
-                <CardDescription>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+            <Card className="col-span-4 border-0 shadow-md">
+              <CardHeader className="space-y-1">
+                <CardTitle className="text-xl font-semibold">Recetas Más Rentables</CardTitle>
+                <CardDescription className="text-sm">
                   Top 5 recetas con mejor margen
                 </CardDescription>
               </CardHeader>
@@ -380,66 +377,66 @@ export default function DashboardPage() {
                 <RecetasRentablesTable recetas={recetas} moneda={configuracion.moneda} />
               </CardContent>
             </Card>
-            <Card className="col-span-3">
-              <CardHeader>
-                <CardTitle>Acciones Rápidas</CardTitle>
-                <CardDescription>
+            <Card className="col-span-3 border-0 shadow-md">
+              <CardHeader className="space-y-1">
+                <CardTitle className="text-xl font-semibold">Acciones Rápidas</CardTitle>
+                <CardDescription className="text-sm">
                   Accesos directos a funciones principales
                 </CardDescription>
               </CardHeader>
               <CardContent className="grid gap-3">
                 <Link href="/productos/nuevo" className="block">
-                  <div className="flex items-center gap-3 p-3 rounded-lg border bg-card hover:bg-accent transition-colors cursor-pointer group">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                      <Plus className="h-5 w-5 text-primary" />
+                  <div className="flex items-center gap-4 p-4 rounded-xl border-0 bg-gradient-to-br from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/15 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-all duration-300 group-hover:scale-110">
+                      <Plus className="h-6 w-6 text-primary" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium">Nuevo Producto</p>
-                      <p className="text-xs text-muted-foreground">Agregar insumo al inventario</p>
+                      <p className="text-sm font-semibold text-foreground">Nuevo Producto</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">Agregar insumo al inventario</p>
                     </div>
-                    <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <ArrowUpRight className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </div>
                 </Link>
 
                 <Link href="/recetas/nueva" className="block">
-                  <div className="flex items-center gap-3 p-3 rounded-lg border bg-card hover:bg-accent transition-colors cursor-pointer group">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-500/10 group-hover:bg-violet-500/20 transition-colors">
-                      <FileText className="h-5 w-5 text-violet-600" />
+                  <div className="flex items-center gap-4 p-4 rounded-xl border-0 bg-gradient-to-br from-violet-500/5 to-violet-500/10 hover:from-violet-500/10 hover:to-violet-500/15 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-500/10 group-hover:bg-violet-500/20 transition-all duration-300 group-hover:scale-110">
+                      <FileText className="h-6 w-6 text-violet-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium">Nueva Receta</p>
-                      <p className="text-xs text-muted-foreground">Crear receta con costos</p>
+                      <p className="text-sm font-semibold text-foreground">Nueva Receta</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">Crear receta con costos</p>
                     </div>
-                    <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <ArrowUpRight className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </div>
                 </Link>
 
                 {tieneVentas && (
                   <Link href="/ventas/nueva" className="block">
-                    <div className="flex items-center gap-3 p-3 rounded-lg border bg-card hover:bg-accent transition-colors cursor-pointer group">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10 group-hover:bg-emerald-500/20 transition-colors">
-                        <ShoppingCart className="h-5 w-5 text-emerald-600" />
+                    <div className="flex items-center gap-4 p-4 rounded-xl border-0 bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 hover:from-emerald-500/10 hover:to-emerald-500/15 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 group-hover:bg-emerald-500/20 transition-all duration-300 group-hover:scale-110">
+                        <ShoppingCart className="h-6 w-6 text-emerald-600" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium">Nueva Venta</p>
-                        <p className="text-xs text-muted-foreground">Registrar orden de venta</p>
+                        <p className="text-sm font-semibold text-foreground">Nueva Venta</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">Registrar orden de venta</p>
                       </div>
-                      <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <ArrowUpRight className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </div>
                   </Link>
                 )}
 
                 {tieneClientes && (
                   <Link href="/clientes/nuevo" className="block">
-                    <div className="flex items-center gap-3 p-3 rounded-lg border bg-card hover:bg-accent transition-colors cursor-pointer group">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors">
-                        <UserPlus className="h-5 w-5 text-blue-600" />
+                    <div className="flex items-center gap-4 p-4 rounded-xl border-0 bg-gradient-to-br from-blue-500/5 to-blue-500/10 hover:from-blue-500/10 hover:to-blue-500/15 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 group-hover:bg-blue-500/20 transition-all duration-300 group-hover:scale-110">
+                        <UserPlus className="h-6 w-6 text-blue-600" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium">Nuevo Cliente</p>
-                        <p className="text-xs text-muted-foreground">Agregar cliente al sistema</p>
+                        <p className="text-sm font-semibold text-foreground">Nuevo Cliente</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">Agregar cliente al sistema</p>
                       </div>
-                      <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <ArrowUpRight className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </div>
                   </Link>
                 )}
@@ -448,12 +445,12 @@ export default function DashboardPage() {
           </div>
         </TabsContent>
 
-        <TabsContent value="analytics" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Análisis de Costos</CardTitle>
-                <CardDescription>
+        <TabsContent value="analytics" className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card className="border-0 shadow-md">
+              <CardHeader className="space-y-1">
+                <CardTitle className="text-xl font-semibold">Análisis de Costos</CardTitle>
+                <CardDescription className="text-sm">
                   Desglose detallado de costos
                 </CardDescription>
               </CardHeader>
@@ -461,10 +458,10 @@ export default function DashboardPage() {
                 <CostosChart recetas={recetas} moneda={configuracion.moneda} />
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Distribución de Productos</CardTitle>
-                <CardDescription>
+            <Card className="border-0 shadow-md">
+              <CardHeader className="space-y-1">
+                <CardTitle className="text-xl font-semibold">Distribución de Productos</CardTitle>
+                <CardDescription className="text-sm">
                   Categorías de insumos
                 </CardDescription>
               </CardHeader>
@@ -476,50 +473,20 @@ export default function DashboardPage() {
         </TabsContent>
 
         {tieneVentas && (
-          <TabsContent value="sales" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Ventas Recientes</CardTitle>
-                <CardDescription>
+          <TabsContent value="sales" className="space-y-6">
+            <Card className="border-0 shadow-md">
+              <CardHeader className="space-y-1">
+                <CardTitle className="text-xl font-semibold">Ventas Recientes</CardTitle>
+                <CardDescription className="text-sm">
                   Últimas 5 órdenes registradas
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {ventasRecientes.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    No hay ventas registradas
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {ventasRecientes.map((orden) => (
-                      <div key={orden.id} className="flex items-center justify-between border-b pb-4 last:border-0">
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium leading-none">
-                            Orden #{orden.id.substring(0, 8)}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {new Date(orden.fechaCreacion || "").toLocaleDateString()}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <div className="text-right">
-                            <p className="text-sm font-medium">
-                              {formatearDualMoneda(orden.total, configuracion.tasaCambioUSD || 50, configuracion.moneda === "USD")}
-                            </p>
-                            <p className="text-xs text-muted-foreground capitalize">
-                              {orden.estado.replace("_", " ")}
-                            </p>
-                          </div>
-                          <Link href={`/ventas/${orden.id}`}>
-                            <Button variant="ghost" size="sm">
-                              <ArrowUpRight className="h-4 w-4" />
-                            </Button>
-                          </Link>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <RecentSales 
+                  ventas={ventasRecientes}
+                  moneda={configuracion.moneda}
+                  tasaCambio={configuracion.tasaCambioUSD || 50}
+                />
               </CardContent>
             </Card>
           </TabsContent>

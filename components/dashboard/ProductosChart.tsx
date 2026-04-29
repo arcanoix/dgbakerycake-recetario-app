@@ -15,9 +15,9 @@ export const ProductosChart = ({ productos }: ProductosChartProps) => {
     if (active && payload && payload.length) {
       const percentage = ((payload[0].value / total) * 100).toFixed(1);
       return (
-        <div className="bg-white p-4 rounded-xl shadow-xl border border-gray-300">
-          <p className="font-bold text-gray-900">{payload[0].name}</p>
-          <p className="text-sm text-gray-700">
+        <div className="bg-card p-4 rounded-lg shadow-lg border">
+          <p className="font-semibold text-foreground">{payload[0].name}</p>
+          <p className="text-sm text-muted-foreground">
             {payload[0].value} productos ({percentage}%)
           </p>
         </div>
@@ -27,20 +27,16 @@ export const ProductosChart = ({ productos }: ProductosChartProps) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg shadow-gray-100/50 border border-gray-200 p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h3 className="text-lg font-bold text-gray-900">Productos por Categoría</h3>
-          <p className="text-sm text-gray-700">Distribución de inventario</p>
-        </div>
+    <div className="h-full">
+      <div className="flex items-center justify-between mb-4">
         <div className="text-right">
-          <p className="text-2xl font-bold text-violet-600">{total}</p>
-          <p className="text-xs text-gray-700">Total productos</p>
+          <p className="text-2xl font-bold">{total}</p>
+          <p className="text-xs text-muted-foreground">Total productos</p>
         </div>
       </div>
       
       <div className="flex items-center justify-center">
-        <ResponsiveContainer width="100%" height={240}>
+        <ResponsiveContainer width="100%" height={200}>
           <PieChart>
             <Pie
               data={productos}
@@ -70,13 +66,13 @@ export const ProductosChart = ({ productos }: ProductosChartProps) => {
         {productos.slice(0, 6).map((producto, index) => (
           <div key={producto.categoria} className="flex items-center gap-2">
             <div 
-              className="w-3 h-3 rounded-full" 
+              className="w-3 h-3 rounded-full flex-shrink-0" 
               style={{ backgroundColor: COLORS[index % COLORS.length] }}
             />
-            <span className="text-xs text-gray-600 truncate">
+            <span className="text-xs text-muted-foreground truncate">
               {producto.categoria}
             </span>
-            <span className="text-xs font-medium text-gray-900 ml-auto">
+            <span className="text-xs font-medium ml-auto">
               {producto.cantidad}
             </span>
           </div>

@@ -26,8 +26,8 @@ export const CostosChart = ({ recetas, moneda }: CostosChartProps) => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white p-4 rounded-xl shadow-xl border border-gray-300">
-          <p className="font-bold text-gray-900 mb-2">{label}</p>
+        <div className="bg-card p-4 rounded-lg shadow-lg border">
+          <p className="font-semibold text-foreground mb-2">{label}</p>
           <div className="space-y-1">
             <p className="text-sm text-violet-600">
               <span className="font-medium">Materiales:</span> {formatearMoneda(payload[0]?.value || 0, moneda, tasaCambio)}
@@ -36,7 +36,7 @@ export const CostosChart = ({ recetas, moneda }: CostosChartProps) => {
               <span className="font-medium">Mano de obra:</span> {formatearMoneda(payload[1]?.value || 0, moneda, tasaCambio)}
             </p>
             <div className="border-t pt-1 mt-1">
-              <p className="text-sm font-bold text-gray-900">
+              <p className="text-sm font-semibold text-foreground">
                 Total: {formatearMoneda(payload[2]?.value || 0, moneda, tasaCambio)}
               </p>
             </div>
@@ -48,41 +48,39 @@ export const CostosChart = ({ recetas, moneda }: CostosChartProps) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg shadow-gray-100/50 border border-gray-200 p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h3 className="text-lg font-bold text-gray-900">Costos por Receta</h3>
-          <p className="text-sm text-gray-700">Desglose de materiales y mano de obra</p>
-        </div>
+    <div className="h-full">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-violet-500"></div>
-            <span className="text-xs text-gray-700">Materiales</span>
+            <span className="text-xs text-muted-foreground">Materiales</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-fuchsia-500"></div>
-            <span className="text-xs text-gray-700">Mano de obra</span>
+            <span className="text-xs text-muted-foreground">Mano de obra</span>
           </div>
         </div>
       </div>
       
-      <ResponsiveContainer width="100%" height={280}>
+      <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} barGap={8}>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-muted" />
           <XAxis 
             dataKey="nombre" 
             axisLine={false} 
             tickLine={false}
-            tick={{ fill: '#9ca3af', fontSize: 12 }}
+            className="text-muted-foreground"
+            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
             dy={10}
           />
           <YAxis 
             axisLine={false} 
             tickLine={false}
-            tick={{ fill: '#9ca3af', fontSize: 12 }}
+            className="text-muted-foreground"
+            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
             tickFormatter={(value) => `${value}`}
           />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f9fafb' }} />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))' }} />
           <Bar 
             dataKey="materiales" 
             fill="#8b5cf6" 

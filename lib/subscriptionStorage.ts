@@ -7,6 +7,7 @@ import {
   UserSubscriptionInfo,
   PaymentStatus,
   Plan,
+  PLAN_LIMITS,
 } from '@/types/subscription';
 import { ActivityLog } from '@/types/user';
 
@@ -668,11 +669,16 @@ export const verificarLimite = async (
   const info = await obtenerInfoSuscripcion();
   
   if (!info) {
-    return { 
-      permitido: false, 
-      limite: 0, 
-      mensaje: 'No se pudo obtener información de suscripción' 
-    };
+    const freeLimits = PLAN_LIMITS['free'];
+    const defaultLimite = tipo === 'productos' ? freeLimits.maxProductos : freeLimits.maxRecetas;
+    if (cantidadActual >= defaultLimite) {
+      return {
+        permitido: false,
+        limite: defaultLimite,
+        mensaje: `Has alcanzado el límite de ${defaultLimite} ${tipo} del Plan Gratuito. Actualiza tu plan para continuar.`,
+      };
+    }
+    return { permitido: true, limite: defaultLimite };
   }
 
   const limite = tipo === 'productos' ? info.max_productos : info.max_recetas;

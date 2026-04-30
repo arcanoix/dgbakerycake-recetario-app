@@ -6,31 +6,33 @@
  * components as already done in MarkdownRenderer.tsx.
  */
 
-/** Tags whose entire block (opening tag + content + closing tag) should be removed. */
-const DANGEROUS_TAG_PATTERN =
-  /<(script|style|iframe|object|embed|link|meta|noscript)[^>]*>[\s\S]*?<\/\1>/gi;
+/**
+ * Tags whose entire block (opening tag + content + closing tag) should be
+ * removed. This pattern is intentionally NOT stored as a module-level constant
+ * with the /g flag because global regex instances are stateful (lastIndex) and
+ * unsafe to reuse across calls. A fresh RegExp is created for each invocation.
+ */
+const DANGEROUS_TAG_SOURCE =
+  '<(script|style|iframe|object|embed|link|meta|noscript)[^>]*>[\\s\\S]*?<\\/\\1>';
+
+/** Combined pattern: dangerous blocks first, then any remaining HTML tag. */
+const STRIP_HTML_SOURCE = `${DANGEROUS_TAG_SOURCE}|<[^>]*>`;
 
 /**
  * Strips HTML/script tags and dangerous block content from a plain-text string.
  * Works in both server (Node.js) and browser environments.
  *
- * Uses a single combined pass to avoid incomplete-sanitization edge cases:
- * - Dangerous block elements (e.g. <script>…</script>) are removed entirely.
+ * - Dangerous block elements (e.g. <script>…</script>) are removed entirely
+ *   including their content.
  * - All remaining HTML tags are stripped while keeping their text content.
  * - Any residual `<` and `>` characters are replaced with their HTML entities
  *   so no partial tags can slip through.
+ *
+ * A new RegExp instance is created on every call to avoid statefulness issues
+ * with the global (`g`) flag.
  */
 export function stripHtml(input: string): string {
-  // Single-pass: dangerous blocks first (higher-specificity alternative),
-  // then remaining HTML tags.
-  const withoutTags = input.replace(
-    new RegExp(
-      DANGEROUS_TAG_PATTERN.source + '|<[^>]*>',
-      'gi'
-    ),
-    ''
-  );
-  // Encode any residual angle-bracket characters so they cannot form new tags.
+  const withoutTags = input.replace(new RegExp(STRIP_HTML_SOURCE, 'gi'), '');
   return withoutTags
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')

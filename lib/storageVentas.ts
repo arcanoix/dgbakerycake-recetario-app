@@ -1,6 +1,8 @@
 import { supabase } from './supabase';
 import { Cliente, ClienteFormData, Orden, OrdenFormData, OrdenItem } from '@/types';
 import { registrarActividad, registrarErrorSistema } from './subscriptionStorage';
+import { ClienteFormSchema, OrdenFormSchema } from './validators';
+import { sanitizeStringFields, stripHtml } from './sanitize';
 
 // ============================================
 // CLIENTES
@@ -49,38 +51,55 @@ export const guardarCliente = async (cliente: ClienteFormData & { id?: string })
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { exitoso: false, error: 'Usuario no autenticado' };
 
-  if (cliente.id) {
+  // Validate and sanitize user-supplied fields before writing to Supabase
+  const sanitized = sanitizeStringFields({
+    nombre: cliente.nombre,
+    email: cliente.email,
+    telefono: cliente.telefono,
+    direccion: cliente.direccion,
+    notas: cliente.notas,
+  });
+
+  const parsed = ClienteFormSchema.safeParse(sanitized);
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0]?.message ?? 'Datos de cliente inválidos';
+    return { exitoso: false, error: msg };
+  }
+
+  const clienteValidado = { ...cliente, ...parsed.data };
+
+  if (clienteValidado.id) {
     // Actualizar
     const { error } = await supabase
       .from('clientes')
       .update({
-        nombre: cliente.nombre,
-        email: cliente.email || null,
-        telefono: cliente.telefono || null,
-        direccion: cliente.direccion || null,
-        notas: cliente.notas || null,
+        nombre: clienteValidado.nombre,
+        email: clienteValidado.email || null,
+        telefono: clienteValidado.telefono || null,
+        direccion: clienteValidado.direccion || null,
+        notas: clienteValidado.notas || null,
         updated_at: new Date().toISOString(),
       })
-      .eq('id', cliente.id)
+      .eq('id', clienteValidado.id)
       .eq('user_id', user.id);
 
     if (error) {
       console.error('Error al actualizar cliente:', error);
       return { exitoso: false, error: error.message };
     }
-    registrarActividad('update', 'clientes', `Cliente actualizado: ${cliente.nombre}`, cliente.id, cliente.nombre);
-    return { exitoso: true, id: cliente.id };
+    registrarActividad('update', 'clientes', `Cliente actualizado: ${clienteValidado.nombre}`, clienteValidado.id, clienteValidado.nombre);
+    return { exitoso: true, id: clienteValidado.id };
   } else {
     // Insertar
     const { data, error } = await supabase
       .from('clientes')
       .insert([{
         user_id: user.id,
-        nombre: cliente.nombre,
-        email: cliente.email || null,
-        telefono: cliente.telefono || null,
-        direccion: cliente.direccion || null,
-        notas: cliente.notas || null,
+        nombre: clienteValidado.nombre,
+        email: clienteValidado.email || null,
+        telefono: clienteValidado.telefono || null,
+        direccion: clienteValidado.direccion || null,
+        notas: clienteValidado.notas || null,
       }])
       .select('id')
       .single();
@@ -89,7 +108,7 @@ export const guardarCliente = async (cliente: ClienteFormData & { id?: string })
       console.error('Error al crear cliente:', error);
       return { exitoso: false, error: error.message };
     }
-    registrarActividad('create', 'clientes', `Cliente creado: ${cliente.nombre}`, data?.id, cliente.nombre);
+    registrarActividad('create', 'clientes', `Cliente creado: ${clienteValidado.nombre}`, data?.id, clienteValidado.nombre);
     return { exitoso: true, id: data?.id };
   }
 };
@@ -168,11 +187,30 @@ export const crearOrden = async (datos: OrdenFormData): Promise<{ exitoso: boole
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { exitoso: false, error: 'Usuario no autenticado' };
 
+  // Validate and sanitize order data before writing to Supabase
+  const sanitized = {
+    ...datos,
+    notas: datos.notas ? stripHtml(datos.notas) : datos.notas,
+    items: datos.items.map(item => ({
+      ...item,
+      nombreItem: stripHtml(item.nombreItem),
+      notas: item.notas ? stripHtml(item.notas) : item.notas,
+    })),
+  };
+
+  const parsed = OrdenFormSchema.safeParse(sanitized);
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0]?.message ?? 'Datos de orden inválidos';
+    return { exitoso: false, error: msg };
+  }
+
+  const datosValidados = parsed.data;
+
   // Calcular totales
-  const subtotal = datos.items.reduce((acc, item) => acc + item.cantidad * item.precioUnitario, 0);
-  const descuentoMonto = subtotal * (datos.descuentoPorcentaje / 100);
+  const subtotal = datosValidados.items.reduce((acc, item) => acc + item.cantidad * item.precioUnitario, 0);
+  const descuentoMonto = subtotal * (datosValidados.descuentoPorcentaje / 100);
   const total = subtotal - descuentoMonto;
-  const saldoPendiente = total - datos.pagoAdelantado;
+  const saldoPendiente = total - datosValidados.pagoAdelantado;
 
   // Generar número de orden
   const { count } = await supabase
@@ -187,17 +225,17 @@ export const crearOrden = async (datos: OrdenFormData): Promise<{ exitoso: boole
     .from('ordenes')
     .insert([{
       user_id: user.id,
-      cliente_id: datos.clienteId,
+      cliente_id: datosValidados.clienteId,
       numero_orden: numeroOrden,
-      estado: datos.estado,
+      estado: datosValidados.estado,
       subtotal,
-      descuento_porcentaje: datos.descuentoPorcentaje,
+      descuento_porcentaje: datosValidados.descuentoPorcentaje,
       descuento_monto: descuentoMonto,
       total,
-      pago_adelantado: datos.pagoAdelantado,
+      pago_adelantado: datosValidados.pagoAdelantado,
       saldo_pendiente: saldoPendiente,
-      notas: datos.notas || null,
-      fecha_entrega: datos.fechaEntrega ? datos.fechaEntrega.toISOString() : null,
+      notas: datosValidados.notas || null,
+      fecha_entrega: datosValidados.fechaEntrega ? datosValidados.fechaEntrega.toISOString() : null,
     }])
     .select('id')
     .single();
@@ -210,8 +248,8 @@ export const crearOrden = async (datos: OrdenFormData): Promise<{ exitoso: boole
   const ordenId = orden.id;
 
   // Insertar ítems de orden
-  if (datos.items.length > 0) {
-    const itemsData = datos.items.map(item => ({
+  if (datosValidados.items.length > 0) {
+    const itemsData = datosValidados.items.map(item => ({
       orden_id: ordenId,
       receta_id: item.recetaId || null,
       nombre_item: item.nombreItem,
@@ -241,26 +279,45 @@ export const actualizarOrden = async (id: string, datos: OrdenFormData): Promise
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { exitoso: false, error: 'Usuario no autenticado' };
 
+  // Validate and sanitize order data before writing to Supabase
+  const sanitized = {
+    ...datos,
+    notas: datos.notas ? stripHtml(datos.notas) : datos.notas,
+    items: datos.items.map(item => ({
+      ...item,
+      nombreItem: stripHtml(item.nombreItem),
+      notas: item.notas ? stripHtml(item.notas) : item.notas,
+    })),
+  };
+
+  const parsed = OrdenFormSchema.safeParse(sanitized);
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0]?.message ?? 'Datos de orden inválidos';
+    return { exitoso: false, error: msg };
+  }
+
+  const datosValidados = parsed.data;
+
   // Calcular totales
-  const subtotal = datos.items.reduce((acc, item) => acc + item.cantidad * item.precioUnitario, 0);
-  const descuentoMonto = subtotal * (datos.descuentoPorcentaje / 100);
+  const subtotal = datosValidados.items.reduce((acc, item) => acc + item.cantidad * item.precioUnitario, 0);
+  const descuentoMonto = subtotal * (datosValidados.descuentoPorcentaje / 100);
   const total = subtotal - descuentoMonto;
-  const saldoPendiente = total - datos.pagoAdelantado;
+  const saldoPendiente = total - datosValidados.pagoAdelantado;
 
   // Actualizar orden
   const { error: ordenError } = await supabase
     .from('ordenes')
     .update({
-      cliente_id: datos.clienteId,
-      estado: datos.estado,
+      cliente_id: datosValidados.clienteId,
+      estado: datosValidados.estado,
       subtotal,
-      descuento_porcentaje: datos.descuentoPorcentaje,
+      descuento_porcentaje: datosValidados.descuentoPorcentaje,
       descuento_monto: descuentoMonto,
       total,
-      pago_adelantado: datos.pagoAdelantado,
+      pago_adelantado: datosValidados.pagoAdelantado,
       saldo_pendiente: saldoPendiente,
-      notas: datos.notas || null,
-      fecha_entrega: datos.fechaEntrega ? datos.fechaEntrega.toISOString() : null,
+      notas: datosValidados.notas || null,
+      fecha_entrega: datosValidados.fechaEntrega ? datosValidados.fechaEntrega.toISOString() : null,
       updated_at: new Date().toISOString(),
     })
     .eq('id', id)
@@ -278,8 +335,8 @@ export const actualizarOrden = async (id: string, datos: OrdenFormData): Promise
     return { exitoso: false, error: deleteItemsError.message };
   }
 
-  if (datos.items.length > 0) {
-    const itemsData = datos.items.map(item => ({
+  if (datosValidados.items.length > 0) {
+    const itemsData = datosValidados.items.map(item => ({
       orden_id: id,
       receta_id: item.recetaId || null,
       nombre_item: item.nombreItem,

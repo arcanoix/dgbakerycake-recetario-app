@@ -21,6 +21,7 @@ export interface ResultadoImportacion {
 }
 
 type FilaCruda = Record<string, string>;
+type CeldaExcel = string | number | boolean | Date | null;
 
 // ============================================
 // MAPEO DE COLUMNAS
@@ -189,11 +190,17 @@ function validarFila(
 
 async function leerFilasExcel(file: File): Promise<{ headers: string[]; filas: FilaCruda[] }> {
   const readXlsxFile = (await import('read-excel-file/browser')).default;
-  const rows = await readXlsxFile(file);
+  const resultado = await readXlsxFile(file);
+
+  // El tipo de retorno de la libreria puede variar segun configuracion/version.
+  // Normalizamos a matriz de filas para procesar headers y datos de forma consistente.
+  const rows: CeldaExcel[][] = Array.isArray(resultado)
+    ? resultado.map((fila) => (Array.isArray(fila) ? (fila as CeldaExcel[]) : []))
+    : [];
 
   if (rows.length === 0) return { headers: [], filas: [] };
 
-  const primeraFila = rows[0];
+  const primeraFila = rows[0] ?? [];
   const headers: string[] = [];
   for (let j = 0; j < primeraFila.length; j++) {
     headers.push(String(primeraFila[j] ?? ''));

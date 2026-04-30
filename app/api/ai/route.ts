@@ -8,6 +8,8 @@ import { planToFeatures, Plan } from '@/types/subscription';
 // Types
 // ---------------------------------------------------------------------------
 
+export type AIProvider = 'openai' | 'anthropic' | 'gemini';
+
 export type AIAction =
   | 'generar_descripcion'
   | 'consejos_reduccion_costos'
@@ -29,7 +31,7 @@ export interface AIRequest {
 }
 
 // ---------------------------------------------------------------------------
-// Helpers
+// Prompt builder
 // ---------------------------------------------------------------------------
 
 function buildPrompt(req: AIRequest): string {
@@ -110,6 +112,116 @@ function buildPrompt(req: AIRequest): string {
 }
 
 // ---------------------------------------------------------------------------
+// Provider callers
+// ---------------------------------------------------------------------------
+
+async function callOpenAI(prompt: string, apiKey: string): Promise<string> {
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 600,
+      temperature: 0.7,
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    console.error('OpenAI error:', err);
+    throw new Error('openai_error');
+  }
+
+  const data = await response.json();
+  return data.choices?.[0]?.message?.content ?? '';
+}
+
+async function callAnthropic(prompt: string, apiKey: string): Promise<string> {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model: 'claude-3-5-haiku-20241022',
+      max_tokens: 600,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    console.error('Anthropic error:', err);
+    throw new Error('anthropic_error');
+  }
+
+  const data = await response.json();
+  return data.content?.[0]?.text ?? '';
+}
+
+async function callGemini(prompt: string, apiKey: string): Promise<string> {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { maxOutputTokens: 600, temperature: 0.7 },
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    console.error('Gemini error:', err);
+    throw new Error('gemini_error');
+  }
+
+  const data = await response.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+}
+
+// ---------------------------------------------------------------------------
+// Provider resolution — reads AI_PROVIDER env var; falls back to auto-detect
+// ---------------------------------------------------------------------------
+
+type ProviderConfig =
+  | { provider: AIProvider; apiKey: string }
+  | null;
+
+function resolveProvider(): ProviderConfig {
+  const explicit = (process.env.AI_PROVIDER ?? '').toLowerCase() as AIProvider | '';
+
+  if (explicit === 'openai' || (!explicit && process.env.OPENAI_API_KEY)) {
+    const key = process.env.OPENAI_API_KEY;
+    if (key) return { provider: 'openai', apiKey: key };
+  }
+  if (explicit === 'anthropic' || (!explicit && process.env.ANTHROPIC_API_KEY)) {
+    const key = process.env.ANTHROPIC_API_KEY;
+    if (key) return { provider: 'anthropic', apiKey: key };
+  }
+  if (explicit === 'gemini' || (!explicit && process.env.GEMINI_API_KEY)) {
+    const key = process.env.GEMINI_API_KEY;
+    if (key) return { provider: 'gemini', apiKey: key };
+  }
+
+  return null;
+}
+
+async function callProvider(provider: AIProvider, apiKey: string, prompt: string): Promise<string> {
+  switch (provider) {
+    case 'openai':    return callOpenAI(prompt, apiKey);
+    case 'anthropic': return callAnthropic(prompt, apiKey);
+    case 'gemini':    return callGemini(prompt, apiKey);
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Route handler
 // ---------------------------------------------------------------------------
 
@@ -173,51 +285,26 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Acción no válida' }, { status: 400 });
   }
 
-  // 4. Check OpenAI API key
-  const openAIKey = process.env.OPENAI_API_KEY;
-  if (!openAIKey) {
+  // 4. Resolve AI provider from environment
+  const providerConfig = resolveProvider();
+  if (!providerConfig) {
     return NextResponse.json(
       { error: 'El servicio de IA no está configurado. Contacta al administrador.' },
       { status: 503 }
     );
   }
 
-  // 5. Build prompt and call OpenAI
+  // 5. Build prompt and dispatch to the configured provider
   const prompt = buildPrompt(body);
 
   try {
-    const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${openAIKey}`,
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 600,
-        temperature: 0.7,
-      }),
-    });
-
-    if (!openAIResponse.ok) {
-      const errorData = await openAIResponse.json().catch(() => ({}));
-      console.error('OpenAI API error:', errorData);
-      return NextResponse.json(
-        { error: 'Error al conectar con el servicio de IA. Intenta de nuevo más tarde.' },
-        { status: 502 }
-      );
-    }
-
-    const openAIData = await openAIResponse.json();
-    const result = openAIData.choices?.[0]?.message?.content ?? '';
-
-    return NextResponse.json({ result });
+    const result = await callProvider(providerConfig.provider, providerConfig.apiKey, prompt);
+    return NextResponse.json({ result, provider: providerConfig.provider });
   } catch (err) {
-    console.error('Error calling OpenAI:', err);
+    console.error(`Error calling ${providerConfig.provider}:`, err);
     return NextResponse.json(
-      { error: 'Error interno al procesar la solicitud de IA.' },
-      { status: 500 }
+      { error: 'Error al conectar con el servicio de IA. Intenta de nuevo más tarde.' },
+      { status: 502 }
     );
   }
 }
@@ -266,3 +353,4 @@ async function checkAIAccess(
   const features = planToFeatures(planData as Plan);
   return features.ia_features;
 }
+

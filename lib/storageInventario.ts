@@ -6,6 +6,8 @@ import {
   ConfigStockProducto,
   ConfigStockFormData,
 } from '@/types';
+import { MovimientoFormSchema } from './validators';
+import { sanitizeStringFields } from './sanitize';
 
 // ============================================
 // MOVIMIENTOS (KARDEX)
@@ -46,33 +48,52 @@ export const registrarMovimientoConUnidad = async (
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { exitoso: false, error: 'Usuario no autenticado' };
 
-  const stockActual = await calcularStockActual(user.id, datos.productoId);
+  // Validate and sanitize user-supplied fields before writing to Supabase
+  const sanitized = sanitizeStringFields({
+    productoId: datos.productoId,
+    tipo: datos.tipo,
+    cantidad: datos.cantidad,
+    costoUnitario: datos.costoUnitario,
+    notas: datos.notas,
+    referenciaId: datos.referenciaId,
+    referenciaTipo: datos.referenciaTipo,
+    fecha: datos.fecha,
+  });
 
-  const esEntrada = datos.tipo === 'compra' || datos.tipo === 'ajuste_entrada';
+  const parsed = MovimientoFormSchema.safeParse(sanitized);
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0]?.message ?? 'Datos de movimiento inválidos';
+    return { exitoso: false, error: msg };
+  }
+
+  const datosValidados = parsed.data;
+  const stockActual = await calcularStockActual(user.id, datosValidados.productoId);
+
+  const esEntrada = datosValidados.tipo === 'compra' || datosValidados.tipo === 'ajuste_entrada';
   const stockNuevo = esEntrada
-    ? stockActual + datos.cantidad
-    : Math.max(0, stockActual - datos.cantidad);
+    ? stockActual + datosValidados.cantidad
+    : Math.max(0, stockActual - datosValidados.cantidad);
 
   const costoTotal =
-    datos.costoUnitario != null ? datos.costoUnitario * datos.cantidad : null;
+    datosValidados.costoUnitario != null ? datosValidados.costoUnitario * datosValidados.cantidad : null;
 
   const { data, error } = await supabase
     .from('inventario_movimientos')
     .insert([
       {
         user_id: user.id,
-        producto_id: datos.productoId,
-        tipo: datos.tipo,
-        cantidad: datos.cantidad,
+        producto_id: datosValidados.productoId,
+        tipo: datosValidados.tipo,
+        cantidad: datosValidados.cantidad,
         unidad_medida: unidadMedida,
-        costo_unitario: datos.costoUnitario ?? null,
+        costo_unitario: datosValidados.costoUnitario ?? null,
         costo_total: costoTotal,
         stock_anterior: stockActual,
         stock_nuevo: stockNuevo,
-        notas: datos.notas ?? null,
-        referencia_id: datos.referenciaId ?? null,
-        referencia_tipo: datos.referenciaTipo ?? null,
-        fecha: datos.fecha ? datos.fecha.toISOString() : new Date().toISOString(),
+        notas: datosValidados.notas ?? null,
+        referencia_id: datosValidados.referenciaId ?? null,
+        referencia_tipo: datosValidados.referenciaTipo ?? null,
+        fecha: datosValidados.fecha ? datosValidados.fecha.toISOString() : new Date().toISOString(),
       },
     ])
     .select('id')

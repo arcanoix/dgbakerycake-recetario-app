@@ -17,6 +17,7 @@ import {
   ChevronUp,
   ShoppingBag,
   Download,
+  MessageCircle,
 } from "lucide-react";
 import { formatearUSD } from "@/lib/currency";
 
@@ -48,6 +49,7 @@ interface OrdenListProps {
   onCambiarEstado: (id: string, estado: EstadoOrden) => void;
   onExportarPDF?: (orden: Orden) => void;
   puedeExportarPDF?: boolean;
+  onCompartirWhatsApp?: (orden: Orden) => void;
 }
 
 export const OrdenList = ({
@@ -58,6 +60,7 @@ export const OrdenList = ({
   onCambiarEstado,
   onExportarPDF,
   puedeExportarPDF,
+  onCompartirWhatsApp,
 }: OrdenListProps) => {
   const [busqueda, setBusqueda] = useState("");
   const [filtroEstado, setFiltroEstado] = useState<EstadoOrden | "">("");
@@ -225,6 +228,17 @@ export const OrdenList = ({
                         onClick={() => onExportarPDF(orden)}
                       >
                         <Download className="w-3.5 h-3.5" />
+                      </Button>
+                    )}
+                    {onCompartirWhatsApp && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-1.5 text-green-600 hover:bg-green-50 hover:border-green-300"
+                        onClick={() => onCompartirWhatsApp(orden)}
+                        title="Enviar por WhatsApp"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5" />
                       </Button>
                     )}
                     <Button

@@ -13,6 +13,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { exportarCotizacionPDF } from "@/lib/pdfCotizacion";
+import { generarEnlaceWhatsApp } from "@/lib/whatsapp";
 import { motion } from "motion/react";
 import { ShoppingBag, Plus, Lock, ArrowRight, TrendingUp, Clock, CheckCircle2, FileText } from "lucide-react";
 import Link from "next/link";
@@ -59,6 +60,12 @@ export default function VentasPage() {
 
   const handleExportarPDF = (orden: Orden) => {
     exportarCotizacionPDF(orden, configuracion);
+  };
+
+  const handleCompartirWhatsApp = (orden: Orden) => {
+    const cliente = clientes.find(c => c.id === orden.clienteId);
+    const url = generarEnlaceWhatsApp(orden, configuracion, cliente?.telefono);
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   // Mostrar loading mientras se verifica el plan
@@ -270,6 +277,7 @@ export default function VentasPage() {
             onCambiarEstado={cambiarEstado}
             onExportarPDF={puedeExportarPDF ? handleExportarPDF : undefined}
             puedeExportarPDF={puedeExportarPDF}
+            onCompartirWhatsApp={handleCompartirWhatsApp}
           />
         ) : null}
       </div>

@@ -94,6 +94,14 @@ export default function RecetasPage() {
     setRecetaEditando(undefined);
   };
 
+  const populateFormWithReceta = (receta: Receta) => {
+    setNombre(receta.nombre);
+    setDescripcion(receta.descripcion);
+    setCategoria(receta.categoria || "");
+    setMargenGanancia(receta.margenGanancia || 0);
+    setMateriales(receta.materiales);
+  };
+
   const handleEdit = (receta: Receta) => {
     populateFormWithReceta(receta);
     setRecetaEditando(receta);
@@ -105,14 +113,6 @@ export default function RecetasPage() {
     setNombre(`Copia de ${receta.nombre}`);
     setRecetaEditando(undefined);
     setMostrarFormulario(true);
-  };
-
-  const populateFormWithReceta = (receta: Receta) => {
-    setNombre(receta.nombre);
-    setDescripcion(receta.descripcion);
-    setCategoria(receta.categoria || "");
-    setMargenGanancia(receta.margenGanancia || 0);
-    setMateriales(receta.materiales);
   };
 
   const desglose = materiales.length > 0 ? generarDesgloseCostos({

@@ -52,15 +52,17 @@ export const registrarMovimientoConUnidad = async (
   const sanitized = sanitizeStringFields({
     productoId: datos.productoId,
     tipo: datos.tipo,
-    cantidad: datos.cantidad,
-    costoUnitario: datos.costoUnitario,
     notas: datos.notas,
     referenciaId: datos.referenciaId,
     referenciaTipo: datos.referenciaTipo,
-    fecha: datos.fecha,
   });
 
-  const parsed = MovimientoFormSchema.safeParse(sanitized);
+  const parsed = MovimientoFormSchema.safeParse({
+    ...sanitized,
+    cantidad: datos.cantidad,
+    costoUnitario: datos.costoUnitario,
+    fecha: datos.fecha,
+  });
   if (!parsed.success) {
     const msg = parsed.error.issues[0]?.message ?? 'Datos de movimiento inválidos';
     return { exitoso: false, error: msg };

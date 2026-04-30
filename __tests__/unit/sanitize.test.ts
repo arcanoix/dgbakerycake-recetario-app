@@ -9,7 +9,7 @@ describe('stripHtml', () => {
     expect(stripHtml('<b>Texto</b>')).toBe('Texto');
   });
 
-  it('elimina etiquetas script (XSS)', () => {
+  it('elimina etiquetas script (XSS) junto con su contenido', () => {
     expect(stripHtml('<script>alert("xss")</script>hola')).toBe('hola');
   });
 
@@ -41,6 +41,21 @@ describe('stripHtml', () => {
   it('preserva el texto entre etiquetas', () => {
     const input = '<p>Harina</p><p>Azúcar</p>';
     expect(stripHtml(input)).toBe('HarinaAzúcar');
+  });
+
+  it('codifica caracteres residuales de ángulo como entidades HTML', () => {
+    // Un ángulo izquierdo suelto (sin etiqueta válida) se codifica como &lt;
+    expect(stripHtml('precio < 5')).toBe('precio &lt; 5');
+  });
+
+  it('elimina bloques style con su contenido (XSS vía CSS)', () => {
+    const input = '<style>body{display:none}</style>texto';
+    expect(stripHtml(input)).toBe('texto');
+  });
+
+  it('elimina iframes con su contenido', () => {
+    const input = '<iframe src="evil.com">contenido</iframe>texto';
+    expect(stripHtml(input)).toBe('texto');
   });
 });
 

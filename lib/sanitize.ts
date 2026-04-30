@@ -14,14 +14,26 @@ const DANGEROUS_TAG_PATTERN =
  * Strips HTML/script tags and dangerous block content from a plain-text string.
  * Works in both server (Node.js) and browser environments.
  *
- * 1. Removes dangerous blocks entirely (e.g. <script>…</script>).
- * 2. Strips remaining HTML tags while keeping their text content.
- * 3. Trims surrounding whitespace.
+ * Uses a single combined pass to avoid incomplete-sanitization edge cases:
+ * - Dangerous block elements (e.g. <script>…</script>) are removed entirely.
+ * - All remaining HTML tags are stripped while keeping their text content.
+ * - Any residual `<` and `>` characters are replaced with their HTML entities
+ *   so no partial tags can slip through.
  */
 export function stripHtml(input: string): string {
-  return input
-    .replace(DANGEROUS_TAG_PATTERN, '')
-    .replace(/<[^>]*>/g, '')
+  // Single-pass: dangerous blocks first (higher-specificity alternative),
+  // then remaining HTML tags.
+  const withoutTags = input.replace(
+    new RegExp(
+      DANGEROUS_TAG_PATTERN.source + '|<[^>]*>',
+      'gi'
+    ),
+    ''
+  );
+  // Encode any residual angle-bracket characters so they cannot form new tags.
+  return withoutTags
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
     .trim();
 }
 

@@ -2,7 +2,7 @@ import { supabase } from './supabase';
 import { Cliente, ClienteFormData, Orden, OrdenFormData, OrdenItem } from '@/types';
 import { registrarActividad, registrarErrorSistema } from './subscriptionStorage';
 import { ClienteFormSchema, OrdenFormSchema } from './validators';
-import { sanitizeStringFields } from './sanitize';
+import { sanitizeStringFields, stripHtml } from './sanitize';
 
 // ============================================
 // CLIENTES
@@ -190,11 +190,11 @@ export const crearOrden = async (datos: OrdenFormData): Promise<{ exitoso: boole
   // Validate and sanitize order data before writing to Supabase
   const sanitized = {
     ...datos,
-    notas: datos.notas ? datos.notas.replace(/<[^>]*>/g, '').trim() : datos.notas,
+    notas: datos.notas ? stripHtml(datos.notas) : datos.notas,
     items: datos.items.map(item => ({
       ...item,
-      nombreItem: item.nombreItem.replace(/<[^>]*>/g, '').trim(),
-      notas: item.notas ? item.notas.replace(/<[^>]*>/g, '').trim() : item.notas,
+      nombreItem: stripHtml(item.nombreItem),
+      notas: item.notas ? stripHtml(item.notas) : item.notas,
     })),
   };
 
@@ -282,11 +282,11 @@ export const actualizarOrden = async (id: string, datos: OrdenFormData): Promise
   // Validate and sanitize order data before writing to Supabase
   const sanitized = {
     ...datos,
-    notas: datos.notas ? datos.notas.replace(/<[^>]*>/g, '').trim() : datos.notas,
+    notas: datos.notas ? stripHtml(datos.notas) : datos.notas,
     items: datos.items.map(item => ({
       ...item,
-      nombreItem: item.nombreItem.replace(/<[^>]*>/g, '').trim(),
-      notas: item.notas ? item.notas.replace(/<[^>]*>/g, '').trim() : item.notas,
+      nombreItem: stripHtml(item.nombreItem),
+      notas: item.notas ? stripHtml(item.notas) : item.notas,
     })),
   };
 

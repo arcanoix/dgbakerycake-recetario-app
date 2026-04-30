@@ -50,16 +50,18 @@ export const guardarProducto = async (producto: Producto) => {
   // Validate and sanitize user-supplied text fields before writing to Supabase
   const sanitized = sanitizeStringFields({
     nombre: producto.nombre,
-    precioTotal: producto.precioTotal,
-    tamañoPresentacion: producto.tamañoPresentacion,
     unidadMedida: producto.unidadMedida,
-    cantidadPresentaciones: producto.cantidadPresentaciones,
     categoria: producto.categoria,
     proveedor: producto.proveedor,
     notas: producto.notas,
   });
 
-  const parsed = ProductoFormSchema.safeParse(sanitized);
+  const parsed = ProductoFormSchema.safeParse({
+    ...sanitized,
+    precioTotal: producto.precioTotal,
+    tamañoPresentacion: producto.tamañoPresentacion,
+    cantidadPresentaciones: producto.cantidadPresentaciones,
+  });
   if (!parsed.success) {
     const msg = parsed.error.issues[0]?.message ?? 'Datos de producto inválidos';
     return { exitoso: false, error: msg };
@@ -161,15 +163,17 @@ export const guardarReceta = async (receta: Receta) => {
   const sanitized = sanitizeStringFields({
     nombre: receta.nombre,
     descripcion: receta.descripcion,
-    rendimiento: receta.rendimiento,
     unidadRendimiento: receta.unidadRendimiento,
-    margenGanancia: receta.margenGanancia,
     categoria: receta.categoria,
     imagen: receta.imagen,
     notas: receta.notas,
   });
 
-  const parsed = RecetaFormSchema.safeParse(sanitized);
+  const parsed = RecetaFormSchema.safeParse({
+    ...sanitized,
+    rendimiento: receta.rendimiento,
+    margenGanancia: receta.margenGanancia,
+  });
   if (!parsed.success) {
     const msg = parsed.error.issues[0]?.message ?? 'Datos de receta inválidos';
     return { exitoso: false, error: msg };
@@ -290,14 +294,14 @@ export const obtenerConfiguracion = async (): Promise<ConfiguracionGlobal | null
 
 export const guardarConfiguracion = async (config: ConfiguracionGlobal) => {
   // Validate user-supplied fields before writing to Supabase
-  const sanitized = sanitizeStringFields({
+  const sanitized = sanitizeStringFields({ moneda: config.moneda });
+
+  const parsed = ConfiguracionFormSchema.safeParse({
+    moneda: sanitized.moneda,
     costoPorHoraDefecto: config.costoPorHoraDefecto,
-    moneda: config.moneda,
     margenGananciaDefecto: config.margenGananciaDefecto,
     tasaCambioUSD: config.tasaCambioUSD,
   });
-
-  const parsed = ConfiguracionFormSchema.safeParse(sanitized);
   if (!parsed.success) {
     const msg = parsed.error.issues[0]?.message ?? 'Datos de configuración inválidos';
     return { exitoso: false, error: msg };
@@ -491,11 +495,13 @@ export const guardarUnidad = async (unidad: UnidadMedidaAdmin) => {
     nombre: unidad.nombre,
     simbolo: unidad.simbolo,
     tipo: unidad.tipo,
-    factorConversionBase: unidad.factorConversionBase,
     unidadBase: unidad.unidadBase,
   });
 
-  const parsed = UnidadMedidaFormSchema.safeParse(sanitized);
+  const parsed = UnidadMedidaFormSchema.safeParse({
+    ...sanitized,
+    factorConversionBase: unidad.factorConversionBase,
+  });
   if (!parsed.success) {
     const msg = parsed.error.issues[0]?.message ?? 'Datos de unidad de medida inválidos';
     return { exitoso: false, error: msg };

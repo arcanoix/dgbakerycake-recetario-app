@@ -188,7 +188,7 @@ function validarFila(
 // ============================================
 
 async function leerFilasExcel(file: File): Promise<{ headers: string[]; filas: FilaCruda[] }> {
-  const { readXlsxFile } = await import('read-excel-file/browser');
+  const readXlsxFile = (await import('read-excel-file/browser')).default;
   const rows = await readXlsxFile(file);
 
   if (rows.length === 0) return { headers: [], filas: [] };

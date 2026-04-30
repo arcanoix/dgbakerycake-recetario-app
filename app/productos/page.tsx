@@ -10,11 +10,21 @@ import { ProductoList } from "@/components/productos/ProductoList";
 import { ImportarProductosModal } from "@/components/productos/ImportarProductosModal";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loading } from "@/components/ui/loading";
 import { motion } from "motion/react";
-import { Package, AlertCircle, Lock, ArrowRight, Upload, RefreshCw } from "lucide-react";
+import { 
+  Package, 
+  AlertCircle, 
+  Lock, 
+  ArrowRight, 
+  Upload, 
+  RefreshCw,
+  Plus,
+  ArrowUpRight,
+  Tags,
+  Boxes
+} from "lucide-react";
 
 export default function ProductosPage() {
   const router = useRouter();
@@ -26,7 +36,6 @@ export default function ProductosPage() {
     crearProducto,
     actualizarProducto,
     eliminar,
-    buscarProductos,
     importarProductosMasivo,
     cargarProductos,
   } = useProductos();
@@ -36,11 +45,6 @@ export default function ProductosPage() {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [mostrarImportacion, setMostrarImportacion] = useState(false);
   const [productoEditando, setProductoEditando] = useState<Producto | undefined>();
-  const [terminoBusqueda, setTerminoBusqueda] = useState("");
-
-  const productosFiltrados = terminoBusqueda
-    ? buscarProductos(terminoBusqueda)
-    : productos;
 
   const limitInfo = getCurrentCount('productos', productos.length);
   const canCreate = limitInfo.canCreate;
@@ -96,79 +100,72 @@ export default function ProductosPage() {
 
   return (
     <ProtectedRoute>
-      <div className="container mx-auto p-6 space-y-6">
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
-        >
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
-                <Package className="w-5 h-5 text-white" />
-              </div>
+      <div className="flex-1 space-y-6">
+        {/* Header con estética shadcn-admin */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-1">
+            <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
               Productos e Insumos
-            </h1>
-            <p className="text-gray-700 mt-1">
+            </h2>
+            <p className="text-sm text-muted-foreground">
               Gestiona los ingredientes y materiales para tus recetas
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Button 
-              onClick={handleNuevo} 
-              size="lg"
-              disabled={isDataLoading || !canCreate}
-              className={`gap-2 ${canCreate && !isDataLoading ? 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 border-0' : ''}`}
-            >
-              {isDataLoading ? (
-                <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                  Cargando...
-                </>
-              ) : canCreate ? (
-                <> + Nuevo Producto</>
-              ) : (
-                <>
-                  <Lock className="w-4 h-4" />
-                  Límite alcanzado
-                </>
-              )}
-            </Button>
+          <div className="flex items-center gap-3">
             <Button
               onClick={handleImportar}
-              size="lg"
               variant="outline"
+              size="sm"
               disabled={isDataLoading || !canCreate}
-              className="gap-2"
+              className="gap-2 h-10 px-4"
             >
               <Upload className="w-4 h-4" />
-              Importar Excel/CSV
+              <span className="hidden sm:inline">Importar</span>
+            </Button>
+            <Button 
+              onClick={handleNuevo} 
+              size="sm"
+              disabled={isDataLoading || !canCreate}
+              className="gap-2 h-10 px-4 bg-primary shadow-sm"
+            >
+              {isDataLoading ? (
+                <RefreshCw className="w-4 h-4 animate-spin" />
+              ) : canCreate ? (
+                <Plus className="w-4 h-4" />
+              ) : (
+                <Lock className="w-4 h-4" />
+              )}
+              <span>{isDataLoading ? 'Cargando...' : canCreate ? 'Nuevo Producto' : 'Límite alcanzado'}</span>
             </Button>
           </div>
-        </motion.div>
+        </div>
 
+        {/* Alerta de Límite de Plan */}
         {!cargandoPlan && isLimited && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            <Card className="border-amber-200 bg-amber-50/30">
-              <CardContent className="py-4 flex items-center justify-between">
+            <Card className="border-amber-200 bg-amber-50/50 shadow-none">
+              <CardContent className="py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <AlertCircle className="w-5 h-5 text-amber-500" />
+                  <div className="p-2 rounded-full bg-amber-100">
+                    <AlertCircle className="w-5 h-5 text-amber-600" />
+                  </div>
                   <div>
-                    <p className="font-medium text-amber-900">
+                    <p className="font-semibold text-amber-900 text-sm">
                       Plan: {getPlanDisplayName()} - Límite de {limitInfo.limit} productos
                     </p>
-                    <p className="text-sm text-amber-700">
+                    <p className="text-xs text-amber-700">
                       Has usado {productos.length} de {limitInfo.limit} productos ({limitInfo.remaining} restantes)
                     </p>
                   </div>
                 </div>
                 <Button 
                   variant="outline" 
+                  size="sm"
                   onClick={() => router.push('/pricing')}
-                  className="gap-2"
+                  className="gap-2 border-amber-200 bg-white text-amber-900 hover:bg-amber-100"
                 >
                   Actualizar plan
                   <ArrowRight className="w-4 h-4" />
@@ -178,45 +175,71 @@ export default function ProductosPage() {
           </motion.div>
         )}
 
+        {/* Estadísticas Rápidas */}
+        {!mostrarFormulario && !mostrarImportacion && !cargando && productos.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Card className="border-0 shadow-sm bg-muted/30">
+              <CardContent className="py-4 flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-blue-500/10 text-blue-600">
+                  <Package className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Total Productos</p>
+                  <p className="text-2xl font-bold">{productos.length}</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border-0 shadow-sm bg-muted/30">
+              <CardContent className="py-4 flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-violet-500/10 text-violet-600">
+                  <Tags className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Categorías</p>
+                  <p className="text-2xl font-bold">
+                    {new Set(productos.map((p) => p.categoria).filter(Boolean)).size}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border-0 shadow-sm bg-muted/30">
+              <CardContent className="py-4 flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600">
+                  <Boxes className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Stock Registrado</p>
+                  <p className="text-2xl font-bold">{productos.length}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Errores */}
         {error && (
-          <Card className="border-red-200">
-            <CardContent className="py-4">
-              <p className="text-red-600">{error}</p>
-              <Button variant="link" onClick={() => cargarProductos()} className="px-0 mt-2">
-                Intentar nuevamente
+          <Card className="border-destructive/20 bg-destructive/5 shadow-none">
+            <CardContent className="py-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <AlertCircle className="w-5 h-5 text-destructive" />
+                <p className="text-sm font-medium text-destructive">{error}</p>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => cargarProductos()} className="h-8">
+                Reintentar
               </Button>
             </CardContent>
           </Card>
         )}
 
-        {!cargando && errorCarga && productos.length === 0 && (
-          <Card className="border-amber-200 bg-amber-50/70">
-            <CardContent className="py-6 space-y-3">
-              <p className="font-semibold text-amber-900">No pudimos cargar tus productos</p>
-              <p className="text-amber-800">{errorCarga}</p>
-              <Button variant="outline" onClick={() => cargarProductos()} className="gap-2 border-amber-300 text-amber-900 hover:bg-amber-100">
-                <RefreshCw className="w-4 h-4" />
-                Reintentar carga
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {!cargando && errorCarga && productos.length > 0 && (
-          <Card className="border-amber-200 bg-amber-50/50">
-            <CardContent className="py-4">
-              <p className="text-amber-900 font-medium">Conexión lenta detectada</p>
-              <p className="text-amber-800 text-sm">{errorCarga}</p>
-            </CardContent>
-          </Card>
-        )}
-
+        {/* Formularios y Contenido */}
         {mostrarFormulario && (
-          <ProductoForm
-            producto={productoEditando}
-            onSubmit={handleSubmit}
-            onCancel={handleCancel}
-          />
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <ProductoForm
+              producto={productoEditando}
+              onSubmit={handleSubmit}
+              onCancel={handleCancel}
+            />
+          </motion.div>
         )}
 
         {mostrarImportacion && (
@@ -227,65 +250,21 @@ export default function ProductosPage() {
           />
         )}
 
-        {!mostrarFormulario && !mostrarImportacion && (
-          <div className="flex gap-4">
-            <Input
-              placeholder="Buscar productos por nombre, categoría o proveedor..."
-              value={terminoBusqueda}
-              onChange={(e) => setTerminoBusqueda(e.target.value)}
-              className="max-w-md"
-              disabled={cargando}
-            />
-            {terminoBusqueda && (
-              <Button variant="outline" onClick={() => setTerminoBusqueda("")}>
-                Limpiar
-              </Button>
-            )}
-          </div>
-        )}
-
-        {!mostrarFormulario && !mostrarImportacion && !cargando && productos.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card>
-              <CardContent className="py-4">
-                <p className="text-sm text-gray-700">Total de Productos</p>
-                <p className="text-2xl font-bold">{productos.length}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="py-4">
-                <p className="text-sm text-gray-700">Resultados</p>
-                <p className="text-2xl font-bold">{productosFiltrados.length}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="py-4">
-                <p className="text-sm text-gray-700">Categorías</p>
-                <p className="text-2xl font-bold">
-                  {new Set(productos.map((p) => p.categoria).filter(Boolean)).size}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
         {cargando ? (
-          <div className="py-12 flex justify-center">
-            <Loading text="Cargando tus productos..." />
+          <div className="py-20 flex flex-col items-center justify-center gap-4">
+            <div className="relative h-12 w-12">
+              <div className="absolute inset-0 rounded-full border-4 border-primary/20" />
+              <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+            </div>
+            <p className="text-sm text-muted-foreground font-medium">Cargando tus productos...</p>
           </div>
         ) : !mostrarFormulario && !mostrarImportacion && !(errorCarga && productos.length === 0) ? (
           <ProductoList
-            productos={productosFiltrados}
+            productos={productos}
             onEdit={handleEdit}
             onDelete={async (id: string) => {
               await eliminar(id);
             }}
-            emptyTitle={terminoBusqueda ? 'No encontramos productos' : 'No hay productos registrados'}
-            emptyDescription={
-              terminoBusqueda
-                ? `No hay resultados para “${terminoBusqueda}”. Prueba con otro nombre, categoría o proveedor.`
-                : 'Crea tu primer producto para comenzar a gestionar tus costos de producción'
-            }
           />
         ) : null}
       </div>

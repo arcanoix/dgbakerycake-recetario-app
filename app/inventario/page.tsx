@@ -10,7 +10,7 @@ import { StockList } from "@/components/inventario/StockList";
 import { ConfigStock } from "@/components/inventario/ConfigStock";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loading } from "@/components/ui/loading";
 import { motion } from "motion/react";
 import {
@@ -20,17 +20,13 @@ import {
   ClipboardList,
   Settings,
   Plus,
+  ArrowRight,
+  RefreshCw,
+  TrendingUp,
+  History,
+  ShieldAlert
 } from "lucide-react";
-
-type TabId = "stock" | "kardex" | "nuevo" | "alertas" | "config";
-
-const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
-  { id: "stock", label: "Stock Actual", icon: <PackageSearch className="w-4 h-4" /> },
-  { id: "kardex", label: "Kardex", icon: <ClipboardList className="w-4 h-4" /> },
-  { id: "nuevo", label: "Nuevo Movimiento", icon: <Plus className="w-4 h-4" /> },
-  { id: "alertas", label: "Alertas", icon: <AlertTriangle className="w-4 h-4" /> },
-  { id: "config", label: "Configuración", icon: <Settings className="w-4 h-4" /> },
-];
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function InventarioPage() {
   const {
@@ -48,11 +44,19 @@ export default function InventarioPage() {
 
   const { productos, cargando: cargandoProductos } = useProductos();
 
-  const [tabActiva, setTabActiva] = useState<TabId>("stock");
+  const [tabActiva, setTabActiva] = useState<string>("stock");
   const [productoKardexFiltro, setProductoKardexFiltro] = useState<string>("");
 
   if (cargando || cargandoProductos) {
-    return <Loading text="Cargando inventario..." />;
+    return (
+      <div className="py-20 flex flex-col items-center justify-center gap-4">
+        <div className="relative h-12 w-12">
+          <div className="absolute inset-0 rounded-full border-4 border-primary/20" />
+          <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+        </div>
+        <p className="text-sm text-muted-foreground font-medium">Cargando inventario...</p>
+      </div>
+    );
   }
 
   const handleRegistrarMovimiento = async (datos: MovimientoFormData): Promise<boolean> => {
@@ -71,95 +75,103 @@ export default function InventarioPage() {
 
   return (
     <ProtectedRoute>
-      <div className="container mx-auto p-6 space-y-6">
+      <div className="flex-1 space-y-6">
         {/* Encabezado */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
-        >
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
-                <Warehouse className="w-5 h-5 text-white" />
-              </div>
-              Inventario / Almacén
-            </h1>
-            <p className="text-gray-700 mt-1">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-1">
+            <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+              Inventario y Almacén
+            </h2>
+            <p className="text-sm text-muted-foreground">
               Control de stock, kardex y trazabilidad de insumos
             </p>
           </div>
           <Button
             onClick={() => setTabActiva("nuevo")}
-            size="lg"
-            className="gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 border-0 text-white"
+            size="sm"
+            className="gap-2 h-10 px-4 bg-primary shadow-sm"
           >
             <Plus className="w-4 h-4" />
-            Nuevo Movimiento
+            <span>Nuevo Movimiento</span>
           </Button>
-        </motion.div>
+        </div>
 
         {/* Tarjetas de resumen */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.05 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4"
-        >
-          <Card>
-            <CardContent className="py-4">
-              <p className="text-sm text-gray-600">Productos rastreados</p>
-              <p className="text-2xl font-bold">{stocksConMovimientos.length}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="border-0 shadow-sm bg-muted/30">
+            <CardContent className="py-4 flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-blue-500/10 text-blue-600">
+                <PackageSearch className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Productos</p>
+                <p className="text-2xl font-bold">{stocksConMovimientos.length}</p>
+              </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="py-4">
-              <p className="text-sm text-gray-600">Movimientos registrados</p>
-              <p className="text-2xl font-bold">{movimientos.length}</p>
+          <Card className="border-0 shadow-sm bg-muted/30">
+            <CardContent className="py-4 flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-violet-500/10 text-violet-600">
+                <History className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Movimientos</p>
+                <p className="text-2xl font-bold">{movimientos.length}</p>
+              </div>
             </CardContent>
           </Card>
-          <Card className={stocksCriticos.length > 0 ? "border-red-300 bg-red-50/30" : ""}>
-            <CardContent className="py-4">
-              <p className="text-sm text-gray-600">Stock crítico</p>
-              <p className={`text-2xl font-bold ${stocksCriticos.length > 0 ? "text-red-600" : ""}`}>
-                {stocksCriticos.length}
-              </p>
+          <Card className={`border-0 shadow-sm ${stocksCriticos.length > 0 ? "bg-red-500/10" : "bg-muted/30"}`}>
+            <CardContent className="py-4 flex items-center gap-4">
+              <div className={`p-3 rounded-xl ${stocksCriticos.length > 0 ? "bg-red-500/20 text-red-600" : "bg-emerald-500/10 text-emerald-600"}`}>
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Stock Crítico</p>
+                <p className={`text-2xl font-bold ${stocksCriticos.length > 0 ? "text-red-600" : ""}`}>
+                  {stocksCriticos.length}
+                </p>
+              </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="py-4">
-              <p className="text-sm text-gray-600">Alertas configuradas</p>
-              <p className="text-2xl font-bold">{configs.length}</p>
+          <Card className="border-0 shadow-sm bg-muted/30">
+            <CardContent className="py-4 flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-amber-500/10 text-amber-600">
+                <Settings className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Alertas</p>
+                <p className="text-2xl font-bold">{configs.length}</p>
+              </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
 
         {/* Alerta global si hay stock crítico */}
         {stocksCriticos.length > 0 && tabActiva !== "alertas" && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-          >
-            <Card className="border-red-300 bg-red-50/40">
-              <CardContent className="py-3 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0" />
-                  <p className="text-red-800 font-medium text-sm">
-                    {stocksCriticos.length} producto{stocksCriticos.length !== 1 ? "s" : ""} con stock crítico:{" "}
-                    {stocksCriticos
-                      .slice(0, 3)
-                      .map((s) => s.productoNombre)
-                      .join(", ")}
-                    {stocksCriticos.length > 3 && ` y ${stocksCriticos.length - 3} más`}.
-                  </p>
+          <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}>
+            <Card className="border-red-200 bg-red-50/50 shadow-none">
+              <CardContent className="py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-full bg-red-100">
+                    <ShieldAlert className="w-5 h-5 text-red-600" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-red-900 text-sm">
+                      {stocksCriticos.length} producto{stocksCriticos.length !== 1 ? "s" : ""} con stock crítico
+                    </p>
+                    <p className="text-xs text-red-700">
+                      Hay insumos que están por debajo del nivel mínimo establecido.
+                    </p>
+                  </div>
                 </div>
-                <Button
-                  variant="outline"
+                <Button 
+                  variant="outline" 
                   size="sm"
-                  className="shrink-0 border-red-300 text-red-700 hover:bg-red-100"
                   onClick={() => setTabActiva("alertas")}
+                  className="gap-2 border-red-200 bg-white text-red-900 hover:bg-red-100"
                 >
-                  Ver alertas
+                  Revisar alertas
+                  <ArrowRight className="w-4 h-4" />
                 </Button>
               </CardContent>
             </Card>
@@ -167,148 +179,158 @@ export default function InventarioPage() {
         )}
 
         {error && (
-          <Card className="border-red-200">
-            <CardContent className="py-4">
-              <p className="text-red-600">{error}</p>
+          <Card className="border-destructive/20 bg-destructive/5 shadow-none">
+            <CardContent className="py-4 flex items-center gap-3">
+              <AlertTriangle className="w-5 h-5 text-destructive" />
+              <p className="text-sm font-medium text-destructive">{error}</p>
             </CardContent>
           </Card>
         )}
 
-        {/* Tabs */}
-        <div className="flex gap-1 bg-gray-100 p-1 rounded-xl overflow-x-auto">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setTabActiva(tab.id)}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-                tabActiva === tab.id
-                  ? "bg-white shadow text-violet-700"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              {tab.icon}
-              {tab.label}
-              {tab.id === "alertas" && stocksCriticos.length > 0 && (
-                <span className="ml-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 leading-none">
+        {/* Tabs Principales */}
+        <Tabs value={tabActiva} onValueChange={setTabActiva} className="space-y-6">
+          <TabsList className="bg-muted/50 p-1 border h-11">
+            <TabsTrigger value="stock" className="gap-2 h-9 px-4 font-bold data-[state=active]:shadow-sm">
+              <PackageSearch className="w-4 h-4" />
+              Stock Actual
+            </TabsTrigger>
+            <TabsTrigger value="kardex" className="gap-2 h-9 px-4 font-bold data-[state=active]:shadow-sm">
+              <ClipboardList className="w-4 h-4" />
+              Kardex
+            </TabsTrigger>
+            <TabsTrigger value="alertas" className="gap-2 h-9 px-4 font-bold data-[state=active]:shadow-sm relative">
+              <AlertTriangle className="w-4 h-4" />
+              Alertas
+              {stocksCriticos.length > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] text-white font-black shadow-sm">
                   {stocksCriticos.length}
                 </span>
               )}
-            </button>
-          ))}
-        </div>
+            </TabsTrigger>
+            <TabsTrigger value="config" className="gap-2 h-9 px-4 font-bold data-[state=active]:shadow-sm">
+              <Settings className="w-4 h-4" />
+              Configurar
+            </TabsTrigger>
+            <TabsTrigger value="nuevo" className="gap-2 h-9 px-4 font-bold data-[state=active]:shadow-sm text-primary">
+              <Plus className="w-4 h-4" />
+              Nuevo
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Contenido de cada tab */}
-        <motion.div
-          key={tabActiva}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.15 }}
-        >
-          {tabActiva === "stock" && (
-            <div className="space-y-4">
-              <p className="text-sm text-gray-600">
-                Stock actual de todos los productos que tienen al menos un movimiento registrado.
-                Haz clic en un producto para ver su kardex.
-              </p>
-              <StockList
-                stocks={stocksConMovimientos.length > 0 ? stocksConMovimientos : stocks}
-                onSeleccionar={(id) => {
-                  setProductoKardexFiltro(id);
-                  setTabActiva("kardex");
-                }}
-              />
-            </div>
-          )}
-
-          {tabActiva === "kardex" && (
-            <div className="space-y-4">
-              {/* Filtro por producto */}
-              <div className="flex gap-3 items-center flex-wrap">
-                <select
-                  value={productoKardexFiltro}
-                  onChange={(e) => setProductoKardexFiltro(e.target.value)}
-                  className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
-                >
-                  <option value="">Todos los productos</option>
-                  {productos.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.nombre}
-                    </option>
-                  ))}
-                </select>
-                {productoKardexFiltro && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setProductoKardexFiltro("")}
-                  >
-                    Limpiar filtro
-                  </Button>
-                )}
-                <span className="text-sm text-gray-500">
-                  {movimientosFiltrados.length} movimiento{movimientosFiltrados.length !== 1 ? "s" : ""}
-                </span>
-              </div>
-              <KardexTable
-                movimientos={movimientosFiltrados}
-                onEliminar={async (id) => {
-                  await eliminar(id);
-                }}
-              />
-            </div>
-          )}
-
-          {tabActiva === "nuevo" && (
-            <MovimientoForm
-              productos={productos}
-              onSubmit={handleRegistrarMovimiento}
-              onCancel={() => setTabActiva("stock")}
-            />
-          )}
-
-          {tabActiva === "alertas" && (
-            <div className="space-y-4">
-              {stocksCriticos.length === 0 ? (
-                <Card>
-                  <CardContent className="py-10 text-center text-gray-500">
-                    <p className="text-green-700 font-medium">✓ No hay alertas activas.</p>
-                    <p className="text-sm mt-1">
-                      Todos los productos están por encima de su nivel mínimo de stock.
-                    </p>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={tabActiva}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              <TabsContent value="stock" className="m-0 space-y-4">
+                <Card className="border-0 shadow-none bg-transparent">
+                  <CardHeader className="px-0 pt-0">
+                    <CardTitle className="text-lg">Control de Stock</CardTitle>
+                    <CardDescription>Visualiza el nivel actual de todos tus productos e insumos.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="px-0">
+                    <StockList
+                      stocks={stocksConMovimientos.length > 0 ? stocksConMovimientos : stocks}
+                      onSeleccionar={(id) => {
+                        setProductoKardexFiltro(id);
+                        setTabActiva("kardex");
+                      }}
+                    />
                   </CardContent>
                 </Card>
-              ) : (
-                <>
-                  <p className="text-sm text-gray-600">
-                    Los siguientes productos están por debajo de su nivel mínimo configurado:
-                  </p>
-                  <StockList
-                    stocks={stocksCriticos}
-                    onSeleccionar={(id) => {
-                      setProductoKardexFiltro(id);
-                      setTabActiva("kardex");
-                    }}
-                  />
-                </>
-              )}
-            </div>
-          )}
+              </TabsContent>
 
-          {tabActiva === "config" && (
-            <div className="space-y-4">
-              <p className="text-sm text-gray-600">
-                Configura el nivel mínimo de stock para cada producto. Recibirás alertas cuando el
-                stock caiga por debajo del mínimo establecido.
-              </p>
-              <ConfigStock
-                productos={productos}
-                configs={configs}
-                onGuardar={guardarConfig}
-                onEliminar={eliminarConfig}
-              />
-            </div>
-          )}
-        </motion.div>
+              <TabsContent value="kardex" className="m-0 space-y-4">
+                <Card className="border-0 shadow-none bg-transparent">
+                  <CardHeader className="px-0 pt-0 flex flex-row items-center justify-between space-y-0">
+                    <div>
+                      <CardTitle className="text-lg">Historial de Movimientos</CardTitle>
+                      <CardDescription>Trazabilidad completa de entradas, salidas y ajustes.</CardDescription>
+                    </div>
+                    {productoKardexFiltro && (
+                      <Button variant="ghost" size="sm" onClick={() => setProductoKardexFiltro("")} className="text-xs h-8">
+                        Limpiar filtro de producto
+                      </Button>
+                    )}
+                  </CardHeader>
+                  <CardContent className="px-0">
+                    <KardexTable
+                      movimientos={movimientosFiltrados}
+                      onEliminar={async (id) => {
+                        await eliminar(id);
+                      }}
+                      productoFiltro={productoKardexFiltro}
+                      onFiltroChange={setProductoKardexFiltro}
+                      productos={productos}
+                    />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="alertas" className="m-0 space-y-4">
+                {stocksCriticos.length === 0 ? (
+                  <Card className="border-0 shadow-sm bg-muted/30">
+                    <CardContent className="py-20 flex flex-col items-center justify-center text-center">
+                      <div className="p-4 rounded-full bg-emerald-100 text-emerald-600 mb-4">
+                        <CheckCircle2 className="w-10 h-10" />
+                      </div>
+                      <p className="text-lg font-bold text-emerald-900">¡Todo bajo control!</p>
+                      <p className="text-sm text-muted-foreground mt-1 max-w-xs">
+                        No tienes productos con stock crítico en este momento.
+                      </p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <Card className="border-0 shadow-none bg-transparent">
+                    <CardHeader className="px-0 pt-0">
+                      <CardTitle className="text-lg text-destructive">Productos en Alerta</CardTitle>
+                      <CardDescription>Estos insumos requieren reposición inmediata.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="px-0">
+                      <StockList
+                        stocks={stocksCriticos}
+                        onSeleccionar={(id) => {
+                          setProductoKardexFiltro(id);
+                          setTabActiva("kardex");
+                        }}
+                      />
+                    </CardContent>
+                  </Card>
+                )}
+              </TabsContent>
+
+              <TabsContent value="config" className="m-0 space-y-4">
+                <Card className="border-0 shadow-none bg-transparent">
+                  <CardHeader className="px-0 pt-0">
+                    <CardTitle className="text-lg">Configuración de Alertas</CardTitle>
+                    <CardDescription>Define los niveles mínimos de stock para cada producto.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="px-0">
+                    <ConfigStock
+                      productos={productos}
+                      configs={configs}
+                      onGuardar={guardarConfig}
+                      onEliminar={eliminarConfig}
+                    />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="nuevo" className="m-0">
+                <div className="max-w-3xl mx-auto">
+                  <MovimientoForm
+                    productos={productos}
+                    onSubmit={handleRegistrarMovimiento}
+                    onCancel={() => setTabActiva("stock")}
+                  />
+                </div>
+              </TabsContent>
+            </motion.div>
+          </AnimatePresence>
+        </Tabs>
       </div>
     </ProtectedRoute>
   );

@@ -193,7 +193,11 @@ async function leerFilasExcel(file: File): Promise<{ headers: string[]; filas: F
 
   if (rows.length === 0) return { headers: [], filas: [] };
 
-  const headers = rows[0].map((cell) => String(cell ?? ''));
+  const primeraFila = rows[0];
+  const headers: string[] = [];
+  for (let j = 0; j < primeraFila.length; j++) {
+    headers.push(String(primeraFila[j] ?? ''));
+  }
   const filas: FilaCruda[] = [];
 
   for (let i = 1; i < rows.length; i++) {

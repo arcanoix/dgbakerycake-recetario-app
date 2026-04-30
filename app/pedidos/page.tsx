@@ -6,7 +6,7 @@ import { useOrdenes } from "@/hooks/useOrdenes";
 import { usePlanAccess } from "@/hooks/usePlanAccess";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { CalendarDays, ArrowRight, Lock } from "lucide-react";
+import { CalendarDays, ArrowRight, Lock, AlertCircle } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
 
@@ -18,41 +18,36 @@ export default function PedidosPage() {
 
   if (cargandoPlan) {
     return (
-      <ProtectedRoute>
-        <div className="min-h-screen flex items-center justify-center">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center"
-          >
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full border-4 border-t-transparent border-violet-500 animate-spin"></div>
-            <p className="text-gray-700">Verificando acceso...</p>
-          </motion.div>
+      <div className="py-20 flex flex-col items-center justify-center gap-4">
+        <div className="relative h-12 w-12">
+          <div className="absolute inset-0 rounded-full border-4 border-primary/20" />
+          <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
         </div>
-      </ProtectedRoute>
+        <p className="text-sm text-muted-foreground font-medium">Verificando acceso...</p>
+      </div>
     );
   }
 
   if (!puedeAcceder) {
     return (
       <ProtectedRoute>
-        <div className="p-6 max-w-md mx-auto mt-12 text-center">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-violet-100 to-fuchsia-100 flex items-center justify-center mx-auto mb-4">
-            <Lock className="w-8 h-8 text-violet-500" />
+        <div className="flex flex-col items-center justify-center py-20 text-center space-y-6">
+          <div className="w-20 h-20 rounded-3xl bg-muted flex items-center justify-center">
+            <Lock className="w-10 h-10 text-muted-foreground" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">
-            Calendario de Pedidos
-          </h2>
-          <p className="text-gray-700 mb-4 text-sm">
-            Visualiza tus entregas y estados de venta en un calendario. Disponible desde el plan
-            Básico.
-          </p>
-          <p className="text-xs text-gray-700 mb-5">
-            Tu plan actual: <strong>{getPlanDisplayName()}</strong>
-          </p>
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold">Calendario de Pedidos</h2>
+            <p className="text-muted-foreground max-w-sm mx-auto">
+              Visualiza tus entregas y estados de venta en un calendario dinámico. 
+              Disponible desde el plan <strong>Básico</strong>.
+            </p>
+          </div>
+          <div className="bg-primary/5 p-4 rounded-xl border border-primary/10">
+            <p className="text-sm font-medium">Plan actual: <span className="text-primary font-bold uppercase">{getPlanDisplayName()}</span></p>
+          </div>
           <Link href="/pricing">
-            <Button className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700">
-              Ver Planes <ArrowRight className="w-4 h-4 ml-2" />
+            <Button className="gap-2 h-11 px-6 shadow-lg bg-primary">
+              Ver Planes <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>
         </div>
@@ -62,34 +57,42 @@ export default function PedidosPage() {
 
   return (
     <ProtectedRoute>
-      <div className="p-4 sm:p-6 max-w-6xl mx-auto space-y-6">
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-3"
-        >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 flex items-center justify-center">
-            <CalendarDays className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Pedidos</h1>
-            <p className="text-sm text-gray-700">
-              Calendario de entregas y estados
+      <div className="flex-1 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-1">
+            <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+              Agenda de Pedidos
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Cronograma de entregas y seguimiento logístico
             </p>
           </div>
-        </motion.div>
+          <div className="flex items-center gap-3">
+             <Link href="/ventas">
+               <Button variant="outline" size="sm" className="h-10 px-4 gap-2">
+                 Ver todas las órdenes
+               </Button>
+             </Link>
+          </div>
+        </div>
 
         {error && (
-          <Card className="border-red-200 bg-red-50/20">
-            <CardContent className="py-3 px-4 text-sm text-red-600">{error}</CardContent>
+          <Card className="border-destructive/20 bg-destructive/5 shadow-none">
+            <CardContent className="py-4 flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-destructive" />
+              <p className="text-sm font-medium text-destructive">{error}</p>
+            </CardContent>
           </Card>
         )}
 
-        <OrdenCalendar
-          ordenes={ordenes}
-          cargando={cargando}
-          onActualizarFecha={actualizarFechaEntrega}
-        />
+        <div className="bg-card rounded-3xl border shadow-sm p-2">
+          <OrdenCalendar
+            ordenes={ordenes}
+            cargando={cargando}
+            onActualizarFecha={actualizarFechaEntrega}
+          />
+        </div>
       </div>
     </ProtectedRoute>
   );

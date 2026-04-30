@@ -64,6 +64,7 @@ describe('planToFeatures()', () => {
       expect(features.exportar_datos).toBe(false);
       expect(features.api_access).toBe(false);
       expect(features.soporte_prioritario).toBe(false);
+      expect(features.ia_features).toBe(false);
     });
 
     it('should use plan max_productos and max_recetas as limits', () => {
@@ -123,6 +124,7 @@ describe('planToFeatures()', () => {
           exportar_datos: true,
           api_access: true,
           soporte_prioritario: true,
+          ia_features: true,
         },
       });
       const features = planToFeatures(plan);
@@ -131,6 +133,7 @@ describe('planToFeatures()', () => {
       expect(features.exportar_datos).toBe(true);
       expect(features.api_access).toBe(true);
       expect(features.soporte_prioritario).toBe(true);
+      expect(features.ia_features).toBe(true);
     });
   });
 
@@ -165,6 +168,48 @@ describe('planToFeatures()', () => {
       expect(features.exportar_pdf).toBe(expected.exportar_pdf);
       expect(features.max_productos).toBe(expected.max_productos);
       expect(features.max_recetas).toBe(expected.max_recetas);
+      expect(features.ia_features).toBe(expected.ia_features);
+    });
+  });
+
+  describe('ia_features defaults by plan tier', () => {
+    it('should disable ia_features for free plan by default', () => {
+      const plan = makePlan({ name: 'free', features: {} });
+      const features = planToFeatures(plan);
+      expect(features.ia_features).toBe(false);
+    });
+
+    it('should disable ia_features for basico plan by default', () => {
+      const plan = makePlan({ name: 'basico', features: {} });
+      const features = planToFeatures(plan);
+      expect(features.ia_features).toBe(false);
+    });
+
+    it('should enable ia_features for profesional plan by default', () => {
+      const plan = makePlan({ name: 'profesional', features: {} });
+      const features = planToFeatures(plan);
+      expect(features.ia_features).toBe(true);
+    });
+
+    it('should enable ia_features for empresarial plan by default', () => {
+      const plan = makePlan({ name: 'empresarial', features: {} });
+      const features = planToFeatures(plan);
+      expect(features.ia_features).toBe(true);
+    });
+
+    it('should respect explicit ia_features override in features JSON', () => {
+      const planWithOverride = makePlan({ name: 'free', features: { ia_features: true } });
+      expect(planToFeatures(planWithOverride).ia_features).toBe(true);
+
+      const planDisabled = makePlan({ name: 'profesional', features: { ia_features: false } });
+      expect(planToFeatures(planDisabled).ia_features).toBe(false);
+    });
+
+    it('PLAN_FEATURES constants should reflect correct ia_features per plan', () => {
+      expect(PLAN_FEATURES['free'].ia_features).toBe(false);
+      expect(PLAN_FEATURES['basico'].ia_features).toBe(false);
+      expect(PLAN_FEATURES['profesional'].ia_features).toBe(true);
+      expect(PLAN_FEATURES['empresarial'].ia_features).toBe(true);
     });
   });
 });

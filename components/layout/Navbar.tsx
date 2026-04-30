@@ -19,6 +19,7 @@ const navItems: NavItem[] = [
   { href: "/productos", label: "Productos", icon: "📦", requiredFeature: "menu_productos" },
   { href: "/inventario", label: "Inventario", icon: "🏪", requiredFeature: "menu_productos" },
   { href: "/recetas", label: "Recetas", icon: "📝", requiredFeature: "menu_recetas" },
+  { href: "/ai", label: "IA Premium", icon: "✨", requiredFeature: "ia_features" },
   { href: "/clientes", label: "Clientes", icon: "👥", requiredFeature: "menu_clientes" },
   { href: "/ventas", label: "Ventas", icon: "🛒", requiredFeature: "menu_ventas" },
   { href: "/pedidos", label: "Pedidos", icon: "🗓️", requiredFeature: "menu_ventas" },

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
 import { PrecioDual } from "@/components/ui/precio-dual";
-import { Download, Edit2, Trash2, ChefHat, Package, DollarSign, TrendingUp, Eye, FileText } from "lucide-react";
+import { Download, Edit2, Trash2, ChefHat, Package, DollarSign, TrendingUp, Eye, FileText, Copy } from "lucide-react";
 import { motion } from "motion/react";
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string; icon: string }> = {
@@ -29,9 +29,10 @@ interface RecetaListProps {
   onEdit: (receta: Receta) => void;
   onDelete: (id: string) => Promise<void>;
   onView?: (receta: Receta) => void;
+  onDuplicate?: (receta: Receta) => void;
 }
 
-export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProps) => {
+export const RecetaList = ({ recetas, onEdit, onDelete, onView, onDuplicate }: RecetaListProps) => {
   const { configuracion } = useConfiguracion();
   const [eliminando, setEliminando] = useState<string | null>(null);
   const [exportandoPDF, setExportandoPDF] = useState<string | null>(null);
@@ -220,6 +221,19 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView }: RecetaListProp
                     <Edit2 className="w-3.5 h-3.5" />
                     Editar
                   </Button>
+                  {onDuplicate && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5"
+                      onClick={() => onDuplicate(receta)}
+                      disabled={eliminando === receta.id}
+                      title="Duplicar receta"
+                      aria-label="Duplicar receta"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
                     size="sm"

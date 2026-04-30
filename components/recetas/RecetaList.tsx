@@ -7,22 +7,23 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
 import { PrecioDual } from "@/components/ui/precio-dual";
-import { Download, Edit2, Trash2, ChefHat, Package, DollarSign, TrendingUp, Eye, FileText, Copy } from "lucide-react";
-import { motion } from "motion/react";
-
-const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string; icon: string }> = {
-  'Panadería': { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200', icon: '🍞' },
-  'Pasteles': { bg: 'bg-rose-50', text: 'text-rose-700', border: 'border-rose-200', icon: '🎂' },
-  'Galletas': { bg: 'bg-orange-50', text: 'text-orange-700', border: 'border-orange-200', icon: '🍪' },
-  'Postres': { bg: 'bg-pink-50', text: 'text-pink-700', border: 'border-pink-200', icon: '🍮' },
-  'Bizcochos': { bg: 'bg-yellow-50', text: 'text-yellow-700', border: 'border-yellow-200', icon: '🧁' },
-  'Otros': { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-200', icon: '🥐' },
-};
-
-const getCategoryStyle = (categoria?: string) => {
-  const key = categoria || 'Otros';
-  return CATEGORY_COLORS[key] || CATEGORY_COLORS['Otros'];
-};
+import { 
+  Download, 
+  Edit2, 
+  Trash2, 
+  ChefHat, 
+  Package, 
+  DollarSign, 
+  TrendingUp, 
+  Eye, 
+  FileText, 
+  Copy,
+  LayoutGrid,
+  Table as TableIcon
+} from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { DataTable } from "@/components/ui/data-table";
+import { getRecetaColumns } from "./receta-columns";
 
 interface RecetaListProps {
   recetas: Receta[];
@@ -34,10 +35,10 @@ interface RecetaListProps {
 
 export const RecetaList = ({ recetas, onEdit, onDelete, onView, onDuplicate }: RecetaListProps) => {
   const { configuracion } = useConfiguracion();
+  const [viewMode, setViewMode] = useState<'table' | 'grid'>('grid');
   const [eliminando, setEliminando] = useState<string | null>(null);
   const [exportandoPDF, setExportandoPDF] = useState<string | null>(null);
 
-  // Lazy import de jsPDF — no entra en el bundle inicial (~300 KB)
   const handleExportPDF = async (receta: Receta) => {
     setExportandoPDF(receta.id);
     try {
@@ -57,206 +58,227 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView, onDuplicate }: R
     }
   };
 
+  const columns = getRecetaColumns({
+    onEdit,
+    onDelete: handleDelete,
+    onDuplicate: onDuplicate || (() => {}),
+    onExportPDF: handleExportPDF,
+    tasaCambio: configuracion?.tasaCambioUSD || 50,
+    moneda: configuracion?.moneda || 'VES',
+  });
+
   if (recetas.length === 0) {
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center justify-center py-16 px-4"
+        className="flex flex-col items-center justify-center py-16 px-4 text-center"
       >
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center mb-4">
-          <ChefHat className="w-10 h-10 text-amber-500" />
+        <div className="w-20 h-20 rounded-2xl bg-amber-500/10 flex items-center justify-center mb-6 shadow-sm">
+          <ChefHat className="w-10 h-10 text-amber-600" />
         </div>
-        <h3 className="text-xl font-semibold mb-2">
+        <h3 className="text-xl font-bold mb-2">
           No hay recetas registradas
         </h3>
-        <p className="text-muted-foreground text-center max-w-md">
-          Crea tu primera receta para calcular costos y establecer precios de venta
+        <p className="text-muted-foreground max-w-md leading-relaxed">
+          Crea tu primera receta para calcular costos y establecer precios de venta competitivos.
         </p>
       </motion.div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {recetas.map((receta, index) => {
-        const categoryStyle = getCategoryStyle(receta.categoria);
-        const hasMargen = receta.margenGanancia && receta.margenGanancia > 0;
-        
-        return (
-          <motion.div
-            key={receta.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05, duration: 0.3 }}
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground font-medium">
+          <span className="text-foreground font-bold">{recetas.length}</span> recetas encontradas
+        </p>
+        <div className="flex bg-muted p-1 rounded-lg border">
+          <Button
+            variant={viewMode === 'table' ? 'secondary' : 'ghost'}
+            size="sm"
+            onClick={() => setViewMode('table')}
+            className={viewMode === 'table' ? 'shadow-sm' : ''}
           >
-            <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+            <TableIcon className="w-4 h-4 mr-2" />
+            Tabla
+          </Button>
+          <Button
+            variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
+            size="sm"
+            onClick={() => setViewMode('grid')}
+            className={viewMode === 'grid' ? 'shadow-sm' : ''}
+          >
+            <LayoutGrid className="w-4 h-4 mr-2" />
+            Cuadrícula
+          </Button>
+        </div>
+      </div>
+
+      <AnimatePresence mode="wait">
+        {viewMode === 'table' ? (
+          <motion.div
+            key="table"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.2 }}
+          >
+            <DataTable 
+              columns={columns} 
+              data={recetas} 
+              searchKey="nombre"
+              placeholder="Filtrar recetas..."
+            />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="grid"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {recetas.map((receta, index) => {
+              const hasMargen = receta.margenGanancia && receta.margenGanancia > 0;
               
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
-                    <CardTitle className="text-lg truncate flex items-center gap-2">
-                      <ChefHat className="w-5 h-5 text-amber-500 flex-shrink-0" />
-                      <span className="truncate">{receta.nombre}</span>
-                    </CardTitle>
-                  </div>
-                  {receta.categoria && (
-                    <Badge variant="secondary" className="flex-shrink-0 gap-1">
-                      <span>{categoryStyle.icon}</span>
-                      {receta.categoria}
-                    </Badge>
-                  )}
-                </div>
-                {receta.descripcion && (
-                  <CardDescription className="line-clamp-2 mt-2">
-                    {receta.descripcion}
-                  </CardDescription>
-                )}
-              </CardHeader>
-              
-              <CardContent className="space-y-4">
-                <div className="bg-muted/50 rounded-lg p-4 space-y-3 border">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold flex items-center gap-1.5">
-                      <Package className="w-4 h-4" />
-                      Materiales
-                    </span>
-                    <span className="text-sm font-bold">
-                      {receta.materiales.length} {receta.materiales.length === 1 ? 'item' : 'items'}
-                    </span>
-                  </div>
-                  
-                  <div className="h-px bg-border" />
-                  
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
-                      <p className="text-[11px] uppercase tracking-wider text-blue-700 font-semibold mb-1 flex items-center gap-1">
-                        <DollarSign className="w-3.5 h-3.5" />
-                        Costo Materiales
-                      </p>
-                      <PrecioDual 
-                        valorUSD={receta.costoMateriales} 
-                        tasaCambio={configuracion?.tasaCambioUSD || 50}
-                        monedaPorDefecto={configuracion?.moneda || 'VES'}
-                        className="text-sm font-bold text-blue-800"
-                      />
-                    </div>
-                    <div className="bg-violet-50 rounded-lg p-3 border border-violet-200">
-                      <p className="text-[11px] uppercase tracking-wider text-violet-700 font-semibold mb-1 flex items-center gap-1">
-                        <TrendingUp className="w-3.5 h-3.5" />
-                        Costo Total
-                      </p>
-                      <PrecioDual 
-                        valorUSD={receta.costoTotal} 
-                        tasaCambio={configuracion?.tasaCambioUSD || 50}
-                        monedaPorDefecto={configuracion?.moneda || 'VES'}
-                        className="text-sm font-bold text-violet-800"
-                      />
-                    </div>
-                  </div>
-                </div>
-                
-                {receta.precioVentaSugerido && (
-                  <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-200">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-[11px] uppercase tracking-wider text-emerald-700 font-semibold mb-1">
-                          Precio de Venta Sugerido
-                        </p>
-                        <PrecioDual 
-                          valorUSD={receta.precioVentaSugerido} 
-                          tasaCambio={configuracion?.tasaCambioUSD || 50}
-                          monedaPorDefecto={configuracion?.moneda || 'VES'}
-                          className="text-xl font-bold text-emerald-800"
-                        />
-                      </div>
-                      {hasMargen && (
-                        <div className="text-right">
-                          <p className="text-[11px] uppercase tracking-wider text-emerald-700 font-semibold mb-1">
-                            Margen
-                          </p>
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 text-sm font-bold border border-emerald-300">
-                            +{receta.margenGanancia}%
-                          </span>
+              return (
+                <Card key={receta.id} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden border-0 shadow-md bg-card">
+                  <CardHeader className="pb-3 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <CardTitle className="text-lg font-bold truncate flex items-center gap-2">
+                        <div className="p-2 rounded-lg bg-amber-500/10 text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300">
+                          <ChefHat className="w-4 h-4" />
                         </div>
+                        <span className="truncate group-hover:text-amber-600 transition-colors">{receta.nombre}</span>
+                      </CardTitle>
+                      {receta.categoria && (
+                        <Badge variant="outline" className="font-bold uppercase tracking-wider text-[10px]">
+                          {receta.categoria}
+                        </Badge>
                       )}
                     </div>
-                  </div>
-                )}
+                    {receta.descripcion && (
+                      <CardDescription className="line-clamp-2 text-xs">
+                        {receta.descripcion}
+                      </CardDescription>
+                    )}
+                  </CardHeader>
+                  
+                  <CardContent className="space-y-4">
+                    <div className="bg-muted/30 rounded-xl p-4 space-y-3 border">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold uppercase tracking-tight text-muted-foreground flex items-center gap-1.5">
+                          <Package className="w-3.5 h-3.5" />
+                          Materiales
+                        </span>
+                        <span className="text-sm font-black">
+                          {receta.materiales.length} ítems
+                        </span>
+                      </div>
+                      
+                      <div className="h-px bg-border/50" />
+                      
+                      <div className="grid grid-cols-2 gap-3 text-center">
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase">Costo Insumos</p>
+                          <PrecioDual 
+                            valorUSD={receta.costoMateriales} 
+                            tasaCambio={configuracion?.tasaCambioUSD || 50}
+                            monedaPorDefecto={configuracion?.moneda || 'VES'}
+                            className="text-xs font-bold"
+                          />
+                        </div>
+                        <div className="space-y-1 border-l">
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase">Costo Total</p>
+                          <PrecioDual 
+                            valorUSD={receta.costoTotal} 
+                            tasaCambio={configuracion?.tasaCambioUSD || 50}
+                            monedaPorDefecto={configuracion?.moneda || 'VES'}
+                            className="text-xs font-bold text-violet-600"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {receta.precioVentaSugerido && (
+                      <div className="bg-emerald-500/10 rounded-xl p-4 border border-emerald-500/20">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-700 mb-1">
+                              P. VENTA SUGERIDO
+                            </p>
+                            <PrecioDual 
+                              valorUSD={receta.precioVentaSugerido} 
+                              tasaCambio={configuracion?.tasaCambioUSD || 50}
+                              monedaPorDefecto={configuracion?.moneda || 'VES'}
+                              className="text-xl font-black text-emerald-700"
+                            />
+                          </div>
+                          {hasMargen && (
+                            <Badge className="bg-emerald-600 text-white font-black border-none shadow-sm">
+                              +{receta.margenGanancia}%
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    )}
 
-                <div className="flex gap-2">
-                  {onView && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 gap-1.5"
-                      onClick={() => onView(receta)}
-                      disabled={eliminando === receta.id}
-                    >
-                      <Eye className="w-3.5 h-3.5" />
-                      Ver
-                    </Button>
-                  )}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-1.5"
-                    onClick={() => handleExportPDF(receta)}
-                    disabled={exportandoPDF === receta.id}
-                    title="Exportar a PDF"
-                  >
-                    {exportandoPDF === receta.id ? (
-                      <span className="animate-spin text-xs">⏳</span>
-                    ) : (
-                      <FileText className="w-3.5 h-3.5" />
-                    )}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1 gap-1.5"
-                    onClick={() => onEdit(receta)}
-                    disabled={eliminando === receta.id}
-                  >
-                    <Edit2 className="w-3.5 h-3.5" />
-                    Editar
-                  </Button>
-                  {onDuplicate && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="gap-1.5"
-                      onClick={() => onDuplicate(receta)}
-                      disabled={eliminando === receta.id}
-                      title="Duplicar receta"
-                      aria-label="Duplicar receta"
-                    >
-                      <Copy className="w-3.5 h-3.5" />
-                    </Button>
-                  )}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-1.5 text-destructive hover:bg-destructive/10"
-                    onClick={() => {
-                      if (confirm(`¿Estás seguro de eliminar "${receta.nombre}"?`)) {
-                        handleDelete(receta.id);
-                      }
-                    }}
-                    disabled={eliminando === receta.id}
-                  >
-                    {eliminando === receta.id ? (
-                      <span className="animate-spin">⏳</span>
-                    ) : (
-                      <Trash2 className="w-3.5 h-3.5" />
-                    )}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                    <div className="flex gap-2 pt-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 gap-2 font-bold text-[10px] h-9"
+                        onClick={() => onEdit(receta)}
+                        disabled={eliminando === receta.id}
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                        EDITAR
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-9 px-2 hover:bg-muted"
+                        onClick={() => handleExportPDF(receta)}
+                        disabled={exportandoPDF === receta.id}
+                      >
+                        {exportandoPDF === receta.id ? (
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <FileText className="w-4 h-4" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-9 px-2 hover:bg-muted"
+                        onClick={() => onDuplicate?.(receta)}
+                        disabled={eliminando === receta.id}
+                      >
+                        <Copy className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-9 px-2 text-destructive hover:bg-destructive/10"
+                        onClick={() => {
+                          if (confirm(`¿Estás seguro de eliminar "${receta.nombre}"?`)) {
+                            handleDelete(receta.id);
+                          }
+                        }}
+                        disabled={eliminando === receta.id}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </motion.div>
-        );
-      })}
+        )}
+      </AnimatePresence>
     </div>
   );
 };

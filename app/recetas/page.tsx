@@ -94,13 +94,24 @@ export default function RecetasPage() {
     setRecetaEditando(undefined);
   };
 
-  const handleEdit = (receta: Receta) => {
-    setRecetaEditando(receta);
+  const populateFormWithReceta = (receta: Receta) => {
     setNombre(receta.nombre);
     setDescripcion(receta.descripcion);
     setCategoria(receta.categoria || "");
     setMargenGanancia(receta.margenGanancia || 0);
     setMateriales(receta.materiales);
+  };
+
+  const handleEdit = (receta: Receta) => {
+    populateFormWithReceta(receta);
+    setRecetaEditando(receta);
+    setMostrarFormulario(true);
+  };
+
+  const handleDuplicate = (receta: Receta) => {
+    populateFormWithReceta(receta);
+    setNombre(`Copia de ${receta.nombre}`);
+    setRecetaEditando(undefined);
     setMostrarFormulario(true);
   };
 
@@ -294,7 +305,7 @@ export default function RecetasPage() {
             <Input placeholder="Buscar recetas..." value={terminoBusqueda} onChange={(e) => setTerminoBusqueda(e.target.value)} className="max-w-md" />
           </div>
           {(!errorCargaRecetas || recetas.length > 0) && (
-            <RecetaList recetas={recetasFiltradas} onEdit={handleEdit} onDelete={async (id: string) => {
+            <RecetaList recetas={recetasFiltradas} onEdit={handleEdit} onDuplicate={handleDuplicate} onDelete={async (id: string) => {
               await eliminar(id);
             }} />
           )}

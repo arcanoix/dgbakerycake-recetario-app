@@ -1,6 +1,14 @@
 import { supabase } from './supabase';
 import { Producto, Receta, ConfiguracionGlobal, UnidadMedidaAdmin, CategoriaAdmin } from '@/types';
 import { registrarActividad, registrarErrorSistema } from './subscriptionStorage';
+import {
+  ProductoFormSchema,
+  RecetaFormSchema,
+  ConfiguracionFormSchema,
+  UnidadMedidaFormSchema,
+  CategoriaFormSchema,
+} from './validators';
+import { sanitizeStringFields } from './sanitize';
 
 // ============================================
 // PRODUCTOS
@@ -39,7 +47,30 @@ export const obtenerProductoPorId = async (id: string): Promise<Producto | null>
 };
 
 export const guardarProducto = async (producto: Producto) => {
-  const productoData = mapProductoToDB(producto);
+  // Validate and sanitize user-supplied text fields before writing to Supabase
+  const sanitized = sanitizeStringFields({
+    nombre: producto.nombre,
+    unidadMedida: producto.unidadMedida,
+    categoria: producto.categoria,
+    proveedor: producto.proveedor,
+    notas: producto.notas,
+  });
+
+  const parsed = ProductoFormSchema.safeParse({
+    ...sanitized,
+    precioTotal: producto.precioTotal,
+    tamañoPresentacion: producto.tamañoPresentacion,
+    cantidadPresentaciones: producto.cantidadPresentaciones,
+  });
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0]?.message ?? 'Datos de producto inválidos';
+    return { exitoso: false, error: msg };
+  }
+
+  const productoData = mapProductoToDB({
+    ...producto,
+    ...parsed.data,
+  });
 
   // Verificar si existe
   const { data: existing } = await supabase
@@ -128,7 +159,30 @@ export const obtenerRecetaPorId = async (id: string): Promise<Receta | null> => 
 };
 
 export const guardarReceta = async (receta: Receta) => {
-  const recetaData = mapRecetaToDB(receta);
+  // Validate and sanitize user-supplied text fields before writing to Supabase
+  const sanitized = sanitizeStringFields({
+    nombre: receta.nombre,
+    descripcion: receta.descripcion,
+    unidadRendimiento: receta.unidadRendimiento,
+    categoria: receta.categoria,
+    imagen: receta.imagen,
+    notas: receta.notas,
+  });
+
+  const parsed = RecetaFormSchema.safeParse({
+    ...sanitized,
+    rendimiento: receta.rendimiento,
+    margenGanancia: receta.margenGanancia,
+  });
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0]?.message ?? 'Datos de receta inválidos';
+    return { exitoso: false, error: msg };
+  }
+
+  const recetaData = mapRecetaToDB({
+    ...receta,
+    ...parsed.data,
+  });
 
   // Verificar si existe
   const { data: existing } = await supabase
@@ -239,7 +293,24 @@ export const obtenerConfiguracion = async (): Promise<ConfiguracionGlobal | null
 };
 
 export const guardarConfiguracion = async (config: ConfiguracionGlobal) => {
-  const configData = mapConfiguracionToDB(config);
+  // Validate user-supplied fields before writing to Supabase
+  const sanitized = sanitizeStringFields({ moneda: config.moneda });
+
+  const parsed = ConfiguracionFormSchema.safeParse({
+    moneda: sanitized.moneda,
+    costoPorHoraDefecto: config.costoPorHoraDefecto,
+    margenGananciaDefecto: config.margenGananciaDefecto,
+    tasaCambioUSD: config.tasaCambioUSD,
+  });
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0]?.message ?? 'Datos de configuración inválidos';
+    return { exitoso: false, error: msg };
+  }
+
+  const configData = mapConfiguracionToDB({
+    ...config,
+    ...parsed.data,
+  });
 
   // Verificar si existe alguna configuración
   const { data: existing } = await supabase
@@ -419,7 +490,27 @@ export const obtenerUnidadPorId = async (id: string): Promise<UnidadMedidaAdmin 
 };
 
 export const guardarUnidad = async (unidad: UnidadMedidaAdmin) => {
-  const unidadData = mapUnidadToDB(unidad);
+  // Validate and sanitize user-supplied fields before writing to Supabase
+  const sanitized = sanitizeStringFields({
+    nombre: unidad.nombre,
+    simbolo: unidad.simbolo,
+    tipo: unidad.tipo,
+    unidadBase: unidad.unidadBase,
+  });
+
+  const parsed = UnidadMedidaFormSchema.safeParse({
+    ...sanitized,
+    factorConversionBase: unidad.factorConversionBase,
+  });
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0]?.message ?? 'Datos de unidad de medida inválidos';
+    return { exitoso: false, error: msg };
+  }
+
+  const unidadData = mapUnidadToDB({
+    ...unidad,
+    ...parsed.data,
+  });
 
   const { data: existing } = await supabase
     .from('unidades_medida')
@@ -549,7 +640,21 @@ export const guardarCategoria = async (categoria: CategoriaAdmin): Promise<{ exi
     return { exitoso: false, error: "Usuario no autenticado" };
   }
 
-  const categoriaDB = mapCategoriaHaciaBD(categoria, user.id);
+  // Validate and sanitize user-supplied fields before writing to Supabase
+  const sanitized = sanitizeStringFields({
+    nombre: categoria.nombre,
+    tipo: categoria.tipo,
+    descripcion: categoria.descripcion,
+    color: categoria.color,
+  });
+
+  const parsed = CategoriaFormSchema.safeParse(sanitized);
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0]?.message ?? 'Datos de categoría inválidos';
+    return { exitoso: false, error: msg };
+  }
+
+  const categoriaDB = mapCategoriaHaciaBD({ ...categoria, ...parsed.data }, user.id);
 
   const { error } = await supabase
     .from("categorias")

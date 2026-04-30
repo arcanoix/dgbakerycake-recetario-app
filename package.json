@@ -16,7 +16,7 @@
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",
     "@radix-ui/react-dialog": "^1.1.15",
-    "@supabase/ssr": "^0.9.0",
+    "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.98.0",
     "@types/dompurify": "^3.0.5",
     "@types/papaparse": "^5.5.2",
@@ -32,11 +32,11 @@
     "lucide-react": "^0.575.0",
     "marked": "^15.0.12",
     "motion": "^12.38.0",
-    "next": "^16.1.7",
+    "next": "^16.2.4",
     "papaparse": "^5.5.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "read-excel-file": "^7.0.3",
+    "react-dom": "^19.2.5",
+    "read-excel-file": "^9.0.6",
     "recharts": "^3.7.0",
     "tailwind-merge": "^3.5.0",
     "zod": "^4.3.6"
@@ -55,10 +55,10 @@
     "eslint-config-next": "^16.1.7",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
-    "postcss": "^8.4.0",
+    "postcss": "^8.5.10",
     "tailwindcss": "^3.4.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.0"
+    "typescript": "^6.0.3"
   },
   "overrides": {
     "react": "$react",

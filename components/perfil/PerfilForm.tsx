@@ -7,7 +7,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "motion/react";
-import { User, Mail, Calendar, Key, Save, Check, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { 
+  User, 
+  Mail, 
+  Calendar, 
+  Key, 
+  Save, 
+  Check, 
+  AlertCircle, 
+  Eye, 
+  EyeOff,
+  UserCircle,
+  ShieldLock,
+  LogOut,
+  Fingerprint,
+  RefreshCw
+} from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
 
 export const PerfilForm = () => {
   const { user, guardando, error, mensaje, limpiarMensajes, actualizarDatos, cambiarPassword } =
@@ -84,270 +101,229 @@ export const PerfilForm = () => {
       })
     : "N/A";
 
+  const initials = datosForm.nombre?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || "?";
+
   return (
-    <div className="space-y-6">
-      {/* Información de la cuenta */}
-      <Card className="border-0 shadow-lg overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500" />
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
-              <User className="w-4 h-4 text-white" />
-            </div>
-            Información de la Cuenta
-          </CardTitle>
-          <CardDescription>Datos de registro y actividad de tu cuenta</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-gray-50/50 rounded-xl p-4">
-              <div className="flex items-center gap-2 text-sm text-gray-700 mb-1">
-                <Mail className="w-4 h-4" />
-                Email actual
-              </div>
-              <p className="font-medium text-gray-900">{user.email}</p>
-            </div>
-            <div className="bg-gray-50/50 rounded-xl p-4">
-              <div className="flex items-center gap-2 text-sm text-gray-700 mb-1">
-                <Calendar className="w-4 h-4" />
-                Registrado el
-              </div>
-              <p className="font-medium text-gray-900">{fechaRegistro}</p>
-            </div>
+    <div className="space-y-8">
+      {/* Perfil Overview */}
+      <div className="flex flex-col md:flex-row items-center gap-6 p-8 bg-gradient-to-br from-primary/5 via-primary/10 to-violet-500/5 rounded-3xl border shadow-sm">
+        <div className="h-24 w-24 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-4xl font-black shadow-xl ring-4 ring-white">
+          {initials}
+        </div>
+        <div className="flex-1 text-center md:text-left space-y-1">
+          <h3 className="text-2xl font-black tracking-tight">{datosForm.nombre || "Usuario"}</h3>
+          <p className="text-muted-foreground font-medium flex items-center justify-center md:justify-start gap-2">
+            <Mail className="w-4 h-4" />
+            {user.email}
+          </p>
+          <div className="flex items-center justify-center md:justify-start gap-3 mt-2">
+            <Badge variant="secondary" className="bg-white/50 text-primary border-primary/10 font-bold px-3">
+              <Calendar className="w-3 h-3 mr-1.5" />
+              Desde {fechaRegistro}
+            </Badge>
           </div>
-          <div className="mt-4 p-3 bg-muted rounded-lg">
-            <p className="text-xs text-gray-700 font-mono">ID: {user.id}</p>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Datos personales */}
-      <Card className="border-0 shadow-lg overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-rose-500" />
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
-              <User className="w-4 h-4 text-white" />
-            </div>
+      <Tabs defaultValue="datos" className="w-full">
+        <TabsList className="bg-muted/50 p-1 border h-11 mb-8">
+          <TabsTrigger value="datos" className="gap-2 h-9 px-6 font-bold data-[state=active]:shadow-sm">
+            <UserCircle className="w-4 h-4" />
             Datos Personales
-          </CardTitle>
-          <CardDescription>Actualiza tu nombre y dirección de correo electrónico</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleDatosSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="nombre" className="flex items-center gap-2">
-                <User className="w-4 h-4 text-gray-700" />
-                Nombre
-              </Label>
-              <Input
-                id="nombre"
-                name="nombre"
-                type="text"
-                value={datosForm.nombre}
-                onChange={handleDatosChange}
-                placeholder="Tu nombre"
-                maxLength={100}
-                className="h-11"
-              />
-            </div>
+          </TabsTrigger>
+          <TabsTrigger value="seguridad" className="gap-2 h-9 px-6 font-bold data-[state=active]:shadow-sm">
+            <ShieldLock className="w-4 h-4" />
+            Seguridad
+          </TabsTrigger>
+        </TabsList>
 
-            <div className="space-y-2">
-              <Label htmlFor="email" className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-gray-700" />
-                Email
-              </Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={datosForm.email}
-                onChange={handleDatosChange}
-                placeholder="tu@email.com"
-                required
-                className="h-11"
-              />
-              <p className="text-xs text-gray-700">
-                Si cambias tu email, recibirás un correo de confirmación en la nueva dirección.
-              </p>
-            </div>
+        <AnimatePresence mode="wait">
+          <TabsContent value="datos" className="m-0 space-y-6">
+            <Card className="border-0 shadow-lg bg-card">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                    <Fingerprint className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl font-bold">Información Básica</CardTitle>
+                    <CardDescription>Actualiza tu identidad en la plataforma.</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleDatosSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <Label htmlFor="nombre" className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-1">Nombre Completo</Label>
+                      <Input
+                        id="nombre"
+                        name="nombre"
+                        value={datosForm.nombre}
+                        onChange={handleDatosChange}
+                        placeholder="Tu nombre"
+                        className="h-12 bg-white"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <Label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-1">Correo Electrónico</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={datosForm.email}
+                        onChange={handleDatosChange}
+                        placeholder="tu@email.com"
+                        required
+                        className="h-12 bg-white"
+                      />
+                      <p className="text-[10px] text-muted-foreground font-medium px-1 italic">
+                        Si cambias tu email, deberás verificar la nueva dirección.
+                      </p>
+                    </div>
+                  </div>
 
-            <AnimatePresence>
-              {accionActiva === "perfil" && error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="p-3 bg-red-50/30 border border-red-200 rounded-lg flex items-center gap-2"
-                >
-                  <AlertCircle className="w-4 h-4 text-red-500" />
-                  <p className="text-sm text-red-700">{error}</p>
-                </motion.div>
-              )}
+                  <AnimatePresence>
+                    {accionActiva === "perfil" && (error || mensaje) && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className={`p-4 rounded-xl border flex items-center gap-3 ${error ? 'bg-red-50 text-red-700 border-red-100' : 'bg-emerald-50 text-emerald-700 border-emerald-100'}`}
+                      >
+                        {error ? <AlertCircle className="w-5 h-5" /> : <Check className="w-5 h-5" />}
+                        <p className="text-sm font-bold">{error || mensaje}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
-              {accionActiva === "perfil" && mensaje && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="p-3 bg-green-50/30 border border-green-200 rounded-lg flex items-center gap-2"
-                >
-                  <Check className="w-4 h-4 text-green-500" />
-                  <p className="text-sm text-green-700">{mensaje}</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  <div className="flex justify-end pt-4 border-t">
+                    <Button 
+                      type="submit" 
+                      disabled={guardando && accionActiva === "perfil"}
+                      className="gap-2 h-11 px-8 font-black shadow-md bg-primary"
+                    >
+                      {guardadoPerfil ? (
+                        <><Check className="w-4 h-4" /> ¡ACTUALIZADO!</>
+                      ) : guardando && accionActiva === "perfil" ? (
+                        <><RefreshCw className="w-4 h-4 animate-spin" /> GUARDANDO...</>
+                      ) : (
+                        <><Save className="w-4 h-4" /> GUARDAR CAMBIOS</>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-            <div className="flex justify-end">
-              <Button 
-                type="submit" 
-                disabled={guardando && accionActiva === "perfil"}
-                className="gap-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 border-0"
-              >
-                {guardadoPerfil ? (
-                  <>
-                    <Check className="w-4 h-4" />
-                    Guardado
-                  </>
-                ) : guardando && accionActiva === "perfil" ? (
-                  "Guardando..."
-                ) : (
-                  <>
-                    <Save className="w-4 h-4" />
-                    Guardar Cambios
-                  </>
-                )}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+          <TabsContent value="seguridad" className="m-0 space-y-6">
+            <Card className="border-0 shadow-lg bg-card">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-amber-500/10 text-amber-600">
+                    <Key className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl font-bold">Cambio de Contraseña</CardTitle>
+                    <CardDescription>Mantén tu cuenta protegida con una contraseña robusta.</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handlePasswordSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <Label htmlFor="passwordNuevo" className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-1">Nueva Contraseña</Label>
+                      <div className="relative">
+                        <Input
+                          id="passwordNuevo"
+                          name="passwordNuevo"
+                          type={showPasswords.nueva ? "text" : "password"}
+                          value={passwordForm.passwordNuevo}
+                          onChange={handlePasswordChange}
+                          placeholder="Mínimo 6 caracteres"
+                          minLength={6}
+                          required
+                          className="h-12 bg-white pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPasswords(p => ({ ...p, nueva: !p.nueva }))}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          {showPasswords.nueva ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
 
-      {/* Cambiar contraseña */}
-      <Card className="border-0 shadow-lg overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500" />
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-              <Key className="w-4 h-4 text-white" />
-            </div>
-            Cambiar Contraseña
-          </CardTitle>
-          <CardDescription>Establece una nueva contraseña para tu cuenta</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handlePasswordSubmit} className="space-y-4">
-            <div className="p-3 bg-blue-50/50 border border-blue-200 rounded-lg mb-4">
-              <p className="text-sm text-blue-700">
-                💡 No necesitas tu contraseña actual. Simplemente ingresa una nueva contraseña y confírmala.
-              </p>
-            </div>
+                    <div className="space-y-3">
+                      <Label htmlFor="passwordConfirmar" className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-1">Confirmar Contraseña</Label>
+                      <div className="relative">
+                        <Input
+                          id="passwordConfirmar"
+                          name="passwordConfirmar"
+                          type={showPasswords.confirmar ? "text" : "password"}
+                          value={passwordForm.passwordConfirmar}
+                          onChange={handlePasswordChange}
+                          placeholder="Repite la contraseña"
+                          minLength={6}
+                          required
+                          className="h-12 bg-white pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPasswords(p => ({ ...p, confirmar: !p.confirmar }))}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          {showPasswords.confirmar ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="passwordNuevo" className="flex items-center gap-2">
-                <Key className="w-4 h-4 text-gray-700" />
-                Nueva Contraseña
-              </Label>
-              <div className="relative">
-                <Input
-                  id="passwordNuevo"
-                  name="passwordNuevo"
-                  type={showPasswords.nueva ? "text" : "password"}
-                  value={passwordForm.passwordNuevo}
-                  onChange={handlePasswordChange}
-                  placeholder="Mínimo 6 caracteres"
-                  minLength={6}
-                  required
-                  className="h-11 pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPasswords(p => ({ ...p, nueva: !p.nueva }))}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 hover:text-gray-600"
-                >
-                  {showPasswords.nueva ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
+                  <AnimatePresence>
+                    {accionActiva === "password" && (error || mensaje) && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className={`p-4 rounded-xl border flex items-center gap-3 ${error ? 'bg-red-50 text-red-700 border-red-100' : 'bg-emerald-50 text-emerald-700 border-emerald-100'}`}
+                      >
+                        {error ? <AlertCircle className="w-5 h-5" /> : <Check className="w-5 h-5" />}
+                        <p className="text-sm font-bold">{error || mensaje}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
-            <div className="space-y-2">
-              <Label htmlFor="passwordConfirmar" className="flex items-center gap-2">
-                <Key className="w-4 h-4 text-gray-700" />
-                Confirmar Nueva Contraseña
-              </Label>
-              <div className="relative">
-                <Input
-                  id="passwordConfirmar"
-                  name="passwordConfirmar"
-                  type={showPasswords.confirmar ? "text" : "password"}
-                  value={passwordForm.passwordConfirmar}
-                  onChange={handlePasswordChange}
-                  placeholder="Repite la nueva contraseña"
-                  minLength={6}
-                  required
-                  className="h-11 pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPasswords(p => ({ ...p, confirmar: !p.confirmar }))}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 hover:text-gray-600"
-                >
-                  {showPasswords.confirmar ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
+                  <div className="flex justify-end pt-4 border-t">
+                    <Button 
+                      type="submit" 
+                      disabled={guardando && accionActiva === "password"}
+                      className="gap-2 h-11 px-8 font-black shadow-md bg-amber-600 hover:bg-amber-700"
+                    >
+                      {guardadoPassword ? (
+                        <><Check className="w-4 h-4" /> ¡ACTUALIZADA!</>
+                      ) : guardando && accionActiva === "password" ? (
+                        <><RefreshCw className="w-4 h-4 animate-spin" /> ACTUALIZANDO...</>
+                      ) : (
+                        <><ShieldLock className="w-4 h-4" /> CAMBIAR CONTRASEÑA</>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </AnimatePresence>
+      </Tabs>
 
-            <AnimatePresence>
-              {accionActiva === "password" && error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="p-3 bg-red-50/30 border border-red-200 rounded-lg flex items-center gap-2"
-                >
-                  <AlertCircle className="w-4 h-4 text-red-500" />
-                  <p className="text-sm text-red-700">{error}</p>
-                </motion.div>
-              )}
-
-              {accionActiva === "password" && mensaje && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="p-3 bg-green-50/30 border border-green-200 rounded-lg flex items-center gap-2"
-                >
-                  <Check className="w-4 h-4 text-green-500" />
-                  <p className="text-sm text-green-700">{mensaje}</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <div className="flex justify-end">
-              <Button
-                type="submit"
-                disabled={guardando && accionActiva === "password"}
-                variant="outline"
-                className="gap-2"
-              >
-                {guardadoPassword ? (
-                  <>
-                    <Check className="w-4 h-4" />
-                    Contraseña actualizada
-                  </>
-                ) : guardando && accionActiva === "password" ? (
-                  "Actualizando..."
-                ) : (
-                  <>
-                    <Key className="w-4 h-4" />
-                    Cambiar Contraseña
-                  </>
-                )}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+      {/* Info Account Footer */}
+      <div className="bg-muted/30 p-4 rounded-2xl border border-dashed text-center">
+        <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-[0.2em]">
+          ID de Usuario: {user.id}
+        </p>
+      </div>
     </div>
   );
 };

@@ -9,13 +9,15 @@ import { SubscriptionPlan } from "@/types/subscription";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loading } from "@/components/ui/loading";
 import { motion } from "motion/react";
-import { Crown, CreditCard, Wallet, Globe, Check, Sparkles } from "lucide-react";
+import { Crown, CreditCard, Wallet, Globe, Check, Sparkles, ShieldCheck, Zap } from "lucide-react";
 
 export default function PricingPage() {
   const router = useRouter();
   const { planes, infoSuscripcion, cargando } = useSubscription();
+  
   const handleSelectPlan = (plan: SubscriptionPlan) => {
     if (plan.name === 'free') {
+      router.push('/dashboard');
       return;
     }
     router.push(`/payment?plan=${plan.id}`);
@@ -23,59 +25,58 @@ export default function PricingPage() {
 
   if (cargando) {
     return (
-      <ProtectedRoute>
-        <Loading text="Cargando planes..." fullScreen />
-      </ProtectedRoute>
+      <div className="py-20 flex flex-col items-center justify-center gap-4">
+        <div className="relative h-12 w-12">
+          <div className="absolute inset-0 rounded-full border-4 border-primary/20" />
+          <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+        </div>
+        <p className="text-sm text-muted-foreground font-medium">Preparando planes...</p>
+      </div>
     );
   }
 
   return (
     <ProtectedRoute>
-      <div className="container mx-auto p-6 space-y-12">
-        {/* Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-4"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-violet-100/30 rounded-full">
-            <Sparkles className="w-4 h-4 text-violet-600" />
-            <span className="text-sm font-medium text-violet-700">Planes y Precios</span>
+      <div className="flex-1 space-y-12">
+        {/* Header con estética shadcn-admin */}
+        <div className="flex flex-col items-center text-center space-y-4 max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-black uppercase tracking-widest">Planes & Beneficios</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-violet-600 via-fuchsia-600 to-rose-600 bg-clip-text text-transparent">
-            Elige tu Plan Perfecto
-          </h1>
-          <p className="text-xl text-gray-700 max-w-2xl mx-auto">
-            Potencia tu negocio de repostería con las herramientas que necesitas
+          <h2 className="text-4xl md:text-5xl font-black tracking-tight bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
+            Escala tu Repostería al Siguiente Nivel
+          </h2>
+          <p className="text-muted-foreground font-medium text-lg leading-relaxed">
+            Elige el plan que mejor se adapte a tu volumen de producción. 
+            Cero comisiones por venta, solo herramientas para crecer.
           </p>
           
           {infoSuscripcion && (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-50 to-fuchsia-50 dark:from-violet-950/30 dark:to-fuchsia-950/30 rounded-xl border border-violet-200"
+              className="mt-6 p-4 rounded-2xl bg-muted/50 border flex items-center gap-3 shadow-sm"
             >
-              <Crown className="w-5 h-5 text-violet-500" />
-              <span className="text-sm font-medium">Plan actual:</span>
-              <span className="font-bold text-violet-700">{infoSuscripcion.plan_display_name}</span>
+              <div className="p-2 rounded-xl bg-primary text-primary-foreground">
+                <Crown className="w-4 h-4" />
+              </div>
+              <div className="text-left">
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">Tu suscripción actual</p>
+                <p className="font-bold text-sm text-primary uppercase">{infoSuscripcion.plan_display_name}</p>
+              </div>
             </motion.div>
           )}
-        </motion.div>
+        </div>
 
-        {/* Planes */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto"
-        >
+        {/* Planes Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto px-4">
           {planes.map((plan, index) => (
             <motion.div
               key={plan.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + index * 0.05 }}
+              transition={{ delay: index * 0.1 }}
             >
               <PricingCard
                 plan={plan}
@@ -84,72 +85,42 @@ export default function PricingPage() {
               />
             </motion.div>
           ))}
-        </motion.div>
+        </div>
 
-        {/* Información adicional */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <Card className="max-w-3xl mx-auto border-0 shadow-xl overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-rose-500" />
-            <CardContent className="py-8">
-              <h3 className="text-xl font-bold flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
-                  <CreditCard className="w-5 h-5 text-white" />
-                </div>
-                Métodos de Pago Aceptados
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div className="bg-emerald-50/30 rounded-xl p-5 border border-emerald-100">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Globe className="w-5 h-5 text-emerald-600" />
-                    <h4 className="font-semibold text-emerald-900">🇻🇪 Venezuela</h4>
-                  </div>
-                  <ul className="space-y-2 text-sm text-emerald-700">
-                    <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4" /> Pago Móvil
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4" /> Binance (USDT)
-                    </li>
-                  </ul>
-                </div>
-                
-                <div className="bg-blue-50/30 rounded-xl p-5 border border-blue-100">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Globe className="w-5 h-5 text-blue-600" />
-                    <h4 className="font-semibold text-blue-900">🌎 Internacional</h4>
-                  </div>
-                  <ul className="space-y-2 text-sm text-blue-700">
-                    <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4" /> PayPal
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4" /> Binance (USDT)
-                    </li>
-                  </ul>
-                </div>
+        {/* FAQ / Info adicional */}
+        <div className="max-w-4xl mx-auto space-y-8 pt-8">
+          <Separator />
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+            <div className="space-y-3 p-6 rounded-3xl bg-muted/30 border">
+              <div className="p-2 w-fit rounded-lg bg-emerald-500/10 text-emerald-600">
+                <Globe className="w-5 h-5" />
               </div>
-              
-              <div className="bg-amber-50/30 rounded-xl p-4 border border-amber-100">
-                <div className="flex items-start gap-3">
-                  <Wallet className="w-5 h-5 text-amber-600 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-amber-900">
-                      Verificación manual
-                    </p>
-                    <p className="text-sm text-amber-700 mt-1">
-                      Todos los pagos son verificados manualmente. Tu suscripción se activará dentro de 24 horas hábiles después de la aprobación.
-                    </p>
-                  </div>
-                </div>
+              <h4 className="font-black text-sm uppercase tracking-wider">Pagos en Venezuela</h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Aceptamos <strong>Pago Móvil</strong> a tasa BCV. También puedes pagar vía 
+                Binance (USDT) para mayor comodidad. Los planes se activan tras validación manual.
+              </p>
+            </div>
+            
+            <div className="space-y-3 p-6 rounded-3xl bg-muted/30 border">
+              <div className="p-2 w-fit rounded-lg bg-blue-500/10 text-blue-600">
+                <ShieldCheck className="w-5 h-5" />
               </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+              <h4 className="font-black text-sm uppercase tracking-wider">Seguridad y Soporte</h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Tus datos de recetas y costos están protegidos. Ofrecemos soporte prioritario 
+                vía WhatsApp para planes Básico y superiores para ayudarte en tu gestión.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-4 text-center">
+            <p className="text-[10px] text-muted-foreground uppercase font-black tracking-[0.3em]">
+              DGcost • Soluciones Tecnológicas para Repostería
+            </p>
+          </div>
+        </div>
       </div>
     </ProtectedRoute>
   );

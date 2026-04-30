@@ -3,38 +3,37 @@
 import { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useInView } from "motion/react";
+import { motion, useInView, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Inter } from "next/font/google";
 import { usePublicPlanes } from "@/hooks/usePublicPlanes";
-import { Check, Sparkles, ArrowRight, Menu, X, ChevronDown } from "lucide-react";
+import { 
+  Check, 
+  Sparkles, 
+  ArrowRight, 
+  ChevronDown, 
+  Zap, 
+  ShieldCheck, 
+  TrendingUp, 
+  ChefHat,
+  Package,
+  Calculator,
+  BarChart3,
+  Globe,
+  MessageCircle,
+  Smartphone
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "900"],
   variable: "--font-inter",
   display: "swap",
   preload: true
 });
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 }
-  }
-};
-
-const scaleIn = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } }
-};
 
 function AnimatedSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const ref = useRef(null);
@@ -45,7 +44,7 @@ function AnimatedSection({ children, delay = 0 }: { children: React.ReactNode; d
       ref={ref}
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-      transition={{ duration: 0.5, delay }}
+      transition={{ duration: 0.6, delay, ease: "easeOut" }}
     >
       {children}
     </motion.div>
@@ -55,79 +54,85 @@ function AnimatedSection({ children, delay = 0 }: { children: React.ReactNode; d
 const faqs = [
   {
     question: "¿Es realmente gratis?",
-    answer: "Sí, el plan básico es 100% gratuito. No necesitas tarjeta de crédito para comenzar."
+    answer: "Sí, el plan básico es 100% gratuito para siempre. Queremos ayudar a los emprendedores a formalizar sus costos sin barreras de entrada."
+  },
+  {
+    question: "¿Cómo calculan los precios?",
+    answer: "DGcost utiliza fórmulas de ingeniería de costos: suma el valor proporcional de cada insumo, permite añadir merma y aplica tu margen de ganancia configurado."
+  },
+  {
+    question: "¿Puedo usarlo desde mi celular?",
+    answer: "¡Totalmente! DGcost es una Web App responsiva que funciona perfecto en navegadores móviles. Muy pronto lanzaremos la App nativa en tiendas."
   },
   {
     question: "¿Mis datos están seguros?",
-    answer: "Tus datos están protegidos con autenticación segura y almacenamiento en la nube con Supabase."
-  },
-  {
-    question: "¿Puedo usar sin conexión?",
-    answer: "DGcost es una aplicación web. Necesitas internet para acceder, pero tus datos siempre estarán disponibles."
-  },
-  {
-    question: "¿Hay límite de recetas?",
-    answer: "El plan gratuito permite hasta 20 recetas. Los planes de pago tienen límites más altos o ilimitados."
+    answer: "Utilizamos encriptación de nivel bancario y almacenamiento seguro en Supabase. Tus recetas y costos son privados y solo tú tienes acceso a ellos."
   }
 ];
 
 const testimonials = [
   {
     name: "María González",
-    role: "Repostera profesional",
-    image: "/images/testimonial-1.jpg",
-    quote: "Desde que uso DGcost puedo calcular mis precios de forma precisa. Mis ganancias aumentaron un 30%",
+    role: "Repostera Profesional",
+    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria",
+    quote: "Gracias a DGcost dejé de adivinar precios. Mis ganancias subieron un 30% en el primer mes.",
     metric: "+30%",
-    metricLabel: "en ganancias"
+    metricLabel: "ganancias"
   },
   {
     name: "Carlos Rodríguez",
-    role: "Dueño de panadería",
-    image: "/images/testimonial-2.jpg",
-    quote: "Me encantó la facilidad de uso. En 5 minutos configuré todas mis recetas del menú",
-    metric: "5 min",
-    metricLabel: "para empezar"
+    role: "Dueño de Pastelería",
+    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Carlos",
+    quote: "La gestión de inventario es increíble. Sé exactamente cuándo debo comprar más harina.",
+    metric: "100%",
+    metricLabel: "control"
   },
   {
     name: "Ana Pérez",
-    role: "Emprendedora pasteles",
-    image: "/images/testimonial-3.jpg",
-    quote: "El mejor investimento que hice para mi negocio. Ahora sé exactamente cuánto gano en cada pedido",
-    metric: "100%",
-    metricLabel: "control total"
+    role: "Emprendedora Home-made",
+    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ana",
+    quote: "Es la herramienta más sencilla que he usado. En 10 minutos ya tenía costeado mi menú.",
+    metric: "10 min",
+    metricLabel: "setup"
   }
 ];
 
 const features = [
   {
-    icon: "📊",
-    title: "Cálculo Automático",
-    description: "Calcula el costo total de tus recetas en segundos. Materials, mano de obra y márgenes."
+    icon: Calculator,
+    title: "Cálculo Preciso",
+    description: "Desglose automático de costos por ingrediente, gramo a gramo.",
+    color: "bg-blue-500/10 text-blue-600"
   },
   {
-    icon: "💰",
-    title: "Precio de Venta",
-    description: "Obtén el precio sugerido basado en tu margen de ganancia deseado. No más guessing."
+    icon: TrendingUp,
+    title: "Márgenes Reales",
+    description: "Aplica porcentajes de utilidad y obtén precios de venta sugeridos.",
+    color: "bg-emerald-500/10 text-emerald-600"
   },
   {
-    icon: "📦",
-    title: "Gestión de Productos",
-    description: "Administra todos tus ingredientes, precios y proveedores en un solo lugar."
+    icon: Package,
+    title: "Inventario Inteligente",
+    description: "Control de stock crítico y alertas automáticas de reposición.",
+    color: "bg-violet-500/10 text-violet-600"
   },
   {
-    icon: "📈",
-    title: "Dashboard Visual",
-    description: "Gráficos y estadísticas para entender la rentabilidad de tu negocio."
+    icon: BarChart3,
+    title: "Dashboard Pro",
+    description: "Estadísticas visuales de rentabilidad y productos más costosos.",
+    color: "bg-amber-500/10 text-amber-600"
   },
   {
-    icon: "🍰",
-    title: "Recetas Detalladas",
-    description: "Crea recetas con ingredientes, pasos y costos. Todo documentado y organizado."
+    icon: Globe,
+    title: "Precio Dual",
+    description: "Visualiza tus costos en USD y Bolívares a tasa oficial BCV.",
+    color: "bg-cyan-500/10 text-cyan-600"
   },
   {
-    icon: "☁️",
-    title: "En la Nube",
-    description: "Accede desde cualquier dispositivo. Tus datos siempre disponibles y seguros."
+    icon: ChefHat,
+    title: "Recetario Maestro",
+    description: "Organiza tus creaciones con fotos, categorías e instrucciones.",
+    color: "bg-rose-500/10 text-rose-600"
   }
 ];
 
@@ -136,580 +141,316 @@ export const LandingPage = () => {
   const { planes, cargando: cargandoPlanes } = usePublicPlanes();
 
   return (
-    <div className={`min-h-screen bg-slate-50 ${inter.variable}`} style={{ fontFamily: 'var(--font-inter)' }}>
+    <div className={`min-h-screen bg-background text-foreground ${inter.variable}`} style={{ fontFamily: 'var(--font-inter)' }}>
       {/* Navigation */}
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200"
-      >
-        <div className="container mx-auto px-4 sm:px-6 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-2xl">🧁</span>
-              <span className="text-xl font-bold text-slate-900">
-                DGcost
-              </span>
-            </Link>
-            <div className="flex items-center gap-4">
-              <Link href="/auth/login" className="text-sm text-slate-600 hover:text-slate-900 font-medium transition-colors">
-                Iniciar sesión
-              </Link>
-              <Link href="/auth/register">
-                <Button className="text-sm px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg transition-all">
-                  Comenzar gratis
-                </Button>
-              </Link>
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b">
+        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="p-1.5 rounded-lg bg-primary text-primary-foreground group-hover:rotate-12 transition-transform duration-300">
+               <ChefHat className="w-5 h-5" />
             </div>
+            <span className="text-xl font-black tracking-tight uppercase">
+              DGcost
+            </span>
+          </Link>
+          <div className="flex items-center gap-6">
+            <Link href="/auth/login" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">
+              LOG IN
+            </Link>
+            <Link href="/auth/register">
+              <Button className="h-9 px-5 font-black text-xs tracking-widest uppercase shadow-lg bg-primary hover:shadow-xl transition-all">
+                EMPEZAR GRATIS
+              </Button>
+            </Link>
           </div>
         </div>
-      </motion.nav>
+      </nav>
 
       {/* Hero Section */}
-      <section className="pt-24 sm:pt-32 pb-16 sm:pb-24 px-4 sm:px-6">
-        <div className="container mx-auto">
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 px-4 py-2 rounded-full text-sm font-medium mb-8">
-                <Sparkles className="w-4 h-4" />
-                <span>100% Gratis para empezar</span>
-              </div>
-            </motion.div>
+      <section className="relative pt-32 pb-24 overflow-hidden">
+        {/* Background blobs */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-30 blur-[120px]">
+           <div className="absolute top-20 left-1/4 w-72 h-72 bg-primary rounded-full animate-pulse" />
+           <div className="absolute top-40 right-1/4 w-96 h-96 bg-violet-500 rounded-full" />
+        </div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 sm:mb-8 leading-tight tracking-tight text-slate-900"
-            >
-              Calcula tus costos,<br />
-              <span className="text-indigo-600">gana más</span>
-            </motion.h1>
+        <div className="container mx-auto px-6 text-center space-y-8">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Badge variant="secondary" className="px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary font-black text-[10px] tracking-[0.2em] uppercase">
+              <Sparkles className="w-3 h-3 mr-2" />
+              SaaS para Repostería Profesional
+            </Badge>
+          </motion.div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="text-lg sm:text-xl text-slate-600 mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed px-4 sm:px-0"
-            >
-              DGcost calcula automáticamente el costo de tus recetas.
-              Deja de adivinar precios y empieza a ganar más con cada venta.
-            </motion.p>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] text-foreground"
+          >
+            Calcula tus costos.<br />
+            <span className="text-primary italic">Multiplica</span> tus ganancias.
+          </motion.h1>
 
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-12 sm:mb-16 px-4 sm:px-0"
-            >
-              <Link href="/auth/register">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="h-12 px-8 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition-colors w-full sm:w-auto"
-                >
-                  Comenzar Gratis
-                  <ArrowRight className="w-4 h-4" />
-                </motion.button>
-              </Link>
-              <Link href="/auth/login">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="h-12 px-8 border border-slate-200 text-slate-700 font-medium rounded-lg flex items-center justify-center gap-2 hover:border-slate-300 hover:bg-slate-50 transition-all w-full sm:w-auto"
-                >
-                  Ver demo
-                </motion.button>
-              </Link>
-            </motion.div>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-medium leading-relaxed"
+          >
+            La plataforma definitiva para reposteros que quieren dejar de adivinar y empezar a facturar con precisión. Inventario, recetas y precios en un solo lugar.
+          </motion.p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="grid grid-cols-3 gap-4 sm:gap-8 max-w-2xl mx-auto px-4 sm:px-0 pt-8 border-t border-slate-200"
-            >
-              {[
-                { value: "500+", label: "Usuarios" },
-                { value: "10K+", label: "Recetas" },
-                { value: "100%", label: "Gratis" }
-              ].map((stat, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: 0.6 + i * 0.1 }}
-                >
-                  <div className="text-2xl sm:text-3xl font-bold text-slate-900">
-                    {stat.value}
-                  </div>
-                  <div className="text-slate-500 text-xs sm:text-sm font-medium">{stat.label}</div>
-                </motion.div>
-              ))}
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+          >
+            <Link href="/auth/register">
+              <Button size="lg" className="h-14 px-10 font-black tracking-widest text-xs uppercase shadow-2xl bg-primary hover:shadow-primary/20">
+                COMENZAR AHORA <ArrowRight className="ml-2 w-4 h-4" />
+              </Button>
+            </Link>
+            <Link href="/auth/login">
+              <Button size="lg" variant="outline" className="h-14 px-10 font-black tracking-widest text-xs uppercase border-2">
+                VER DEMO
+              </Button>
+            </Link>
+          </motion.div>
+
+          {/* Stats Bar */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.6 }}
+            className="pt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto border-t"
+          >
+             {[
+               { value: "500+", label: "Emprendedores" },
+               { value: "15k", label: "Recetas Creadas" },
+               { value: "100%", label: "Seguro" },
+               { value: "24/7", label: "Acceso Cloud" }
+             ].map((stat, i) => (
+               <div key={i} className="space-y-1">
+                 <p className="text-3xl font-black text-foreground">{stat.value}</p>
+                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{stat.label}</p>
+               </div>
+             ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section className="py-24 bg-muted/30">
+        <div className="container mx-auto px-6">
+          <div className="text-center space-y-4 mb-16">
+            <h2 className="text-3xl md:text-5xl font-black tracking-tight uppercase">Herramientas de Alto Nivel</h2>
+            <p className="text-muted-foreground font-medium max-w-xl mx-auto">Todo lo que necesitas para profesionalizar tu taller de repostería desde el día uno.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feature, i) => (
+              <AnimatedSection key={i} delay={i * 0.1}>
+                <Card className="h-full border-0 shadow-lg bg-card group hover:shadow-2xl transition-all duration-300">
+                  <CardContent className="p-8 space-y-4">
+                    <div className={`p-3 rounded-2xl w-fit ${feature.color} group-hover:scale-110 transition-transform`}>
+                      <feature.icon className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-xl font-bold tracking-tight">{feature.title}</h3>
+                    <p className="text-sm text-muted-foreground font-medium leading-relaxed">{feature.description}</p>
+                  </CardContent>
+                </Card>
+              </AnimatedSection>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Problems Section */}
-      <AnimatedSection>
-        <section className="py-16 sm:py-24 px-4 sm:px-6 bg-white">
-          <div className="container mx-auto">
-            <div className="max-w-3xl mx-auto">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-4 text-slate-900">
-                ¿Te suena conocido?
-              </h2>
-              <p className="text-base sm:text-lg text-slate-600 text-center mb-12 px-4 sm:px-0">
-                Estos son los problemas que enfrentan los reposteros cada día
-              </p>
-
-              <div className="space-y-3 sm:space-y-4">
-                {[
-                  { emoji: "😰", title: "¿Cuánto debo cobrar por mi pastel?", desc: "Calculas mentalmente y siempre dudas si estás ganando o perdiendo", color: "border-l-red-500" },
-                  { emoji: "📱", title: "¿Cuánto gasté en materiales?", desc: "Llevas los precios en papel y se te pierden", color: "border-l-orange-500" },
-                  { emoji: "💸", title: "¿Cuál es mi ganancia real?", desc: "Vendes pero no sabes cuánto te queda después de materiales y tiempo", color: "border-l-amber-500" }
-                ].map((problem, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: i * 0.1 }}
-                    viewport={{ once: true }}
-                  >
-                    <Card 
-                      className="bg-white shadow-lg hover:shadow-xl transition-all duration-300 border-0 overflow-hidden relative"
-                      style={{
-                        borderRadius: i === 0 ? '30px 10px 30px 10px' : i === 1 ? '10px 30px 10px 30px' : '25px 15px 25px 15px'
-                      }}
-                    >
-                      <div 
-                        className={`absolute left-0 top-0 bottom-0 w-1.5 ${problem.color.replace('border-l-', 'bg-')}`}
-                        style={{
-                          borderRadius: i === 0 ? '30px 0 0 10px' : i === 1 ? '0 30px 10px 0' : '25px 0 0 15px'
-                        }}
-                      />
-                      <CardContent className="p-4 sm:p-6 pl-6 sm:pl-8">
-                        <div className="flex items-start gap-3 sm:gap-4">
-                          <motion.span 
-                            className="text-2xl sm:text-3xl flex-shrink-0"
-                            whileHover={{ scale: 1.2, rotate: 10 }}
-                            transition={{ type: "spring", stiffness: 300 }}
-                          >
-                            {problem.emoji}
-                          </motion.span>
-                          <div>
-                            <h3 className="font-bold text-gray-900 mb-1 sm:mb-2 text-base sm:text-lg">{problem.title}</h3>
-                            <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{problem.desc}</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
+      {/* Testimonials */}
+      <section className="py-24 bg-background">
+        <div className="container mx-auto px-6">
+          <div className="text-center space-y-4 mb-16">
+            <h2 className="text-3xl md:text-5xl font-black tracking-tight uppercase">Historias de Éxito</h2>
+            <p className="text-muted-foreground font-medium">Usuarios que transformaron su pasión en un negocio rentable.</p>
           </div>
-        </section>
-      </AnimatedSection>
 
-      {/* Features Section */}
-      <AnimatedSection>
-        <section className="py-16 sm:py-24 px-4 sm:px-6 bg-slate-50">
-          <div className="container mx-auto">
-            <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-slate-900">
-                Todo lo que necesitas
-              </h2>
-              <p className="text-base sm:text-lg text-slate-600">
-                Herramientas pensadas para reposteros profesionales
-              </p>
-            </div>
-
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto"
-            >
-              {features.map((feature, index) => (
-                <motion.div key={index} variants={scaleIn}>
-                  <Card className="bg-white border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 h-full rounded-xl">
-                    <CardContent className="p-6">
-                      <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-xl mb-4">
-                        {feature.icon}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {testimonials.map((t, i) => (
+              <AnimatedSection key={i} delay={i * 0.1}>
+                <Card className="h-full border-0 shadow-xl bg-card overflow-hidden">
+                  <CardContent className="p-8 space-y-6">
+                    <p className="text-sm font-medium italic text-muted-foreground leading-relaxed">"{t.quote}"</p>
+                    <div className="flex items-center gap-4 pt-4 border-t">
+                      <Image src={t.image} alt={t.name} width={48} height={48} className="rounded-full bg-muted" />
+                      <div>
+                        <p className="font-bold text-sm">{t.name}</p>
+                        <p className="text-[10px] font-black text-primary uppercase tracking-widest">{t.role}</p>
                       </div>
-                      <h3 className="text-lg font-semibold mb-2 text-slate-900">{feature.title}</h3>
-                      <p className="text-sm text-slate-600 leading-relaxed">{feature.description}</p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </section>
-      </AnimatedSection>
-
-      {/* Mobile App Section */}
-      <AnimatedSection>
-        <section className="py-16 sm:py-24 px-4 sm:px-6 bg-white border-y border-slate-100">
-          <div className="container mx-auto max-w-4xl">
-            <div className="text-center">
-              <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-sm font-medium mb-6">
-                <span>📱</span>
-                <span>Próximamente</span>
-              </div>
-              
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-slate-900">
-                App Móvil en Camino
-              </h2>
-              
-              <p className="text-base sm:text-lg text-slate-600 mb-8 max-w-2xl mx-auto px-4 sm:px-0">
-                Muy pronto podrás gestionar tus recetas y costos desde tu celular.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <div className="flex items-center gap-3 bg-slate-50 px-5 py-3 rounded-lg border border-slate-200">
-                  <span className="text-2xl">🤖</span>
-                  <div className="text-left">
-                    <p className="text-xs text-slate-500">Disponible pronto</p>
-                    <p className="font-semibold text-sm text-slate-900">Google Play</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-3 bg-slate-50 px-5 py-3 rounded-lg border border-slate-200">
-                  <span className="text-2xl">🍎</span>
-                  <div className="text-left">
-                    <p className="text-xs text-slate-500">Disponible pronto</p>
-                    <p className="font-semibold text-sm text-slate-900">App Store</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </AnimatedSection>
-
-      {/* Testimonials Section */}
-      <AnimatedSection>
-        <section className="py-16 sm:py-24 px-4 sm:px-6 bg-slate-50">
-          <div className="container mx-auto">
-            <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-slate-900">
-                Lo que dicen nuestros usuarios
-              </h2>
-              <p className="text-base sm:text-lg text-slate-600">
-                Reposteros como tú ya están mejorando sus negocios
-              </p>
-            </div>
-
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto"
-            >
-              {testimonials.map((testimonial, index) => (
-                <motion.div key={index} variants={scaleIn}>
-                  <Card className="bg-white border border-slate-100 shadow-sm h-full rounded-xl">
-                    <CardContent className="p-6">
-                      <div className="flex items-center gap-3 mb-4">
-                        <Image
-                          src={testimonial.image}
-                          alt={testimonial.name}
-                          width={40}
-                          height={40}
-                          className="w-10 h-10 rounded-full object-cover bg-slate-200"
-                          placeholder="blur"
-                          blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2UxZTVlYiIvPjwvc3ZnPg=="
-                          priority={index < 2}
-                          loading={index < 2 ? "eager" : "lazy"}
-                        />
-                        <div>
-                          <h4 className="font-semibold text-sm text-slate-900">{testimonial.name}</h4>
-                          <p className="text-slate-500 text-xs">{testimonial.role}</p>
-                        </div>
-                      </div>
-                      <p className="text-sm text-slate-600 mb-4 leading-relaxed">"{testimonial.quote}"</p>
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-xl font-bold text-indigo-600">{testimonial.metric}</span>
-                        <span className="text-slate-500 text-xs">{testimonial.metricLabel}</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </section>
-      </AnimatedSection>
-
-      {/* Pricing Section */}
-      <AnimatedSection>
-        <section className="py-16 sm:py-24 px-4 sm:px-6 bg-white">
-          <div className="container mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-              className="text-center mb-12 sm:mb-16 max-w-2xl mx-auto"
-            >
-              <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-sm font-medium mb-6">
-                <Sparkles className="w-4 h-4" />
-                <span>Planes flexibles</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-slate-900">
-                Planes para cada etapa
-              </h2>
-              <p className="text-base sm:text-lg text-slate-600">
-                Empieza gratis, escala cuando quieras. Todos los planes incluyen actualizaciones gratuitas.
-              </p>
-            </motion.div>
-
-            {cargandoPlanes ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="bg-white border border-slate-100 rounded-xl p-6 animate-pulse">
-                    <div className="h-6 bg-slate-200 rounded w-3/4 mx-auto mb-2"></div>
-                    <div className="h-4 bg-slate-100 rounded w-1/2 mx-auto mb-6"></div>
-                    <div className="h-10 bg-slate-200 rounded w-1/2 mx-auto mb-6"></div>
-                    <div className="space-y-3 mb-8">
-                      {[1, 2, 3, 4, 5].map((j) => (
-                        <div key={j} className="flex items-center gap-2">
-                          <div className="w-5 h-5 bg-slate-200 rounded-full"></div>
-                          <div className="h-4 bg-slate-100 rounded flex-1"></div>
-                        </div>
-                      ))}
                     </div>
-                    <div className="h-11 bg-slate-200 rounded-lg w-full"></div>
+                    <div className="p-3 bg-primary/5 rounded-xl border border-primary/10 flex justify-between items-center">
+                       <span className="text-[10px] font-black uppercase text-muted-foreground">Logro:</span>
+                       <span className="text-lg font-black text-primary">{t.metric} <span className="text-[10px] uppercase font-bold text-muted-foreground">{t.metricLabel}</span></span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Mobile Promo */}
+      <section className="py-24 bg-muted/50 border-y">
+        <div className="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
+          <div className="flex-1 space-y-6 text-center md:text-left">
+            <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 font-black text-[10px] tracking-widest uppercase">Próximamente</Badge>
+            <h2 className="text-4xl md:text-6xl font-black tracking-tight leading-none uppercase">Tu negocio en tu bolsillo</h2>
+            <p className="text-muted-foreground font-medium text-lg leading-relaxed">
+              Estamos construyendo la App móvil nativa para que gestiones tus costos directamente desde la cocina, escaneando facturas y recibiendo notificaciones de stock.
+            </p>
+            <div className="flex flex-wrap justify-center md:justify-start gap-4">
+              <div className="px-6 py-3 rounded-2xl bg-card border shadow-sm flex items-center gap-3 opacity-60">
+                 <Smartphone className="w-6 h-6 text-muted-foreground" />
+                 <div className="text-left">
+                   <p className="text-[9px] font-black text-muted-foreground uppercase">Disponible pronto</p>
+                   <p className="font-bold text-xs">App Store & Play Store</p>
+                 </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex-1 relative">
+            <div className="relative z-10 p-4 bg-background rounded-[3rem] border shadow-2xl shadow-primary/20 max-w-sm mx-auto">
+               <div className="aspect-[9/19] bg-muted rounded-[2.5rem] overflow-hidden flex items-center justify-center">
+                  <div className="text-center p-8 space-y-4">
+                     <div className="w-16 h-16 rounded-full bg-primary/10 text-primary mx-auto flex items-center justify-center">
+                       <RefreshCw className="w-8 h-8 animate-spin" />
+                     </div>
+                     <p className="font-black text-xs uppercase tracking-widest">Compilando...</p>
                   </div>
-                ))}
-              </div>
+               </div>
+            </div>
+            {/* Decorations */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/5 rounded-full blur-3xl -z-10" />
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Teaser */}
+      <section className="py-24 bg-background">
+        <div className="container mx-auto px-6 text-center space-y-16">
+          <div className="space-y-4">
+            <h2 className="text-3xl md:text-5xl font-black tracking-tight uppercase">Planes para cada Etapa</h2>
+            <p className="text-muted-foreground font-medium">Empieza gratis, escala cuando el éxito toque tu puerta.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+            {cargandoPlanes ? (
+              <div className="col-span-full h-64 flex items-center justify-center"><RefreshCw className="animate-spin" /></div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-                {planes.filter(p => p.is_active).sort((a, b) => a.sort_order - b.sort_order).map((plan, i) => {
-                  const isPopular = plan.name === 'profesional';
-                  const features = [
-                    `${plan.max_recetas === -1 ? 'Recetas ilimitadas' : `${plan.max_recetas} recetas`}`,
-                    `${plan.max_productos === -1 ? 'Productos ilimitados' : `${plan.max_productos} productos`}`,
-                    ...(plan.features.exportar_pdf ? ['Exportar PDF'] : []),
-                    ...(plan.features.ver_analytics ? ['Analytics avanzados'] : []),
-                    ...(plan.features.api_access ? ['Acceso API'] : []),
-                    ...(plan.features.soporte_prioritario ? ['Soporte prioritario'] : ['Soporte básico']),
-                  ];
+              planes.filter(p => p.is_active).sort((a, b) => a.sort_order - b.sort_order).map((plan, i) => (
+                <Card key={plan.id} className={`flex flex-col border-0 shadow-lg bg-card hover:-translate-y-2 transition-all duration-300 ${plan.name === 'basico' ? 'ring-2 ring-primary shadow-2xl shadow-primary/10' : ''}`}>
+                  <CardContent className="p-8 flex flex-col h-full space-y-6">
+                    <div className="space-y-1">
+                      <p className="font-black text-[10px] uppercase tracking-widest text-muted-foreground">{plan.name}</p>
+                      <h3 className="text-2xl font-black tracking-tight">{plan.display_name}</h3>
+                    </div>
+                    
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-4xl font-black">${plan.price_usd}</span>
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase">/mes</span>
+                    </div>
 
-                  return (
-                    <motion.div
-                      key={plan.id}
-                      initial={{ opacity: 0, y: 50 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: i * 0.1 }}
-                      viewport={{ once: true }}
-                      className="relative"
-                    >
-                      {isPopular && (
-                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
-                          <div className="bg-indigo-600 text-white px-4 py-1.5 text-sm font-medium rounded-full flex items-center gap-1">
-                            <Sparkles className="w-3.5 h-3.5" />
-                            Más popular
-                          </div>
-                        </div>
-                      )}
-                      <Card 
-                        className={`h-full transition-all duration-300 rounded-xl ${
-                          isPopular 
-                            ? 'border-2 border-indigo-200 shadow-lg' 
-                            : 'border border-slate-200 shadow-sm hover:shadow-md'
-                        }`}
-                      >
-                        <CardContent className="p-6">
-                          <div className="text-center mb-6">
-                            <h3 className="text-xl font-bold mb-1 text-slate-900">
-                              {plan.display_name}
-                            </h3>
-                            <p className="text-sm text-slate-500">{plan.description || 'Plan completo'}</p>
-                          </div>
+                    <Separator className="opacity-50" />
 
-                          <div className="text-center mb-6">
-                            <div className="flex items-baseline justify-center gap-1">
-                              <span className="text-4xl font-bold text-slate-900">
-                                ${plan.price_usd}
-                              </span>
-                              <span className="text-slate-500 text-sm">/mes</span>
-                            </div>
-                            {plan.price_bs > 0 && (
-                              <p className="text-sm text-slate-500 mt-1">
-                                Bs. {plan.price_bs.toLocaleString('es-VE')}
-                              </p>
-                            )}
-                          </div>
+                    <ul className="flex-1 space-y-3">
+                       <li className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
+                         <Check className="w-3.5 h-3.5 text-primary" /> {plan.max_recetas === -1 ? 'Ilimitadas' : plan.max_recetas} Recetas
+                       </li>
+                       <li className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
+                         <Check className="w-3.5 h-3.5 text-primary" /> {plan.max_productos === -1 ? 'Ilimitados' : plan.max_productos} Productos
+                       </li>
+                       {plan.features.exportar_pdf && (
+                         <li className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
+                           <Check className="w-3.5 h-3.5 text-primary" /> Exportar PDF
+                         </li>
+                       )}
+                    </ul>
 
-                          <ul className="space-y-3 mb-8">
-                            {features.map((feat, j) => (
-                              <li key={j} className="flex items-start gap-2">
-                                <Check className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
-                                <span className="text-sm text-slate-700">{feat}</span>
-                              </li>
-                            ))}
-                          </ul>
-
-                          <Link href="/auth/register" className="block">
-                            <Button
-                              className={`w-full h-11 font-medium rounded-lg ${
-                                isPopular
-                                  ? 'bg-slate-900 hover:bg-slate-800 text-white'
-                                  : 'border border-slate-200 text-slate-700 hover:bg-slate-50'
-                              }`}
-                              variant={isPopular ? 'default' : 'outline'}
-                            >
-                              {plan.price_usd === 0 ? 'Comenzar Gratis' : 'Empezar Ahora'}
-                            </Button>
-                          </Link>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  );
-                })}
-              </div>
+                    <Link href="/auth/register" className="block pt-4">
+                       <Button variant={plan.name === 'basico' ? 'default' : 'outline'} className="w-full font-black text-[10px] tracking-widest uppercase">
+                         {plan.price_usd === 0 ? 'LOG IN FREE' : 'SELECCIONAR'}
+                       </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))
             )}
           </div>
-        </section>
-      </AnimatedSection>
-
-      {/* FAQ Section */}
-      <AnimatedSection>
-        <section className="py-16 sm:py-24 px-4 sm:px-6 bg-slate-50">
-          <div className="container mx-auto">
-            <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-slate-900">
-                Preguntas Frecuentes
-              </h2>
-              <p className="text-base sm:text-lg text-slate-600">
-                Todo lo que necesitas saber
-              </p>
-            </div>
-
-            <div className="max-w-3xl mx-auto space-y-4">
-              {faqs.map((faq, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="bg-white border border-slate-200 rounded-xl overflow-hidden"
-                >
-                  <button
-                    className="w-full px-6 py-4 text-left flex items-center justify-between gap-3"
-                    onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  >
-                    <span className="font-medium text-sm text-slate-900">{faq.question}</span>
-                    <motion.div
-                      animate={{ rotate: openFaq === index ? 180 : 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <ChevronDown className="w-5 h-5 text-slate-400" />
-                    </motion.div>
-                  </button>
-                  <motion.div
-                    initial={false}
-                    animate={{
-                      height: openFaq === index ? "auto" : 0,
-                      opacity: openFaq === index ? 1 : 0
-                    }}
-                    transition={{ duration: 0.2 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="px-6 pb-4 text-sm text-slate-600 leading-relaxed">
-                      {faq.answer}
-                    </div>
-                  </motion.div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-      </AnimatedSection>
+          
+          <Link href="/pricing" className="inline-flex items-center gap-2 text-sm font-black text-primary uppercase tracking-widest hover:gap-4 transition-all">
+            Ver detalle de beneficios <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </section>
 
       {/* CTA Final */}
-      <AnimatedSection>
-        <section className="py-16 sm:py-24 px-4 sm:px-6 bg-white">
-          <div className="container mx-auto">
-            <div className="max-w-3xl mx-auto text-center bg-slate-900 rounded-2xl p-8 sm:p-12 text-white">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
-                ¿Listo para empezar?
-              </h2>
-              <p className="text-base sm:text-lg mb-8 text-slate-300">
-                Únete a más de 500 reposteros que ya están ganando más con cada venta
-              </p>
-              <Link href="/auth/register">
-                <Button className="h-12 px-8 bg-white text-slate-900 hover:bg-slate-100 font-medium rounded-lg">
-                  Crear Cuenta Gratis
-                  <ArrowRight className="ml-2 w-4 h-4" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
-      </AnimatedSection>
+      <section className="py-24 bg-primary text-primary-foreground relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        <div className="container mx-auto px-6 text-center space-y-10 relative z-10">
+          <h2 className="text-4xl md:text-7xl font-black tracking-tighter uppercase leading-none">¿Listo para ser un repostero Pro?</h2>
+          <p className="text-lg md:text-xl font-bold opacity-80 max-w-xl mx-auto">Únete hoy a la comunidad que está transformando la repostería artesanal en negocios de alta rentabilidad.</p>
+          <Link href="/auth/register">
+            <Button size="lg" className="h-16 px-12 bg-background text-foreground hover:bg-background/90 font-black text-xs tracking-widest uppercase shadow-2xl">
+              CREAR MI CUENTA GRATUITA
+            </Button>
+          </Link>
+        </div>
+      </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white py-12 sm:py-16">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12 mb-12">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-2xl">🧁</span>
-                <span className="text-xl font-semibold">DGcost</span>
-              </div>
-              <p className="text-slate-400 text-sm">
-                La herramienta de gestión de costos para reposteros profesionales.
-              </p>
+      <footer className="py-16 bg-background border-t">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
+            <div className="col-span-2 space-y-6">
+               <div className="flex items-center gap-2">
+                 <div className="p-1 rounded bg-primary text-primary-foreground">
+                   <ChefHat className="w-4 h-4" />
+                 </div>
+                 <span className="text-lg font-black tracking-tight uppercase">DGcost</span>
+               </div>
+               <p className="text-sm text-muted-foreground font-medium max-w-xs">
+                 La plataforma inteligente de gestión de costos e inventario para la industria repostera.
+               </p>
+               <div className="flex gap-4">
+                 <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"><MessageCircle className="w-4 h-4" /></div>
+                 <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"><TrendingUp className="w-4 h-4" /></div>
+               </div>
             </div>
-
-            <div>
-              <h4 className="font-semibold mb-4 text-white text-sm">Producto</h4>
-              <ul className="space-y-2 text-sm text-slate-400">
-                <li><a href="#" className="hover:text-white transition-colors">Características</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Precios</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Tutorial</a></li>
+            <div className="space-y-4">
+              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Producto</h4>
+              <ul className="space-y-2 text-sm font-bold text-foreground/70">
+                <li><Link href="/pricing" className="hover:text-primary">Precios</Link></li>
+                <li><a href="#" className="hover:text-primary">Características</a></li>
+                <li><a href="#" className="hover:text-primary">Blog</a></li>
               </ul>
             </div>
-
-            <div>
-              <h4 className="font-semibold mb-4 text-white text-sm">Empresa</h4>
-              <ul className="space-y-2 text-sm text-slate-400">
-                <li><a href="#" className="hover:text-white transition-colors">Sobre nosotros</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contacto</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4 text-white text-sm">Legal</h4>
-              <ul className="space-y-2 text-sm text-slate-400">
-                <li><Link href="/terminos" className="hover:text-white transition-colors">Términos</Link></li>
-                <li><a href="#" className="hover:text-white transition-colors">Privacidad</a></li>
+            <div className="space-y-4">
+              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Legal</h4>
+              <ul className="space-y-2 text-sm font-bold text-foreground/70">
+                <li><Link href="/terminos" className="hover:text-primary">Términos</Link></li>
+                <li><a href="#" className="hover:text-primary">Privacidad</a></li>
               </ul>
             </div>
           </div>
-
-          <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-slate-500 text-sm text-center md:text-left">
-              © 2026 DGcost. Todos los derechos reservados.
-            </p>
-            <div className="flex gap-4">
-              <a href="#" className="text-slate-400 hover:text-white transition-colors" aria-label="Facebook">📘</a>
-              <a href="#" className="text-slate-400 hover:text-white transition-colors" aria-label="Instagram">📸</a>
-              <a href="#" className="text-slate-400 hover:text-white transition-colors" aria-label="Twitter">🐦</a>
-            </div>
+          <Separator />
+          <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+            <p>© 2026 DGCOST. DGBakeryCake Solutions.</p>
+            <p>Hecho con ❤️ para reposteros</p>
           </div>
         </div>
       </footer>

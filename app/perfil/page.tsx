@@ -3,33 +3,31 @@
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PerfilForm } from "@/components/perfil/PerfilForm";
 import { motion } from "motion/react";
-import { User } from "lucide-react";
+import { User, ShieldCheck } from "lucide-react";
 
 export default function PerfilPage() {
   return (
     <ProtectedRoute>
-      <div className="container mx-auto p-6 max-w-2xl space-y-6">
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <h1 className="text-3xl font-bold flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
-              <User className="w-5 h-5 text-white" />
-            </div>
-            Mi Perfil
-          </h1>
-          <p className="text-gray-700 mt-1">
-            Gestiona tu información personal y credenciales de acceso
-          </p>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-        >
+      <div className="flex-1 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-1">
+            <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+              Perfil de Usuario
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Gestiona tu información personal, seguridad y preferencias de cuenta
+            </p>
+          </div>
+          <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-600 rounded-full border border-emerald-500/20">
+            <ShieldCheck className="w-4 h-4" />
+            <span className="text-xs font-bold uppercase tracking-wider">Cuenta Verificada</span>
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto">
           <PerfilForm />
-        </motion.div>
+        </div>
       </div>
     </ProtectedRoute>
   );

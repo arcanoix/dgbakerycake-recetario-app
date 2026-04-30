@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { z } from 'zod';
+
+const updateUserSchema = z.object({
+  userId: z.string().uuid('userId debe ser un UUID válido'),
+  nombre: z.string().min(1).max(100).optional(),
+});
 
 export async function POST(req: NextRequest) {
   // Verify the caller is an authenticated admin
@@ -40,13 +46,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Acceso denegado' }, { status: 403 });
   }
 
-  // Parse request body
-  const body = await req.json();
-  const { userId, nombre } = body as { userId?: string; nombre?: string };
-
-  if (!userId) {
-    return NextResponse.json({ error: 'userId es requerido' }, { status: 400 });
+  // Parse and validate request body
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: 'Cuerpo de solicitud inválido' }, { status: 400 });
   }
+
+  const parsed = updateUserSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? 'Datos inválidos' },
+      { status: 400 }
+    );
+  }
+  const { userId, nombre } = parsed.data;
 
   // Use service role client for admin operations
   const supabaseAdmin = createClient(

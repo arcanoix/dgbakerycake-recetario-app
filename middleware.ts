@@ -4,35 +4,34 @@ import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 import { updateSession } from '@/utils/supabase/middleware';
 
-// Inicializa redis con Upstash (requiere URl y Token como ENV, manejara fallos gracefullment si no existen)
+// Inicializa Redis con Upstash – funciona gracefully si los ENV no están configurados
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL || 'https://dummy.upstash.io',
   token: process.env.UPSTASH_REDIS_REST_TOKEN || 'dummy',
 });
 
-// Create a new ratelimiter, that allows 10 requests per 10 seconds (standard rate)
+// Permite 10 peticiones por ventana de 10 segundos por IP (rutas API generales)
 const ratelimit = new Ratelimit({
-  redis: redis,
+  redis,
   limiter: Ratelimit.slidingWindow(10, '10 s'),
   analytics: true,
 });
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Excluir rutas de cron del middleware de autenticación
-  // Los cron jobs usan su propio sistema de autenticación (CRON_SECRET)
+  // Las rutas de cron usan su propio sistema de autenticación (CRON_SECRET)
   if (pathname.startsWith('/api/cron/')) {
     return NextResponse.next();
   }
 
-  // Rate Limiting para APIs
+  // Rate limiting para rutas API (requiere Upstash configurado)
   if (pathname.startsWith('/api/') && process.env.UPSTASH_REDIS_REST_URL) {
-    // Identificar usuario por su IP (de las cabeceras de proxy o del request)
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1';
+    const ip =
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      '127.0.0.1';
     const { success, limit, reset, remaining } = await ratelimit.limit(ip);
-    
-    // Si excede
+
     if (!success) {
       return new NextResponse('Too Many Requests', {
         status: 429,
@@ -45,18 +44,17 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  // Procesamiento de autenticación con Supabase SSR
-  // Devolverá la redirección (ej: a login) o refrescará tokens automáticamente
+  // Gestión de sesión Supabase SSR + redirección autenticación
   return await updateSession(request);
 }
 
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
+     * Aplica el middleware a todas las rutas excepto:
+     * - _next/static (archivos estáticos)
+     * - _next/image  (optimización de imágenes)
+     * - favicon.ico
      */
     '/((?!_next/static|_next/image|favicon.ico).*)',
   ],

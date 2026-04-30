@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { z } from 'zod';
+
+const activityLogSchema = z.object({
+  action: z.enum(['create', 'update', 'delete', 'login', 'logout', 'view']),
+  module: z.string().min(1).max(50),
+  description: z.string().max(500).optional(),
+  entity_id: z.string().max(100).optional(),
+  entity_name: z.string().max(200).optional(),
+});
 
 /**
  * Helper: build server-side Supabase client for the authenticated user.
@@ -106,13 +115,14 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json().catch(() => ({}));
-  const { action, module: mod, description, entity_id, entity_name } = body as {
-    action?: string;
-    module?: string;
-    description?: string;
-    entity_id?: string;
-    entity_name?: string;
-  };
+  const parsed = activityLogSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? 'Datos inválidos' },
+      { status: 400 }
+    );
+  }
+  const { action, module: mod, description, entity_id, entity_name } = parsed.data;
 
   if (!action || !mod) {
     return NextResponse.json({ error: 'action y module son requeridos' }, { status: 400 });

@@ -359,3 +359,72 @@ export interface OrdenFormData {
   notas?: string;
   fechaEntrega?: Date;
 }
+
+// ============================================
+// TIPOS DE INVENTARIO / KARDEX
+// ============================================
+
+export type TipoMovimiento =
+  | 'compra'
+  | 'uso'
+  | 'merma'
+  | 'ajuste_entrada'
+  | 'ajuste_salida';
+
+export interface MovimientoInventario {
+  id: string;
+  userId: string;
+  productoId: string;
+  productoNombre?: string;
+  tipo: TipoMovimiento;
+  cantidad: number;
+  unidadMedida: string;
+  unidadMedidaNombre?: string;
+  unidadMedidaSimbolo?: string;
+  costoUnitario?: number;
+  costoTotal?: number;
+  stockAnterior: number;
+  stockNuevo: number;
+  notas?: string;
+  referenciaId?: string;
+  referenciaTipo?: string;
+  fecha: Date;
+  fechaCreacion: Date;
+}
+
+export interface MovimientoFormData {
+  productoId: string;
+  tipo: TipoMovimiento;
+  cantidad: number;
+  costoUnitario?: number;
+  notas?: string;
+  referenciaId?: string;
+  referenciaTipo?: string;
+  fecha?: Date;
+}
+
+export interface StockProducto {
+  productoId: string;
+  productoNombre: string;
+  unidadMedida: string;
+  unidadMedidaNombre?: string;
+  unidadMedidaSimbolo?: string;
+  stockActual: number;
+  stockMinimo: number;
+  esStockCritico: boolean;
+  ultimaActualizacion: Date;
+}
+
+export interface ConfigStockProducto {
+  id: string;
+  userId: string;
+  productoId: string;
+  stockMinimo: number;
+  fechaCreacion: Date;
+  fechaActualizacion: Date;
+}
+
+export interface ConfigStockFormData {
+  productoId: string;
+  stockMinimo: number;
+}

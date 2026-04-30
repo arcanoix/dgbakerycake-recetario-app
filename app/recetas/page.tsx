@@ -10,6 +10,7 @@ import { usePlanAccess } from "@/hooks/usePlanAccess";
 import { MaterialSelector } from "@/components/recetas/MaterialSelector";
 import { DesgloseCostos } from "@/components/recetas/DesgloseCostos";
 import { RecetaList } from "@/components/recetas/RecetaList";
+import { ImportarRecetaFoto } from "@/components/recetas/ImportarRecetaFoto";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +29,7 @@ export default function RecetasPage() {
   const { recetas, cargando, error, errorCarga: errorCargaRecetas, crearReceta, actualizarReceta, eliminar, agregarMaterial, cargarRecetas } = useRecetas();
   const { productos, errorCarga: errorCargaProductos, cargarProductos } = useProductos();
   const { configuracion } = useConfiguracion();
-  const { getCurrentCount, getPlanDisplayName, getPlanName, cargando: cargandoPlan } = usePlanAccess();
+  const { getCurrentCount, getPlanDisplayName, getPlanName, canAccess, cargando: cargandoPlan } = usePlanAccess();
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [recetaEditando, setRecetaEditando] = useState<Receta | undefined>();
@@ -104,6 +105,20 @@ export default function RecetasPage() {
     setMostrarFormulario(true);
   };
 
+  const handleImportarReceta = ({ nombre: n, descripcion: d, categoria: c, materiales: m }: {
+    nombre: string;
+    descripcion: string;
+    categoria: string;
+    materiales: MaterialReceta[];
+  }) => {
+    setNombre(n);
+    setDescripcion(d);
+    setCategoria(c);
+    setMateriales(m);
+    setRecetaEditando(undefined);
+    setMostrarFormulario(true);
+  };
+
   const desglose = materiales.length > 0 ? generarDesgloseCostos({
     id: "temp",
     nombre,
@@ -125,6 +140,7 @@ export default function RecetasPage() {
   const limitInfo = getCurrentCount('recetas', recetas.length);
   const canCreate = limitInfo.canCreate;
   const isLimited = getPlanName() === 'free' || getPlanName() === 'basico';
+  const canImportarFoto = canAccess('importar_receta_foto');
 
   const handleNuevo = () => {
     if (!canCreate) {
@@ -151,15 +167,22 @@ export default function RecetasPage() {
           </h1>
           <p className="text-gray-700 mt-1">Gestiona tus recetas y calcula costos</p>
         </div>
-        <Button 
-          onClick={handleNuevo}
-          size="lg"
-          disabled={!hayProductos && !mostrarFormulario}
-          className={`gap-2 ${canCreate ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 border-0' : ''}`}
-        >
-          {!canCreate && <Lock className="w-4 h-4" />}
-          {mostrarFormulario ? "Cancelar" : "+ Nueva Receta"}
-        </Button>
+        <div className="flex items-center gap-3 flex-wrap">
+          <ImportarRecetaFoto
+            productos={productos}
+            tieneAcceso={canImportarFoto}
+            onImportar={handleImportarReceta}
+          />
+          <Button 
+            onClick={handleNuevo}
+            size="lg"
+            disabled={!hayProductos && !mostrarFormulario}
+            className={`gap-2 ${canCreate ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 border-0' : ''}`}
+          >
+            {!canCreate && <Lock className="w-4 h-4" />}
+            {mostrarFormulario ? "Cancelar" : "+ Nueva Receta"}
+          </Button>
+        </div>
       </motion.div>
 
       {isLimited && (

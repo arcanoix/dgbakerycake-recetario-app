@@ -30,7 +30,8 @@ export type PlanFeature =
   | 'ver_analytics'
   | 'exportar_datos'
   | 'api_access'
-  | 'soporte_prioritario';
+  | 'soporte_prioritario'
+  | 'importar_receta_foto';
 
 export interface PlanFeatures {
   menu_dashboard: boolean;
@@ -53,6 +54,7 @@ export interface PlanFeatures {
   exportar_datos: boolean;
   api_access: boolean;
   soporte_prioritario: boolean;
+  importar_receta_foto: boolean;
   max_productos: number;
   max_recetas: number;
 }
@@ -100,6 +102,7 @@ export const planToFeatures = (plan: Plan): PlanFeatures => {
     exportar_datos: features.exportar_datos ?? false,
     api_access: features.api_access ?? false,
     soporte_prioritario: features.soporte_prioritario ?? false,
+    importar_receta_foto: features.importar_receta_foto ?? false,
     max_productos: plan.max_productos,
     max_recetas: plan.max_recetas,
   };
@@ -277,6 +280,7 @@ export const PLAN_FEATURES: Record<SubscriptionPlanName, PlanFeatures> = {
     exportar_datos: false,
     api_access: false,
     soporte_prioritario: false,
+    importar_receta_foto: false,
     max_productos: 50,
     max_recetas: 20,
   },
@@ -301,6 +305,7 @@ export const PLAN_FEATURES: Record<SubscriptionPlanName, PlanFeatures> = {
     exportar_datos: false,
     api_access: false,
     soporte_prioritario: false,
+    importar_receta_foto: false,
     max_productos: 200,
     max_recetas: 100,
   },
@@ -325,6 +330,7 @@ export const PLAN_FEATURES: Record<SubscriptionPlanName, PlanFeatures> = {
     exportar_datos: true,
     api_access: false,
     soporte_prioritario: true,
+    importar_receta_foto: true,
     max_productos: 1000,
     max_recetas: 500,
   },
@@ -349,6 +355,7 @@ export const PLAN_FEATURES: Record<SubscriptionPlanName, PlanFeatures> = {
     exportar_datos: true,
     api_access: true,
     soporte_prioritario: true,
+    importar_receta_foto: true,
     max_productos: -1,
     max_recetas: -1,
   },

@@ -187,11 +187,13 @@ const ReduccionCostosTab = () => {
       .filter(Boolean)
       .map((line) => {
         const parts = line.split(",");
+        const rawCantidad = parseFloat(parts[1]?.trim() ?? "");
+        const rawCosto = parts[3] ? parseFloat(parts[3].trim()) : NaN;
         return {
           nombre: parts[0]?.trim() || line,
-          cantidad: parseFloat(parts[1]?.trim() || "1") || 1,
+          cantidad: !isNaN(rawCantidad) ? rawCantidad : 1,
           unidad: parts[2]?.trim() || "unidad",
-          costo: parts[3] ? parseFloat(parts[3].trim()) : undefined,
+          costo: !isNaN(rawCosto) ? rawCosto : undefined,
         };
       });
 
@@ -406,9 +408,10 @@ const RecetasInventarioTab = ({
       .filter(Boolean)
       .map((line) => {
         const parts = line.split(",");
+        const rawCantidad = parseFloat(parts[1]?.trim() ?? "");
         return {
           nombre: parts[0]?.trim() || line,
-          cantidad: parseFloat(parts[1]?.trim() || "1") || 1,
+          cantidad: !isNaN(rawCantidad) ? rawCantidad : 1,
           unidad: parts[2]?.trim() || "unidad",
         };
       });

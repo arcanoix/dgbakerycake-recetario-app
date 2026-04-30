@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
-import { planToFeatures, PLAN_FEATURES, Plan } from '@/types/subscription';
+import { planToFeatures, Plan } from '@/types/subscription';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -226,8 +227,7 @@ export async function POST(request: NextRequest) {
 // ---------------------------------------------------------------------------
 
 async function checkAIAccess(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+  supabase: SupabaseClient,
   userId: string
 ): Promise<boolean> {
   // Admins always have access

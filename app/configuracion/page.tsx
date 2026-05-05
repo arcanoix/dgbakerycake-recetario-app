@@ -6,7 +6,7 @@ import { ConfiguracionForm } from "@/components/configuracion/ConfiguracionForm"
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loading } from "@/components/ui/loading";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Settings, AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

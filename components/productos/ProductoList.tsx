@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatearNumero } from "@/lib/constants";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
 import { PrecioDual } from "@/components/ui/precio-dual";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   Package, 
   Scale, 

@@ -15,7 +15,7 @@ import {
   Table as TableIcon,
   RefreshCw
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { DataTable } from "@/components/ui/data-table";
 import { getClienteColumns } from "./cliente-columns";
 

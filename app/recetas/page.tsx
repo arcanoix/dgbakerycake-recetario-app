@@ -20,7 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Loading } from "@/components/ui/loading";
 import { CATEGORIAS_RECETAS } from "@/lib/constants";
 import { generarDesgloseCostos } from "@/lib/calculations";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   BookOpen, 
   AlertCircle, 

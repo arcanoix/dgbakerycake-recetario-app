@@ -2,7 +2,7 @@
 
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PerfilForm } from "@/components/perfil/PerfilForm";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { User, ShieldCheck } from "lucide-react";
 
 export default function PerfilPage() {

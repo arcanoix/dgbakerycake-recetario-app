@@ -4,8 +4,9 @@ import { Plan, SubscriptionPlan } from "@/types/subscription";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { Check, Sparkles, Zap, ShieldCheck, Crown } from "lucide-react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 
 interface PricingCardProps {
   plan: Plan | SubscriptionPlan;

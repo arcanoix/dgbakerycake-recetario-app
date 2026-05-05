@@ -12,7 +12,7 @@ import { CATEGORIAS_PRODUCTOS } from "@/lib/constants";
 import { formatearMoneda } from "@/lib/constants";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
 import { useUnidades } from "@/hooks/useUnidades";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Package, Scale, ShoppingCart, DollarSign, Building2, FileText, Calculator, ArrowRight, Check } from "lucide-react";
 
 interface ProductoFormProps {

@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { exportarCotizacionPDF } from "@/lib/pdfCotizacion";
 import { generarEnlaceWhatsApp } from "@/lib/whatsapp";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   ShoppingBag, 
   Plus, 

@@ -3,7 +3,7 @@
 import { Receta } from '@/types';
 import { formatearMoneda } from '@/lib/constants';
 import { useConfiguracion } from '@/hooks/useConfiguracion';
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, TrendingUp, BarChart3, ArrowUpRight } from "lucide-react";
 import Link from "next/link";

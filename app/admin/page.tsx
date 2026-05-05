@@ -21,7 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loading } from "@/components/ui/loading";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { 
   CreditCard, Users, BarChart3, Activity, RefreshCw, 
   Clock, CheckCircle, XCircle, TrendingUp, UserPlus, 

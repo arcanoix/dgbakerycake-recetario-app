@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { resetPassword } from "@/lib/supabase-auth";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Mail, ChefHat, RefreshCw, CheckCircle2, AlertCircle } from "lucide-react";
 import { Label } from "@/components/ui/label";
 

@@ -9,7 +9,7 @@ import { SubscriptionPlan } from "@/types/subscription";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Loading } from "@/components/ui/loading";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Crown, CreditCard, Wallet, Globe, Check, Sparkles, ShieldCheck, Zap } from "lucide-react";
 
 export default function PricingPage() {

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { UnidadMedidaAdmin } from "@/types";
 import { DataTable } from "@/components/ui/data-table";
 import { getUnidadColumns } from "./unidades-columns";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Scale } from "lucide-react";
 
 interface UnidadListProps {

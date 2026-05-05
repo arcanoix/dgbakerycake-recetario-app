@@ -7,7 +7,7 @@ import { usePlanAccess } from "@/hooks/usePlanAccess";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CalendarDays, ArrowRight, Lock, AlertCircle } from "lucide-react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default function PedidosPage() {

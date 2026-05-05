@@ -9,7 +9,7 @@ import { obtenerTodosLosPosts, eliminarPost } from "@/lib/blog";
 import { BlogPost } from "@/types/blog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import {
   PenSquare,
   Trash2,

@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { signUp, signInWithGoogle } from '@/lib/supabase-auth';
 import { useAuth } from '@/contexts/AuthContext';
+import { motion } from 'motion/react';
 import { ArrowRight, Chrome, Check, ChefHat, RefreshCw, User, Mail, Lock } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 

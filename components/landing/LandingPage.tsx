@@ -22,7 +22,8 @@ import {
   BarChart3,
   Globe,
   MessageCircle,
-  Smartphone
+  Smartphone,
+  RefreshCw
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";

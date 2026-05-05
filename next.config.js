@@ -67,6 +67,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'images.unsplash.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'api.dicebear.com',
+      },
     ],
   },
   // Excluye motion del bundle SSR — necesario para Next.js 16 + React 19

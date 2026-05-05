@@ -38,8 +38,8 @@ export function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps
   return (
     <aside
       className={cn(
-        `fixed left-0 top-0 z-50 h-screen w-64 border-r bg-background transition-[width] duration-300 md:sticky`,
-        isCollapsed ? "md:w-14" : "md:w-64",
+        `fixed left-0 top-0 z-50 h-screen w-64 border-r bg-background transition-[width] duration-300 md:sticky flex flex-col`,
+        isCollapsed ? "md:w-16" : "md:w-64",
         navOpened ? "translate-x-0" : "-translate-x-full md:translate-x-0",
         className
       )}
@@ -55,14 +55,14 @@ export function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps
       </Button>
 
       {/* Header del Sidebar */}
-      <div className="flex h-16 items-center px-4 py-6">
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+      <div className={cn("flex h-16 justify-center px-4 py-4 transition-all duration-300", isCollapsed && "px-2 justify-center")}>
+        <Link href="/dashboard" className="flex flex-col items-center gap-1">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary shrink-0 shadow-md">
             <span className="text-lg text-primary-foreground font-bold">D</span>
           </div>
-          <div className={cn("flex flex-col transition-opacity duration-300", isCollapsed ? "opacity-0 md:hidden" : "opacity-100")}>
-            <span className="font-bold text-xl leading-none">DGcost</span>
-            <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Repostería</span>
+          <div className={cn("flex flex-col items-center transition-all duration-300 overflow-hidden", isCollapsed ? "h-0 opacity-0 md:hidden" : "h-auto opacity-100")}>
+            <span className="font-bold text-sm leading-none truncate">DGcost</span>
+            <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold truncate">Repostería</span>
           </div>
         </Link>
       </div>
@@ -77,7 +77,7 @@ export function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps
         
         {(isAdmin || visibleAdminItems.length > 0) && (
           <>
-            <div className={cn("px-4 py-2 mt-4", isCollapsed ? "opacity-0" : "opacity-100")}>
+            <div className={cn("px-4 py-2 mt-2 transition-opacity duration-300", isCollapsed ? "opacity-0 hidden" : "opacity-100")}>
               <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                 Administración
               </p>

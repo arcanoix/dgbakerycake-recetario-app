@@ -20,22 +20,13 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loading } from "@/components/ui/loading";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "motion/react";
 import { 
   CreditCard, Users, BarChart3, Activity, RefreshCw, 
   Clock, CheckCircle, XCircle, TrendingUp, UserPlus, 
   Crown, AlertCircle
 } from "lucide-react";
-
-type Vista = "solicitudes" | "usuarios" | "graficos" | "actividades" | "errores";
-
-const TABS: { id: Vista; label: string; icon: React.ReactNode }[] = [
-  { id: "solicitudes", label: "Solicitudes", icon: <CreditCard className="w-4 h-4" /> },
-  { id: "usuarios", label: "Usuarios", icon: <Users className="w-4 h-4" /> },
-  { id: "graficos", label: "Estadísticas", icon: <BarChart3 className="w-4 h-4" /> },
-  { id: "actividades", label: "Actividad", icon: <Activity className="w-4 h-4" /> },
-  { id: "errores", label: "Logs sistema", icon: <AlertCircle className="w-4 h-4" /> },
-];
 
 interface StatCardProps {
   title: string;
@@ -76,7 +67,6 @@ const StatCard = ({ title, value, icon, color, gradient, subtitle }: StatCardPro
 export default function AdminPage() {
   const router = useRouter();
   const { isAdmin, cargando: cargandoRole } = useRole();
-  const [vistaActual, setVistaActual] = useState<Vista>("solicitudes");
   const [solicitudes, setSolicitudes] = useState<PaymentRequest[]>([]);
   const [usuarios, setUsuarios] = useState<UserData[]>([]);
   const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
@@ -182,36 +172,36 @@ export default function AdminPage() {
         </motion.div>
 
         {/* Tabs */}
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="flex gap-2 border-b pb-1 flex-wrap"
-        >
-          {TABS.map((tab) => (
-            <Button
-              key={tab.id}
-              variant="ghost"
-              onClick={() => setVistaActual(tab.id)}
-              className={`gap-2 rounded-lg ${
-                vistaActual === tab.id 
-                  ? "bg-primary/10 text-primary" 
-                  : "text-muted-foreground hover:bg-muted"
-              }`}
-            >
-              {tab.icon}
-              {tab.label}
-              {tab.id === "solicitudes" && pendingCount > 0 && (
-                <span className="ml-1 px-1.5 py-0.5 text-xs bg-yellow-500/90 text-white rounded-full">
+        <Tabs defaultValue="solicitudes" className="space-y-6">
+          <TabsList className="bg-muted/50 p-1 border h-11">
+            <TabsTrigger value="solicitudes" className="gap-2 h-9 px-4 font-bold data-[state=active]:shadow-sm relative">
+              <CreditCard className="w-4 h-4" />
+              Solicitudes
+              {pendingCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-yellow-600 text-[10px] text-white font-black shadow-sm">
                   {pendingCount}
                 </span>
               )}
-            </Button>
-          ))}
-        </motion.div>
+            </TabsTrigger>
+            <TabsTrigger value="usuarios" className="gap-2 h-9 px-4 font-bold data-[state=active]:shadow-sm">
+              <Users className="w-4 h-4" />
+              Usuarios
+            </TabsTrigger>
+            <TabsTrigger value="graficos" className="gap-2 h-9 px-4 font-bold data-[state=active]:shadow-sm">
+              <BarChart3 className="w-4 h-4" />
+              Estadísticas
+            </TabsTrigger>
+            <TabsTrigger value="actividades" className="gap-2 h-9 px-4 font-bold data-[state=active]:shadow-sm">
+              <Activity className="w-4 h-4" />
+              Actividad
+            </TabsTrigger>
+            <TabsTrigger value="errores" className="gap-2 h-9 px-4 font-bold data-[state=active]:shadow-sm">
+              <AlertCircle className="w-4 h-4" />
+              Logs sistema
+            </TabsTrigger>
+          </TabsList>
 
-        {/* ===================== STATS CARDS ===================== */}
-        {vistaActual === "solicitudes" && (
+          <TabsContent value="solicitudes" className="m-0 space-y-6">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -293,9 +283,9 @@ export default function AdminPage() {
               />
             </div>
           </motion.div>
-        )}
+          </TabsContent>
 
-        {vistaActual === "usuarios" && (
+          <TabsContent value="usuarios" className="m-0 space-y-6">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -335,9 +325,9 @@ export default function AdminPage() {
 
             <UsersTable usuarios={usuarios} onUpdate={cargarDatos} />
           </motion.div>
-        )}
+          </TabsContent>
 
-        {vistaActual === "actividades" && (
+          <TabsContent value="actividades" className="m-0 space-y-6">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -369,9 +359,9 @@ export default function AdminPage() {
 
             <ActivityLogsTable logs={activityLogs} />
           </motion.div>
-        )}
+          </TabsContent>
 
-        {vistaActual === "errores" && (
+          <TabsContent value="errores" className="m-0 space-y-6">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -414,9 +404,9 @@ export default function AdminPage() {
               emptyMessage="No se encontraron errores del sistema."
             />
           </motion.div>
-        )}
+          </TabsContent>
 
-        {vistaActual === "graficos" && (
+          <TabsContent value="graficos" className="m-0 space-y-6">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -424,7 +414,8 @@ export default function AdminPage() {
           >
             <AdminCharts usuarios={usuarios} activityLogs={activityLogs} />
           </motion.div>
-        )}
+          </TabsContent>
+        </Tabs>
       </div>
     </ProtectedRoute>
   );

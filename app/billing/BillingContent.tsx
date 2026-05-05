@@ -23,7 +23,9 @@ import {
   Receipt,
   TrendingUp,
   ShieldCheck,
-  Wallet
+  Wallet,
+  MessageCircle,
+  Info
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -199,8 +201,20 @@ export default function BillingContent() {
                <p className="text-xs text-muted-foreground leading-relaxed">
                   ¿Tienes problemas con tu pago o necesitas ayuda con tu plan? Contáctanos directamente vía WhatsApp para una solución rápida.
                </p>
-               <Button variant="outline" className="w-full h-10 font-bold text-xs uppercase tracking-widest gap-2">
-                  <MessageCircle className="w-4 h-4" /> Contactar Soporte
+               <Button 
+                  variant="outline" 
+                  className="w-full h-10 font-bold text-xs uppercase tracking-widest"
+                  asChild
+               >
+                  <a 
+                    href="https://wa.me/584121367894" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    <span>Contactar Soporte</span>
+                  </a>
                </Button>
             </CardContent>
           </Card>

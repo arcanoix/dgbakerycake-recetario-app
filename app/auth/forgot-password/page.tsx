@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { forgotPassword } from "@/lib/supabase-auth";
+import { resetPassword } from "@/lib/supabase-auth";
 import { motion, AnimatePresence } from "motion/react";
 import { ArrowLeft, Mail, ChefHat, RefreshCw, CheckCircle2, AlertCircle } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -22,7 +22,7 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      const result = await forgotPassword(email);
+      const result = await resetPassword(email);
       if (result.success) {
         setSuccess(true);
       } else {

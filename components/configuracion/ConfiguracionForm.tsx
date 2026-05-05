@@ -87,8 +87,14 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
           </TabsTrigger>
         </TabsList>
 
-        <AnimatePresence mode="wait">
-          <TabsContent value="moneda" className="m-0 space-y-6">
+        <TabsContent value="moneda" className="m-0 space-y-6">
+          <motion.div
+            key="moneda-tab"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
             <Card className="border-0 shadow-lg bg-card">
               <CardHeader>
                 <div className="flex items-center gap-3">
@@ -160,9 +166,17 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
+          </motion.div>
+        </TabsContent>
 
-          <TabsContent value="precios" className="m-0 space-y-6">
+        <TabsContent value="precios" className="m-0 space-y-6">
+          <motion.div
+            key="precios-tab"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
             <Card className="border-0 shadow-lg bg-card">
               <CardHeader>
                 <div className="flex items-center gap-3">
@@ -214,7 +228,7 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-6 pt-4 border-t">
+                <div className="grid grid-cols-1 gap-6 pt-4 border-t hidden">
                   <div className="space-y-3">
                     <Label htmlFor="costoHora" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Costo de Mano de Obra por Hora (Defecto)</Label>
                     <div className="relative">
@@ -236,8 +250,8 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-        </AnimatePresence>
+          </motion.div>
+        </TabsContent>
       </Tabs>
 
       {/* Footer Acciones */}

@@ -330,11 +330,20 @@ export default function AdminPlanesPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="container mx-auto p-6 space-y-6">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+      >
         <div>
-          <h1 className="text-3xl font-bold">Gestión de Planes</h1>
-          <p className="text-gray-700 mt-1">
+          <h1 className="text-3xl font-bold flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
+              <Crown className="w-5 h-5 text-white" />
+            </div>
+            Gestión de Planes
+          </h1>
+          <p className="text-muted-foreground mt-1">
             Administra los planes de suscripción disponibles
           </p>
         </div>
@@ -342,7 +351,7 @@ export default function AdminPlanesPage() {
           <Plus className="w-4 h-4" />
           Nuevo Plan
         </Button>
-      </div>
+      </motion.div>
 
       {mensaje && (
         <motion.div

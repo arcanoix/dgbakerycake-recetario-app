@@ -54,6 +54,10 @@ export const obtenerMovimientos = async (
   const { data, error } = await query;
 
   if (error) {
+    const traducido = traducirErrorInventario(error);
+    if (traducido.includes('Falta la tabla')) {
+      throw new Error(traducido);
+    }
     console.error('Error al obtener movimientos:', error);
     return [];
   }
@@ -199,6 +203,19 @@ export const obtenerStockProductos = async (): Promise<StockProducto[]> => {
       .eq('user_id', user.id),
   ]);
 
+  if (movimientosResult.error) {
+    const traducido = traducirErrorInventario(movimientosResult.error);
+    if (traducido.includes('Falta la tabla')) {
+      throw new Error(traducido);
+    }
+  }
+  if (configsResult.error) {
+    const traducido = traducirErrorInventario(configsResult.error);
+    if (traducido.includes('Falta la tabla')) {
+      throw new Error(traducido);
+    }
+  }
+
   const productos = productosResult.data;
   if (!productos || productos.length === 0) return [];
 
@@ -255,6 +272,10 @@ export const obtenerConfigsStock = async (): Promise<ConfigStockProducto[]> => {
     .eq('user_id', user.id);
 
   if (error) {
+    const traducido = traducirErrorInventario(error);
+    if (traducido.includes('Falta la tabla')) {
+      throw new Error(traducido);
+    }
     console.error('Error al obtener configuraciones de stock:', error);
     return [];
   }

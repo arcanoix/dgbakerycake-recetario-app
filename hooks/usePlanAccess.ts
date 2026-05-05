@@ -78,9 +78,6 @@ export const usePlanAccess = () => {
   };
 
   const getPlanDisplayName = (): string => {
-    if (isAdmin) {
-      return 'Admin';
-    }
     return infoSuscripcion?.plan_display_name || 'Plan Gratuito';
   };
 

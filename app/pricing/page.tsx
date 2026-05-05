@@ -7,6 +7,7 @@ import { PricingCard } from "@/components/subscription/PricingCard";
 import { useSubscription } from "@/hooks/useSubscription";
 import { SubscriptionPlan } from "@/types/subscription";
 import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { Loading } from "@/components/ui/loading";
 import { motion } from "motion/react";
 import { Crown, CreditCard, Wallet, Globe, Check, Sparkles, ShieldCheck, Zap } from "lucide-react";

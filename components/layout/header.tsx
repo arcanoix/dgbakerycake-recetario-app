@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { UserNav } from "./user-nav";
 import { Breadcrumbs } from "./breadcrumbs";
 import { cn } from "@/lib/utils";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Sidebar } from "./sidebar";
 import { useState } from "react";
 
@@ -29,7 +29,8 @@ export function Header({ isCollapsed, setIsCollapsed }: HeaderProps) {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="p-0 w-64">
-            <Sidebar isCollapsed={false} setIsCollapsed={() => {}} className="relative h-full w-full border-none" />
+            <SheetTitle className="sr-only">Menú de navegación</SheetTitle>
+            <Sidebar isCollapsed={false} setIsCollapsed={() => {}} className="!static !translate-x-0 h-full w-full border-none" />
           </SheetContent>
         </Sheet>
 

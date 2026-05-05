@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "motion/react";
 import { 
   User, 
@@ -18,7 +19,7 @@ import {
   Eye, 
   EyeOff,
   UserCircle,
-  ShieldLock,
+  Shield,
   LogOut,
   Fingerprint,
   RefreshCw
@@ -132,13 +133,19 @@ export const PerfilForm = () => {
             Datos Personales
           </TabsTrigger>
           <TabsTrigger value="seguridad" className="gap-2 h-9 px-6 font-bold data-[state=active]:shadow-sm">
-            <ShieldLock className="w-4 h-4" />
+            <Shield className="w-4 h-4" />
             Seguridad
           </TabsTrigger>
         </TabsList>
 
-        <AnimatePresence mode="wait">
-          <TabsContent value="datos" className="m-0 space-y-6">
+        <TabsContent value="datos" className="m-0 space-y-6">
+          <motion.div
+            key="datos-tab"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
             <Card className="border-0 shadow-lg bg-card">
               <CardHeader>
                 <div className="flex items-center gap-3">
@@ -215,9 +222,17 @@ export const PerfilForm = () => {
                 </form>
               </CardContent>
             </Card>
-          </TabsContent>
+          </motion.div>
+        </TabsContent>
 
-          <TabsContent value="seguridad" className="m-0 space-y-6">
+        <TabsContent value="seguridad" className="m-0 space-y-6">
+          <motion.div
+            key="seguridad-tab"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
             <Card className="border-0 shadow-lg bg-card">
               <CardHeader>
                 <div className="flex items-center gap-3">
@@ -307,15 +322,15 @@ export const PerfilForm = () => {
                       ) : guardando && accionActiva === "password" ? (
                         <><RefreshCw className="w-4 h-4 animate-spin" /> ACTUALIZANDO...</>
                       ) : (
-                        <><ShieldLock className="w-4 h-4" /> CAMBIAR CONTRASEÑA</>
+                        <><Shield className="w-4 h-4" /> CAMBIAR CONTRASEÑA</>
                       )}
                     </Button>
                   </div>
                 </form>
               </CardContent>
             </Card>
-          </TabsContent>
-        </AnimatePresence>
+          </motion.div>
+        </TabsContent>
       </Tabs>
 
       {/* Info Account Footer */}

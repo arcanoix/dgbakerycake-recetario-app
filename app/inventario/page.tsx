@@ -12,7 +12,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loading } from "@/components/ui/loading";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   Warehouse,
   AlertTriangle,
@@ -24,7 +24,8 @@ import {
   RefreshCw,
   TrendingUp,
   History,
-  ShieldAlert
+  ShieldAlert,
+  CheckCircle2
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { X, Plus, Trash2 } from "lucide-react";
 import { formatearUSD } from "@/lib/currency";
@@ -152,14 +152,17 @@ export const OrdenForm = ({ orden, clientes, recetas, onGuardar, onCancelar }: O
             <div className="space-y-1">
               <Label htmlFor="clienteId">Cliente *</Label>
               <Select
-                id="clienteId"
                 value={clienteId}
-                onChange={e => setClienteId(e.target.value)}
+                onValueChange={(value) => setClienteId(value)}
               >
-                <option value="">Selecciona un cliente...</option>
-                {clientes.map(c => (
-                  <option key={c.id} value={c.id}>{c.nombre}</option>
-                ))}
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecciona un cliente..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {clientes.map(c => (
+                    <SelectItem key={c.id} value={c.id}>{c.nombre}</SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
               {errores.clienteId && <p className="text-sm text-red-500">{errores.clienteId}</p>}
             </div>
@@ -167,13 +170,17 @@ export const OrdenForm = ({ orden, clientes, recetas, onGuardar, onCancelar }: O
             <div className="space-y-1">
               <Label htmlFor="estado">Estado</Label>
               <Select
-                id="estado"
                 value={estado}
-                onChange={e => setEstado(e.target.value as EstadoOrden)}
+                onValueChange={(value) => setEstado(value as EstadoOrden)}
               >
-                {ESTADOS.map(s => (
-                  <option key={s.value} value={s.value}>{s.label}</option>
-                ))}
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {ESTADOS.map(s => (
+                    <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </div>
           </div>
@@ -217,12 +224,16 @@ export const OrdenForm = ({ orden, clientes, recetas, onGuardar, onCancelar }: O
                     <Label className="text-xs">Receta (opcional)</Label>
                     <Select
                       value={item.recetaId || ""}
-                      onChange={e => actualizarItem(index, "recetaId", e.target.value || undefined)}
+                      onValueChange={(value) => actualizarItem(index, "recetaId", value || undefined)}
                     >
-                      <option value="">Artículo personalizado...</option>
-                      {recetas.map(r => (
-                        <option key={r.id} value={r.id}>{r.nombre}</option>
-                      ))}
+                      <SelectTrigger>
+                        <SelectValue placeholder="Artículo personalizado..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {recetas.map(r => (
+                          <SelectItem key={r.id} value={r.id}>{r.nombre}</SelectItem>
+                        ))}
+                      </SelectContent>
                     </Select>
                   </div>
 

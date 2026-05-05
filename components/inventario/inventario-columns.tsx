@@ -13,7 +13,6 @@ import {
   Trash2,
   Clock
 } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
 
 export const getStockColumns = (onSeleccionar: (id: string) => void): ColumnDef<StockProducto>[] => [
   {

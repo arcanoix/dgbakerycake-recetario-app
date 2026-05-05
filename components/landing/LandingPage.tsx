@@ -423,7 +423,7 @@ export const LandingPage = () => {
         <div className="container mx-auto px-6 text-center space-y-10 relative z-10">
           <h2 className="text-4xl md:text-7xl font-black tracking-tighter uppercase leading-none">¿Listo para ser un repostero Pro?</h2>
           <p className="text-lg md:text-xl font-bold opacity-80 max-w-xl mx-auto">Únete hoy a la comunidad que está transformando la repostería artesanal en negocios de alta rentabilidad.</p>
-          <Link href="/auth/register">
+          <Link href="/auth/register" className="mt-4">
             <Button size="lg" className="h-16 px-12 bg-background text-foreground hover:bg-background/90 font-black text-xs tracking-widest uppercase shadow-2xl">
               CREAR MI CUENTA GRATUITA
             </Button>
@@ -455,7 +455,7 @@ export const LandingPage = () => {
               <ul className="space-y-2 text-sm font-bold text-foreground/70">
                 <li><Link href="/pricing" className="hover:text-primary">Precios</Link></li>
                 <li><a href="#" className="hover:text-primary">Características</a></li>
-                <li><a href="#" className="hover:text-primary">Blog</a></li>
+                <li><Link href="/blog" className="hover:text-primary">Blog</Link></li>
               </ul>
             </div>
             <div className="space-y-4">

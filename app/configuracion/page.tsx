@@ -11,7 +11,7 @@ import { Settings, AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function ConfiguracionPage() {
-  const { configuracion, cargando, error, actualizar, cargar } = useConfiguracion();
+  const { configuracion, cargando, error, actualizar, cargarConfiguracion } = useConfiguracion();
 
   const handleSubmit = async (datos: ConfiguracionFormData) => {
     await actualizar(datos);
@@ -42,7 +42,7 @@ export default function ConfiguracionPage() {
               No pudimos obtener la configuración del sistema. Por favor, intenta de nuevo.
             </p>
           </div>
-          <Button onClick={() => cargar()} className="gap-2">
+          <Button onClick={() => cargarConfiguracion()} className="gap-2">
             <RefreshCw className="w-4 h-4" /> Reintentar
           </Button>
         </div>

@@ -5,7 +5,7 @@ import { MaterialReceta, Producto, UnidadMedidaAdmin } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatearMoneda, formatearNumero } from "@/lib/constants";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
@@ -302,19 +302,20 @@ export const MaterialSelector = ({
                   )}
                 </Label>
                 <Select
-                  id="unidad"
                   value={unidadSeleccionadaId}
-                  onChange={(e) => setUnidadSeleccionadaId(e.target.value)}
+                  onValueChange={(value) => setUnidadSeleccionadaId(value)}
                   disabled={unidadesCompatibles.length === 0}
                 >
-                  {unidadesCompatibles.length === 0 && (
-                    <option value="">— Sin unidades compatibles —</option>
-                  )}
-                  {unidadesCompatibles.map((u) => (
-                    <option key={u.id} value={u.id}>
-                      {u.nombre} ({u.simbolo})
-                    </option>
-                  ))}
+                  <SelectTrigger>
+                    <SelectValue placeholder={unidadesCompatibles.length === 0 ? "— Sin unidades compatibles —" : "Seleccionar unidad..."} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {unidadesCompatibles.map((u) => (
+                      <SelectItem key={u.id} value={u.id}>
+                        {u.nombre} ({u.simbolo})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
               </div>
             </div>

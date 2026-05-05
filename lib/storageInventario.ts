@@ -9,6 +9,26 @@ import {
 import { MovimientoFormSchema } from './validators';
 import { sanitizeStringFields } from './sanitize';
 
+function traducirErrorInventario(error: { message?: string } | null): string {
+  const message = error?.message ?? '';
+
+  if (message.includes("Could not find the table 'public.inventario_movimientos'")) {
+    return (
+      'Falta la tabla inventario_movimientos en Supabase. Ejecuta la migracion ' +
+      'supabase/migrations/create_inventario_tables.sql en SQL Editor y vuelve a intentar.'
+    );
+  }
+
+  if (message.includes("Could not find the table 'public.inventario_config_stock'")) {
+    return (
+      'Falta la tabla inventario_config_stock en Supabase. Ejecuta la migracion ' +
+      'supabase/migrations/create_inventario_tables.sql en SQL Editor y vuelve a intentar.'
+    );
+  }
+
+  return message || 'Error de base de datos en inventario';
+}
+
 // ============================================
 // MOVIMIENTOS (KARDEX)
 // ============================================
@@ -34,6 +54,10 @@ export const obtenerMovimientos = async (
   const { data, error } = await query;
 
   if (error) {
+    const traducido = traducirErrorInventario(error);
+    if (traducido.includes('Falta la tabla')) {
+      throw new Error(traducido);
+    }
     console.error('Error al obtener movimientos:', error);
     return [];
   }
@@ -103,7 +127,7 @@ export const registrarMovimientoConUnidad = async (
 
   if (error) {
     console.error('Error al registrar movimiento:', error);
-    return { exitoso: false, error: error.message };
+    return { exitoso: false, error: traducirErrorInventario(error) };
   }
 
   return { exitoso: true, id: data?.id };
@@ -123,7 +147,7 @@ export const eliminarMovimiento = async (
 
   if (error) {
     console.error('Error al eliminar movimiento:', error);
-    return { exitoso: false, error: error.message };
+    return { exitoso: false, error: traducirErrorInventario(error) };
   }
 
   return { exitoso: true };
@@ -178,6 +202,19 @@ export const obtenerStockProductos = async (): Promise<StockProducto[]> => {
       .select('producto_id, tipo, cantidad, fecha')
       .eq('user_id', user.id),
   ]);
+
+  if (movimientosResult.error) {
+    const traducido = traducirErrorInventario(movimientosResult.error);
+    if (traducido.includes('Falta la tabla')) {
+      throw new Error(traducido);
+    }
+  }
+  if (configsResult.error) {
+    const traducido = traducirErrorInventario(configsResult.error);
+    if (traducido.includes('Falta la tabla')) {
+      throw new Error(traducido);
+    }
+  }
 
   const productos = productosResult.data;
   if (!productos || productos.length === 0) return [];
@@ -235,6 +272,10 @@ export const obtenerConfigsStock = async (): Promise<ConfigStockProducto[]> => {
     .eq('user_id', user.id);
 
   if (error) {
+    const traducido = traducirErrorInventario(error);
+    if (traducido.includes('Falta la tabla')) {
+      throw new Error(traducido);
+    }
     console.error('Error al obtener configuraciones de stock:', error);
     return [];
   }
@@ -262,7 +303,7 @@ export const guardarConfigStock = async (
 
   if (error) {
     console.error('Error al guardar configuración de stock:', error);
-    return { exitoso: false, error: error.message };
+    return { exitoso: false, error: traducirErrorInventario(error) };
   }
 
   return { exitoso: true };
@@ -282,7 +323,7 @@ export const eliminarConfigStock = async (
 
   if (error) {
     console.error('Error al eliminar configuración de stock:', error);
-    return { exitoso: false, error: error.message };
+    return { exitoso: false, error: traducirErrorInventario(error) };
   }
 
   return { exitoso: true };

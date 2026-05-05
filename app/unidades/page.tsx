@@ -7,37 +7,35 @@ import { UnidadForm } from "@/components/unidades/UnidadForm";
 import { UnidadList } from "@/components/unidades/UnidadList";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
-import { Loading } from "@/components/ui/loading";
-import { motion } from "motion/react";
-import { Plus, Scale, Search, Filter, X } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Plus, 
+  Scale, 
+  Search, 
+  Filter, 
+  X, 
+  AlertCircle, 
+  RefreshCw,
+  Ruler
+} from "lucide-react";
 
 export default function UnidadesPage() {
-  const { unidades, cargando, error, errorCarga, crearUnidad, actualizarUnidad, eliminar, desactivarUnidad, activarUnidad, cargarUnidades } = useUnidades();
+  const { 
+    unidades, 
+    cargando, 
+    error, 
+    errorCarga, 
+    crearUnidad, 
+    actualizarUnidad, 
+    eliminar, 
+    desactivarUnidad, 
+    activarUnidad, 
+    cargarUnidades 
+  } = useUnidades();
   
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [unidadEditando, setUnidadEditando] = useState<UnidadMedidaAdmin | undefined>();
-  const [terminoBusqueda, setTerminoBusqueda] = useState("");
-  const [filtroTipo, setFiltroTipo] = useState<string>("todos");
-  const [filtroEstado, setFiltroEstado] = useState<string>("activos");
-
-  const unidadesFiltradas = unidades.filter(u => {
-    const coincideBusqueda = terminoBusqueda
-      ? u.nombre.toLowerCase().includes(terminoBusqueda.toLowerCase()) ||
-        u.simbolo.toLowerCase().includes(terminoBusqueda.toLowerCase())
-      : true;
-    
-    const coincideTipo = filtroTipo === "todos" ? true : u.tipo === filtroTipo;
-    const coincideEstado = filtroEstado === "todos" 
-      ? true 
-      : filtroEstado === "activos" 
-        ? u.activo 
-        : !u.activo;
-
-    return coincideBusqueda && coincideTipo && coincideEstado;
-  });
 
   const handleSubmit = async (datos: UnidadMedidaFormData) => {
     let exito = false;
@@ -60,6 +58,7 @@ export default function UnidadesPage() {
   const handleEdit = (unidad: UnidadMedidaAdmin) => {
     setUnidadEditando(unidad);
     setMostrarFormulario(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleToggleEstado = async (unidad: UnidadMedidaAdmin): Promise<boolean> => {
@@ -70,188 +69,130 @@ export default function UnidadesPage() {
     }
   };
 
-  const handleNuevo = () => {
-    setUnidadEditando(undefined);
-    setMostrarFormulario(true);
-  };
-
-  const limpiarFiltros = () => {
-    setTerminoBusqueda("");
-    setFiltroTipo("todos");
-    setFiltroEstado("activos");
-  };
-
-  const tieneFiltrosActivos = terminoBusqueda || filtroTipo !== "todos" || filtroEstado !== "activos";
-
   if (cargando) {
     return (
-      <ProtectedRoute>
-        <Loading text="Cargando unidades..." fullScreen />
-      </ProtectedRoute>
+      <div className="py-20 flex flex-col items-center justify-center gap-4">
+        <div className="relative h-12 w-12">
+          <div className="absolute inset-0 rounded-full border-4 border-primary/20" />
+          <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+        </div>
+        <p className="text-sm text-muted-foreground font-medium">Cargando unidades...</p>
+      </div>
     );
   }
 
   return (
     <ProtectedRoute>
-      <div className="container mx-auto p-6 space-y-6">
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
-        >
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
-                <Scale className="w-5 h-5 text-white" />
-              </div>
+      <div className="flex-1 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-1">
+            <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
               Unidades de Medida
-            </h1>
-            <p className="text-gray-700 mt-1">
-              Administra las unidades de medida disponibles ({unidades.length} total)
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Define y gestiona las magnitudes de peso, volumen y cantidad
             </p>
           </div>
-          <Button 
-            onClick={handleNuevo}
-            size="lg"
-            className="gap-2 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 border-0"
-          >
-            <Plus className="w-4 h-4" />
-            Nueva Unidad
-          </Button>
-        </motion.div>
+          <div className="flex items-center gap-3">
+            <Button 
+              onClick={() => setMostrarFormulario(!mostrarFormulario)}
+              size="sm"
+              variant={mostrarFormulario ? "outline" : "default"}
+              className={`gap-2 h-10 px-4 ${!mostrarFormulario ? 'bg-primary shadow-sm' : ''}`}
+            >
+              {mostrarFormulario ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+              <span>{mostrarFormulario ? "Cancelar" : "Nueva Unidad"}</span>
+            </Button>
+          </div>
+        </div>
 
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-          >
-            <Card className="border-red-200 bg-red-50/30">
-              <CardContent className="py-4">
-                <p className="text-red-600">{error}</p>
+        {/* Stats Rápidas */}
+        {!mostrarFormulario && unidades.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Card className="border-0 shadow-sm bg-muted/30">
+              <CardContent className="py-4 flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-blue-500/10 text-blue-600">
+                  <Scale className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Peso/Masa</p>
+                  <p className="text-2xl font-bold">{unidades.filter(u => u.tipo === 'peso').length}</p>
+                </div>
               </CardContent>
             </Card>
-          </motion.div>
+            <Card className="border-0 shadow-sm bg-muted/30">
+              <CardContent className="py-4 flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-violet-500/10 text-violet-600">
+                  <Ruler className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Volumen</p>
+                  <p className="text-2xl font-bold">{unidades.filter(u => u.tipo === 'volumen').length}</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border-0 shadow-sm bg-muted/30">
+              <CardContent className="py-4 flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600">
+                  <RefreshCw className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Activas</p>
+                  <p className="text-2xl font-bold">{unidades.filter(u => u.activo).length}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         )}
 
-        {!cargando && errorCarga && unidades.length === 0 && (
-          <Card className="border-amber-200 bg-amber-50/70">
-            <CardContent className="py-4 space-y-3">
-              <p className="font-semibold text-amber-900">No pudimos cargar las unidades</p>
-              <p className="text-amber-800 text-sm">{errorCarga}</p>
-              <Button variant="outline" onClick={() => cargarUnidades()} className="border-amber-300 text-amber-900 hover:bg-amber-100">
-                Reintentar carga
+        {/* Error */}
+        {(error || errorCarga) && (
+          <Card className="border-destructive/20 bg-destructive/5 shadow-none">
+            <CardContent className="py-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <AlertCircle className="w-5 h-5 text-destructive" />
+                <p className="text-sm font-medium text-destructive">{error || errorCarga}</p>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => cargarUnidades()} className="h-8">
+                Reintentar
               </Button>
             </CardContent>
           </Card>
         )}
 
-        {!cargando && errorCarga && unidades.length > 0 && (
-          <Card className="border-amber-200 bg-amber-50/50">
-            <CardContent className="py-3 px-4 text-sm text-amber-800">
-              {errorCarga}
-            </CardContent>
-          </Card>
-        )}
-
-        {mostrarFormulario ? (
-          <UnidadForm
-            unidad={unidadEditando}
-            unidades={unidades}
-            onSubmit={handleSubmit}
-            onCancel={resetForm}
-          />
-        ) : !errorCarga || unidades.length > 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.1 }}
-          >
-            <Card className="border-0 shadow-sm">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Filter className="w-4 h-4" />
-                    Filtros
-                  </CardTitle>
-                  {tieneFiltrosActivos && (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={limpiarFiltros}
-                      className="text-gray-700 hover:text-gray-700"
-                    >
-                      <X className="w-3 h-3 mr-1" />
-                      Limpiar
-                    </Button>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium flex items-center gap-2">
-                      <Search className="w-4 h-4 text-gray-700" />
-                      Buscar
-                    </label>
-                    <Input
-                      placeholder="Nombre o símbolo..."
-                      value={terminoBusqueda}
-                      onChange={(e) => setTerminoBusqueda(e.target.value)}
-                      className="h-10"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium flex items-center gap-2">
-                      <Scale className="w-4 h-4 text-gray-700" />
-                      Tipo
-                    </label>
-                    <Select
-                      value={filtroTipo}
-                      onChange={(e) => setFiltroTipo(e.target.value)}
-                      className="h-10"
-                    >
-                      <option value="todos">Todos los tipos</option>
-                      <option value="peso">⚖️ Peso</option>
-                      <option value="volumen">💧 Volumen</option>
-                      <option value="cantidad">🔢 Cantidad</option>
-                      <option value="otro">📦 Otro</option>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium flex items-center gap-2">
-                      <Filter className="w-4 h-4 text-gray-700" />
-                      Estado
-                    </label>
-                    <Select
-                      value={filtroEstado}
-                      onChange={(e) => setFiltroEstado(e.target.value)}
-                      className="h-10"
-                    >
-                      <option value="activos">✅ Solo activos</option>
-                      <option value="inactivos">❌ Solo inactivos</option>
-                      <option value="todos">📋 Todos</option>
-                    </Select>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <div className="mt-4 text-sm text-gray-700">
-              Mostrando <span className="font-semibold">{unidadesFiltradas.length}</span> de {unidades.length} unidades
-            </div>
-
-            <div className="mt-4">
+        <AnimatePresence mode="wait">
+          {mostrarFormulario ? (
+            <motion.div 
+              key="form"
+              initial={{ opacity: 0, y: 20 }} 
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="max-w-2xl mx-auto"
+            >
+              <UnidadForm
+                unidad={unidadEditando}
+                unidades={unidades}
+                onSubmit={handleSubmit}
+                onCancel={resetForm}
+              />
+            </motion.div>
+          ) : (
+            <motion.div 
+              key="list"
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }}
+              className="space-y-6"
+            >
               <UnidadList
-                unidades={unidadesFiltradas}
+                unidades={unidades}
                 onEdit={handleEdit}
                 onDelete={eliminar}
                 onToggleEstado={handleToggleEstado}
               />
-            </div>
-          </motion.div>
-        ) : null}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </ProtectedRoute>
   );

@@ -39,7 +39,8 @@ export const useInventario = () => {
       setConfigs(cfgs);
       setError(null);
     } catch (err) {
-      setError("Error al cargar el inventario");
+      const msg = err instanceof Error ? err.message : "Error al cargar el inventario";
+      setError(msg);
       console.error(err);
     } finally {
       setCargando(false);

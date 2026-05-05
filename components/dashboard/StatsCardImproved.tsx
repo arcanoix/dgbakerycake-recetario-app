@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
@@ -109,76 +109,117 @@ export const StatsCard = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
+      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      whileHover={{ y: -6, scale: 1.02 }}
+      transition={{ 
+        duration: 0.4, 
+        ease: [0.4, 0, 0.2, 1],
+        scale: { duration: 0.2 }
+      }}
       className={className}
     >
-      <Card className="relative overflow-hidden border-0 shadow-sm hover:shadow-md transition-all duration-300">
-        {/* Gradient Background */}
+      <Card className="group relative overflow-hidden border shadow-lg hover:shadow-2xl transition-all duration-500 backdrop-blur-sm bg-card/95">
+        {/* Animated Gradient Background */}
         <div
           className={cn(
-            "absolute inset-0 bg-gradient-to-br opacity-50",
+            "absolute inset-0 bg-gradient-to-br opacity-40 group-hover:opacity-60 transition-opacity duration-500",
             styles.gradient
           )}
         />
 
-        <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-2">
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground">
+        {/* Shine Effect on Hover */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+        </div>
+
+        <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
+          <div className="space-y-1 flex-1">
+            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">
               {title}
             </p>
           </div>
           {Icon && (
-            <div
+            <motion.div
+              whileHover={{ rotate: 360, scale: 1.1 }}
+              transition={{ duration: 0.6, ease: "easeInOut" }}
               className={cn(
-                "flex h-10 w-10 items-center justify-center rounded-lg transition-colors",
+                "flex h-12 w-12 items-center justify-center rounded-xl shadow-sm group-hover:shadow-md transition-all duration-300",
                 styles.iconBg
               )}
             >
-              <Icon className={cn("h-5 w-5", styles.iconColor)} />
-            </div>
+              <Icon className={cn("h-6 w-6", styles.iconColor)} />
+            </motion.div>
           )}
         </CardHeader>
 
-        <CardContent className="relative space-y-1">
-          <div className="flex items-baseline gap-2">
-            <div className="text-3xl font-bold tracking-tight">{value}</div>
+        <CardContent className="relative space-y-3">
+          <div className="flex items-baseline gap-3">
+            <motion.div 
+              className="text-3xl font-black tracking-tight"
+              initial={{ scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
+            >
+              {value}
+            </motion.div>
             {trend && (
-              <div className="flex items-center gap-1">
+              <motion.div 
+                className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-background/50 backdrop-blur-sm"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+              >
                 {trend.isPositive ? (
-                  <TrendingUp className="h-4 w-4 text-emerald-500" />
+                  <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
                 ) : (
-                  <TrendingDown className="h-4 w-4 text-red-500" />
+                  <TrendingDown className="h-3.5 w-3.5 text-red-500" />
                 )}
                 <span
                   className={cn(
-                    "text-sm font-medium",
-                    trend.isPositive ? "text-emerald-600" : "text-red-600"
+                    "text-xs font-bold",
+                    trend.isPositive ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
                   )}
                 >
                   {trend.isPositive ? "+" : ""}
                   {trend.value}%
                 </span>
-              </div>
+              </motion.div>
             )}
           </div>
 
           {description && (
-            <p className="text-xs text-muted-foreground leading-relaxed">
+            <p className="text-xs font-medium text-muted-foreground/90 leading-relaxed">
               {description}
             </p>
           )}
 
           {trend?.label && (
-            <p className="text-xs text-muted-foreground">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
               {trend.label}
             </p>
           )}
 
-          {sparklineData && <Sparkline data={sparklineData} />}
+          {sparklineData && (
+            <motion.div
+              initial={{ opacity: 0, scaleY: 0 }}
+              animate={{ opacity: 1, scaleY: 1 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+            >
+              <Sparkline data={sparklineData} />
+            </motion.div>
+          )}
         </CardContent>
+
+        {/* Bottom Accent Line */}
+        <div className={cn(
+          "absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-500",
+          variant === "success" && "from-emerald-400 to-emerald-600",
+          variant === "primary" && "from-blue-400 to-blue-600",
+          variant === "warning" && "from-amber-400 to-amber-600",
+          variant === "danger" && "from-red-400 to-red-600",
+          variant === "default" && "from-slate-400 to-slate-600"
+        )} />
       </Card>
     </motion.div>
   );

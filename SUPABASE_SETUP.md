@@ -14,6 +14,13 @@ Esto creará las tablas:
 - ✅ `recetas`
 - ✅ `configuracion`
 
+Si vas a usar el modulo de inventario, ejecuta tambien el script:
+- `supabase/migrations/create_inventario_tables.sql`
+
+Ese script crea:
+- ✅ `inventario_movimientos`
+- ✅ `inventario_config_stock`
+
 ---
 
 ## 🔑 Paso 2: Obtener las API Keys
@@ -92,3 +99,18 @@ Ver `supabase/README.md` para más detalles sobre:
 - Políticas de seguridad
 - Triggers automáticos
 - Solución de problemas
+
+## 🐛 Error Común de Inventario
+
+Si aparece este error:
+
+```text
+Could not find the table 'public.inventario_movimientos' in the schema cache
+```
+
+Significa que falta ejecutar la migración del módulo de inventario en el proyecto Supabase conectado por tus variables de entorno.
+
+Solución rápida:
+1. Abre Supabase SQL Editor.
+2. Ejecuta el contenido de `supabase/migrations/create_inventario_tables.sql`.
+3. Vuelve a intentar registrar el movimiento.

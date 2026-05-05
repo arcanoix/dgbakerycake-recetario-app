@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
   SubscriptionPlan,
@@ -150,16 +150,19 @@ export const PaymentRequestForm = ({ plan, onSuccess, onCancel }: PaymentRequest
           <div className="space-y-2">
             <Label htmlFor="payment_method">Método de Pago *</Label>
             <Select
-              id="payment_method"
               value={paymentMethod}
-              onChange={(e) => handlePaymentMethodChange(e.target.value as PaymentMethod)}
-              required
+              onValueChange={(value) => handlePaymentMethodChange(value as PaymentMethod)}
             >
-              <option value="pago_movil">Pago Móvil 🇻🇪</option>
-              <option value="transferencia">Transferencia Bancaria 🇻🇪</option>
-              <option value="binance">Binance (USDT) 💰</option>
-              <option value="zelle">Zelle 🇺🇸</option>
-              <option value="paypal">PayPal 🌎</option>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pago_movil">Pago Móvil 🇻🇪</SelectItem>
+                <SelectItem value="transferencia">Transferencia Bancaria 🇻🇪</SelectItem>
+                <SelectItem value="binance">Binance (USDT) 💰</SelectItem>
+                <SelectItem value="zelle">Zelle 🇺🇸</SelectItem>
+                <SelectItem value="paypal">PayPal 🌎</SelectItem>
+              </SelectContent>
             </Select>
           </div>
 
@@ -179,14 +182,17 @@ export const PaymentRequestForm = ({ plan, onSuccess, onCancel }: PaymentRequest
             <div className="space-y-2">
               <Label htmlFor="currency">Moneda *</Label>
               <Select
-                id="currency"
                 value={currency}
-                onChange={(e) => setCurrency(e.target.value as Currency)}
-                required
+                onValueChange={(value) => setCurrency(value as Currency)}
               >
-                <option value="BS">Bolívares (Bs)</option>
-                <option value="USD">Dólares (USD)</option>
-                <option value="USDT">USDT</option>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="BS">Bolívares (Bs)</SelectItem>
+                  <SelectItem value="USD">Dólares (USD)</SelectItem>
+                  <SelectItem value="USDT">USDT</SelectItem>
+                </SelectContent>
               </Select>
             </div>
           </div>
@@ -302,12 +308,16 @@ export const PaymentRequestForm = ({ plan, onSuccess, onCancel }: PaymentRequest
                   <Label>Red *</Label>
                   <Select
                     value={binance.red}
-                    onChange={(e) => setBinance({ ...binance, red: e.target.value })}
-                    required
+                    onValueChange={(value) => setBinance({ ...binance, red: value })}
                   >
-                    <option value="BSC">BSC (Binance Smart Chain)</option>
-                    <option value="ETH">Ethereum (ERC20)</option>
-                    <option value="TRC20">Tron (TRC20)</option>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="BSC">BSC (Binance Smart Chain)</SelectItem>
+                      <SelectItem value="ETH">Ethereum (ERC20)</SelectItem>
+                      <SelectItem value="TRC20">Tron (TRC20)</SelectItem>
+                    </SelectContent>
                   </Select>
                 </div>
               </div>

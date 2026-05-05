@@ -1,197 +1,196 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { supabaseAuth } from '@/lib/supabase-auth';
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { updatePassword } from "@/lib/supabase-auth";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  ChefHat, 
+  RefreshCw, 
+  CheckCircle2, 
+  AlertCircle, 
+  Lock, 
+  Eye, 
+  EyeOff,
+  ShieldCheck
+} from "lucide-react";
+import { Label } from "@/components/ui/label";
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const router = useRouter();
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const searchParams = useSearchParams();
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [validSession, setValidSession] = useState(false);
-
-  const sessionFoundRef = useRef(false);
-
-  // Tiempo máximo de espera para que Supabase procese el token de recuperación
-  const TOKEN_PROCESSING_TIMEOUT_MS = 1500;
-
-  useEffect(() => {
-    // Escuchar el evento PASSWORD_RECOVERY que Supabase emite al procesar el enlace
-    const { data: { subscription } } = supabaseAuth.auth.onAuthStateChange((event, session) => {
-      if (event === 'PASSWORD_RECOVERY' && session) {
-        sessionFoundRef.current = true;
-        setValidSession(true);
-      }
-    });
-
-    // También verificar si ya existe una sesión activa (token ya procesado)
-    const checkSession = async () => {
-      const { data: { session } } = await supabaseAuth.auth.getSession();
-      if (session) {
-        sessionFoundRef.current = true;
-        setValidSession(true);
-      } else {
-        // Esperar brevemente para que onAuthStateChange pueda procesar el token
-        setTimeout(() => {
-          if (!sessionFoundRef.current) {
-            setError('Enlace de recuperación inválido o expirado');
-          }
-        }, TOKEN_PROCESSING_TIMEOUT_MS);
-      }
-    };
-
-    checkSession();
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
+      setError("Las contraseñas no coinciden");
       return;
     }
 
     if (password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres');
+      setError("Mínimo 6 caracteres");
       return;
     }
 
     setLoading(true);
 
     try {
-      const { error } = await supabaseAuth.auth.updateUser({
-        password: password
-      });
-
-      if (error) {
-        let errorMsg = error.message;
-        if (errorMsg.includes('New password should be different from the old password')) {
-          errorMsg = 'La nueva contraseña debe ser diferente a la contraseña anterior.';
-        } else if (errorMsg.includes('Password should be at least')) {
-          errorMsg = 'La contraseña debe tener al menos 6 caracteres.';
-        }
-        setError(errorMsg);
-      } else {
+      const result = await updatePassword(password);
+      if (result.success) {
         setSuccess(true);
-        // Cerrar sesión para que el usuario inicie sesión con la nueva contraseña
-        await supabaseAuth.auth.signOut();
         setTimeout(() => {
-          router.push('/auth/login');
-        }, 2000);
+          router.push("/auth/login");
+        }, 3000);
+      } else {
+        setError(result.error || "Error al actualizar la contraseña");
       }
     } catch (err) {
-      setError('Error inesperado al actualizar la contraseña');
-      console.error(err);
+      setError("Error inesperado al restablecer contraseña");
     } finally {
       setLoading(false);
     }
   };
 
-  if (!validSession && !error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-        <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md text-center">
-          <div className="text-4xl mb-4">⏳</div>
-          <p className="text-gray-600">Verificando enlace de recuperación...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">🔐</h1>
-          <h2 className="text-2xl font-bold text-gray-800">Nueva Contraseña</h2>
-          <p className="text-gray-600 mt-2">
-            Ingresa tu nueva contraseña
-          </p>
-        </div>
-
-        {!validSession ? (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-            <p className="font-semibold mb-2">❌ Enlace inválido</p>
-            <p className="text-sm mb-4">
-              El enlace de recuperación es inválido o ha expirado.
-            </p>
-            <Link href="/auth/forgot-password">
-              <Button variant="outline" className="w-full">
-                Solicitar nuevo enlace
-              </Button>
-            </Link>
+    <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
+      <Card className="w-full max-w-md border-0 shadow-2xl overflow-hidden bg-card">
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary via-violet-500 to-fuchsia-500" />
+        <CardHeader className="text-center space-y-4 pt-8">
+          <Link href="/" className="inline-flex items-center gap-2 mx-auto">
+            <div className="p-2 rounded-xl bg-primary text-primary-foreground">
+               <ChefHat className="w-6 h-6" />
+            </div>
+            <span className="text-2xl font-black tracking-tighter uppercase text-foreground">
+              DGcost
+            </span>
+          </Link>
+          <div className="space-y-1">
+            <CardTitle className="text-2xl font-black tracking-tight">
+              Nueva Contraseña
+            </CardTitle>
+            <CardDescription className="text-muted-foreground font-medium px-4">
+              Establece una nueva clave de acceso para tu taller digital.
+            </CardDescription>
           </div>
-        ) : !success ? (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-                {error}
-              </div>
+        </CardHeader>
+
+        <CardContent className="space-y-6 pb-8">
+          <AnimatePresence mode="wait">
+            {success ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-emerald-50 border border-emerald-100 p-6 rounded-2xl space-y-4 text-center"
+              >
+                <div className="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto">
+                  <ShieldCheck className="w-6 h-6 text-emerald-600" />
+                </div>
+                <div className="space-y-1">
+                  <p className="font-black text-sm uppercase tracking-tight text-emerald-700">¡Actualizada!</p>
+                  <p className="text-xs text-emerald-600 font-medium leading-relaxed">
+                    Tu contraseña ha sido cambiada con éxito. Serás redirigido al inicio de sesión en unos segundos...
+                  </p>
+                </div>
+                <Button 
+                  onClick={() => router.push("/auth/login")}
+                  className="w-full font-black text-[10px] tracking-widest uppercase shadow-md bg-emerald-600 hover:bg-emerald-700"
+                >
+                  IR AL LOGIN AHORA
+                </Button>
+              </motion.div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {error && (
+                  <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-xl text-xs font-bold flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4" />
+                    {error}
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-1">
+                    Nueva Contraseña
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Mínimo 6 caracteres"
+                      required
+                      disabled={loading}
+                      className="h-12 bg-muted/30 border-0 focus-visible:ring-primary pl-10 pr-10"
+                    />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-1">
+                    Confirmar Contraseña
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      type={showPassword ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Repite tu nueva contraseña"
+                      required
+                      disabled={loading}
+                      className="h-12 bg-muted/30 border-0 focus-visible:ring-primary pl-10"
+                    />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  </div>
+                </div>
+
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 font-black tracking-widest text-[10px] uppercase shadow-xl bg-primary hover:shadow-primary/20 transition-all" 
+                  disabled={loading}
+                >
+                  {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : "CAMBIAR CONTRASEÑA"}
+                </Button>
+              </form>
             )}
+          </AnimatePresence>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Nueva Contraseña
-              </label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                disabled={loading}
-                minLength={6}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                Confirmar Contraseña
-              </label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                disabled={loading}
-                minLength={6}
-              />
-            </div>
-
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Actualizando...' : 'Actualizar Contraseña'}
-            </Button>
-          </form>
-        ) : (
-          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
-            <p className="font-semibold mb-2">✅ Contraseña actualizada exitosamente</p>
-            <p className="text-sm">
-              Redirigiendo al login...
-            </p>
-          </div>
-        )}
-
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            ¿Recordaste tu contraseña?{' '}
-            <Link href="/auth/login" className="text-primary font-semibold hover:underline">
-              Inicia sesión aquí
-            </Link>
-          </p>
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50">
+        <div className="text-center">
+          <RefreshCw className="w-8 h-8 animate-spin mx-auto text-primary" />
+          <p className="mt-4 text-sm text-muted-foreground">Cargando...</p>
         </div>
       </div>
-    </div>
+    }>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }

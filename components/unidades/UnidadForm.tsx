@@ -5,9 +5,9 @@ import { UnidadMedidaAdmin, UnidadMedidaFormData, TipoUnidad } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Scale, Hash, Droplets, Box, ArrowRight, ArrowRightLeft, Calculator, Info } from "lucide-react";
 
 const TIPO_ICONS = {
@@ -144,17 +144,18 @@ export const UnidadForm = ({ unidad, unidades, onSubmit, onCancel }: UnidadFormP
                 Tipo de Unidad *
               </Label>
               <Select
-                id="tipo"
-                name="tipo"
                 value={formData.tipo}
-                onChange={handleChange}
-                required
-                className="h-11"
+                onValueChange={(value) => setFormData({ ...formData, tipo: value as TipoUnidad })}
               >
-                <option value="peso">⚖️ Peso (g, kg, lb, oz)</option>
-                <option value="volumen">💧 Volumen (mL, L, gal)</option>
-                <option value="cantidad">🔢 Cantidad (pza, dz, cent)</option>
-                <option value="otro">📦 Otro</option>
+                <SelectTrigger className="h-11">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="peso">⚖️ Peso (g, kg, lb, oz)</SelectItem>
+                  <SelectItem value="volumen">💧 Volumen (mL, L, gal)</SelectItem>
+                  <SelectItem value="cantidad">🔢 Cantidad (pza, dz, cent)</SelectItem>
+                  <SelectItem value="otro">📦 Otro</SelectItem>
+                </SelectContent>
               </Select>
             </div>
 
@@ -202,19 +203,20 @@ export const UnidadForm = ({ unidad, unidades, onSubmit, onCancel }: UnidadFormP
                     Unidad Base
                   </Label>
                   <Select
-                    id="unidadBase"
-                    name="unidadBase"
                     value={formData.unidadBase || ""}
-                    onChange={handleChange}
+                    onValueChange={(value) => setFormData({ ...formData, unidadBase: value })}
                     disabled={unidadesDelMismoTipo.length === 0}
-                    className="h-11"
                   >
-                    <option value="">Seleccionar...</option>
-                    {unidadesDelMismoTipo.map((u) => (
-                      <option key={u.id} value={u.nombre}>
-                        {u.nombre} ({u.simbolo})
-                      </option>
-                    ))}
+                    <SelectTrigger className="h-11">
+                      <SelectValue placeholder="Seleccionar..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {unidadesDelMismoTipo.map((u) => (
+                        <SelectItem key={u.id} value={u.nombre}>
+                          {u.nombre} ({u.simbolo})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
                   {unidadesDelMismoTipo.length === 0 && (
                     <p className="text-xs text-amber-600">

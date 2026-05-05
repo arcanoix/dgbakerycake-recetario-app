@@ -1,22 +1,32 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { Navbar } from "@/components/layout/Navbar";
 import { useAuth } from "@/contexts/AuthContext";
+import { Sidebar } from "./sidebar";
+import { Header } from "./header";
+import { cn } from "@/lib/utils";
 
 /**
- * AppShell — layout wrapper sin el anti-pattern useState(mounted).
- *
- * El patrón anterior hacía un doble render en cada página:
- *   1er render: shell vacío (mounted=false) → CLS
- *   2do render: shell real (mounted=true)   → layout shift visible
- *
- * La solución es confiar en que AuthContext ya maneja la hidratación
- * y renderizar directamente. El parpadeo de Navbar es preferible al CLS.
+ * AppShell — Rediseñado siguiendo la estética de shadcn-admin.
  */
 export const AppShell = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Persistir estado del sidebar
+  useEffect(() => {
+    setMounted(true);
+    const saved = localStorage.getItem("sidebar-collapsed");
+    if (saved) setIsCollapsed(saved === "true");
+  }, []);
+
+  const handleSetCollapsed = (value: boolean) => {
+    setIsCollapsed(value);
+    localStorage.setItem("sidebar-collapsed", value.toString());
+  };
 
   const isPublicRoute =
     pathname.startsWith("/auth/") ||
@@ -27,12 +37,40 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
     return <main className="min-h-screen bg-background">{children}</main>;
   }
 
+  // Prevenir saltos visuales durante la hidratación del sidebar
+  if (!mounted) {
+    return <div className="min-h-screen bg-background" />;
+  }
+
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen pt-20 lg:pt-0 lg:pl-64 bg-background">
-        <div className="container mx-auto p-4 lg:p-8">{children}</div>
-      </main>
-    </>
+    <div className="relative flex min-h-screen bg-background">
+      {/* Sidebar - Oculto en móvil (manejado por Sheet en Header), fijo en desktop */}
+      <Sidebar 
+        isCollapsed={isCollapsed} 
+        setIsCollapsed={handleSetCollapsed} 
+        className="hidden md:flex" 
+      />
+
+      <div className="flex flex-1 flex-col overflow-hidden">
+        {/* Header - Contiene el toggle de móvil y breadcrumbs */}
+        <Header 
+          isCollapsed={isCollapsed} 
+          setIsCollapsed={handleSetCollapsed} 
+        />
+
+        {/* Contenido Principal */}
+        <main 
+          className={cn(
+            "flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 lg:p-8 transition-all duration-300",
+            // Si el sidebar no es sticky/fixed, este margen no es necesario
+            // Pero como usamos md:sticky en Sidebar, necesitamos que el main fluya
+          )}
+        >
+          <div className="mx-auto h-full w-full max-w-7xl animate-in fade-in duration-500">
+            {children}
+          </div>
+        </main>
+      </div>
+    </div>
   );
 };

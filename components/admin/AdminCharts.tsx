@@ -19,7 +19,7 @@ import {
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserData, ActivityLog } from "@/types/user";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Users, Calendar, Activity, Zap, TrendingUp, Package, BookOpen, Settings } from "lucide-react";
 
 const COLORS = [

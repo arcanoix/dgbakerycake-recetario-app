@@ -5,14 +5,14 @@ import { Producto, ProductoFormData } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CATEGORIAS_PRODUCTOS } from "@/lib/constants";
 import { formatearMoneda } from "@/lib/constants";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
 import { useUnidades } from "@/hooks/useUnidades";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Package, Scale, ShoppingCart, DollarSign, Building2, FileText, Calculator, ArrowRight, Check } from "lucide-react";
 
 interface ProductoFormProps {
@@ -174,18 +174,19 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
                   Categoría
                 </Label>
                 <Select
-                  id="categoria"
-                  name="categoria"
                   value={formData.categoria}
-                  onChange={handleChange}
-                  className="h-11"
+                  onValueChange={(value) => setFormData({ ...formData, categoria: value })}
                 >
-                  <option value="">Seleccionar categoría</option>
-                  {CATEGORIAS_PRODUCTOS.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
+                  <SelectTrigger className="h-11">
+                    <SelectValue placeholder="Seleccionar categoría" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CATEGORIAS_PRODUCTOS.map((cat) => (
+                      <SelectItem key={cat} value={cat}>
+                        {cat}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
               </div>
 
@@ -281,22 +282,22 @@ export const ProductoForm = ({ producto, onSubmit, onCancel }: ProductoFormProps
                   Unidad de Medida *
                 </Label>
                 <Select
-                  id="unidadMedida"
-                  name="unidadMedida"
                   value={formData.unidadMedida}
-                  onChange={(e) => {
-                    handleChange(e);
-                    setUnidadSeleccionada(e.target.value);
+                  onValueChange={(value) => {
+                    setFormData({ ...formData, unidadMedida: value });
+                    setUnidadSeleccionada(value);
                   }}
-                  required
-                  className="h-11"
                 >
-                  <option value="">Seleccionar unidad...</option>
-                  {unidadesActivas.map((unidad) => (
-                    <option key={unidad.id} value={unidad.id}>
-                      {unidad.nombre} ({unidad.simbolo})
-                    </option>
-                  ))}
+                  <SelectTrigger className="h-11">
+                    <SelectValue placeholder="Seleccionar unidad..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {unidadesActivas.map((unidad) => (
+                      <SelectItem key={unidad.id} value={unidad.id}>
+                        {unidad.nombre} ({unidad.simbolo})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
                 {unidadesActivas.length === 0 && (
                   <p className="text-xs text-red-500 flex items-center gap-1">

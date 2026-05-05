@@ -5,7 +5,7 @@ import { CategoriaAdmin, CategoriaFormData, TipoCategoria } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -90,14 +90,16 @@ export const CategoriaForm = ({ categoria, onSubmit, onCancel }: CategoriaFormPr
             <div className="space-y-2">
               <Label htmlFor="tipo">Tipo *</Label>
               <Select
-                id="tipo"
-                name="tipo"
                 value={formData.tipo}
-                onChange={handleChange}
-                required
+                onValueChange={(value) => setFormData({ ...formData, tipo: value as TipoCategoria })}
               >
-                <option value="producto">Producto</option>
-                <option value="receta">Receta</option>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecciona un tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="producto">Producto</SelectItem>
+                  <SelectItem value="receta">Receta</SelectItem>
+                </SelectContent>
               </Select>
               <p className="text-xs text-gray-700">
                 ¿Es para productos o recetas?

@@ -370,16 +370,34 @@ export const LandingPage = () => {
 
                     <ul className="flex-1 space-y-3">
                        <li className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
-                         <Check className="w-3.5 h-3.5 text-primary" /> {plan.max_recetas === -1 ? 'Ilimitadas' : plan.max_recetas} Recetas
+                         <Check className="w-3.5 h-3.5 text-primary" /> {plan.max_recetas === -1 ? 'Recetas ilimitadas' : `Hasta ${plan.max_recetas} recetas`}
                        </li>
                        <li className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
-                         <Check className="w-3.5 h-3.5 text-primary" /> {plan.max_productos === -1 ? 'Ilimitados' : plan.max_productos} Productos
+                         <Check className="w-3.5 h-3.5 text-primary" /> {plan.max_productos === -1 ? 'Productos ilimitados' : `Hasta ${plan.max_productos} productos`}
                        </li>
                        {plan.features.exportar_pdf && (
                          <li className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
                            <Check className="w-3.5 h-3.5 text-primary" /> Exportar PDF
                          </li>
                        )}
+                       {plan.features.exportar_datos && (
+                         <li className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
+                           <Check className="w-3.5 h-3.5 text-primary" /> Exportar datos
+                         </li>
+                       )}
+                       {plan.features.analytics && (
+                         <li className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
+                           <Check className="w-3.5 h-3.5 text-primary" /> Dashboard analytics
+                         </li>
+                       )}
+                       {plan.features.gestion_inventario && (
+                         <li className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
+                           <Check className="w-3.5 h-3.5 text-primary" /> Gestión de inventario
+                         </li>
+                       )}
+                       <li className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
+                         <Check className="w-3.5 h-3.5 text-primary" /> Soporte {plan.features.soporte || 'básico'}
+                       </li>
                     </ul>
 
                     <Link href="/auth/register" className="block pt-4">

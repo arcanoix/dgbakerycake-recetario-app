@@ -1,9 +1,25 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AppShell } from "@/components/layout/AppShell";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Analytics } from "@vercel/analytics/react";
+import { Inter } from "next/font/google";
+
+// Optimizar fuente con display swap para mejor FCP
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  preload: true,
+  variable: "--font-inter",
+});
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#8b5cf6",
+};
 
 export const metadata: Metadata = {
   title: "DGcost - Gestión de Costos",
@@ -17,16 +33,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
-      <head>
-        {/* Preconnect para fuentes de Google */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Precargar recursos críticos */}
-        <link rel="preload" href="/images/testimonial-1.jpg" as="image" type="image/webp" />
-        <link rel="preload" href="/images/testimonial-2.jpg" as="image" type="image/webp" />
-      </head>
-      <body className="antialiased bg-gray-100">
+    <html lang="es" className={inter.variable}>
+      <body className={`${inter.className} antialiased bg-gray-100`}>
         <AuthProvider>
           <AppShell>{children}</AppShell>
         </AuthProvider>

@@ -3,9 +3,19 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { Sidebar } from "./sidebar";
-import { Header } from "./header";
+import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
+
+// Lazy load Sidebar and Header para reducir bundle inicial
+const Sidebar = dynamic(() => import("./sidebar").then(mod => ({ default: mod.Sidebar })), {
+  ssr: false,
+  loading: () => <div className="w-64 bg-card border-r" />
+});
+
+const Header = dynamic(() => import("./header").then(mod => ({ default: mod.Header })), {
+  ssr: false,
+  loading: () => <div className="h-16 bg-card border-b" />
+});
 
 /**
  * AppShell — Rediseñado siguiendo la estética de shadcn-admin.

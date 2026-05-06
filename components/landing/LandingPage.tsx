@@ -3,10 +3,9 @@
 import { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Inter } from "next/font/google";
 import { usePublicPlanes } from "@/hooks/usePublicPlanes";
 import { 
   Check, 
@@ -28,24 +27,16 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "900"],
-  variable: "--font-inter",
-  display: "swap",
-  preload: true
-});
-
 function AnimatedSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: "-50px", amount: 0.3 });
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-      transition={{ duration: 0.6, delay, ease: "easeOut" }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      transition={{ duration: 0.4, delay, ease: [0.4, 0, 0.2, 1] }}
     >
       {children}
     </motion.div>
@@ -142,7 +133,7 @@ export const LandingPage = () => {
   const { planes, cargando: cargandoPlanes } = usePublicPlanes();
 
   return (
-    <div className={`min-h-screen bg-background text-foreground ${inter.variable}`} style={{ fontFamily: 'var(--font-inter)' }}>
+    <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b">
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">

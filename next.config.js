@@ -108,7 +108,7 @@ const nextConfig = {
   },
   
   // Excluye motion del bundle SSR — necesario para Next.js 16 + React 19
-  serverExternalPackages: ['motion', 'framer-motion'],
+  serverExternalPackages: ['motion'],
   
   // Turbopack vacío silencia el warning de "no turbopack config"
   turbopack: {},

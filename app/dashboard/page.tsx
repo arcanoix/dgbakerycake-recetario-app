@@ -196,32 +196,32 @@ export default function DashboardPage() {
     .slice(0, 5);
 
   return (
-    <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
+    <div className="flex-1 space-y-4 md:space-y-6 p-3 md:p-8 pt-4 md:pt-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="space-y-1">
-          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+      <div className="flex flex-col gap-3 md:gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="space-y-0.5 md:space-y-1">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
             Dashboard
           </h2>
-          <p className="text-sm text-muted-foreground">
-            Resumen general de tu negocio de repostería
+          <p className="text-xs md:text-sm text-muted-foreground">
+            Resumen general de tu negocio
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full md:w-auto">
           <Button
             variant="outline"
             size="sm"
             onClick={recargarDashboard}
             disabled={recargandoDatos}
-            className="gap-2"
+            className="gap-2 flex-1 md:flex-none"
           >
             <RefreshCw className={`h-4 w-4 ${recargandoDatos ? 'animate-spin' : ''}`} />
-            <span className="hidden sm:inline">Actualizar</span>
+            <span className="text-xs md:text-sm">Actualizar</span>
           </Button>
-          <Link href="/pricing">
-            <Button size="sm" className="gap-2 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-sm">
+          <Link href="/pricing" className="flex-1 md:flex-none">
+            <Button size="sm" className="gap-2 w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-sm">
               <TrendingUp className="h-4 w-4" />
-              <span className="hidden sm:inline">Mejorar Plan</span>
+              <span className="text-xs md:text-sm">Mejorar</span>
             </Button>
           </Link>
         </div>
@@ -245,7 +245,7 @@ export default function DashboardPage() {
       )}
 
       {/* Stats Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 md:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Valor Inventario"
           value={formatearDualMoneda(valorInventario, configuracion.tasaCambioUSD || 50, configuracion.moneda === "USD")}
@@ -324,119 +324,121 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Content */}
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full max-w-md grid-cols-3">
-          <TabsTrigger value="overview" className="data-[state=active]:bg-background">
-            Resumen
-          </TabsTrigger>
-          <TabsTrigger value="analytics" className="data-[state=active]:bg-background">
-            Análisis
-          </TabsTrigger>
-          {tieneVentas && (
-            <TabsTrigger value="sales" className="data-[state=active]:bg-background">
-              Ventas
+      <Tabs defaultValue="overview" className="space-y-4 md:space-y-6">
+        <div className="overflow-x-auto -mx-3 md:mx-0 px-3 md:px-0">
+          <TabsList className="inline-flex md:grid w-full md:max-w-md md:grid-cols-3 min-w-max md:min-w-0">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-background text-xs md:text-sm px-4 md:px-6">
+              Resumen
             </TabsTrigger>
-          )}
-        </TabsList>
+            <TabsTrigger value="analytics" className="data-[state=active]:bg-background text-xs md:text-sm px-4 md:px-6">
+              Análisis
+            </TabsTrigger>
+            {tieneVentas && (
+              <TabsTrigger value="sales" className="data-[state=active]:bg-background text-xs md:text-sm px-4 md:px-6">
+                Ventas
+              </TabsTrigger>
+            )}
+          </TabsList>
+        </div>
 
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="col-span-4 border-0 shadow-md">
-              <CardHeader className="space-y-1">
-                <CardTitle className="text-xl font-semibold">Distribución de Costos</CardTitle>
-                <CardDescription className="text-sm">
+        <TabsContent value="overview" className="space-y-4 md:space-y-6">
+          <div className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-7">
+            <Card className="lg:col-span-4 border-0 shadow-md">
+              <CardHeader className="space-y-1 p-4 md:p-6">
+                <CardTitle className="text-lg md:text-xl font-semibold">Distribución de Costos</CardTitle>
+                <CardDescription className="text-xs md:text-sm">
                   Análisis de costos por receta
                 </CardDescription>
               </CardHeader>
-              <CardContent className="pl-2">
+              <CardContent className="p-2 md:pl-2 md:pr-6 md:pb-6">
                 <CostosChart recetas={recetas} moneda={configuracion.moneda} />
               </CardContent>
             </Card>
-            <Card className="col-span-3 border-0 shadow-md">
-              <CardHeader className="space-y-1">
-                <CardTitle className="text-xl font-semibold">Productos por Categoría</CardTitle>
-                <CardDescription className="text-sm">
+            <Card className="lg:col-span-3 border-0 shadow-md">
+              <CardHeader className="space-y-1 p-4 md:p-6">
+                <CardTitle className="text-lg md:text-xl font-semibold">Productos por Categoría</CardTitle>
+                <CardDescription className="text-xs md:text-sm">
                   Distribución de insumos
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 md:p-6">
                 <ProductosChart productos={estadisticas.productosPorCategoria} />
               </CardContent>
             </Card>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="col-span-4 border-0 shadow-md">
-              <CardHeader className="space-y-1">
-                <CardTitle className="text-xl font-semibold">Recetas Más Rentables</CardTitle>
-                <CardDescription className="text-sm">
+          <div className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-7">
+            <Card className="lg:col-span-4 border-0 shadow-md">
+              <CardHeader className="space-y-1 p-4 md:p-6">
+                <CardTitle className="text-lg md:text-xl font-semibold">Recetas Más Rentables</CardTitle>
+                <CardDescription className="text-xs md:text-sm">
                   Top 5 recetas con mejor margen
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 md:p-6">
                 <RecetasRentablesTable recetas={recetas} moneda={configuracion.moneda} />
               </CardContent>
             </Card>
-            <Card className="col-span-3 border-0 shadow-md">
-              <CardHeader className="space-y-1">
-                <CardTitle className="text-xl font-semibold">Acciones Rápidas</CardTitle>
-                <CardDescription className="text-sm">
+            <Card className="lg:col-span-3 border-0 shadow-md">
+              <CardHeader className="space-y-1 p-4 md:p-6">
+                <CardTitle className="text-lg md:text-xl font-semibold">Acciones Rápidas</CardTitle>
+                <CardDescription className="text-xs md:text-sm">
                   Accesos directos a funciones principales
                 </CardDescription>
               </CardHeader>
-              <CardContent className="grid gap-3">
+              <CardContent className="grid gap-2 md:gap-3 p-4 md:p-6">
                 <Link href="/productos/nuevo" className="block">
-                  <div className="flex items-center gap-4 p-4 rounded-xl border-0 bg-gradient-to-br from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/15 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-all duration-300 group-hover:scale-110">
-                      <Plus className="h-6 w-6 text-primary" />
+                  <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl border-0 bg-gradient-to-br from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/15 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md">
+                    <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-all duration-300 group-hover:scale-110">
+                      <Plus className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-semibold text-foreground">Nuevo Producto</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">Agregar insumo al inventario</p>
+                      <p className="text-xs md:text-sm font-semibold text-foreground">Nuevo Producto</p>
+                      <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Agregar insumo</p>
                     </div>
                     <ArrowUpRight className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </div>
                 </Link>
 
                 <Link href="/recetas/nueva" className="block">
-                  <div className="flex items-center gap-4 p-4 rounded-xl border-0 bg-gradient-to-br from-violet-500/5 to-violet-500/10 hover:from-violet-500/10 hover:to-violet-500/15 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-500/10 group-hover:bg-violet-500/20 transition-all duration-300 group-hover:scale-110">
-                      <FileText className="h-6 w-6 text-violet-600" />
+                  <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl border-0 bg-gradient-to-br from-violet-500/5 to-violet-500/10 hover:from-violet-500/10 hover:to-violet-500/15 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md">
+                    <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-xl bg-violet-500/10 group-hover:bg-violet-500/20 transition-all duration-300 group-hover:scale-110">
+                      <FileText className="h-5 w-5 md:h-6 md:w-6 text-violet-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-semibold text-foreground">Nueva Receta</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">Crear receta con costos</p>
+                      <p className="text-xs md:text-sm font-semibold text-foreground">Nueva Receta</p>
+                      <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Crear receta</p>
                     </div>
-                    <ArrowUpRight className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    <ArrowUpRight className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground opacity-0 md:group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </div>
                 </Link>
 
                 {tieneVentas && (
                   <Link href="/ventas/nueva" className="block">
-                    <div className="flex items-center gap-4 p-4 rounded-xl border-0 bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 hover:from-emerald-500/10 hover:to-emerald-500/15 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 group-hover:bg-emerald-500/20 transition-all duration-300 group-hover:scale-110">
-                        <ShoppingCart className="h-6 w-6 text-emerald-600" />
+                    <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl border-0 bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 hover:from-emerald-500/10 hover:to-emerald-500/15 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md">
+                      <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-xl bg-emerald-500/10 group-hover:bg-emerald-500/20 transition-all duration-300 group-hover:scale-110">
+                        <ShoppingCart className="h-5 w-5 md:h-6 md:w-6 text-emerald-600" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-semibold text-foreground">Nueva Venta</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">Registrar orden de venta</p>
+                        <p className="text-xs md:text-sm font-semibold text-foreground">Nueva Venta</p>
+                        <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Registrar orden</p>
                       </div>
-                      <ArrowUpRight className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      <ArrowUpRight className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground opacity-0 md:group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </div>
                   </Link>
                 )}
 
                 {tieneClientes && (
                   <Link href="/clientes/nuevo" className="block">
-                    <div className="flex items-center gap-4 p-4 rounded-xl border-0 bg-gradient-to-br from-blue-500/5 to-blue-500/10 hover:from-blue-500/10 hover:to-blue-500/15 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 group-hover:bg-blue-500/20 transition-all duration-300 group-hover:scale-110">
-                        <UserPlus className="h-6 w-6 text-blue-600" />
+                    <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl border-0 bg-gradient-to-br from-blue-500/5 to-blue-500/10 hover:from-blue-500/10 hover:to-blue-500/15 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md">
+                      <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-xl bg-blue-500/10 group-hover:bg-blue-500/20 transition-all duration-300 group-hover:scale-110">
+                        <UserPlus className="h-5 w-5 md:h-6 md:w-6 text-blue-600" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-semibold text-foreground">Nuevo Cliente</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">Agregar cliente al sistema</p>
+                        <p className="text-xs md:text-sm font-semibold text-foreground">Nuevo Cliente</p>
+                        <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Agregar cliente</p>
                       </div>
-                      <ArrowUpRight className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      <ArrowUpRight className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground opacity-0 md:group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </div>
                   </Link>
                 )}

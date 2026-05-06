@@ -12,9 +12,10 @@ import Link from "next/link";
 interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
   isCollapsed: boolean;
   setIsCollapsed: (value: boolean) => void;
+  onLinkClick?: () => void;
 }
 
-export function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
+export function Sidebar({ className, isCollapsed, setIsCollapsed, onLinkClick }: SidebarProps) {
   const [navOpened, setNavOpened] = useState(false);
   const { canAccess, isAdmin } = usePlanAccess();
 
@@ -73,6 +74,7 @@ export function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps
           items={visibleNavItems}
           isCollapsed={isCollapsed}
           label="Menú Principal"
+          onLinkClick={onLinkClick}
         />
         
         {(isAdmin || visibleAdminItems.length > 0) && (
@@ -86,6 +88,7 @@ export function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps
               items={isAdmin ? sidebarData.adminItems : visibleAdminItems}
               isCollapsed={isCollapsed}
               label="Admin"
+              onLinkClick={onLinkClick}
             />
           </>
         )}

@@ -30,7 +30,12 @@ export function Header({ isCollapsed, setIsCollapsed }: HeaderProps) {
           </SheetTrigger>
           <SheetContent side="left" className="p-0 w-64">
             <SheetTitle className="sr-only">Menú de navegación</SheetTitle>
-            <Sidebar isCollapsed={false} setIsCollapsed={() => {}} className="!static !translate-x-0 h-full w-full border-none" />
+            <Sidebar 
+              isCollapsed={false} 
+              setIsCollapsed={() => {}} 
+              onLinkClick={() => setOpen(false)}
+              className="!static !translate-x-0 h-full w-full border-none" 
+            />
           </SheetContent>
         </Sheet>
 

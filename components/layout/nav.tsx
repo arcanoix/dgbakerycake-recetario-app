@@ -21,9 +21,10 @@ interface NavProps {
     variant?: "default" | "ghost";
   }[];
   label?: string;
+  onLinkClick?: () => void;
 }
 
-export function Nav({ items, isCollapsed, label }: NavProps) {
+export function Nav({ items, isCollapsed, label, onLinkClick }: NavProps) {
   const { checkActiveNav } = useCheckActiveNav();
 
   return (
@@ -41,6 +42,7 @@ export function Nav({ items, isCollapsed, label }: NavProps) {
                 <TooltipTrigger asChild>
                   <Link
                     href={link.href}
+                    onClick={onLinkClick}
                     className={cn(
                       buttonVariants({ variant: isActive ? "default" : "ghost", size: "icon" }),
                       "h-10 w-10",
@@ -59,6 +61,7 @@ export function Nav({ items, isCollapsed, label }: NavProps) {
               <Link
                 key={index}
                 href={link.href}
+                onClick={onLinkClick}
                 className={cn(
                   buttonVariants({ variant: isActive ? "default" : "ghost", size: "sm" }),
                   "justify-start h-10 px-3",

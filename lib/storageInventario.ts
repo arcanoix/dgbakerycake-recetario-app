@@ -42,7 +42,13 @@ export const obtenerMovimientos = async (
 
   let query = supabase
     .from('inventario_movimientos')
-    .select('*')
+    .select(`
+      *,
+      productos:producto_id (
+        nombre,
+        unidad_medida_simbolo
+      )
+    `)
     .eq('user_id', user.id)
     .order('fecha', { ascending: false })
     .limit(limite);
@@ -338,6 +344,8 @@ function mapMovimientoFromDB(data: any): MovimientoInventario {
     id: data.id,
     userId: data.user_id,
     productoId: data.producto_id,
+    productoNombre: data.productos?.nombre || 'Producto desconocido',
+    unidadMedidaSimbolo: data.productos?.unidad_medida_simbolo || data.unidad_medida,
     tipo: data.tipo,
     cantidad: parseFloat(data.cantidad),
     unidadMedida: data.unidad_medida,

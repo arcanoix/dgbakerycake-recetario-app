@@ -9,6 +9,8 @@ import { obtenerTodosLosPosts, eliminarPost, actualizarPost } from "@/lib/blog";
 import { BlogPost } from "@/types/blog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BlogAnalyticsDashboard } from "@/components/blog/BlogAnalyticsDashboard";
 import { motion } from "framer-motion";
 import {
   PenSquare,
@@ -148,14 +150,22 @@ export default function AdminBlogPage() {
           </div>
         </motion.div>
 
-        {/* Posts table */}
-        <Card className="border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-base">
-              {posts.length} {posts.length === 1 ? "artículo" : "artículos"}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
+        {/* Tabs */}
+        <Tabs defaultValue="posts" className="space-y-6">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="posts">Artículos</TabsTrigger>
+            <TabsTrigger value="analytics">Estadísticas</TabsTrigger>
+          </TabsList>
+
+          {/* Posts Tab */}
+          <TabsContent value="posts" className="space-y-6">
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-base">
+                  {posts.length} {posts.length === 1 ? "artículo" : "artículos"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
             {cargando ? (
               <div className="flex items-center justify-center h-32">
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-violet-600" />
@@ -327,7 +337,14 @@ export default function AdminBlogPage() {
               </div>
             )}
           </CardContent>
-        </Card>
+            </Card>
+          </TabsContent>
+
+          {/* Analytics Tab */}
+          <TabsContent value="analytics" className="space-y-6">
+            <BlogAnalyticsDashboard />
+          </TabsContent>
+        </Tabs>
       </div>
     </ProtectedRoute>
   );

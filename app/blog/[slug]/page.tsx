@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { obtenerPostPorSlug } from '@/lib/blog-server';
 import { MarkdownRenderer } from '@/components/blog/MarkdownRenderer';
+import { BlogPostTracker } from '@/components/blog/BlogPostTracker';
 import { Calendar, User, Tag, ArrowLeft } from 'lucide-react';
 
 interface Props {
@@ -109,6 +110,9 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <>
+      {/* Analytics Tracker */}
+      <BlogPostTracker postId={post.id} postSlug={post.slug} />
+
       {/* JSON-LD */}
       {jsonLd && (
         <script

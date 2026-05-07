@@ -128,8 +128,10 @@ export default function RegisterPage() {
       <div className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-background">
         <div className="w-full max-w-md space-y-8">
           {/* Mobile Logo */}
-          <div className="lg:hidden flex justify-center">
-            <LogoFull size="lg" />
+          <div className="lg:hidden flex justify-center mb-8">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-primary/10 via-violet-500/10 to-fuchsia-500/10 border-2 border-primary/20">
+              <LogoFull size="lg" />
+            </div>
           </div>
 
           {success ? (

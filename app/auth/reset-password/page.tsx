@@ -64,113 +64,140 @@ function ResetPasswordForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
-      <Card className="w-full max-w-md border-0 shadow-2xl overflow-hidden bg-card">
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary via-violet-500 to-fuchsia-500" />
-        <CardHeader className="text-center space-y-4 pt-8">
-          <div className="flex justify-center">
-            <LogoFull size="md" />
+    <div className="min-h-screen flex">
+      {/* Left Side - Hero Section */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary via-violet-600 to-fuchsia-600 p-12 flex-col justify-between relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+        
+        <div className="relative z-10">
+          <LogoFull size="lg" className="text-white [&_path]:fill-white [&_stop]:stop-color-white" />
+        </div>
+
+        <div className="relative z-10 space-y-6">
+          <h1 className="text-5xl font-black text-white leading-tight">
+            Restablece tu contraseña de forma segura
+          </h1>
+          <p className="text-xl text-white/90 font-medium leading-relaxed">
+            Crea una nueva contraseña fuerte para proteger tu cuenta y continuar gestionando tu negocio.
+          </p>
+        </div>
+
+        <div className="relative z-10 flex items-center gap-3 text-white/60 text-xs font-semibold">
+          <ShieldCheck className="w-4 h-4" />
+          <span>Proceso seguro y encriptado</span>
+        </div>
+      </div>
+
+      {/* Right Side - Form */}
+      <div className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-background">
+        <div className="w-full max-w-md space-y-8">
+          <div className="lg:hidden flex justify-center mb-8">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-primary/10 via-violet-500/10 to-fuchsia-500/10 border-2 border-primary/20">
+              <LogoFull size="lg" />
+            </div>
           </div>
-          <div className="space-y-1">
-            <CardTitle className="text-2xl font-black tracking-tight">
+
+          <div className="space-y-2">
+            <h2 className="text-3xl font-black tracking-tight">
               Nueva Contraseña
-            </CardTitle>
-            <CardDescription className="text-muted-foreground font-medium px-4">
-              Establece una nueva clave de acceso para tu taller digital.
-            </CardDescription>
+            </h2>
+            <p className="text-muted-foreground font-medium">
+              Establece una nueva clave de acceso para tu cuenta
+            </p>
           </div>
-        </CardHeader>
 
-        <CardContent className="space-y-6 pb-8">
-          <AnimatePresence mode="wait">
-            {success ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-emerald-50 border border-emerald-100 p-6 rounded-2xl space-y-4 text-center"
-              >
-                <div className="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto">
-                  <ShieldCheck className="w-6 h-6 text-emerald-600" />
-                </div>
-                <div className="space-y-1">
-                  <p className="font-black text-sm uppercase tracking-tight text-emerald-700">¡Actualizada!</p>
-                  <p className="text-xs text-emerald-600 font-medium leading-relaxed">
-                    Tu contraseña ha sido cambiada con éxito. Serás redirigido al inicio de sesión en unos segundos...
-                  </p>
-                </div>
-                <Button 
-                  onClick={() => router.push("/auth/login")}
-                  className="w-full font-black text-[10px] tracking-widest uppercase shadow-md bg-emerald-600 hover:bg-emerald-700"
+          <div className="space-y-6">
+            <AnimatePresence mode="wait">
+              {success ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="space-y-6 text-center"
                 >
-                  IR AL LOGIN AHORA
-                </Button>
-              </motion.div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
-                {error && (
-                  <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-xl text-xs font-bold flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4" />
-                    {error}
+                  <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto">
+                    <ShieldCheck className="w-10 h-10 text-emerald-600" />
                   </div>
-                )}
-
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-1">
-                    Nueva Contraseña
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Mínimo 6 caracteres"
-                      required
-                      disabled={loading}
-                      className="h-12 bg-muted/30 border-0 focus-visible:ring-primary pl-10 pr-10"
-                    />
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
+                  <div className="space-y-2">
+                    <h3 className="text-2xl font-black">¡Contraseña Actualizada!</h3>
+                    <p className="text-muted-foreground font-medium">
+                      Tu contraseña ha sido cambiada con éxito. Serás redirigido al inicio de sesión...
+                    </p>
                   </div>
-                </div>
+                  <Button 
+                    onClick={() => router.push("/auth/login")}
+                    className="w-full h-14 rounded-xl"
+                  >
+                    Ir al Login Ahora
+                  </Button>
+                </motion.div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  {error && (
+                    <div className="bg-destructive/10 border-l-4 border-destructive text-destructive px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-3">
+                      <AlertCircle className="w-5 h-5" />
+                      {error}
+                    </div>
+                  )}
 
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-1">
-                    Confirmar Contraseña
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="confirmPassword"
-                      type={showPassword ? "text" : "password"}
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Repite tu nueva contraseña"
-                      required
-                      disabled={loading}
-                      className="h-12 bg-muted/30 border-0 focus-visible:ring-primary pl-10"
-                    />
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-sm font-semibold">
+                      Nueva Contraseña
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Mínimo 6 caracteres"
+                        required
+                        disabled={loading}
+                        className="h-14 pl-12 pr-12 text-base rounded-xl border-2 focus-visible:ring-2 focus-visible:ring-primary/20"
+                      />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      </button>
+                    </div>
                   </div>
-                </div>
 
-                <Button 
-                  type="submit" 
-                  className="w-full h-12 font-black tracking-widest text-[10px] uppercase shadow-xl bg-primary hover:shadow-primary/20 transition-all" 
-                  disabled={loading}
-                >
-                  {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : "CAMBIAR CONTRASEÑA"}
-                </Button>
-              </form>
-            )}
-          </AnimatePresence>
-        </CardContent>
-      </Card>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword" className="text-sm font-semibold">
+                      Confirmar Contraseña
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        id="confirmPassword"
+                        type={showPassword ? "text" : "password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Repite tu nueva contraseña"
+                        required
+                        disabled={loading}
+                        className="h-14 pl-12 text-base rounded-xl border-2 focus-visible:ring-2 focus-visible:ring-primary/20"
+                      />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    </div>
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    className="w-full h-14 font-bold text-base rounded-xl shadow-lg hover:shadow-xl transition-all" 
+                    disabled={loading}
+                  >
+                    {loading ? <RefreshCw className="w-5 h-5 animate-spin" /> : "Actualizar Contraseña"}
+                  </Button>
+                </form>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

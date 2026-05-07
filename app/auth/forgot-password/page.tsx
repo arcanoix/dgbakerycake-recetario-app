@@ -65,8 +65,10 @@ export default function ForgotPasswordPage() {
       {/* Right Side - Form */}
       <div className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-background">
         <div className="w-full max-w-md space-y-8">
-          <div className="lg:hidden flex justify-center">
-            <LogoFull size="lg" />
+          <div className="lg:hidden flex justify-center mb-8">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-500/10 via-orange-500/10 to-red-500/10 border-2 border-orange-500/20">
+              <LogoFull size="lg" />
+            </div>
           </div>
 
           <div className="space-y-2">

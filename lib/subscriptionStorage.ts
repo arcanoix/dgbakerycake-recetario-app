@@ -465,6 +465,67 @@ export const cambiarRolUsuario = async (
   }
 };
 
+export const cambiarPlanUsuario = async (
+  userId: string,
+  nuevoPlanId: string
+): Promise<{ exitoso: boolean; error?: string }> => {
+  try {
+    // Obtener la suscripción activa del usuario
+    const { data: suscripcionActual, error: errorBusqueda } = await supabase
+      .from('user_subscriptions')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('status', 'active')
+      .single();
+
+    if (errorBusqueda && errorBusqueda.code !== 'PGRST116') {
+      console.error('Error al buscar suscripción:', errorBusqueda);
+      return { exitoso: false, error: errorBusqueda.message };
+    }
+
+    if (suscripcionActual) {
+      // Actualizar la suscripción existente
+      const { error: errorActualizacion } = await supabase
+        .from('user_subscriptions')
+        .update({
+          plan_id: nuevoPlanId,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', suscripcionActual.id);
+
+      if (errorActualizacion) {
+        console.error('Error al actualizar plan:', errorActualizacion);
+        return { exitoso: false, error: errorActualizacion.message };
+      }
+    } else {
+      // Crear nueva suscripción si no existe
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setMonth(endDate.getMonth() + 1);
+
+      const { error: errorCreacion } = await supabase
+        .from('user_subscriptions')
+        .insert({
+          user_id: userId,
+          plan_id: nuevoPlanId,
+          status: 'active',
+          start_date: startDate.toISOString(),
+          end_date: endDate.toISOString(),
+        });
+
+      if (errorCreacion) {
+        console.error('Error al crear suscripción:', errorCreacion);
+        return { exitoso: false, error: errorCreacion.message };
+      }
+    }
+
+    return { exitoso: true };
+  } catch (err) {
+    console.error('Error al cambiar plan del usuario:', err);
+    return { exitoso: false, error: 'Error inesperado al cambiar plan' };
+  }
+};
+
 export const suspenderUsuario = async (
   userId: string,
   motivo?: string

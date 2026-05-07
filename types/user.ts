@@ -12,6 +12,8 @@ export interface UserData {
   end_date?: string;
   productos_count?: number;
   recetas_count?: number;
+  max_productos?: number;
+  max_recetas?: number;
   is_active?: boolean;
   /** Last known IP address captured from activity logs */
   last_ip?: string;

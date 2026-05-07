@@ -14,9 +14,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit, Ban, Play, UserCog, ShieldAlert, Trash2 } from "lucide-react";
+import { Edit, Ban, Play, UserCog, ShieldAlert, Trash2, CreditCard } from "lucide-react";
 import { suspenderUsuario, reactivarUsuario, cambiarRolUsuario, eliminarUsuario, obtenerPlanPorNombre } from "@/lib/subscriptionStorage";
 import { EditUserModal } from "@/components/admin/EditUserModal";
+import { ChangePlanDialog } from "@/components/admin/ChangePlanDialog";
 
 interface UsersTableProps {
   usuarios: UserData[];
@@ -27,6 +28,7 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
   const [busqueda, setBusqueda] = useState("");
   const [cargandoAccion, setCargandoAccion] = useState<string | null>(null);
   const [usuarioEditando, setUsuarioEditando] = useState<UserData | null>(null);
+  const [usuarioCambiandoPlan, setUsuarioCambiandoPlan] = useState<UserData | null>(null);
 
   const usuariosFiltrados = usuarios.filter((usuario) =>
     usuario.email.toLowerCase().includes(busqueda.toLowerCase())
@@ -246,6 +248,16 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
                         <Button
                           size="icon"
                           variant="outline"
+                          title="Cambiar plan"
+                          onClick={() => setUsuarioCambiandoPlan(usuario)}
+                          disabled={cargandoAccion === usuario.id}
+                          className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                        >
+                          <CreditCard className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="outline"
                           title="Editar usuario"
                           onClick={() => setUsuarioEditando(usuario)}
                           disabled={cargandoAccion === usuario.id}
@@ -316,6 +328,14 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
         onClose={() => setUsuarioEditando(null)}
         onUpdate={() => {
           setUsuarioEditando(null);
+          onUpdate?.();
+        }}
+      />
+      <ChangePlanDialog
+        usuario={usuarioCambiandoPlan}
+        onClose={() => setUsuarioCambiandoPlan(null)}
+        onUpdate={() => {
+          setUsuarioCambiandoPlan(null);
           onUpdate?.();
         }}
       />

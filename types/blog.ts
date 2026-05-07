@@ -2,7 +2,7 @@
 // Blog / Magazine – TypeScript Types
 // ============================================================
 
-export type BlogPostStatus = 'draft' | 'published';
+export type BlogPostStatus = 'draft' | 'published' | 'archived';
 
 export interface BlogPost {
   id: string;

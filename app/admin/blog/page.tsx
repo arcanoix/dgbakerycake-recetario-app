@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { useRole } from "@/hooks/useRole";
-import { obtenerTodosLosPosts, eliminarPost } from "@/lib/blog";
+import { obtenerTodosLosPosts, eliminarPost, actualizarPost } from "@/lib/blog";
 import { BlogPost } from "@/types/blog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,8 @@ import {
   ExternalLink,
   FileText,
   Crown,
+  CheckCircle,
+  Archive,
 } from "lucide-react";
 
 export default function AdminBlogPage() {
@@ -28,6 +30,7 @@ export default function AdminBlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [cargando, setCargando] = useState(true);
   const [eliminando, setEliminando] = useState<string | null>(null);
+  const [cambiandoEstado, setCambiandoEstado] = useState<string | null>(null);
 
   useEffect(() => {
     if (!cargandoRole && !isAdmin) {
@@ -54,6 +57,37 @@ export default function AdminBlogPage() {
       setPosts((prev) => prev.filter((p) => p.id !== id));
     }
     setEliminando(null);
+  };
+
+  const handleCambiarEstado = async (
+    id: string,
+    titulo: string,
+    estadoActual: string,
+    nuevoEstado: "draft" | "published" | "archived"
+  ) => {
+    const mensajes = {
+      draft: "borrador",
+      published: "publicado",
+      archived: "archivado",
+    };
+
+    const confirmMessage = `¿Cambiar "${titulo}" de ${mensajes[estadoActual as keyof typeof mensajes]} a ${mensajes[nuevoEstado]}?`;
+    
+    if (!confirm(confirmMessage)) return;
+
+    setCambiandoEstado(id);
+    const { error } = await actualizarPost(id, { status: nuevoEstado });
+    
+    if (error) {
+      alert(`Error al cambiar estado: ${error}`);
+    } else {
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.id === id ? { ...p, status: nuevoEstado } : p
+        )
+      );
+    }
+    setCambiandoEstado(null);
   };
 
   const formatFecha = (fecha: string | null) => {
@@ -162,6 +196,11 @@ export default function AdminBlogPage() {
                               <Eye className="w-3 h-3" />
                               Publicado
                             </span>
+                          ) : post.status === "archived" ? (
+                            <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-gray-50/20 text-gray-700">
+                              <Archive className="w-3 h-3" />
+                              Archivado
+                            </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-yellow-50/20 text-yellow-700">
                               <EyeOff className="w-3 h-3" />
@@ -177,6 +216,73 @@ export default function AdminBlogPage() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center justify-end gap-1">
+                            {/* Status change buttons */}
+                            {post.status === "draft" && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
+                                onClick={() => handleCambiarEstado(post.id, post.title, post.status, "published")}
+                                disabled={cambiandoEstado === post.id}
+                                title="Publicar"
+                              >
+                                {cambiandoEstado === post.id ? (
+                                  <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-green-600" />
+                                ) : (
+                                  <CheckCircle className="w-3.5 h-3.5" />
+                                )}
+                              </Button>
+                            )}
+                            {post.status === "published" && (
+                              <>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0 text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50"
+                                  onClick={() => handleCambiarEstado(post.id, post.title, post.status, "draft")}
+                                  disabled={cambiandoEstado === post.id}
+                                  title="Volver a borrador"
+                                >
+                                  {cambiandoEstado === post.id ? (
+                                    <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-yellow-600" />
+                                  ) : (
+                                    <EyeOff className="w-3.5 h-3.5" />
+                                  )}
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0 text-gray-600 hover:text-gray-700 hover:bg-gray-50"
+                                  onClick={() => handleCambiarEstado(post.id, post.title, post.status, "archived")}
+                                  disabled={cambiandoEstado === post.id}
+                                  title="Archivar"
+                                >
+                                  {cambiandoEstado === post.id ? (
+                                    <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-gray-600" />
+                                  ) : (
+                                    <Archive className="w-3.5 h-3.5" />
+                                  )}
+                                </Button>
+                              </>
+                            )}
+                            {post.status === "archived" && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
+                                onClick={() => handleCambiarEstado(post.id, post.title, post.status, "published")}
+                                disabled={cambiandoEstado === post.id}
+                                title="Publicar"
+                              >
+                                {cambiandoEstado === post.id ? (
+                                  <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-green-600" />
+                                ) : (
+                                  <CheckCircle className="w-3.5 h-3.5" />
+                                )}
+                              </Button>
+                            )}
+
+                            {/* View published post */}
                             {post.status === "published" && (
                               <Link
                                 href={`/blog/${post.slug}`}
@@ -189,11 +295,15 @@ export default function AdminBlogPage() {
                                 </Button>
                               </Link>
                             )}
+
+                            {/* Edit button */}
                             <Link href={`/admin/blog/${post.id}/editar`} title="Editar">
                               <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                                 <PenSquare className="w-3.5 h-3.5" />
                               </Button>
                             </Link>
+
+                            {/* Delete button */}
                             <Button
                               variant="ghost"
                               size="sm"

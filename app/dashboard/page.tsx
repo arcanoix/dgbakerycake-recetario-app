@@ -54,7 +54,7 @@ import { useOrdenes } from "@/hooks/useOrdenes";
 import { useClientes } from "@/hooks/useClientes";
 import { usePlanAccess } from "@/hooks/usePlanAccess";
 import { calcularEstadisticas, calcularValorInventario } from "@/lib/estadisticas";
-import { formatearDualMoneda } from "@/lib/currency";
+import { formatearDualMoneda, formatearDualMonedaCompacto } from "@/lib/currency";
 import {
   Activity,
   ArrowUpRight,
@@ -248,7 +248,7 @@ export default function DashboardPage() {
       <div className="grid gap-3 md:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Valor Inventario"
-          value={formatearDualMoneda(valorInventario, configuracion.tasaCambioUSD || 50, configuracion.moneda === "USD")}
+          value={formatearDualMonedaCompacto(valorInventario, configuracion.tasaCambioUSD || 50, configuracion.moneda === "USD")}
           icon={DollarSign}
           description="Inversión total en productos"
           variant="success"
@@ -277,7 +277,7 @@ export default function DashboardPage() {
           <>
             <StatsCard
               title="Ventas Totales"
-              value={formatearDualMoneda(totalVentas, configuracion.tasaCambioUSD || 50, configuracion.moneda === "USD")}
+              value={formatearDualMonedaCompacto(totalVentas, configuracion.tasaCambioUSD || 50, configuracion.moneda === "USD")}
               icon={CreditCard}
               description={`+${ordenesEntregadas} órdenes entregadas`}
               variant="success"
@@ -314,7 +314,7 @@ export default function DashboardPage() {
 
             <StatsCard
               title="Costo Promedio"
-              value={formatearDualMoneda(estadisticas.costoPromedioReceta, configuracion.tasaCambioUSD || 50, configuracion.moneda === "USD")}
+              value={formatearDualMonedaCompacto(estadisticas.costoPromedioReceta, configuracion.tasaCambioUSD || 50, configuracion.moneda === "USD")}
               icon={BarChart3}
               description="Promedio de recetas"
               variant="default"

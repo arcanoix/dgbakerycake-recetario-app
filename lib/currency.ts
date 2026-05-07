@@ -50,6 +50,25 @@ export const formatearBS = (valor: number): string => {
 };
 
 /**
+ * Formatea un número de forma compacta (K, M, B)
+ */
+const formatearCompacto = (valor: number, locale: string = 'en-US'): string => {
+  if (Math.abs(valor) < 1000) {
+    return new Intl.NumberFormat(locale, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(valor);
+  }
+  
+  return new Intl.NumberFormat(locale, {
+    notation: 'compact',
+    compactDisplay: 'short',
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  }).format(valor);
+};
+
+/**
  * Formatea un valor mostrando ambas monedas
  * Ejemplo: "$10.00 USD (Bs. 500.00)"
  */
@@ -66,6 +85,38 @@ export const formatearDualMoneda = (
     return `${usdFormateado} (${bsFormateado})`;
   } else {
     return `${bsFormateado} (${usdFormateado})`;
+  }
+};
+
+/**
+ * Formatea un valor mostrando ambas monedas de forma compacta para widgets
+ * Ejemplo: "$2.00\n(Bs.$ 993.66)" o "$10K\n(Bs.$ 500K)"
+ */
+export const formatearDualMonedaCompacto = (
+  valorUSD: number,
+  tasaCambio: number,
+  mostrarUSDPrimero: boolean = true
+): string => {
+  const valorBS = convertirUSDaBS(valorUSD, tasaCambio);
+  
+  // Determinar si usar formato compacto
+  const usarCompacto = Math.abs(valorUSD) >= 1000 || Math.abs(valorBS) >= 1000;
+  
+  let usdFormateado: string;
+  let bsFormateado: string;
+  
+  if (usarCompacto) {
+    usdFormateado = `$${formatearCompacto(valorUSD)}`;
+    bsFormateado = `Bs.$ ${formatearCompacto(valorBS, 'es-VE')}`;
+  } else {
+    usdFormateado = formatearUSD(valorUSD);
+    bsFormateado = formatearBS(valorBS);
+  }
+
+  if (mostrarUSDPrimero) {
+    return `${usdFormateado}\n(${bsFormateado})`;
+  } else {
+    return `${bsFormateado}\n(${usdFormateado})`;
   }
 };
 

@@ -154,9 +154,15 @@ export const StatsCard = ({
         </CardHeader>
 
         <CardContent className="relative space-y-3">
-          <div className="flex items-baseline gap-3">
+          <div className="flex items-baseline gap-2 flex-wrap">
             <motion.div 
-              className="text-3xl font-black tracking-tight"
+              className={cn(
+                "font-black tracking-tight whitespace-pre-line",
+                // Responsive text sizing based on value length (without newlines)
+                typeof value === 'string' && value.replace(/\n/g, '').length > 20 ? "text-xl sm:text-2xl" :
+                typeof value === 'string' && value.replace(/\n/g, '').length > 12 ? "text-2xl sm:text-3xl" :
+                "text-3xl sm:text-4xl"
+              )}
               initial={{ scale: 1 }}
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
@@ -165,7 +171,7 @@ export const StatsCard = ({
             </motion.div>
             {trend && (
               <motion.div 
-                className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-background/50 backdrop-blur-sm"
+                className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-background/50 backdrop-blur-sm flex-shrink-0"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { sidebarData } from "./data/sidebar-data";
 import { usePlanAccess } from "@/hooks/usePlanAccess";
 import Link from "next/link";
+import { LogoIcon, LogoFull } from "@/components/ui/logo";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
   isCollapsed: boolean;
@@ -56,15 +57,13 @@ export function Sidebar({ className, isCollapsed, setIsCollapsed, onLinkClick }:
       </Button>
 
       {/* Header del Sidebar */}
-      <div className={cn("flex h-16 justify-center px-4 py-4 transition-all duration-300", isCollapsed && "px-2 justify-center")}>
-        <Link href="/dashboard" className="flex flex-col items-center gap-1">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary shrink-0 shadow-md">
-            <span className="text-lg text-primary-foreground font-bold">D</span>
-          </div>
-          <div className={cn("flex flex-col items-center transition-all duration-300 overflow-hidden", isCollapsed ? "h-0 opacity-0 md:hidden" : "h-auto opacity-100")}>
-            <span className="font-bold text-sm leading-none truncate">DGcost</span>
-            <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold truncate">Repostería</span>
-          </div>
+      <div className={cn("flex h-16 items-center justify-center px-4 py-4 transition-all duration-300", isCollapsed && "px-2")}>
+        <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          {isCollapsed ? (
+            <LogoIcon size={32} />
+          ) : (
+            <LogoFull size="sm" />
+          )}
         </Link>
       </div>
 

@@ -26,6 +26,8 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { LogoFull } from "@/components/ui/logo";
+import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 
 function AnimatedSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const ref = useRef(null);
@@ -137,14 +139,7 @@ export const LandingPage = () => {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b">
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="p-1.5 rounded-lg bg-primary text-primary-foreground group-hover:rotate-12 transition-transform duration-300">
-               <ChefHat className="w-5 h-5" />
-            </div>
-            <span className="text-xl font-black tracking-tight uppercase">
-              DGcost
-            </span>
-          </Link>
+          <LogoFull size="md" />
           <div className="flex items-center gap-6">
             <Link href="/auth/login" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">
               LOG IN
@@ -427,12 +422,7 @@ export const LandingPage = () => {
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-2 space-y-6">
-               <div className="flex items-center gap-2">
-                 <div className="p-1 rounded bg-primary text-primary-foreground">
-                   <ChefHat className="w-4 h-4" />
-                 </div>
-                 <span className="text-lg font-black tracking-tight uppercase">DGcost</span>
-               </div>
+               <LogoFull size="sm" />
                <p className="text-sm text-muted-foreground font-medium max-w-xs">
                  La plataforma inteligente de gestión de costos e inventario para la industria repostera.
                </p>
@@ -464,6 +454,9 @@ export const LandingPage = () => {
           </div>
         </div>
       </footer>
+
+      {/* WhatsApp Button - Flotante */}
+      <WhatsAppButton />
     </div>
   );
 };

@@ -9,7 +9,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { updatePassword } from "@/lib/supabase-auth";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  ChefHat, 
   RefreshCw, 
   CheckCircle2, 
   AlertCircle, 
@@ -19,6 +18,7 @@ import {
   ShieldCheck
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { LogoFull } from "@/components/ui/logo";
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -68,14 +68,9 @@ function ResetPasswordForm() {
       <Card className="w-full max-w-md border-0 shadow-2xl overflow-hidden bg-card">
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary via-violet-500 to-fuchsia-500" />
         <CardHeader className="text-center space-y-4 pt-8">
-          <Link href="/" className="inline-flex items-center gap-2 mx-auto">
-            <div className="p-2 rounded-xl bg-primary text-primary-foreground">
-               <ChefHat className="w-6 h-6" />
-            </div>
-            <span className="text-2xl font-black tracking-tighter uppercase text-foreground">
-              DGcost
-            </span>
-          </Link>
+          <div className="flex justify-center">
+            <LogoFull size="md" />
+          </div>
           <div className="space-y-1">
             <CardTitle className="text-2xl font-black tracking-tight">
               Nueva Contraseña

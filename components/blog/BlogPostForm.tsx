@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { motion } from "framer-motion";
 import { ArrowLeft, Save, Eye, EyeOff, Tag } from "lucide-react";
 
@@ -229,16 +230,19 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
             </div>
 
             {/* Cover image */}
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700">
-                URL de imagen de portada
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">
+                Imagen de portada
               </label>
-              <Input
+              <ImageUpload
                 value={form.cover_image}
-                onChange={(e) => handleChange("cover_image", e.target.value)}
-                placeholder="https://..."
-                type="url"
+                onChange={(url) => handleChange("cover_image", url)}
+                onRemove={() => handleChange("cover_image", "")}
+                maxSize={5}
               />
+              <p className="text-xs text-muted-foreground">
+                Recomendado: 1200×630 px para mejor visualización en redes sociales
+              </p>
             </div>
 
             {/* Tags */}

@@ -14,8 +14,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { TagInput } from "@/components/ui/tag-input";
 import { motion } from "framer-motion";
-import { ArrowLeft, Save, Eye, EyeOff, Tag } from "lucide-react";
+import { ArrowLeft, Save, Eye, EyeOff } from "lucide-react";
 
 interface BlogPostFormProps {
   post?: BlogPost;
@@ -246,17 +247,15 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
             </div>
 
             {/* Tags */}
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-                <Tag className="w-4 h-4" />
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">
                 Etiquetas
               </label>
-              <Input
+              <TagInput
                 value={form.tags}
-                onChange={(e) => handleChange("tags", e.target.value)}
-                placeholder="repostería, costos, tutoriales (separadas por coma)"
+                onChange={(value) => handleChange("tags", value)}
+                placeholder="Escribe una etiqueta y presiona Enter"
               />
-              <p className="text-xs text-gray-700">Separa las etiquetas con comas.</p>
             </div>
 
             {/* Content editor */}

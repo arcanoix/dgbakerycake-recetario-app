@@ -12,6 +12,7 @@ import {
   MoreHorizontal, 
   Package, 
   Building2, 
+  Eye,
   ArrowUpDown 
 } from "lucide-react";
 import {
@@ -25,6 +26,7 @@ import {
 
 interface ColumnsProps {
   onEdit: (producto: Producto) => void;
+  onView?: (producto: Producto) => void;
   onDelete: (id: string) => void;
   tasaCambio: number;
   moneda: string;
@@ -32,6 +34,7 @@ interface ColumnsProps {
 
 export const getProductoColumns = ({
   onEdit,
+  onView,
   onDelete,
   tasaCambio,
   moneda,
@@ -158,6 +161,15 @@ export const getProductoColumns = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+            {onView && (
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => onView(producto)}
+              >
+                <Eye className="mr-2 h-4 w-4" />
+                Ver detalles
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem
               className="cursor-pointer"
               onClick={() => onEdit(producto)}

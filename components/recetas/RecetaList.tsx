@@ -72,6 +72,7 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView, onDuplicate }: R
 
   const columns = getRecetaColumns({
     onEdit,
+    onView,
     onDelete: handleDelete,
     onDuplicate: onDuplicate || (() => {}),
     onExportPDF: handleExportPDF,
@@ -277,6 +278,18 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView, onDuplicate }: R
                         <Edit2 className="w-3.5 h-3.5" />
                         EDITAR
                       </Button>
+                      {onView && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-9 px-2 hover:bg-primary/10 hover:text-primary"
+                          onClick={() => onView(receta)}
+                          disabled={eliminando === receta.id}
+                          title="Ver detalles"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                      )}
                       <Button
                         variant="ghost"
                         size="sm"

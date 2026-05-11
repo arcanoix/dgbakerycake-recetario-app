@@ -11,6 +11,7 @@ import { usePlanAccess } from "@/hooks/usePlanAccess";
 import { MaterialSelector } from "@/components/recetas/MaterialSelector";
 import { DesgloseCostos } from "@/components/recetas/DesgloseCostos";
 import { RecetaList } from "@/components/recetas/RecetaList";
+import { RecetaDetailModal } from "@/components/recetas/RecetaDetailModal";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,6 +48,8 @@ export default function RecetasPage() {
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [recetaEditando, setRecetaEditando] = useState<Receta | undefined>();
+  const [recetaVisualizando, setRecetaVisualizando] = useState<Receta | null>(null);
+  const [modalDetalleAbierto, setModalDetalleAbierto] = useState(false);
   const [terminoBusqueda, setTerminoBusqueda] = useState("");
 
   const [nombre, setNombre] = useState("");
@@ -138,6 +141,11 @@ export default function RecetasPage() {
     setRecetaEditando(undefined);
     setMostrarFormulario(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleView = (receta: Receta) => {
+    setRecetaVisualizando(receta);
+    setModalDetalleAbierto(true);
   };
 
   const costoPorHora = configuracion?.costoPorHoraDefecto || 0;
@@ -396,13 +404,21 @@ export default function RecetasPage() {
               {(!errorCargaRecetas || recetas.length > 0) && (
                 <RecetaList 
                   recetas={recetasFiltradas} 
-                  onEdit={handleEdit} 
+                  onEdit={handleEdit}
+                  onView={handleView}
                   onDuplicate={handleDuplicate} 
                   onDelete={async (id: string) => {
                     await eliminar(id);
                   }} 
                 />
               )}
+
+              {/* Modal de Detalles */}
+              <RecetaDetailModal 
+                receta={recetaVisualizando}
+                open={modalDetalleAbierto}
+                onOpenChange={setModalDetalleAbierto}
+              />
             </motion.div>
           )}
         </AnimatePresence>

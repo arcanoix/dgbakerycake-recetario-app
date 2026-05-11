@@ -12,6 +12,7 @@ import {
   FileText, 
   Download, 
   MessageCircle,
+  Eye,
   ArrowUpDown,
   Calendar,
   CheckCircle2,
@@ -37,6 +38,7 @@ const ESTADO_CONFIG: Record<EstadoOrden, { label: string; class: string; icon: a
 
 interface ColumnsProps {
   onEdit: (orden: Orden) => void;
+  onView?: (orden: Orden) => void;
   onDelete: (id: string) => void;
   onExportPDF: (orden: Orden) => void;
   onWhatsApp: (orden: Orden) => void;
@@ -45,6 +47,7 @@ interface ColumnsProps {
 
 export const getOrdenColumns = ({
   onEdit,
+  onView,
   onDelete,
   onExportPDF,
   onWhatsApp,
@@ -145,6 +148,15 @@ export const getOrdenColumns = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+            {onView && (
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => onView(orden)}
+              >
+                <Eye className="mr-2 h-4 w-4" />
+                Ver detalles
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem
               className="cursor-pointer"
               onClick={() => onEdit(orden)}

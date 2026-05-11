@@ -7,6 +7,7 @@ import { useProductos } from "@/hooks/useProductos";
 import { usePlanAccess } from "@/hooks/usePlanAccess";
 import { ProductoForm } from "@/components/productos/ProductoForm";
 import { ProductoList } from "@/components/productos/ProductoList";
+import { ProductoDetailModal } from "@/components/productos/ProductoDetailModal";
 import { ImportarProductosModal } from "@/components/productos/ImportarProductosModal";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,8 @@ export default function ProductosPage() {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [mostrarImportacion, setMostrarImportacion] = useState(false);
   const [productoEditando, setProductoEditando] = useState<Producto | undefined>();
+  const [productoVisualizando, setProductoVisualizando] = useState<Producto | null>(null);
+  const [modalDetalleAbierto, setModalDetalleAbierto] = useState(false);
 
   const limitInfo = getCurrentCount('productos', productos.length);
   const canCreate = limitInfo.canCreate;
@@ -68,6 +71,11 @@ export default function ProductosPage() {
   const handleEdit = (producto: Producto) => {
     setProductoEditando(producto);
     setMostrarFormulario(true);
+  };
+
+  const handleView = (producto: Producto) => {
+    setProductoVisualizando(producto);
+    setModalDetalleAbierto(true);
   };
 
   const handleCancel = () => {
@@ -262,11 +270,19 @@ export default function ProductosPage() {
           <ProductoList
             productos={productos}
             onEdit={handleEdit}
+            onView={handleView}
             onDelete={async (id: string) => {
               await eliminar(id);
             }}
           />
         ) : null}
+
+        {/* Modal de Detalles */}
+        <ProductoDetailModal 
+          producto={productoVisualizando}
+          open={modalDetalleAbierto}
+          onOpenChange={setModalDetalleAbierto}
+        />
       </div>
     </ProtectedRoute>
   );

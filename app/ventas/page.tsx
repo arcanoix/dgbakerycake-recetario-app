@@ -9,6 +9,7 @@ import { useConfiguracion } from "@/hooks/useConfiguracion";
 import { usePlanAccess } from "@/hooks/usePlanAccess";
 import { OrdenForm } from "@/components/ventas/OrdenForm";
 import { OrdenList } from "@/components/ventas/OrdenList";
+import { OrdenDetailModal } from "@/components/ordenes/OrdenDetailModal";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -41,6 +42,8 @@ export default function VentasPage() {
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [ordenEditando, setOrdenEditando] = useState<Orden | undefined>();
+  const [ordenVisualizando, setOrdenVisualizando] = useState<Orden | null>(null);
+  const [modalDetalleAbierto, setModalDetalleAbierto] = useState(false);
 
   const puedeAcceder = canAccess("menu_ventas");
   const puedeCrear = canAccess("crear_ordenes");
@@ -73,6 +76,11 @@ export default function VentasPage() {
     setOrdenEditando(orden);
     setMostrarFormulario(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleVer = (orden: Orden) => {
+    setOrdenVisualizando(orden);
+    setModalDetalleAbierto(true);
   };
 
   const handleCancelar = () => {
@@ -269,11 +277,19 @@ export default function VentasPage() {
                 ordenes={ordenes}
                 cargando={cargando}
                 onEditar={handleEditar}
+                onVer={handleVer}
                 onEliminar={eliminar}
                 onCambiarEstado={cambiarEstado}
                 onExportarPDF={puedeExportarPDF ? handleExportarPDF : undefined}
                 puedeExportarPDF={puedeExportarPDF}
                 onCompartirWhatsApp={handleCompartirWhatsApp}
+              />
+
+              {/* Modal de Detalles */}
+              <OrdenDetailModal 
+                orden={ordenVisualizando}
+                open={modalDetalleAbierto}
+                onOpenChange={setModalDetalleAbierto}
               />
             </motion.div>
           )}

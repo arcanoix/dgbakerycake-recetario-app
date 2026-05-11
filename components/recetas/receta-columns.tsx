@@ -27,6 +27,7 @@ import {
 
 interface ColumnsProps {
   onEdit: (receta: Receta) => void;
+  onView?: (receta: Receta) => void;
   onDelete: (id: string) => void;
   onDuplicate: (receta: Receta) => void;
   onExportPDF: (receta: Receta) => void;
@@ -36,6 +37,7 @@ interface ColumnsProps {
 
 export const getRecetaColumns = ({
   onEdit,
+  onView,
   onDelete,
   onDuplicate,
   onExportPDF,
@@ -151,6 +153,15 @@ export const getRecetaColumns = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+            {onView && (
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => onView(receta)}
+              >
+                <Eye className="mr-2 h-4 w-4" />
+                Ver detalles
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem
               className="cursor-pointer"
               onClick={() => onEdit(receta)}

@@ -27,6 +27,7 @@ import { getProductoColumns } from "./producto-columns";
 interface ProductoListProps {
   productos: Producto[];
   onEdit: (producto: Producto) => void;
+  onView?: (producto: Producto) => void;
   onDelete: (id: string) => Promise<void>;
   emptyTitle?: string;
   emptyDescription?: string;
@@ -35,6 +36,7 @@ interface ProductoListProps {
 export const ProductoList = ({
   productos,
   onEdit,
+  onView,
   onDelete,
   emptyTitle = 'No hay productos registrados',
   emptyDescription = 'Crea tu primer producto para comenzar a gestionar tus costos de producción',
@@ -54,6 +56,7 @@ export const ProductoList = ({
 
   const columns = getProductoColumns({
     onEdit,
+    onView,
     onDelete: handleDelete,
     tasaCambio: configuracion?.tasaCambioUSD || 50,
     moneda: configuracion?.moneda || 'VES',

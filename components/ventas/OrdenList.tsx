@@ -59,6 +59,7 @@ interface OrdenListProps {
   ordenes: Orden[];
   cargando: boolean;
   onEditar: (orden: Orden) => void;
+  onVer?: (orden: Orden) => void;
   onEliminar: (id: string) => void;
   onCambiarEstado: (id: string, estado: EstadoOrden) => void;
   onExportarPDF?: (orden: Orden) => void;
@@ -70,6 +71,7 @@ export const OrdenList = ({
   ordenes,
   cargando,
   onEditar,
+  onVer,
   onEliminar,
   onCambiarEstado,
   onExportarPDF,
@@ -81,6 +83,7 @@ export const OrdenList = ({
 
   const columns = getOrdenColumns({
     onEdit: onEditar,
+    onView: onVer,
     onDelete: (id) => {
       setAccionEnCursoId(id);
       Promise.resolve(onEliminar(id)).finally(() => setAccionEnCursoId(null));

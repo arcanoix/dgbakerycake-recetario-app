@@ -80,7 +80,7 @@ const LogoFull = ({ size = "md", className }: { size?: "sm" | "md" | "lg"; class
           </span>
         </span>
         <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider leading-none">
-          Repostería
+          Gastronomía
         </span>
       </div>
     </div>

@@ -169,7 +169,7 @@ export const LandingPage = () => {
           >
             <Badge variant="secondary" className="px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary font-black text-[10px] tracking-[0.2em] uppercase">
               <Sparkles className="w-3 h-3 mr-2" />
-              SaaS para Repostería Profesional
+              SaaS para Gastronomía Profesional
             </Badge>
           </motion.div>
 
@@ -237,7 +237,7 @@ export const LandingPage = () => {
         <div className="container mx-auto px-6">
           <div className="text-center space-y-4 mb-16">
             <h2 className="text-3xl md:text-5xl font-black tracking-tight uppercase">Herramientas de Alto Nivel</h2>
-            <p className="text-muted-foreground font-medium max-w-xl mx-auto">Todo lo que necesitas para profesionalizar tu taller de repostería desde el día uno.</p>
+            <p className="text-muted-foreground font-medium max-w-xl mx-auto">Todo lo que necesitas para profesionalizar tu taller de gastronomía desde el día uno.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -408,7 +408,7 @@ export const LandingPage = () => {
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <div className="container mx-auto px-6 text-center space-y-10 relative z-10">
           <h2 className="text-4xl md:text-7xl font-black tracking-tighter uppercase leading-none">¿Listo para ser un repostero Pro?</h2>
-          <p className="text-lg md:text-xl font-bold opacity-80 max-w-xl mx-auto">Únete hoy a la comunidad que está transformando la repostería artesanal en negocios de alta rentabilidad.</p>
+          <p className="text-lg md:text-xl font-bold opacity-80 max-w-xl mx-auto">Únete hoy a la comunidad que está transformando la gastronomía artesanal en negocios de alta rentabilidad.</p>
           <Link href="/auth/register" className="mt-4">
             <Button size="lg" className="h-16 px-12 bg-background text-foreground hover:bg-background/90 font-black text-xs tracking-widest uppercase shadow-2xl">
               CREAR MI CUENTA GRATUITA

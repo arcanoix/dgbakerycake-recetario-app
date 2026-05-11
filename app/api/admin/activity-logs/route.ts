@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 import { z } from 'zod';
 
 const activityLogSchema = z.object({
-  action: z.enum(['create', 'update', 'delete', 'login', 'logout', 'view']),
+  action: z.enum(['create', 'update', 'delete', 'login', 'logout', 'view', 'error']),
   module: z.string().min(1).max(50),
   description: z.string().max(500).optional(),
   entity_id: z.string().max(100).optional(),

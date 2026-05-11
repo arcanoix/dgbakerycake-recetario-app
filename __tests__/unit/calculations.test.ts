@@ -3,6 +3,7 @@ import {
   calcularCostoMaterial,
   calcularCostoTotalMateriales,
   calcularCostoManoObra,
+  calcularCostoGastosFijos,
   calcularCostoTotalReceta,
   calcularPrecioVentaSugerido,
   calcularCostoPorPorcion,
@@ -61,9 +62,10 @@ const recetaBase: Receta = {
     },
   ],
   rendimiento: 8,
-  tiempoPreparacion: 0,
+  cantidadHoras: 0,
   costoPorHora: 0,
   costoManoObra: 0,
+  costoGastosFijos: 0,
   costoMateriales: 1.3,
   costoTotal: 1.3,
   margenGanancia: 30,
@@ -145,25 +147,57 @@ describe('calcularCostoTotalMateriales', () => {
 
 describe('calcularCostoManoObra', () => {
   it('calcula el costo de mano de obra correctamente', () => {
-    // 60 minutos * $10/hora = $10
-    expect(calcularCostoManoObra(60, 10)).toBeCloseTo(10);
+    // 1 hora * $10/hora = $10
+    expect(calcularCostoManoObra(1, 10)).toBeCloseTo(10);
   });
 
   it('calcula correctamente para tiempo parcial', () => {
-    // 30 minutos * $10/hora = $5
-    expect(calcularCostoManoObra(30, 10)).toBeCloseTo(5);
+    // 0.5 horas * $10/hora = $5
+    expect(calcularCostoManoObra(0.5, 10)).toBeCloseTo(5);
   });
 
-  it('retorna 0 cuando el tiempo es 0', () => {
+  it('retorna 0 cuando las horas son 0', () => {
     expect(calcularCostoManoObra(0, 10)).toBe(0);
   });
 
   it('retorna 0 cuando el costo por hora es 0', () => {
-    expect(calcularCostoManoObra(60, 0)).toBe(0);
+    expect(calcularCostoManoObra(2, 0)).toBe(0);
   });
 
-  it('retorna 0 cuando el tiempo es negativo', () => {
-    expect(calcularCostoManoObra(-30, 10)).toBe(0);
+  it('retorna 0 cuando las horas son negativas', () => {
+    expect(calcularCostoManoObra(-1, 10)).toBe(0);
+  });
+
+  it('calcula correctamente con múltiples horas', () => {
+    expect(calcularCostoManoObra(3, 15)).toBeCloseTo(45);
+  });
+});
+
+// ============================================
+// calcularCostoGastosFijos
+// ============================================
+
+describe('calcularCostoGastosFijos', () => {
+  it('calcula el costo de gastos fijos correctamente', () => {
+    // Total gastos mensuales $100 * 10% = $10
+    expect(calcularCostoGastosFijos(100, 10)).toBeCloseTo(10);
+  });
+
+  it('calcula correctamente con porcentaje decimal', () => {
+    // Total gastos mensuales $50 * 5.5% = $2.75
+    expect(calcularCostoGastosFijos(50, 5.5)).toBeCloseTo(2.75);
+  });
+
+  it('retorna 0 cuando el total de gastos es 0', () => {
+    expect(calcularCostoGastosFijos(0, 10)).toBe(0);
+  });
+
+  it('retorna 0 cuando el porcentaje es 0', () => {
+    expect(calcularCostoGastosFijos(100, 0)).toBe(0);
+  });
+
+  it('retorna 0 cuando ambos valores son negativos', () => {
+    expect(calcularCostoGastosFijos(-100, -10)).toBe(0);
   });
 });
 
@@ -172,16 +206,20 @@ describe('calcularCostoManoObra', () => {
 // ============================================
 
 describe('calcularCostoTotalReceta', () => {
-  it('suma el costo de materiales y mano de obra', () => {
-    expect(calcularCostoTotalReceta(10, 5)).toBeCloseTo(15);
+  it('suma el costo de materiales, mano de obra y gastos fijos', () => {
+    expect(calcularCostoTotalReceta(10, 5, 3)).toBeCloseTo(18);
   });
 
-  it('retorna el costo de materiales cuando la mano de obra es 0', () => {
-    expect(calcularCostoTotalReceta(10, 0)).toBeCloseTo(10);
+  it('retorna el costo de materiales cuando mano de obra y gastos fijos son 0', () => {
+    expect(calcularCostoTotalReceta(10, 0, 0)).toBeCloseTo(10);
   });
 
   it('funciona con valores decimales', () => {
-    expect(calcularCostoTotalReceta(1.35, 0.75)).toBeCloseTo(2.1);
+    expect(calcularCostoTotalReceta(1.35, 0.75, 0.50)).toBeCloseTo(2.6);
+  });
+
+  it('funciona sin gastos fijos (parámetro opcional)', () => {
+    expect(calcularCostoTotalReceta(10, 5)).toBeCloseTo(15);
   });
 });
 

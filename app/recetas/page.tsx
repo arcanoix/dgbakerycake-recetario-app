@@ -6,6 +6,7 @@ import { Receta, MaterialReceta } from "@/types";
 import { useRecetas } from "@/hooks/useRecetas";
 import { useProductos } from "@/hooks/useProductos";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
+import { useGastosFijos } from "@/hooks/useGastosFijos";
 import { usePlanAccess } from "@/hooks/usePlanAccess";
 import { MaterialSelector } from "@/components/recetas/MaterialSelector";
 import { DesgloseCostos } from "@/components/recetas/DesgloseCostos";
@@ -41,6 +42,7 @@ export default function RecetasPage() {
   const { recetas, cargando, error, errorCarga: errorCargaRecetas, crearReceta, actualizarReceta, eliminar, agregarMaterial, cargarRecetas } = useRecetas();
   const { productos, errorCarga: errorCargaProductos, cargarProductos } = useProductos();
   const { configuracion } = useConfiguracion();
+  const { totales } = useGastosFijos();
   const { getCurrentCount, getPlanDisplayName, getPlanName, cargando: cargandoPlan } = usePlanAccess();
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -50,6 +52,7 @@ export default function RecetasPage() {
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [categoria, setCategoria] = useState("");
+  const [cantidadHoras, setCantidadHoras] = useState(0);
   const [margenGanancia, setMargenGanancia] = useState(configuracion?.margenGananciaDefecto || 30);
   const [materiales, setMateriales] = useState<MaterialReceta[]>([]);
   const [guardando, setGuardando] = useState(false);
@@ -78,15 +81,20 @@ export default function RecetasPage() {
       nombre,
       descripcion,
       categoria,
+      cantidadHoras,
       margenGanancia,
     };
+
+    const costoPorHora = configuracion?.costoPorHoraDefecto || 0;
+    const totalGastosMensuales = totales.totalMontoMensual;
+    const porcentajeGastosFijos = configuracion?.porcentajeGastosFijos || 0;
 
     try {
       let exito = false;
       if (recetaEditando) {
-        exito = await actualizarReceta(recetaEditando.id, datos, materiales);
+        exito = await actualizarReceta(recetaEditando.id, datos, materiales, costoPorHora, totalGastosMensuales, porcentajeGastosFijos);
       } else {
-        exito = await crearReceta(datos, materiales);
+        exito = await crearReceta(datos, materiales, costoPorHora, totalGastosMensuales, porcentajeGastosFijos);
       }
 
       if (exito) {
@@ -101,6 +109,7 @@ export default function RecetasPage() {
     setNombre("");
     setDescripcion("");
     setCategoria("");
+    setCantidadHoras(0);
     setMargenGanancia(configuracion?.margenGananciaDefecto || 30);
     setMateriales([]);
     setMostrarFormulario(false);
@@ -111,6 +120,7 @@ export default function RecetasPage() {
     setNombre(receta.nombre);
     setDescripcion(receta.descripcion);
     setCategoria(receta.categoria || "");
+    setCantidadHoras(receta.cantidadHoras || 0);
     setMargenGanancia(receta.margenGanancia || 0);
     setMateriales(receta.materiales);
   };
@@ -130,14 +140,16 @@ export default function RecetasPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const costoPorHora = configuracion?.costoPorHoraDefecto || 0;
   const desglose = materiales.length > 0 ? generarDesgloseCostos({
     id: "temp",
     nombre,
     descripcion,
     materiales,
-    tiempoPreparacion: 0,
-    costoPorHora: 0,
+    cantidadHoras,
+    costoPorHora,
     costoManoObra: 0,
+    costoGastosFijos: 0,
     costoMateriales: 0,
     costoTotal: 0,
     margenGanancia,
@@ -284,7 +296,7 @@ export default function RecetasPage() {
                         <Label htmlFor="descripcion" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Descripción o Instrucciones *</Label>
                         <Textarea id="descripcion" value={descripcion} onChange={(e) => setDescripcion(e.target.value)} required placeholder="Describe brevemente la receta o añade pasos importantes..." className="min-h-[100px] resize-none" />
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="categoria" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Categoría</Label>
                           <select 
@@ -298,9 +310,16 @@ export default function RecetasPage() {
                           </select>
                         </div>
                         <div className="space-y-2">
+                          <Label htmlFor="cantidadHoras" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Horas Mano Obra</Label>
+                          <div className="relative">
+                            <Input id="cantidadHoras" type="number" step="0.5" min="0" value={cantidadHoras} onChange={(e) => setCantidadHoras(parseFloat(e.target.value) || 0)} className="h-11 pr-8" />
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold">h</span>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
                           <Label htmlFor="margen" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Margen de Ganancia (%)</Label>
                           <div className="relative">
-                            <Input id="margen" type="number" step="0.01" value={margenGanancia} onChange={(e) => setMargenGanancia(parseFloat(e.target.value))} className="h-11 pr-8" />
+                            <Input id="margen" type="number" step="0.01" value={margenGanancia} onChange={(e) => setMargenGanancia(parseFloat(e.target.value) || 0)} className="h-11 pr-8" />
                             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold">%</span>
                           </div>
                         </div>

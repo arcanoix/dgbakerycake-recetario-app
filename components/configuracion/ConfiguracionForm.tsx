@@ -41,6 +41,7 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
     moneda: "USD",
     margenGananciaDefecto: 0,
     tasaCambioUSD: 0,
+    porcentajeGastosFijos: 0,
   });
 
   const [guardado, setGuardado] = useState(false);
@@ -53,6 +54,7 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
         moneda: configuracion.moneda,
         margenGananciaDefecto: configuracion.margenGananciaDefecto || 0,
         tasaCambioUSD: configuracion.tasaCambioUSD || 0,
+        porcentajeGastosFijos: configuracion.porcentajeGastosFijos || 0,
       });
     }
   }, [configuracion]);
@@ -228,9 +230,9 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-6 pt-4 border-t hidden">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t">
                   <div className="space-y-3">
-                    <Label htmlFor="costoHora" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Costo de Mano de Obra por Hora (Defecto)</Label>
+                    <Label htmlFor="costoHora" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Costo de Mano de Obra por Hora</Label>
                     <div className="relative">
                       <Input
                         id="costoHora"
@@ -243,8 +245,29 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
                       />
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-sm">{formData.moneda}</span>
                     </div>
-                    <p className="text-[10px] text-muted-foreground font-medium px-1 italic">
-                      Nota: Actualmente este valor no se utiliza en los cálculos automáticos de recetas (solo insumos).
+                    <p className="text-[10px] text-muted-foreground font-medium px-1">
+                      Se multiplica por las horas de trabajo de cada receta.
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label htmlFor="porcentajeGastosFijos" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Porcentaje de Gastos Fijos (%)</Label>
+                    <div className="relative">
+                      <Input
+                        id="porcentajeGastosFijos"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        max="100"
+                        value={formData.porcentajeGastosFijos || ""}
+                        onChange={(e) => handleValueChange("porcentajeGastosFijos", parseFloat(e.target.value) || 0)}
+                        placeholder="0.00"
+                        className="h-12 pr-12 bg-white"
+                      />
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-sm">%</span>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground font-medium px-1">
+                      Porcentaje del costo total a asignar como gastos fijos.
                     </p>
                   </div>
                 </div>

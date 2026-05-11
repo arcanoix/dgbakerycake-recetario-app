@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
 import { PrecioDual } from "@/components/ui/precio-dual";
+import { formatearMoneda } from "@/lib/constants";
 import { 
   Download, 
   Edit2, 
@@ -181,9 +182,9 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView, onDuplicate }: R
                       
                       <div className="h-px bg-border/50" />
                       
-                      <div className="grid grid-cols-2 gap-3 text-center">
-                        <div className="space-y-1">
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase">Costo Insumos</p>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-[10px] font-bold text-muted-foreground uppercase">Insumos</span>
                           <PrecioDual 
                             valorUSD={receta.costoMateriales} 
                             tasaCambio={configuracion?.tasaCambioUSD || 50}
@@ -191,13 +192,28 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView, onDuplicate }: R
                             className="text-xs font-bold"
                           />
                         </div>
-                        <div className="space-y-1 border-l">
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase">Costo Total</p>
+                        {receta.costoManoObra > 0 && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-[10px] font-bold text-muted-foreground uppercase">Mano Obra</span>
+                            <span className="text-xs font-bold text-muted-foreground">
+                              {receta.cantidadHoras}h × {formatearMoneda(receta.costoPorHora, configuracion?.moneda, configuracion?.tasaCambioUSD || 50)}/h
+                            </span>
+                            <PrecioDual 
+                              valorUSD={receta.costoManoObra} 
+                              tasaCambio={configuracion?.tasaCambioUSD || 50}
+                              monedaPorDefecto={configuracion?.moneda || 'VES'}
+                              className="text-xs font-bold"
+                            />
+                          </div>
+                        )}
+                        <div className="h-px bg-border/50" />
+                        <div className="flex justify-between items-center">
+                          <span className="text-[10px] font-bold text-primary uppercase">Costo Total</span>
                           <PrecioDual 
                             valorUSD={receta.costoTotal} 
                             tasaCambio={configuracion?.tasaCambioUSD || 50}
                             monedaPorDefecto={configuracion?.moneda || 'VES'}
-                            className="text-xs font-bold text-violet-600"
+                            className="text-sm font-black text-primary"
                           />
                         </div>
                       </div>

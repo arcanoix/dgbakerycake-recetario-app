@@ -59,6 +59,7 @@ export type Database = {
           tiempo_preparacion: number;
           costo_por_hora: number;
           costo_mano_obra: number;
+          costo_gastos_fijos: number;
           costo_materiales: number;
           costo_total: number;
           margen_ganancia: number | null;
@@ -79,6 +80,7 @@ export type Database = {
           tiempo_preparacion: number;
           costo_por_hora: number;
           costo_mano_obra: number;
+          costo_gastos_fijos?: number;
           costo_materiales: number;
           costo_total: number;
           margen_ganancia?: number | null;
@@ -99,6 +101,7 @@ export type Database = {
           tiempo_preparacion?: number;
           costo_por_hora?: number;
           costo_mano_obra?: number;
+          costo_gastos_fijos?: number;
           costo_materiales?: number;
           costo_total?: number;
           margen_ganancia?: number | null;
@@ -115,6 +118,7 @@ export type Database = {
           costo_por_hora_defecto: number;
           moneda: string;
           margen_ganancia_defecto: number;
+          porcentaje_gastos_fijos: number | null;
           created_at: string;
           updated_at: string;
         };
@@ -123,6 +127,7 @@ export type Database = {
           costo_por_hora_defecto: number;
           moneda: string;
           margen_ganancia_defecto: number;
+          porcentaje_gastos_fijos?: number | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -131,6 +136,7 @@ export type Database = {
           costo_por_hora_defecto?: number;
           moneda?: string;
           margen_ganancia_defecto?: number;
+          porcentaje_gastos_fijos?: number | null;
           updated_at?: string;
         };
       };

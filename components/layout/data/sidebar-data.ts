@@ -13,6 +13,7 @@ import {
   Ruler,
   ShieldCheck,
   PenTool,
+  DollarSign,
 } from "lucide-react";
 
 export interface NavItem {
@@ -55,6 +56,12 @@ export const sidebarData = {
       title: "Recetas",
       href: "/recetas",
       icon: FileText,
+      requiredFeature: "menu_recetas",
+    },
+    {
+      title: "Gastos Fijos",
+      href: "/gastos-fijos",
+      icon: DollarSign,
       requiredFeature: "menu_recetas",
     },
     {

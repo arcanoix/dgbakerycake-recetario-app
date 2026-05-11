@@ -55,6 +55,35 @@ export const DesgloseCostos = ({ desglose }: DesgloseCostosProps) => {
             </span>
           </div>
 
+          {desglose.costoManoObra > 0 && (
+            <div className="flex justify-between items-center p-3 rounded-xl border bg-muted/20">
+              <div className="flex items-center gap-2">
+                <Calculator className="w-4 h-4 text-muted-foreground" />
+                <div className="flex flex-col">
+                  <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Mano de Obra</span>
+                  <span className="text-[10px] text-muted-foreground font-medium">
+                    ({formatearNumero(desglose.cantidadHoras || 0)}h × {formatearMoneda(desglose.costoPorHora || 0, configuracion?.moneda, tasaCambio)}/h)
+                  </span>
+                </div>
+              </div>
+              <span className="font-bold text-lg">
+                {formatearMoneda(desglose.costoManoObra, configuracion?.moneda, tasaCambio)}
+              </span>
+            </div>
+          )}
+
+          {desglose.costoGastosFijos > 0 && (
+            <div className="flex justify-between items-center p-3 rounded-xl border bg-muted/20">
+              <div className="flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Gastos Fijos</span>
+              </div>
+              <span className="font-bold text-lg">
+                {formatearMoneda(desglose.costoGastosFijos, configuracion?.moneda, tasaCambio)}
+              </span>
+            </div>
+          )}
+
           <div className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-violet-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
             <div className="relative flex justify-between items-center p-5 bg-card rounded-2xl border-2 border-primary/20 shadow-sm">

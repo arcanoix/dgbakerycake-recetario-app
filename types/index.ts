@@ -149,14 +149,17 @@ export interface Receta {
   rendimiento?: number;
   unidadRendimiento?: string;
   
-  // Mano de Obra (campos mantenidos por compatibilidad, siempre en 0)
-  tiempoPreparacion: number; // Siempre 0 - no se usa
-  costoPorHora: number; // Siempre 0 - no se usa
-  costoManoObra: number; // Siempre 0 - no se calcula
+  // Mano de Obra
+  cantidadHoras: number; // Horas de trabajo para la receta
+  costoPorHora: number; // Costo por hora desde configuración
+  costoManoObra: number; // Calculado: cantidadHoras * costoPorHora
+  
+  // Gastos Fijos
+  costoGastosFijos: number; // Calculado: suma(montosMensualesGastosFijos) * porcentajeGastosFijos
   
   // Costos
   costoMateriales: number; // Calculado: suma de todos los costoMaterial
-  costoTotal: number; // Igual a costoMateriales (no incluye mano de obra)
+  costoTotal: number; // Calculado: costoMateriales + costoManoObra + costoGastosFijos
   
   // Precio de Venta
   margenGanancia?: number; // Porcentaje
@@ -175,6 +178,7 @@ export interface RecetaFormData {
   descripcion: string;
   rendimiento?: number;
   unidadRendimiento?: string;
+  cantidadHoras?: number;
   margenGanancia?: number;
   categoria?: string;
   imagen?: string;
@@ -191,6 +195,7 @@ export interface ConfiguracionGlobal {
   moneda: string;
   margenGananciaDefecto?: number;
   tasaCambioUSD?: number;
+  porcentajeGastosFijos?: number;
   ultimaActualizacion: Date;
 }
 
@@ -199,6 +204,7 @@ export interface ConfiguracionFormData {
   moneda: string;
   margenGananciaDefecto?: number;
   tasaCambioUSD?: number;
+  porcentajeGastosFijos?: number;
 }
 
 // ============================================
@@ -218,7 +224,10 @@ export interface CalculoCostoMaterial {
 export interface DesgloseCostos {
   costoMateriales: number;
   costoManoObra: number;
+  costoGastosFijos: number;
   costoTotal: number;
+  cantidadHoras?: number;
+  costoPorHora?: number;
   margenGanancia?: number;
   precioVentaSugerido?: number;
   detallesMateriales: {
@@ -427,4 +436,31 @@ export interface ConfigStockProducto {
 export interface ConfigStockFormData {
   productoId: string;
   stockMinimo: number;
+}
+
+// ============================================
+// TIPOS DE GASTOS FIJOS
+// ============================================
+
+export interface GastoFijo {
+  id: string;
+  userId: string;
+  nombre: string;
+  montoMensual: number;
+  unidadesEstimadas: number;
+  costoAsignado: number; // Calculado: montoMensual / unidadesEstimadas
+  porcentajeDistribucion: number; // Calculado: costoAsignado / totalCostoAsignado
+  fechaCreacion: Date;
+  fechaActualizacion: Date;
+}
+
+export interface GastoFijoFormData {
+  nombre: string;
+  montoMensual: number;
+  unidadesEstimadas: number;
+}
+
+export interface TotalesGastosFijos {
+  totalMontoMensual: number;
+  totalCostoAsignado: number;
 }

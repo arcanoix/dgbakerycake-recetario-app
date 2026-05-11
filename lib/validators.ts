@@ -52,6 +52,11 @@ export const RecetaFormSchema = z.object({
     .string()
     .max(100, 'La unidad de rendimiento no puede superar 100 caracteres')
     .optional(),
+  cantidadHoras: z
+    .number()
+    .min(0, 'La cantidad de horas no puede ser negativa')
+    .max(999.99, 'La cantidad de horas no puede superar 999.99')
+    .optional(),
   margenGanancia: z
     .number()
     .min(0, 'El margen de ganancia no puede ser negativo')
@@ -237,7 +242,33 @@ export const ConfiguracionFormSchema = z.object({
     .number()
     .positive('La tasa de cambio debe ser mayor a 0')
     .optional(),
+  porcentajeGastosFijos: z
+    .number()
+    .min(0, 'El porcentaje de gastos fijos no puede ser negativo')
+    .max(100, 'El porcentaje de gastos fijos no puede superar 100%')
+    .optional(),
 });
 
 export type ConfiguracionFormSchemaType = z.infer<typeof ConfiguracionFormSchema>;
+
+// ============================================
+// GASTOS FIJOS
+// ============================================
+
+export const GastoFijoFormSchema = z.object({
+  nombre: z
+    .string()
+    .min(1, 'El nombre es requerido')
+    .max(100, 'El nombre no puede superar 100 caracteres'),
+  montoMensual: z
+    .number()
+    .min(0, 'El monto mensual no puede ser negativo')
+    .max(999999.99, 'El monto mensual no puede superar 999,999.99'),
+  unidadesEstimadas: z
+    .number()
+    .positive('Las unidades estimadas deben ser mayor a 0')
+    .max(999999.99, 'Las unidades estimadas no pueden superar 999,999.99'),
+});
+
+export type GastoFijoFormSchemaType = z.infer<typeof GastoFijoFormSchema>;
 

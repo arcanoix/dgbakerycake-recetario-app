@@ -113,33 +113,47 @@ export const exportarRecetaPDF = (
 
   // Totals Section
   const rightColX = 140;
+
+  const totales: { label: string, bsv: number, isSubtotal?: boolean, isTotal?: boolean, isMargin?: boolean }[] = [
+    { label: "Costo Insumos:", bsv: receta.costoMateriales },
+  ];
+
+  if (receta.costoManoObra && receta.costoManoObra > 0) {
+    totales.push({ label: "Mano de Obra:", bsv: receta.costoManoObra });
+  }
+
+  totales.push({ label: "Costo Total:", bsv: receta.costoTotal, isSubtotal: true });
+
+  if (receta.margenGanancia) {
+    totales.push({ label: `Margen (${receta.margenGanancia}%):`, bsv: receta.costoTotal * (receta.margenGanancia / 100), isMargin: true });
+  }
+
+  if (receta.precioVentaSugerido) {
+    totales.push({ label: "Precio Sugerido:", bsv: receta.precioVentaSugerido, isTotal: true });
+  }
+
+  // Calculate box height dynamically based on the elements and spacing
+  let boxHeight = 6; // Base padding
+  totales.forEach((t) => {
+    if (t.isSubtotal || t.isTotal) {
+      boxHeight += 11; // 8 for text + 3 extra space
+    } else {
+      boxHeight += 8;
+    }
+  });
   
   // Dibuja una caja elegante para los totales
   doc.setFillColor(248, 250, 252); // slate-50
   doc.setDrawColor(lineColor[0], lineColor[1], lineColor[2]);
-  doc.roundedRect(60, finalY - 8, 136, 45, 2, 2, 'FD');
+  doc.roundedRect(60, finalY - 8, 136, boxHeight, 2, 2, 'FD');
 
-  const totales = [
-    { label: "Costo Materiales:", bsv: receta.costoMateriales },
-  ];
-
-  if (receta.margenGanancia) {
-    totales.push({ label: `Margen (${receta.margenGanancia}%):`, bsv: receta.costoTotal * (receta.margenGanancia / 100) });
-  }
-
-  totales.push({ label: "Costo Total:", bsv: receta.costoTotal });
-
-  if (receta.precioVentaSugerido) {
-    totales.push({ label: "Precio Sugerido:", bsv: receta.precioVentaSugerido });
-  }
-
-  totales.forEach((total, index) => {
-    const isBold = index >= totales.length - 2;
+  totales.forEach((total) => {
+    const isBold = total.isSubtotal || total.isTotal;
     doc.setFontSize(isBold ? 11 : 10);
     doc.setFont("helvetica", isBold ? "bold" : "normal");
     
     // Y-spacing rules
-    if (isBold && index === totales.length - 2) {
+    if (isBold) {
       finalY += 3; // Extra space before total
       doc.setDrawColor(lineColor[0], lineColor[1], lineColor[2]);
       doc.line(65, finalY - 6, 191, finalY - 6);

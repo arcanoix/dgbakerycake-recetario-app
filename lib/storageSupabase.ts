@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { Producto, Receta, ConfiguracionGlobal, UnidadMedidaAdmin, CategoriaAdmin } from '@/types';
+import { Producto, Receta, ConfiguracionGlobal, UnidadMedidaAdmin, CategoriaAdmin, GastoFijo, TotalesGastosFijos } from '@/types';
 import { registrarActividad, registrarErrorSistema } from './subscriptionStorage';
 import {
   ProductoFormSchema,
@@ -7,6 +7,7 @@ import {
   ConfiguracionFormSchema,
   UnidadMedidaFormSchema,
   CategoriaFormSchema,
+  GastoFijoFormSchema,
 } from './validators';
 import { sanitizeStringFields } from './sanitize';
 
@@ -159,6 +160,12 @@ export const obtenerRecetaPorId = async (id: string): Promise<Receta | null> => 
 };
 
 export const guardarReceta = async (receta: Receta) => {
+  // Obtener usuario autenticado (necesario para satisfacer las políticas RLS)
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return { exitoso: false, error: 'Usuario no autenticado' };
+  }
+
   // Validate and sanitize user-supplied text fields before writing to Supabase
   const sanitized = sanitizeStringFields({
     nombre: receta.nombre,
@@ -172,6 +179,7 @@ export const guardarReceta = async (receta: Receta) => {
   const parsed = RecetaFormSchema.safeParse({
     ...sanitized,
     rendimiento: receta.rendimiento,
+    cantidadHoras: receta.cantidadHoras,
     margenGanancia: receta.margenGanancia,
   });
   if (!parsed.success) {
@@ -182,7 +190,7 @@ export const guardarReceta = async (receta: Receta) => {
   const recetaData = mapRecetaToDB({
     ...receta,
     ...parsed.data,
-  });
+  }, user.id);
 
   // Verificar si existe
   const { data: existing } = await supabase
@@ -192,19 +200,25 @@ export const guardarReceta = async (receta: Receta) => {
     .maybeSingle();
 
   if (existing) {
-    // Actualizar
-    const { error } = await supabase
+    // Actualizar — excluir fecha_creacion y user_id para no pisar valores originales
+    const { id: _id, fecha_creacion: _fc, user_id: _uid, ...updatePayload } = recetaData;
+    const { data: updated, error } = await supabase
       .from('recetas')
-      .update(recetaData)
-      .eq('id', receta.id);
+      .update(updatePayload)
+      .eq('id', receta.id)
+      .select('id');
 
     if (error) {
       registrarErrorSistema(`Error al actualizar receta: ${String(error)}`).catch(() => {});
       return { exitoso: false, error: error.message };
     }
+    if (!updated || updated.length === 0) {
+      registrarErrorSistema(`UPDATE de receta sin filas afectadas: id=${receta.id}`).catch(() => {});
+      return { exitoso: false, error: 'No se pudo actualizar la receta. Verifica que tienes permiso para editarla.' };
+    }
     registrarActividad('update', 'recetas', `Receta actualizada: ${receta.nombre}`, receta.id, receta.nombre);
   } else {
-    // Insertar
+    // Insertar (incluye user_id para satisfacer RLS INSERT policy)
     const { error } = await supabase
       .from('recetas')
       .insert([recetaData]);
@@ -395,9 +409,10 @@ function mapRecetaFromDB(data: any): Receta {
     materiales: data.materiales || [],
     rendimiento: data.rendimiento ? parseFloat(data.rendimiento) : undefined,
     unidadRendimiento: data.unidad_rendimiento || undefined,
-    tiempoPreparacion: data.tiempo_preparacion,
+    cantidadHoras: parseFloat(data.tiempo_preparacion || 0),
     costoPorHora: parseFloat(data.costo_por_hora),
     costoManoObra: parseFloat(data.costo_mano_obra),
+    costoGastosFijos: parseFloat(data.costo_gastos_fijos || 0),
     costoMateriales: parseFloat(data.costo_materiales),
     costoTotal: parseFloat(data.costo_total),
     margenGanancia: data.margen_ganancia ? parseFloat(data.margen_ganancia) : undefined,
@@ -410,7 +425,7 @@ function mapRecetaFromDB(data: any): Receta {
   };
 }
 
-function mapRecetaToDB(receta: Receta) {
+function mapRecetaToDB(receta: Receta, userId?: string) {
   return {
     id: receta.id,
     nombre: receta.nombre,
@@ -418,9 +433,10 @@ function mapRecetaToDB(receta: Receta) {
     materiales: receta.materiales,
     rendimiento: receta.rendimiento || null,
     unidad_rendimiento: receta.unidadRendimiento || null,
-    tiempo_preparacion: receta.tiempoPreparacion,
+    tiempo_preparacion: receta.cantidadHoras || 0,
     costo_por_hora: receta.costoPorHora,
     costo_mano_obra: receta.costoManoObra,
+    costo_gastos_fijos: receta.costoGastosFijos || 0,
     costo_materiales: receta.costoMateriales,
     costo_total: receta.costoTotal,
     margen_ganancia: receta.margenGanancia || null,
@@ -430,6 +446,7 @@ function mapRecetaToDB(receta: Receta) {
     notas: receta.notas || null,
     fecha_creacion: receta.fechaCreacion.toISOString(),
     fecha_actualizacion: receta.fechaActualizacion.toISOString(),
+    ...(userId ? { user_id: userId } : {}),
   };
 }
 
@@ -440,6 +457,7 @@ function mapConfiguracionFromDB(data: any): ConfiguracionGlobal {
     moneda: data.moneda,
     margenGananciaDefecto: parseFloat(data.margen_ganancia_defecto),
     tasaCambioUSD: data.tasa_cambio_usd ? parseFloat(data.tasa_cambio_usd) : undefined,
+    porcentajeGastosFijos: data.porcentaje_gastos_fijos ? parseFloat(data.porcentaje_gastos_fijos) : undefined,
     ultimaActualizacion: new Date(data.updated_at),
   };
 }
@@ -450,6 +468,7 @@ function mapConfiguracionToDB(config: ConfiguracionGlobal) {
     moneda: config.moneda,
     margen_ganancia_defecto: config.margenGananciaDefecto,
     tasa_cambio_usd: config.tasaCambioUSD || null,
+    porcentaje_gastos_fijos: config.porcentajeGastosFijos || null,
   };
 }
 
@@ -713,6 +732,157 @@ function mapCategoriaHaciaBD(categoria: CategoriaAdmin, userId: string): any {
     activo: categoria.activo,
     created_at: categoria.fechaCreacion.toISOString(),
     updated_at: categoria.fechaActualizacion.toISOString(),
+  };
+}
+
+// ============================================
+// GASTOS FIJOS
+// ============================================
+
+export const obtenerGastosFijos = async (): Promise<GastoFijo[]> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data, error } = await supabase
+    .from('gastos_fijos')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('nombre', { ascending: true });
+
+  if (error) {
+    registrarErrorSistema(`Error al obtener gastos fijos: ${String(error)}`).catch(() => {});
+    throw error;
+  }
+
+  return (data || []).map(mapGastoFijoFromDB);
+};
+
+export const obtenerGastoFijoPorId = async (id: string): Promise<GastoFijo | null> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from('gastos_fijos')
+    .select('*')
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .single();
+
+  if (error) {
+    if (error.code !== 'PGRST116') {
+      registrarErrorSistema(`Error al obtener gasto fijo: ${String(error)}`).catch(() => {});
+    }
+    return null;
+  }
+
+  return data ? mapGastoFijoFromDB(data) : null;
+};
+
+export const guardarGastoFijo = async (gastoFijo: GastoFijo) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { exitoso: false, error: 'Usuario no autenticado' };
+
+  const sanitized = sanitizeStringFields({
+    nombre: gastoFijo.nombre,
+  });
+
+  const parsed = GastoFijoFormSchema.safeParse({
+    nombre: sanitized.nombre,
+    montoMensual: gastoFijo.montoMensual,
+    unidadesEstimadas: gastoFijo.unidadesEstimadas,
+  });
+
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0]?.message ?? 'Datos de gasto fijo inválidos';
+    return { exitoso: false, error: msg };
+  }
+
+  const gastoFijoData = {
+    id: gastoFijo.id,
+    user_id: user.id,
+    nombre: parsed.data.nombre,
+    monto_mensual: parsed.data.montoMensual,
+    unidades_estimadas: parsed.data.unidadesEstimadas,
+  };
+
+  const { data: existing } = await supabase
+    .from('gastos_fijos')
+    .select('id')
+    .eq('id', gastoFijo.id)
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  if (existing) {
+    const { error } = await supabase
+      .from('gastos_fijos')
+      .update(gastoFijoData)
+      .eq('id', gastoFijo.id)
+      .eq('user_id', user.id);
+
+    if (error) {
+      registrarErrorSistema(`Error al actualizar gasto fijo: ${String(error)}`).catch(() => {});
+      return { exitoso: false, error: error.message };
+    }
+    registrarActividad('update', 'gastos_fijos', `Gasto fijo actualizado: ${gastoFijo.nombre}`, gastoFijo.id, gastoFijo.nombre);
+  } else {
+    const { error } = await supabase
+      .from('gastos_fijos')
+      .insert([gastoFijoData]);
+
+    if (error) {
+      registrarErrorSistema(`Error al crear gasto fijo: ${String(error)}`).catch(() => {});
+      return { exitoso: false, error: error.message };
+    }
+    registrarActividad('create', 'gastos_fijos', `Gasto fijo creado: ${gastoFijo.nombre}`, gastoFijo.id, gastoFijo.nombre);
+  }
+
+  return { exitoso: true };
+};
+
+export const eliminarGastoFijo = async (id: string) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { exitoso: false, error: 'Usuario no autenticado' };
+
+  const { error } = await supabase
+    .from('gastos_fijos')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', user.id);
+
+  if (error) {
+    registrarErrorSistema(`Error al eliminar gasto fijo: ${String(error)}`).catch(() => {});
+    return { exitoso: false, error: error.message };
+  }
+
+  registrarActividad('delete', 'gastos_fijos', `Gasto fijo eliminado: ${id}`, id);
+  return { exitoso: true };
+};
+
+export const calcularTotalesGastosFijos = (gastosFijos: GastoFijo[]): TotalesGastosFijos => {
+  const totalMontoMensual = gastosFijos.reduce((sum, gf) => sum + gf.montoMensual, 0);
+  const totalCostoAsignado = gastosFijos.reduce((sum, gf) => sum + gf.costoAsignado, 0);
+
+  return {
+    totalMontoMensual,
+    totalCostoAsignado,
+  };
+};
+
+function mapGastoFijoFromDB(data: any): GastoFijo {
+  const montoMensual = parseFloat(data.monto_mensual);
+  const unidadesEstimadas = parseFloat(data.unidades_estimadas);
+  const costoAsignado = unidadesEstimadas > 0 ? montoMensual / unidadesEstimadas : 0;
+
+  return {
+    id: data.id,
+    userId: data.user_id,
+    nombre: data.nombre,
+    montoMensual,
+    unidadesEstimadas,
+    costoAsignado,
+    porcentajeDistribucion: 0, // Se calculará en el frontend con el total
+    fechaCreacion: new Date(data.created_at),
+    fechaActualizacion: new Date(data.updated_at),
   };
 }
 

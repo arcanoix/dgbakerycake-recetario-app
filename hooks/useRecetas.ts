@@ -17,6 +17,7 @@ import {
   calcularCostoMaterialConConversion,
   calcularCostoTotalMateriales,
   calcularCostoManoObra,
+  calcularCostoGastosFijos,
   calcularCostoTotalReceta,
   calcularPrecioVentaSugerido,
 } from "@/lib/calculations";
@@ -66,11 +67,16 @@ export const useRecetas = () => {
 
   const calcularCostosReceta = (
     materiales: MaterialReceta[],
+    cantidadHoras: number,
+    costoPorHora: number,
+    totalGastosMensuales: number,
+    porcentajeGastosFijos: number,
     margenGanancia?: number
   ) => {
     const costoMateriales = calcularCostoTotalMateriales(materiales);
-    const costoManoObra = 0;
-    const costoTotal = costoMateriales;
+    const costoManoObra = calcularCostoManoObra(cantidadHoras, costoPorHora);
+    const costoGastosFijos = calcularCostoGastosFijos(totalGastosMensuales, porcentajeGastosFijos);
+    const costoTotal = calcularCostoTotalReceta(costoMateriales, costoManoObra, costoGastosFijos);
     const precioVentaSugerido = margenGanancia
       ? calcularPrecioVentaSugerido(costoTotal, margenGanancia)
       : undefined;
@@ -78,6 +84,7 @@ export const useRecetas = () => {
     return {
       costoMateriales,
       costoManoObra,
+      costoGastosFijos,
       costoTotal,
       precioVentaSugerido,
     };
@@ -85,7 +92,10 @@ export const useRecetas = () => {
 
   const crearReceta = async (
     datos: RecetaFormData,
-    materiales: MaterialReceta[]
+    materiales: MaterialReceta[],
+    costoPorHoraConfig: number = 0,
+    totalGastosMensuales: number = 0,
+    porcentajeGastosFijos: number = 0
   ): Promise<boolean> => {
     try {
       // Verificar límite de recetas según el plan
@@ -95,8 +105,13 @@ export const useRecetas = () => {
         return false;
       }
 
+      const cantidadHoras = datos.cantidadHoras || 0;
       const costos = calcularCostosReceta(
         materiales,
+        cantidadHoras,
+        costoPorHoraConfig,
+        totalGastosMensuales,
+        porcentajeGastosFijos,
         datos.margenGanancia
       );
 
@@ -107,9 +122,10 @@ export const useRecetas = () => {
         materiales,
         rendimiento: datos.rendimiento,
         unidadRendimiento: datos.unidadRendimiento,
-        tiempoPreparacion: 0,
-        costoPorHora: 0,
-        costoManoObra: 0,
+        cantidadHoras,
+        costoPorHora: costoPorHoraConfig,
+        costoManoObra: costos.costoManoObra,
+        costoGastosFijos: costos.costoGastosFijos,
         costoMateriales: costos.costoMateriales,
         costoTotal: costos.costoTotal,
         margenGanancia: datos.margenGanancia,
@@ -146,7 +162,10 @@ export const useRecetas = () => {
   const actualizarReceta = async (
     id: string,
     datos: RecetaFormData,
-    materiales: MaterialReceta[]
+    materiales: MaterialReceta[],
+    costoPorHoraConfig: number = 0,
+    totalGastosMensuales: number = 0,
+    porcentajeGastosFijos: number = 0
   ): Promise<boolean> => {
     try {
       const recetaExistente = await obtenerRecetaPorId(id);
@@ -155,8 +174,13 @@ export const useRecetas = () => {
         return false;
       }
 
+      const cantidadHoras = datos.cantidadHoras || 0;
       const costos = calcularCostosReceta(
         materiales,
+        cantidadHoras,
+        costoPorHoraConfig,
+        totalGastosMensuales,
+        porcentajeGastosFijos,
         datos.margenGanancia
       );
 
@@ -167,9 +191,10 @@ export const useRecetas = () => {
         materiales,
         rendimiento: datos.rendimiento,
         unidadRendimiento: datos.unidadRendimiento,
-        tiempoPreparacion: 0,
-        costoPorHora: 0,
-        costoManoObra: 0,
+        cantidadHoras,
+        costoPorHora: costoPorHoraConfig,
+        costoManoObra: costos.costoManoObra,
+        costoGastosFijos: costos.costoGastosFijos,
         costoMateriales: costos.costoMateriales,
         costoTotal: costos.costoTotal,
         margenGanancia: datos.margenGanancia,

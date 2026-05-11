@@ -124,17 +124,16 @@ export const calcularCostoTotalMateriales = (
 // ============================================
 
 /**
- * Calcula el costo de mano de obra basado en tiempo y tarifa por hora
+ * Calcula el costo de mano de obra basado en horas y tarifa por hora
  */
 export const calcularCostoManoObra = (
-  tiempoPreparacionMinutos: number,
+  cantidadHoras: number,
   costoPorHora: number
 ): number => {
-  if (tiempoPreparacionMinutos <= 0 || costoPorHora <= 0) return 0;
+  if (cantidadHoras <= 0 || costoPorHora <= 0) return 0;
   
-  // Convertir minutos a horas y multiplicar por costo por hora
-  const horas = tiempoPreparacionMinutos / 60;
-  return horas * costoPorHora;
+  // Multiplicar horas por costo por hora
+  return cantidadHoras * costoPorHora;
 };
 
 // ============================================
@@ -142,13 +141,27 @@ export const calcularCostoManoObra = (
 // ============================================
 
 /**
- * Calcula el costo total de una receta (materiales + mano de obra)
+ * Calcula el costo de gastos fijos basado en el total de gastos mensuales y el porcentaje
+ */
+export const calcularCostoGastosFijos = (
+  totalGastosMensuales: number,
+  porcentajeGastosFijos: number
+): number => {
+  if (totalGastosMensuales <= 0 || porcentajeGastosFijos <= 0) return 0;
+  
+  // Costo gastos fijos = Total gastos mensuales * (Porcentaje / 100)
+  return totalGastosMensuales * (porcentajeGastosFijos / 100);
+};
+
+/**
+ * Calcula el costo total de una receta (materiales + mano de obra + gastos fijos)
  */
 export const calcularCostoTotalReceta = (
   costoMateriales: number,
-  costoManoObra: number
+  costoManoObra: number,
+  costoGastosFijos: number = 0
 ): number => {
-  return costoMateriales + costoManoObra;
+  return costoMateriales + costoManoObra + costoGastosFijos;
 };
 
 /**
@@ -195,8 +208,9 @@ export const calcularPrecioVentaPorPorcion = (
  */
 export const generarDesgloseCostos = (receta: Receta): DesgloseCostos => {
   const costoMateriales = calcularCostoTotalMateriales(receta.materiales);
-  const costoManoObra = 0;
-  const costoTotal = costoMateriales;
+  const costoManoObra = calcularCostoManoObra(receta.cantidadHoras || 0, receta.costoPorHora || 0);
+  const costoGastosFijos = receta.costoGastosFijos || 0;
+  const costoTotal = calcularCostoTotalReceta(costoMateriales, costoManoObra, costoGastosFijos);
   
   const precioVentaSugerido = receta.margenGanancia
     ? calcularPrecioVentaSugerido(costoTotal, receta.margenGanancia)
@@ -216,7 +230,10 @@ export const generarDesgloseCostos = (receta: Receta): DesgloseCostos => {
   return {
     costoMateriales,
     costoManoObra,
+    costoGastosFijos,
     costoTotal,
+    cantidadHoras: receta.cantidadHoras,
+    costoPorHora: receta.costoPorHora,
     margenGanancia: receta.margenGanancia,
     precioVentaSugerido,
     detallesMateriales,

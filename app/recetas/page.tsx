@@ -141,6 +141,12 @@ export default function RecetasPage() {
   };
 
   const costoPorHora = configuracion?.costoPorHoraDefecto || 0;
+  const totalGastosMensualesPreview = totales.totalMontoMensual;
+  const porcentajeGastosFijosPreview = configuracion?.porcentajeGastosFijos || 0;
+  const costoGastosFijosPreview = totalGastosMensualesPreview > 0 && porcentajeGastosFijosPreview > 0
+    ? totalGastosMensualesPreview * (porcentajeGastosFijosPreview / 100)
+    : 0;
+  
   const desglose = materiales.length > 0 ? generarDesgloseCostos({
     id: "temp",
     nombre,
@@ -149,7 +155,7 @@ export default function RecetasPage() {
     cantidadHoras,
     costoPorHora,
     costoManoObra: 0,
-    costoGastosFijos: 0,
+    costoGastosFijos: costoGastosFijosPreview,
     costoMateriales: 0,
     costoTotal: 0,
     margenGanancia,

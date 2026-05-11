@@ -6,8 +6,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
+import { useGastosFijos } from "@/hooks/useGastosFijos";
 import { PrecioDual } from "@/components/ui/precio-dual";
 import { formatearMoneda } from "@/lib/constants";
+import { calcularCostoGastosFijos } from "@/lib/calculations";
 import { 
   Download, 
   Edit2, 
@@ -37,9 +39,17 @@ interface RecetaListProps {
 
 export const RecetaList = ({ recetas, onEdit, onDelete, onView, onDuplicate }: RecetaListProps) => {
   const { configuracion } = useConfiguracion();
+  const { totales } = useGastosFijos();
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('grid');
   const [eliminando, setEliminando] = useState<string | null>(null);
   const [exportandoPDF, setExportandoPDF] = useState<string | null>(null);
+
+  // Recalcular gastos fijos para todas las recetas en tiempo real
+  const recalcularGastosFijos = (receta: Receta): number => {
+    const totalGastosMensuales = totales.totalMontoMensual;
+    const porcentajeGastosFijos = configuracion?.porcentajeGastosFijos || 0;
+    return calcularCostoGastosFijos(totalGastosMensuales, porcentajeGastosFijos);
+  };
 
   const handleExportPDF = async (receta: Receta) => {
     setExportandoPDF(receta.id);
@@ -206,11 +216,25 @@ export const RecetaList = ({ recetas, onEdit, onDelete, onView, onDuplicate }: R
                             />
                           </div>
                         )}
+                        {(() => {
+                          const gastosFijosRecalculados = recalcularGastosFijos(receta);
+                          return gastosFijosRecalculados > 0 && (
+                            <div className="flex justify-between items-center">
+                              <span className="text-[10px] font-bold text-muted-foreground uppercase">Gastos Fijos</span>
+                              <PrecioDual 
+                                valorUSD={gastosFijosRecalculados} 
+                                tasaCambio={configuracion?.tasaCambioUSD || 50}
+                                monedaPorDefecto={configuracion?.moneda || 'VES'}
+                                className="text-xs font-bold"
+                              />
+                            </div>
+                          );
+                        })()}
                         <div className="h-px bg-border/50" />
                         <div className="flex justify-between items-center">
                           <span className="text-[10px] font-bold text-primary uppercase">Costo Total</span>
                           <PrecioDual 
-                            valorUSD={receta.costoTotal} 
+                            valorUSD={receta.costoMateriales + receta.costoManoObra + recalcularGastosFijos(receta)} 
                             tasaCambio={configuracion?.tasaCambioUSD || 50}
                             monedaPorDefecto={configuracion?.moneda || 'VES'}
                             className="text-sm font-black text-primary"

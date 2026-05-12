@@ -89,24 +89,25 @@ export default function RegisterPage() {
         </div>
 
         <div className="relative z-10 space-y-6">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full backdrop-blur-sm">
-            <Sparkles className="w-4 h-4 text-white" />
-            <span className="text-sm font-bold text-white">Prueba gratis por 14 días</span>
+          <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full mb-4">
+            <p className="text-sm font-black text-white uppercase tracking-wider">
+              🍰 Sistema de Gestión para Gastronomía
+            </p>
           </div>
           <h1 className="text-5xl font-black text-white leading-tight">
-            Únete a cientos de reposteros exitosos
+            Profesionaliza tu negocio gastronómico hoy
           </h1>
           <p className="text-xl text-white/90 font-medium leading-relaxed">
-            Comienza a calcular costos precisos, gestionar inventario y aumentar tus ganancias desde el primer día.
+            Calcula costos reales, controla inventario, gestiona ventas y toma decisiones basadas en datos. Todo en una sola plataforma.
           </p>
           
           {/* Benefits */}
           <div className="space-y-4 pt-4">
             {[
-              'Sin tarjeta de crédito requerida',
-              'Acceso completo a todas las funciones',
-              'Soporte prioritario incluido',
-              'Cancela cuando quieras'
+              '✅ Costeo preciso de recetas por porción',
+              '✅ Control completo de inventario',
+              '✅ Gestión de ventas y cotizaciones',
+              '✅ Análisis de rentabilidad en tiempo real'
             ].map((benefit, i) => (
               <div key={i} className="flex items-center gap-3">
                 <div className="flex-shrink-0 w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
@@ -115,6 +116,10 @@ export default function RegisterPage() {
                 <span className="text-white/90 font-medium">{benefit}</span>
               </div>
             ))}
+          </div>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 rounded-full backdrop-blur-sm border border-emerald-400/30 mt-4">
+            <Sparkles className="w-4 h-4 text-emerald-200" />
+            <span className="text-sm font-bold text-emerald-100">Prueba gratis por 14 días • Sin tarjeta</span>
           </div>
         </div>
 
@@ -157,10 +162,10 @@ export default function RegisterPage() {
             <>
               <div className="space-y-2">
                 <h2 className="text-3xl font-black tracking-tight">
-                  Crea tu cuenta gratis
+                  Comienza gratis hoy
                 </h2>
                 <p className="text-muted-foreground font-medium">
-                  Únete a la plataforma líder para reposteros profesionales
+                  Gestiona costos, inventario y ventas de tu negocio gastronómico
                 </p>
               </div>
 

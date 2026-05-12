@@ -75,24 +75,33 @@ export default function LoginPage() {
         </div>
 
         <div className="relative z-10 space-y-6">
+          <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full mb-4">
+            <p className="text-sm font-black text-white uppercase tracking-wider">
+              🍰 Sistema de Gestión para Gastronomía
+            </p>
+          </div>
           <h1 className="text-5xl font-black text-white leading-tight">
-            Gestiona tu negocio de repostería como un profesional
+            Controla costos y maximiza ganancias en tu negocio gastronómico
           </h1>
           <p className="text-xl text-white/90 font-medium leading-relaxed">
-            Calcula costos precisos, controla inventario y maximiza tus ganancias con la plataforma líder para reposteros.
+            Calcula el costo real de tus recetas, gestiona inventario, controla ventas y toma decisiones basadas en datos reales.
           </p>
-          <div className="flex gap-8 pt-4">
-            <div className="space-y-1">
-              <p className="text-4xl font-black text-white">500+</p>
-              <p className="text-sm text-white/80 font-semibold">Reposteros activos</p>
+          <div className="grid grid-cols-2 gap-4 pt-4">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+              <p className="text-sm text-white/80 font-semibold mb-1">📊 Costeo de Recetas</p>
+              <p className="text-xs text-white/70">Calcula costos exactos por porción</p>
             </div>
-            <div className="space-y-1">
-              <p className="text-4xl font-black text-white">98%</p>
-              <p className="text-sm text-white/80 font-semibold">Satisfacción</p>
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+              <p className="text-sm text-white/80 font-semibold mb-1">📦 Control de Inventario</p>
+              <p className="text-xs text-white/70">Gestiona productos y movimientos</p>
             </div>
-            <div className="space-y-1">
-              <p className="text-4xl font-black text-white">24/7</p>
-              <p className="text-sm text-white/80 font-semibold">Soporte</p>
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+              <p className="text-sm text-white/80 font-semibold mb-1">💰 Gestión de Ventas</p>
+              <p className="text-xs text-white/70">Cotizaciones y órdenes completas</p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+              <p className="text-sm text-white/80 font-semibold mb-1">📈 Análisis de Rentabilidad</p>
+              <p className="text-xs text-white/70">Identifica tus productos más rentables</p>
             </div>
           </div>
         </div>
@@ -115,10 +124,10 @@ export default function LoginPage() {
 
           <div className="space-y-2">
             <h2 className="text-3xl font-black tracking-tight">
-              Bienvenido de nuevo
+              Accede a tu cuenta
             </h2>
             <p className="text-muted-foreground font-medium">
-              Inicia sesión para continuar gestionando tu negocio
+              Gestiona costos, inventario y ventas de tu negocio gastronómico
             </p>
           </div>
 

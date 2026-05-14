@@ -5,21 +5,23 @@ import { Producto } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { formatearNumero } from "@/lib/constants";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
 import { PrecioDual } from "@/components/ui/precio-dual";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Package, 
-  Scale, 
-  ShoppingCart, 
-  DollarSign, 
-  Edit2, 
-  Trash2, 
-  Building2, 
-  FileText, 
-  LayoutGrid, 
-  Table as TableIcon 
+import {
+  Package,
+  Scale,
+  ShoppingCart,
+  DollarSign,
+  Edit2,
+  Trash2,
+  Building2,
+  FileText,
+  LayoutGrid,
+  Search,
+  Table as TableIcon
 } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
 import { getProductoColumns } from "./producto-columns";
@@ -44,6 +46,13 @@ export const ProductoList = ({
   const { configuracion } = useConfiguracion();
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const [eliminando, setEliminando] = useState<string | null>(null);
+  const [gridSearch, setGridSearch] = useState('');
+
+  const productosFiltradosGrid = gridSearch.trim()
+    ? productos.filter((p) =>
+        p.nombre.toLowerCase().includes(gridSearch.toLowerCase())
+      )
+    : productos;
 
   const handleDelete = async (id: string) => {
     setEliminando(id);
@@ -133,9 +142,26 @@ export const ProductoList = ({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.2 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="space-y-6"
           >
-            {productos.map((producto, index) => (
+            <div className="relative max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                value={gridSearch}
+                onChange={(e) => setGridSearch(e.target.value)}
+                placeholder="Filtrar por nombre..."
+                className="pl-9"
+              />
+            </div>
+
+            {productosFiltradosGrid.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
+                <Package className="w-10 h-10 mb-3 opacity-50" />
+                <p className="text-sm">No se encontraron productos con ese nombre.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {productosFiltradosGrid.map((producto, index) => (
               <Card key={producto.id} className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden border-0 shadow-md">
                 <CardHeader className="pb-3 space-y-1">
                   <div className="flex items-start justify-between gap-2">
@@ -237,7 +263,9 @@ export const ProductoList = ({
                   </div>
                 </CardContent>
               </Card>
-            ))}
+                ))}
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

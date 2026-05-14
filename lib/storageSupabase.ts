@@ -233,6 +233,93 @@ export const guardarReceta = async (receta: Receta) => {
   return { exitoso: true };
 };
 
+/**
+ * Recalcula la mano de obra de todas las recetas del usuario autenticado
+ * cuando cambia el costo por hora en la configuración global.
+ * Mantiene materiales, gastos fijos y margen intactos. Recalcula:
+ *   costoPorHora, costoManoObra, costoTotal, precioVentaSugerido, fecha_actualizacion.
+ */
+export const recalcularManoObraRecetas = async (
+  nuevoCostoPorHora: number
+): Promise<{ exitoso: boolean; actualizadas: number; error?: string }> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return { exitoso: false, actualizadas: 0, error: 'Usuario no autenticado' };
+  }
+
+  // Las políticas RLS ya filtran por user_id, pero filtramos explícito por seguridad.
+  const { data: recetasDb, error: errorLectura } = await supabase
+    .from('recetas')
+    .select('id, tiempo_preparacion, costo_materiales, costo_gastos_fijos, margen_ganancia')
+    .eq('user_id', user.id);
+
+  if (errorLectura) {
+    registrarErrorSistema(`Error al leer recetas para recálculo de mano de obra: ${String(errorLectura)}`).catch(() => {});
+    return { exitoso: false, actualizadas: 0, error: errorLectura.message };
+  }
+
+  if (!recetasDb || recetasDb.length === 0) {
+    return { exitoso: true, actualizadas: 0 };
+  }
+
+  const ahoraISO = new Date().toISOString();
+
+  const resultados = await Promise.all(
+    recetasDb.map(async (r: any) => {
+      const cantidadHoras = parseFloat(r.tiempo_preparacion || 0);
+      const costoMateriales = parseFloat(r.costo_materiales || 0);
+      const costoGastosFijos = parseFloat(r.costo_gastos_fijos || 0);
+      const margenGanancia = r.margen_ganancia !== null && r.margen_ganancia !== undefined
+        ? parseFloat(r.margen_ganancia)
+        : null;
+
+      const costoManoObra = cantidadHoras > 0 && nuevoCostoPorHora > 0
+        ? cantidadHoras * nuevoCostoPorHora
+        : 0;
+      const costoTotal = costoMateriales + costoManoObra + costoGastosFijos;
+      const precioVentaSugerido = margenGanancia && margenGanancia > 0
+        ? costoTotal * (1 + margenGanancia / 100)
+        : null;
+
+      const { error } = await supabase
+        .from('recetas')
+        .update({
+          costo_por_hora: nuevoCostoPorHora,
+          costo_mano_obra: costoManoObra,
+          costo_total: costoTotal,
+          precio_venta_sugerido: precioVentaSugerido,
+          fecha_actualizacion: ahoraISO,
+        })
+        .eq('id', r.id)
+        .eq('user_id', user.id);
+
+      return { id: r.id, ok: !error, error };
+    })
+  );
+
+  const fallidas = resultados.filter((r) => !r.ok);
+  const actualizadas = resultados.length - fallidas.length;
+
+  if (fallidas.length > 0) {
+    registrarErrorSistema(
+      `Recálculo de mano de obra: ${fallidas.length} recetas fallaron. Primera: ${String(fallidas[0].error)}`
+    ).catch(() => {});
+    return {
+      exitoso: actualizadas > 0,
+      actualizadas,
+      error: `${fallidas.length} recetas no pudieron actualizarse.`,
+    };
+  }
+
+  registrarActividad(
+    'update',
+    'recetas',
+    `Mano de obra recalculada en ${actualizadas} recetas (nuevo costo/hora: ${nuevoCostoPorHora})`
+  ).catch(() => {});
+
+  return { exitoso: true, actualizadas };
+};
+
 export const eliminarReceta = async (id: string) => {
   const { error } = await supabase
     .from('recetas')

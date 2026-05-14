@@ -6,12 +6,12 @@ import { ConfiguracionForm } from "@/components/configuracion/ConfiguracionForm"
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loading } from "@/components/ui/loading";
-import { motion } from "framer-motion";
-import { Settings, AlertCircle, RefreshCw } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Settings, AlertCircle, RefreshCw, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function ConfiguracionPage() {
-  const { configuracion, cargando, error, actualizar, cargarConfiguracion } = useConfiguracion();
+  const { configuracion, cargando, error, actualizar, cargarConfiguracion, recetasRecalculadas } = useConfiguracion();
 
   const handleSubmit = async (datos: ConfiguracionFormData) => {
     await actualizar(datos);
@@ -74,6 +74,49 @@ export default function ConfiguracionPage() {
             </CardContent>
           </Card>
         )}
+
+        {/* Recálculo automático de recetas */}
+        <AnimatePresence>
+          {recetasRecalculadas !== null && recetasRecalculadas > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              <Card className="border-emerald-200 bg-emerald-50/60 shadow-none">
+                <CardContent className="py-4 flex items-start gap-3">
+                  <div className="p-2 rounded-full bg-emerald-500/10 text-emerald-700 mt-0.5">
+                    <Calculator className="w-4 h-4" />
+                  </div>
+                  <div className="space-y-0.5">
+                    <p className="text-sm font-bold text-emerald-800">
+                      Recetas actualizadas automáticamente
+                    </p>
+                    <p className="text-xs text-emerald-700/90 leading-relaxed">
+                      Se recalcularon {recetasRecalculadas} {recetasRecalculadas === 1 ? "receta" : "recetas"} con el nuevo costo de mano de obra por hora.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+          {recetasRecalculadas === 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              <Card className="border-muted bg-muted/30 shadow-none">
+                <CardContent className="py-3 flex items-center gap-3">
+                  <Calculator className="w-4 h-4 text-muted-foreground" />
+                  <p className="text-xs text-muted-foreground">
+                    No hay recetas existentes para recalcular. Las próximas recetas usarán el nuevo costo por hora.
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Formulario */}
         <div className="max-w-4xl">

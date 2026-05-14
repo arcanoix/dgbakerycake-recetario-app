@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { ConfiguracionGlobal, ConfiguracionFormData } from "@/types";
-import { obtenerConfiguracion, guardarConfiguracion } from "@/lib/storageSupabase";
+import {
+  obtenerConfiguracion,
+  guardarConfiguracion,
+  recalcularManoObraRecetas,
+} from "@/lib/storageSupabase";
 import { useAuth } from "@/contexts/AuthContext";
 
 export const useConfiguracion = () => {
@@ -11,6 +15,7 @@ export const useConfiguracion = () => {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [errorCarga, setErrorCarga] = useState<string | null>(null);
+  const [recetasRecalculadas, setRecetasRecalculadas] = useState<number | null>(null);
 
   useEffect(() => {
     if (loadingAuth) {
@@ -47,9 +52,13 @@ export const useConfiguracion = () => {
     try {
       if (!configuracion) return false;
 
+      const costoPorHoraAnterior = configuracion.costoPorHoraDefecto;
+      const costoPorHoraNuevo = datos.costoPorHoraDefecto;
+      const cambioCostoPorHora = costoPorHoraAnterior !== costoPorHoraNuevo;
+
       const configActualizada: ConfiguracionGlobal = {
         ...configuracion,
-        costoPorHoraDefecto: datos.costoPorHoraDefecto,
+        costoPorHoraDefecto: costoPorHoraNuevo,
         moneda: datos.moneda,
         margenGananciaDefecto: datos.margenGananciaDefecto,
         tasaCambioUSD: datos.tasaCambioUSD,
@@ -58,13 +67,23 @@ export const useConfiguracion = () => {
 
       const respuesta = await guardarConfiguracion(configActualizada);
 
-      if (respuesta.exitoso) {
-        await cargarConfiguracion();
-        return true;
-      } else {
+      if (!respuesta.exitoso) {
         setError(respuesta.error || "Error al guardar la configuración");
         return false;
       }
+
+      setRecetasRecalculadas(null);
+
+      if (cambioCostoPorHora) {
+        const resultadoRecalculo = await recalcularManoObraRecetas(costoPorHoraNuevo);
+        if (!resultadoRecalculo.exitoso && resultadoRecalculo.error) {
+          setError(`Configuración guardada, pero hubo un problema al recalcular recetas: ${resultadoRecalculo.error}`);
+        }
+        setRecetasRecalculadas(resultadoRecalculo.actualizadas);
+      }
+
+      await cargarConfiguracion();
+      return true;
     } catch (err) {
       setError("Error al actualizar la configuración");
       return false;
@@ -78,5 +97,6 @@ export const useConfiguracion = () => {
     errorCarga,
     actualizar,
     cargarConfiguracion,
+    recetasRecalculadas,
   };
 };

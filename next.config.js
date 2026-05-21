@@ -52,6 +52,12 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   
+  // Variables de entorno públicas para el cliente
+  env: {
+    NEXT_PUBLIC_APP_VERSION: process.env.npm_package_version,
+    NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA: process.env.VERCEL_GIT_COMMIT_SHA,
+  },
+
   // Optimizar chunks para mejor caching
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion', '@radix-ui/react-icons'],

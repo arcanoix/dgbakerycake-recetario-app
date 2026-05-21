@@ -28,6 +28,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { LogoFull } from "@/components/ui/logo";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
+import { getAppVersion } from "@/lib/version";
 
 function AnimatedSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const ref = useRef(null);
@@ -450,7 +451,10 @@ export const LandingPage = () => {
           <Separator />
           <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
             <p>© 2026 DGCOST. DGBakeryCake Solutions.</p>
-            <p>Hecho con ❤️ para reposteros</p>
+            <p className="flex items-center gap-2">
+              <span className="opacity-50">HECHO CON ❤️ PARA REPOSTEROS</span>
+              <span className="bg-muted px-2 py-0.5 rounded text-[8px] border">{getAppVersion()}</span>
+            </p>
           </div>
         </div>
       </footer>

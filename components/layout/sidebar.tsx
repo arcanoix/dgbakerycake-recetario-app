@@ -9,6 +9,7 @@ import { sidebarData } from "./data/sidebar-data";
 import { usePlanAccess } from "@/hooks/usePlanAccess";
 import Link from "next/link";
 import { LogoIcon, LogoFull } from "@/components/ui/logo";
+import { getAppVersion } from "@/lib/version";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
   isCollapsed: boolean;
@@ -100,6 +101,16 @@ export function Sidebar({ className, isCollapsed, setIsCollapsed, onLinkClick }:
           onClick={() => setNavOpened(false)}
         />
       )}
+
+      {/* Versión del sistema */}
+      <div className={cn(
+        "mt-auto border-t p-4 transition-all duration-300",
+        isCollapsed ? "px-2 text-center" : "px-4"
+      )}>
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">
+          {isCollapsed ? getAppVersion().split('-')[1] || 'v' : `Versión: ${getAppVersion()}`}
+        </p>
+      </div>
     </aside>
   );
 }

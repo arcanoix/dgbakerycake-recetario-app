@@ -18,7 +18,6 @@ export const OnboardingTour = () => {
       showProgress: true,
       animate: true,
       allowClose: true,
-      overlayClickDismiss: false,
       nextBtnText: 'Siguiente',
       prevBtnText: 'Anterior',
       doneBtnText: 'Finalizar',

@@ -104,6 +104,58 @@
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
   }
+
+  /* Driver.js Customization */
+  .driver-popover {
+    background-color: hsl(var(--card)) !important;
+    color: hsl(var(--card-foreground)) !important;
+    border-radius: var(--radius) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    font-family: inherit !important;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
+  }
+
+  .driver-popover-title {
+    color: hsl(var(--foreground)) !important;
+    font-weight: 600 !important;
+    font-size: 1.1rem !important;
+  }
+
+  .driver-popover-description {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+
+  .driver-popover-arrow-side-left { border-left-color: hsl(var(--card)) !important; }
+  .driver-popover-arrow-side-right { border-right-color: hsl(var(--card)) !important; }
+  .driver-popover-arrow-side-top { border-top-color: hsl(var(--card)) !important; }
+  .driver-popover-arrow-side-bottom { border-bottom-color: hsl(var(--card)) !important; }
+
+  .driver-popover-btn {
+    background-color: hsl(var(--secondary)) !important;
+    color: hsl(var(--secondary-foreground)) !important;
+    text-shadow: none !important;
+    border: none !important;
+    border-radius: calc(var(--radius) - 2px) !important;
+    padding: 5px 12px !important;
+    font-size: 13px !important;
+  }
+
+  .driver-popover-btn-next {
+    background-color: hsl(var(--primary)) !important;
+  }
+
+  .driver-popover-progress-text {
+    color: hsl(var(--muted-foreground)) !important;
+    font-size: 12px !important;
+  }
+
+  .driver-popover-close-btn {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+
+  .driver-active-element {
+    border-radius: 4px !important;
+  }
 }
 
 @layer utilities {

@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
+import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
 
 // Lazy load Sidebar and Header para reducir bundle inicial
 const Sidebar = dynamic(() => import("./sidebar").then(mod => ({ default: mod.Sidebar })), {
@@ -77,7 +78,7 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
             // Pero como usamos md:sticky en Sidebar, necesitamos que el main fluya
           )}
         >
-          <div className="mx-auto h-full w-full max-w-7xl animate-in fade-in duration-500">
+          <div id="main-content" className="mx-auto h-full w-full max-w-7xl animate-in fade-in duration-500">
             {children}
           </div>
         </main>
@@ -85,6 +86,9 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
 
       {/* WhatsApp Button - Flotante */}
       <WhatsAppButton />
+
+      {/* Tour de bienvenida */}
+      <OnboardingTour />
     </div>
   );
 };

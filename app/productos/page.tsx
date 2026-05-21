@@ -50,6 +50,7 @@ export default function ProductosPage() {
   const [productoEditando, setProductoEditando] = useState<Producto | undefined>();
   const [productoVisualizando, setProductoVisualizando] = useState<Producto | null>(null);
   const [modalDetalleAbierto, setModalDetalleAbierto] = useState(false);
+  const [exportando, setExportando] = useState(false);
 
   const limitInfo = getCurrentCount('productos', productos.length);
   const canCreate = limitInfo.canCreate;
@@ -105,8 +106,15 @@ export default function ProductosPage() {
     setMostrarImportacion(true);
   };
 
-  const handleExportar = () => {
-    exportarProductosCSV(productos);
+  const handleExportar = async () => {
+    if (exportando) return;
+    setExportando(true);
+    try {
+      exportarProductosCSV(productos);
+    } finally {
+      // Pequeño delay para evitar el spam de clicks
+      setTimeout(() => setExportando(false), 500);
+    }
   };
 
   const planName = getPlanName();
@@ -130,11 +138,15 @@ export default function ProductosPage() {
               onClick={handleExportar}
               variant="outline"
               size="sm"
-              disabled={isDataLoading || productos.length === 0}
+              disabled={isDataLoading || productos.length === 0 || exportando}
               className="gap-2 h-10 px-4"
             >
-              <Download className="w-4 h-4" />
-              <span className="hidden sm:inline">Exportar</span>
+              {exportando ? (
+                <RefreshCw className="w-4 h-4 animate-spin" />
+              ) : (
+                <Download className="w-4 h-4" />
+              )}
+              <span className="hidden sm:inline">{exportando ? 'Exportando...' : 'Exportar'}</span>
             </Button>
             <Button
               onClick={handleImportar}

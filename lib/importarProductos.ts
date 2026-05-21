@@ -358,7 +358,6 @@ export function exportarProductosCSV(productos: any[]): void {
   link.style.visibility = 'hidden';
   document.body.appendChild(link);
   link.click();
-  link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }

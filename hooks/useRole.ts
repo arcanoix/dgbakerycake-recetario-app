@@ -31,13 +31,13 @@ const obtenerRolUsuario = (userId: string) => {
         .from('user_roles')
         .select('role')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
 
       if (error) {
         throw error;
       }
 
-      const userRole = data.role as UserRole;
+      const userRole = (data?.role as UserRole) || 'user';
       roleCache.set(userId, userRole);
       return userRole;
     } finally {

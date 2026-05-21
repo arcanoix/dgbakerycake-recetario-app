@@ -308,3 +308,57 @@ export function descargarPlantillaCSV(): void {
   enlace.click();
   URL.revokeObjectURL(url);
 }
+
+/**
+ * Exporta una lista de productos a un archivo CSV siguiendo la estructura de la plantilla.
+ */
+export function exportarProductosCSV(productos: any[]): void {
+  const encabezados = [
+    'nombre',
+    'precioTotal',
+    'tamañoPresentacion',
+    'cantidadPresentaciones',
+    'unidadMedida',
+    'categoria',
+    'proveedor',
+    'notas',
+  ];
+
+  const filas = productos.map((p) => [
+    p.nombre || '',
+    p.precioTotal || 0,
+    p.tamañoPresentacion || 0,
+    p.cantidadPresentaciones || 0,
+    p.unidadMedidaNombre || p.unidadMedida || '', // Preferimos el nombre de la unidad si está disponible
+    p.categoria || '',
+    p.proveedor || '',
+    p.notas || '',
+  ]);
+
+  const contenido = [encabezados, ...filas]
+    .map((fila) =>
+      fila
+        .map((v) => {
+          const stringValue = String(v ?? '');
+          // Escapar comillas dobles y envolver en comillas si contiene comas o saltos de línea
+          if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+            return `"${stringValue.replace(/"/g, '""')}"`;
+          }
+          return stringValue;
+        })
+        .join(',')
+    )
+    .join('\r\n'); // Usar terminación CRLF para mejor compatibilidad con Excel
+
+  const blob = new Blob(['\ufeff' + contenido], { type: 'text/csv;charset=utf-8;' }); // Añadir BOM para caracteres especiales
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', `exportacion_productos_${new Date().toISOString().split('T')[0]}.csv`);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}

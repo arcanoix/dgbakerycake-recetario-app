@@ -24,8 +24,10 @@ import {
   Plus,
   ArrowUpRight,
   Tags,
-  Boxes
+  Boxes,
+  Download
 } from "lucide-react";
+import { exportarProductosCSV } from "@/lib/importarProductos";
 
 export default function ProductosPage() {
   const router = useRouter();
@@ -103,6 +105,10 @@ export default function ProductosPage() {
     setMostrarImportacion(true);
   };
 
+  const handleExportar = () => {
+    exportarProductosCSV(productos);
+  };
+
   const planName = getPlanName();
   const isLimited = planName === 'free' || planName === 'basico';
 
@@ -120,6 +126,16 @@ export default function ProductosPage() {
             </p>
           </div>
           <div className="flex items-center gap-3">
+            <Button
+              onClick={handleExportar}
+              variant="outline"
+              size="sm"
+              disabled={isDataLoading || productos.length === 0}
+              className="gap-2 h-10 px-4"
+            >
+              <Download className="w-4 h-4" />
+              <span className="hidden sm:inline">Exportar</span>
+            </Button>
             <Button
               onClick={handleImportar}
               variant="outline"

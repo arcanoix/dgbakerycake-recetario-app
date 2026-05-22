@@ -76,6 +76,7 @@
   "overrides": {
     "react": "$react",
     "react-dom": "$react-dom",
-    "dompurify": "^3.3.3"
+    "dompurify": "^3.3.3",
+    "postcss": "^8.5.10"
   }
 }

@@ -445,7 +445,7 @@ export const LandingPage = () => {
               <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Legal</h4>
               <ul className="space-y-2 text-sm font-bold text-foreground/70">
                 <li><Link href="/terminos" className="hover:text-primary">Términos</Link></li>
-                <li><a href="#" className="hover:text-primary">Privacidad</a></li>
+                <li><Link href="/privacidad" className="hover:text-primary">Privacidad</Link></li>
               </ul>
             </div>
           </div>

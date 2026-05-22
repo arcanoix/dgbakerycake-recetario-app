@@ -28,6 +28,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { LogoFull } from "@/components/ui/logo";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
+import { CookieBanner } from "./CookieBanner";
 import { getAppVersion } from "@/lib/version";
 
 function AnimatedSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
@@ -461,6 +462,9 @@ export const LandingPage = () => {
 
       {/* WhatsApp Button - Flotante */}
       <WhatsAppButton />
+
+      {/* Cookie Consent Banner */}
+      <CookieBanner />
     </div>
   );
 };

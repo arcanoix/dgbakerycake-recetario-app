@@ -29,6 +29,7 @@ import { Separator } from "@/components/ui/separator";
 import { LogoFull } from "@/components/ui/logo";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import { CookieBanner } from "./CookieBanner";
+import { TypewriterText } from "./TypewriterText";
 import { getAppVersion } from "@/lib/version";
 
 function AnimatedSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
@@ -182,7 +183,14 @@ export const LandingPage = () => {
             className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] text-foreground"
           >
             Calcula tus costos.<br />
-            <span className="text-primary italic">Multiplica</span> tus ganancias.
+            <TypewriterText
+              words={["Multiplica", "Controla", "Gestiona", "Maximiza"]}
+              suffix=" tus ganancias."
+              className="text-primary italic"
+              typingSpeed={120}
+              deletingSpeed={80}
+              pauseDuration={2500}
+            />
           </motion.h1>
 
           <motion.p

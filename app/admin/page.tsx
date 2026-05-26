@@ -7,6 +7,7 @@ import { PaymentRequestsTable } from "@/components/admin/PaymentRequestsTable";
 import { UsersTable } from "@/components/admin/UsersTable";
 import { ActivityLogsTable } from "@/components/admin/ActivityLogsTable";
 import { AdminCharts } from "@/components/admin/AdminCharts";
+import { SystemSettingsPanel } from "@/components/admin/SystemSettingsPanel";
 import { useRole } from "@/hooks/useRole";
 import { PaymentRequest } from "@/types/subscription";
 import { UserData, ActivityLog } from "@/types/user";
@@ -25,7 +26,7 @@ import { motion } from "framer-motion";
 import { 
   CreditCard, Users, BarChart3, Activity, RefreshCw, 
   Clock, CheckCircle, XCircle, TrendingUp, UserPlus, 
-  Crown, AlertCircle
+  Crown, AlertCircle, Settings
 } from "lucide-react";
 
 interface StatCardProps {
@@ -198,6 +199,10 @@ export default function AdminPage() {
             <TabsTrigger value="errores" className="gap-2 h-9 px-4 font-bold data-[state=active]:shadow-sm">
               <AlertCircle className="w-4 h-4" />
               Logs sistema
+            </TabsTrigger>
+            <TabsTrigger value="configuracion" className="gap-2 h-9 px-4 font-bold data-[state=active]:shadow-sm">
+              <Settings className="w-4 h-4" />
+              Configuración
             </TabsTrigger>
           </TabsList>
 
@@ -414,6 +419,10 @@ export default function AdminPage() {
           >
             <AdminCharts usuarios={usuarios} activityLogs={activityLogs} />
           </motion.div>
+          </TabsContent>
+
+          <TabsContent value="configuracion" className="m-0 space-y-6">
+            <SystemSettingsPanel />
           </TabsContent>
         </Tabs>
       </div>

@@ -8,9 +8,10 @@ import { Input } from '@/components/ui/input';
 import { signUp, signInWithGoogle } from '@/lib/supabase-auth';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
-import { ArrowRight, Chrome, Check, RefreshCw, User, Mail, Lock, ShieldCheck, Sparkles } from 'lucide-react';
+import { ArrowRight, Chrome, Check, RefreshCw, User, Mail, Lock, ShieldCheck, Sparkles, Users } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { LogoFull } from '@/components/ui/logo';
+import { verificarLimiteRegistro, verificarModoMantenimiento } from '@/lib/systemSettings';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -22,6 +23,8 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [registrationBlocked, setRegistrationBlocked] = useState(false);
+  const [limitInfo, setLimitInfo] = useState<{ current: number; max: number } | null>(null);
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -29,10 +32,31 @@ export default function RegisterPage() {
     }
   }, [user, authLoading, router]);
 
+  // Verificar límite de usuarios al cargar la página
+  useEffect(() => {
+    const checkLimit = async () => {
+      try {
+        const result = await verificarLimiteRegistro();
+        if (!result.permitido) {
+          setRegistrationBlocked(true);
+          setLimitInfo({ current: result.totalUsuarios, max: result.maxUsers });
+        }
+      } catch {
+        // En caso de error, permitir registro
+      }
+    };
+    checkLimit();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess(false);
+
+    if (registrationBlocked) {
+      setError('El registro de nuevos usuarios está temporalmente deshabilitado.');
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError('Las contraseñas no coinciden');
@@ -47,6 +71,24 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
+      // Verificar límite de usuarios
+      const limiteCheck = await verificarLimiteRegistro();
+      if (!limiteCheck.permitido) {
+        setError(limiteCheck.mensaje || 'No se permiten más registros en este momento.');
+        setRegistrationBlocked(true);
+        setLimitInfo({ current: limiteCheck.totalUsuarios, max: limiteCheck.maxUsers });
+        setLoading(false);
+        return;
+      }
+
+      // Verificar modo mantenimiento
+      const mantenimientoCheck = await verificarModoMantenimiento();
+      if (mantenimientoCheck.enMantenimiento && !mantenimientoCheck.adminPuedeAcceder) {
+        setError(mantenimientoCheck.mensaje || 'El sistema está en mantenimiento. Intente más tarde.');
+        setLoading(false);
+        return;
+      }
+
       const result = await signUp({ email, password, nombre });
 
       if (result.success) {
@@ -139,7 +181,31 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {success ? (
+          {registrationBlocked ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="space-y-6 text-center"
+            >
+              <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto">
+                <Users className="w-10 h-10 text-amber-600" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-2xl font-black">Registro Temporalmente Cerrado</h2>
+                <p className="text-muted-foreground font-medium">
+                  Hemos alcanzado el límite de usuarios permitidos en este momento.
+                </p>
+                {limitInfo && limitInfo.max > 0 && (
+                  <p className="text-sm text-amber-600 font-semibold">
+                    {limitInfo.current} / {limitInfo.max} usuarios registrados
+                  </p>
+                )}
+              </div>
+              <Button asChild variant="outline" className="w-full h-14 rounded-xl">
+                <Link href="/auth/login">Ir al Login</Link>
+              </Button>
+            </motion.div>
+          ) : success ? (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}

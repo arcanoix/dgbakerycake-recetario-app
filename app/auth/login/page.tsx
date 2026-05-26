@@ -5,12 +5,12 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { signIn, signInWithGoogle } from '@/lib/supabase-auth';
 import { useAuth } from '@/contexts/AuthContext';
-import { ArrowRight, Chrome, RefreshCw, KeyRound, Mail, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Chrome, RefreshCw, KeyRound, Mail, ShieldCheck, Wrench } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { LogoFull } from '@/components/ui/logo';
+import { obtenerConfiguracionSistema, verificarModoMantenimiento } from '@/lib/systemSettings';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,6 +19,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [maintenanceMessage, setMaintenanceMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -26,12 +27,35 @@ export default function LoginPage() {
     }
   }, [user, authLoading, router]);
 
+  // Verificar modo mantenimiento al cargar la página
+  useEffect(() => {
+    const checkMaintenance = async () => {
+      try {
+        const settings = await obtenerConfiguracionSistema();
+        if (settings.maintenance_mode) {
+          setMaintenanceMessage(settings.maintenance_message || 'El sistema está en mantenimiento. Volveremos pronto.');
+        }
+      } catch {
+        // Ignorar errores silenciosamente
+      }
+    };
+    checkMaintenance();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
+      // Verificar modo mantenimiento antes de login
+      const mantenimientoCheck = await verificarModoMantenimiento();
+      if (mantenimientoCheck.enMantenimiento && !mantenimientoCheck.adminPuedeAcceder) {
+        setError(mantenimientoCheck.mensaje || 'El sistema está en mantenimiento. Intente más tarde.');
+        setLoading(false);
+        return;
+      }
+
       const result = await signIn({ email, password });
 
       if (result.success) {
@@ -130,6 +154,24 @@ export default function LoginPage() {
               Gestiona costos, inventario y ventas de tu negocio gastronómico
             </p>
           </div>
+
+          {/* Alerta de mantenimiento */}
+          {maintenanceMessage && (
+            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 flex items-start gap-3">
+              <Wrench className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-amber-800 dark:text-amber-200">
+                  Modo Mantenimiento Activado
+                </p>
+                <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
+                  {maintenanceMessage}
+                </p>
+                <p className="text-xs text-amber-600 dark:text-amber-400 mt-1 font-medium">
+                  Solo los administradores pueden acceder en este momento.
+                </p>
+              </div>
+            </div>
+          )}
 
           <div className="space-y-6">
             <Button 

@@ -135,7 +135,7 @@ export function SystemSettingsPanel() {
               </p>
             </div>
 
-            <div className="bg-slate-50 dark:bg-slate-900 rounded-lg p-4 space-y-2">
+            <div className="bg-slate-50 rounded-lg p-4 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Usuarios actuales</span>
                 <span className="text-lg font-bold">{totalUsers}</span>

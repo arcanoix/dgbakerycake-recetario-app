@@ -234,6 +234,19 @@ export interface UserSubscriptionInfo {
   is_active: boolean;
 }
 
+// ============================================
+// CONFIGURACIÓN GLOBAL DEL SISTEMA
+// ============================================
+
+export interface SystemSettings {
+  id?: string;
+  max_users: number;           // -1 = ilimitado, 0 = sin registros permitidos
+  maintenance_mode: boolean;     // true = sistema en mantenimiento
+  maintenance_message?: string;  // Mensaje personalizado de mantenimiento
+  updated_at?: string;
+  updated_by?: string;
+}
+
 // Constantes de límites
 export const PLAN_LIMITS: Record<SubscriptionPlanName, { maxProductos: number; maxRecetas: number }> = {
   free: {

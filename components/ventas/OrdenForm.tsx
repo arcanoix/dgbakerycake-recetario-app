@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { X, Plus, Trash2 } from "lucide-react";
 import { formatearUSD } from "@/lib/currency";
@@ -222,19 +223,14 @@ export const OrdenForm = ({ orden, clientes, recetas, onGuardar, onCancelar }: O
                   {/* Receta selector */}
                   <div className="space-y-1">
                     <Label className="text-xs">Receta (opcional)</Label>
-                    <Select
-                      value={item.recetaId || ""}
-                      onValueChange={(value) => actualizarItem(index, "recetaId", value || undefined)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Artículo personalizado..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {recetas.map(r => (
-                          <SelectItem key={r.id} value={r.id}>{r.nombre}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <SearchableSelect
+                      options={recetas.map(r => ({ value: r.id, label: r.nombre }))}
+                      value={item.recetaId}
+                      onChange={(value) => actualizarItem(index, "recetaId", value)}
+                      placeholder="Artículo personalizado..."
+                      searchPlaceholder="Buscar receta..."
+                      emptyMessage="No se encontraron recetas"
+                    />
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">

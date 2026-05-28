@@ -32,7 +32,7 @@
     "@types/papaparse": "^5.5.2",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.37.0",
-    "@vercel/analytics": "^1.4.1",
+    "@vercel/analytics": "^2.0.1",
     "@vercel/blob": "^2.3.3",
     "@vercel/speed-insights": "^1.1.0",
     "class-variance-authority": "^0.7.1",

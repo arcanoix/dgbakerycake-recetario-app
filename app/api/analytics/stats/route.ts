@@ -11,12 +11,24 @@ export async function GET(request: Request) {
 
     const supabase = await createSupabaseServerClient();
 
-    // Check if user is authenticated (only admins should see stats)
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'No autenticado' },
         { status: 401 }
+      );
+    }
+
+    const { data: roleData, error: roleError } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .single();
+
+    if (roleError || roleData?.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Acceso denegado' },
+        { status: 403 }
       );
     }
 

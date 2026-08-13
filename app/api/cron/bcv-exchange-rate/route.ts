@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { timingSafeEqual } from 'node:crypto';
 
 
 /**
@@ -44,6 +45,17 @@ async function sincronizarConAPIExterna(): Promise<{ success: boolean; data?: an
   }
 }
 
+function tieneCredencialCronValida(authHeader: string | null, cronSecret: string | undefined): boolean {
+  if (!cronSecret || !authHeader?.startsWith('Bearer ')) {
+    return false;
+  }
+
+  const credencial = Buffer.from(authHeader.slice('Bearer '.length));
+  const secreto = Buffer.from(cronSecret);
+
+  return credencial.length === secreto.length && timingSafeEqual(credencial, secreto);
+}
+
 
 /**
  * GET /api/cron/bcv-exchange-rate
@@ -59,7 +71,7 @@ export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
 
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  if (!tieneCredencialCronValida(authHeader, cronSecret)) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
   }
 

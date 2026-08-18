@@ -238,6 +238,7 @@ export default function TerminosPage() {
       <div className="bg-white border-t border-gray-200 mt-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 text-center text-sm text-gray-600">
           <p>© 2026 DGcost. Todos los derechos reservados.</p>
+          <a href="https://gustavoherrera.dev" target="_blank" rel="noreferrer" className="hover:text-violet-700 transition-colors">Desarrollado por Gustavo Herrera</a>
         </div>
       </div>
     </div>

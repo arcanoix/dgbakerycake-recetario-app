@@ -37,7 +37,10 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
             <p>© {new Date().getFullYear()} DGCOST. DGBakeryCake Solutions.</p>
-            <p>Pasión por la Repostería Digital</p>
+            <p className="flex items-center gap-2">
+              <a href="https://gustavoherrera.dev" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors">Desarrollado por Gustavo Herrera</a>
+              <span>Pasión por la Repostería Digital</span>
+            </p>
           </div>
         </div>
       </footer>

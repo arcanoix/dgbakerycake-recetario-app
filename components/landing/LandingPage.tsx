@@ -461,6 +461,7 @@ export const LandingPage = () => {
           <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
             <p>© 2026 DGCOST. DGBakeryCake Solutions.</p>
             <p className="flex items-center gap-2">
+              <a href="https://gustavoherrera.dev" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors">Desarrollado por Gustavo Herrera</a>
               <span className="opacity-50">HECHO CON ❤️ PARA REPOSTEROS</span>
               <span className="bg-muted px-2 py-0.5 rounded text-[8px] border">{getAppVersion()}</span>
             </p>

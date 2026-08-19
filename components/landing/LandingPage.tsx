@@ -213,11 +213,6 @@ export const LandingPage = () => {
                 COMENZAR AHORA <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </Link>
-            <Link href="/auth/login">
-              <Button size="lg" variant="outline" className="h-14 px-10 font-black tracking-widest text-xs uppercase border-2">
-                VER DEMO
-              </Button>
-            </Link>
           </motion.div>
 
           {/* Stats Bar */}

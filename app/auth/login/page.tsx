@@ -87,70 +87,70 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="landing-surface min-h-dvh bg-[#f8f6f1] text-[#17202d] lg:flex">
       {/* Left Side - Hero Section */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary via-violet-600 to-fuchsia-600 p-12 flex-col justify-between relative overflow-hidden">
+      <div className="relative hidden overflow-hidden bg-[#111722] p-12 lg:flex lg:w-[48%] lg:flex-col lg:justify-between">
         {/* Decorative Elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+        <div className="absolute right-0 top-0 h-96 w-96 translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-400/20 blur-3xl" />
+        <div className="absolute bottom-0 left-0 h-96 w-96 -translate-x-1/2 translate-y-1/2 rounded-full bg-emerald-400/10 blur-3xl" />
         
         <div className="relative z-10">
           <LogoFull size="lg" className="text-white [&_path]:fill-white [&_stop]:stop-color-white" />
         </div>
 
         <div className="relative z-10 space-y-6">
-          <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full mb-4">
-            <p className="text-sm font-black text-white uppercase tracking-wider">
-              🍰 Sistema de Gestión para Gastronomía
+          <div className="mb-4 inline-block rounded-full border border-amber-400/25 bg-amber-400/10 px-4 py-2 backdrop-blur-sm">
+            <p className="text-xs font-bold uppercase tracking-[.16em] text-amber-300">
+              Gestión para gastronomía
             </p>
           </div>
-          <h1 className="text-5xl font-black text-white leading-tight">
+          <h1 className="max-w-xl text-5xl font-extrabold leading-[.98] tracking-[-.055em] text-white">
             Controla costos y maximiza ganancias en tu negocio gastronómico
           </h1>
-          <p className="text-xl text-white/90 font-medium leading-relaxed">
+          <p className="max-w-xl text-lg font-medium leading-8 text-slate-300">
             Calcula el costo real de tus recetas, gestiona inventario, controla ventas y toma decisiones basadas en datos reales.
           </p>
           <div className="grid grid-cols-2 gap-4 pt-4">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-              <p className="text-sm text-white/80 font-semibold mb-1">📊 Costeo de Recetas</p>
-              <p className="text-xs text-white/70">Calcula costos exactos por porción</p>
+            <div className="rounded-2xl border border-white/10 bg-white/[.055] p-4 backdrop-blur-sm">
+              <p className="mb-1 text-sm font-semibold text-amber-300">Costeo de recetas</p>
+              <p className="text-xs text-slate-400">Calcula costos exactos por porción</p>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-              <p className="text-sm text-white/80 font-semibold mb-1">📦 Control de Inventario</p>
-              <p className="text-xs text-white/70">Gestiona productos y movimientos</p>
+            <div className="rounded-2xl border border-white/10 bg-white/[.055] p-4 backdrop-blur-sm">
+              <p className="mb-1 text-sm font-semibold text-amber-300">Control de inventario</p>
+              <p className="text-xs text-slate-400">Gestiona productos y movimientos</p>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-              <p className="text-sm text-white/80 font-semibold mb-1">💰 Gestión de Ventas</p>
-              <p className="text-xs text-white/70">Cotizaciones y órdenes completas</p>
+            <div className="rounded-2xl border border-white/10 bg-white/[.055] p-4 backdrop-blur-sm">
+              <p className="mb-1 text-sm font-semibold text-amber-300">Gestión de ventas</p>
+              <p className="text-xs text-slate-400">Cotizaciones y órdenes completas</p>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-              <p className="text-sm text-white/80 font-semibold mb-1">📈 Análisis de Rentabilidad</p>
-              <p className="text-xs text-white/70">Identifica tus productos más rentables</p>
+            <div className="rounded-2xl border border-white/10 bg-white/[.055] p-4 backdrop-blur-sm">
+              <p className="mb-1 text-sm font-semibold text-amber-300">Análisis de rentabilidad</p>
+              <p className="text-xs text-slate-400">Identifica tus productos más rentables</p>
             </div>
           </div>
         </div>
 
-        <div className="relative z-10 flex items-center gap-3 text-white/60 text-xs font-semibold">
-          <ShieldCheck className="w-4 h-4" />
+        <div className="relative z-10 flex items-center gap-3 text-xs font-semibold text-slate-400">
+          <ShieldCheck className="h-4 w-4 text-emerald-400" />
           <span>Datos protegidos con encriptación de nivel bancario</span>
         </div>
       </div>
 
       {/* Right Side - Form */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-background">
-        <div className="w-full max-w-md space-y-8">
+      <div className="flex flex-1 items-center justify-center p-5 sm:p-8 lg:p-12">
+        <div className="w-full max-w-md space-y-7 rounded-[28px] border border-stone-200 bg-white p-6 shadow-[0_24px_60px_-35px_rgba(15,23,42,.45)] sm:p-9">
           {/* Mobile Logo */}
           <div className="lg:hidden flex justify-center mb-8">
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-primary/10 via-violet-500/10 to-fuchsia-500/10 border-2 border-primary/20">
+            <div className="rounded-2xl border border-amber-300 bg-amber-50 p-4">
               <LogoFull size="lg" />
             </div>
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-3xl font-black tracking-tight">
+            <h2 className="text-3xl font-extrabold tracking-[-.045em] text-[#17202d]">
               Accede a tu cuenta
             </h2>
-            <p className="text-muted-foreground font-medium">
+            <p className="font-medium leading-6 text-stone-500">
               Gestiona costos, inventario y ventas de tu negocio gastronómico
             </p>
           </div>
@@ -177,7 +177,7 @@ export default function LoginPage() {
             <Button 
               variant="outline" 
               type="button" 
-              className="w-full h-14 font-semibold text-sm flex items-center justify-center gap-3 border-2 hover:bg-muted/50 transition-all rounded-xl"
+              className="h-14 w-full rounded-xl border-stone-300 bg-white text-sm font-semibold shadow-sm transition hover:border-amber-400 hover:bg-amber-50"
               onClick={handleGoogleSignIn}
               disabled={loading}
             >
@@ -215,7 +215,7 @@ export default function LoginPage() {
                     placeholder="tu@email.com"
                     required
                     disabled={loading}
-                    className="h-14 pl-12 text-base rounded-xl border-2 focus-visible:ring-2 focus-visible:ring-primary/20"
+                    className="h-14 rounded-xl border-stone-300 bg-stone-50 pl-12 text-base focus-visible:border-amber-500 focus-visible:ring-amber-200"
                   />
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 </div>
@@ -226,7 +226,7 @@ export default function LoginPage() {
                   <Label htmlFor="password" className="text-sm font-semibold">
                     Contraseña
                   </Label>
-                  <Link href="/auth/forgot-password" className="text-sm font-semibold text-primary hover:underline">
+                  <Link href="/auth/forgot-password" className="text-sm font-semibold text-amber-700 hover:text-amber-800 hover:underline">
                     ¿Olvidaste tu contraseña?
                   </Link>
                 </div>
@@ -239,7 +239,7 @@ export default function LoginPage() {
                     placeholder="••••••••"
                     required
                     disabled={loading}
-                    className="h-14 pl-12 text-base rounded-xl border-2 focus-visible:ring-2 focus-visible:ring-primary/20"
+                    className="h-14 rounded-xl border-stone-300 bg-stone-50 pl-12 text-base focus-visible:border-amber-500 focus-visible:ring-amber-200"
                   />
                   <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 </div>
@@ -247,7 +247,7 @@ export default function LoginPage() {
 
               <Button 
                 type="submit" 
-                className="w-full h-14 font-bold text-base rounded-xl shadow-lg hover:shadow-xl transition-all" 
+                className="h-14 w-full rounded-xl bg-[#17202d] text-base font-bold text-white shadow-lg shadow-stone-900/15 transition hover:-translate-y-0.5 hover:bg-black"
                 disabled={loading}
               >
                 {loading ? <RefreshCw className="w-5 h-5 animate-spin" /> : (
@@ -262,7 +262,7 @@ export default function LoginPage() {
             <div className="text-center pt-4">
               <p className="text-sm text-muted-foreground">
                 ¿Aún no tienes cuenta?{' '}
-                <Link href="/auth/register" className="text-primary font-bold hover:underline">
+                <Link href="/auth/register" className="font-bold text-amber-700 hover:text-amber-800 hover:underline">
                   Regístrate gratis
                 </Link>
               </p>

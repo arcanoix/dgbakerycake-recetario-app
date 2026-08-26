@@ -46,16 +46,16 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
     pathname === "/";
 
   if (isPublicRoute || !user) {
-    return <main className="min-h-screen bg-background">{children}</main>;
+    return <main className="min-h-screen bg-[#f8f6f1]">{children}</main>;
   }
 
   // Prevenir saltos visuales durante la hidratación del sidebar
   if (!mounted) {
-    return <div className="min-h-screen bg-background" />;
+    return <div className="min-h-screen bg-[#f8f6f1]" />;
   }
 
   return (
-    <div className="relative flex min-h-screen bg-background">
+    <div className="relative flex min-h-screen bg-[#f8f6f1]">
       {/* Sidebar - Oculto en móvil (manejado por Sheet en Header), fijo en desktop */}
       <Sidebar 
         isCollapsed={isCollapsed} 

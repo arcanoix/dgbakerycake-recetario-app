@@ -196,12 +196,13 @@ export default function DashboardPage() {
     .slice(0, 5);
 
   return (
-    <div className="flex-1 space-y-4 md:space-y-6 p-3 md:p-8 pt-4 md:pt-6">
+    <div className="landing-surface flex-1 space-y-5 rounded-[28px] border border-stone-200/80 bg-white/65 p-3 shadow-[0_20px_60px_-45px_rgba(15,23,42,.45)] md:space-y-6 md:p-6 lg:p-8">
       {/* Header */}
       <div className="flex flex-col gap-3 md:gap-4 md:flex-row md:items-center md:justify-between">
         <div className="space-y-0.5 md:space-y-1">
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
-            Dashboard
+          <p className="text-xs font-bold uppercase tracking-[.16em] text-amber-700">Vista general</p>
+          <h2 className="mt-1 text-2xl font-extrabold tracking-[-.045em] text-[#17202d] md:text-3xl">
+            Tu negocio, con números claros
           </h2>
           <p className="text-xs md:text-sm text-muted-foreground">
             Resumen general de tu negocio
@@ -213,13 +214,13 @@ export default function DashboardPage() {
             size="sm"
             onClick={recargarDashboard}
             disabled={recargandoDatos}
-            className="gap-2 flex-1 md:flex-none"
+            className="flex-1 gap-2 rounded-xl border-stone-300 bg-white md:flex-none"
           >
             <RefreshCw className={`h-4 w-4 ${recargandoDatos ? 'animate-spin' : ''}`} />
             <span className="text-xs md:text-sm">Actualizar</span>
           </Button>
           <Link href="/pricing" className="flex-1 md:flex-none">
-            <Button size="sm" className="gap-2 w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-sm">
+            <Button size="sm" className="w-full gap-2 rounded-xl bg-[#17202d] shadow-sm hover:bg-black">
               <TrendingUp className="h-4 w-4" />
               <span className="text-xs md:text-sm">Mejorar</span>
             </Button>
@@ -343,7 +344,7 @@ export default function DashboardPage() {
 
         <TabsContent value="overview" className="space-y-4 md:space-y-6">
           <div className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-7">
-            <Card className="lg:col-span-4 border-0 shadow-md">
+            <Card className="lg:col-span-4 rounded-2xl border-stone-200 bg-white shadow-sm">
               <CardHeader className="space-y-1 p-4 md:p-6">
                 <CardTitle className="text-lg md:text-xl font-semibold">Distribución de Costos</CardTitle>
                 <CardDescription className="text-xs md:text-sm">
@@ -354,7 +355,7 @@ export default function DashboardPage() {
                 <CostosChart recetas={recetas} moneda={configuracion.moneda} />
               </CardContent>
             </Card>
-            <Card className="lg:col-span-3 border-0 shadow-md">
+            <Card className="lg:col-span-3 rounded-2xl border-stone-200 bg-white shadow-sm">
               <CardHeader className="space-y-1 p-4 md:p-6">
                 <CardTitle className="text-lg md:text-xl font-semibold">Productos por Categoría</CardTitle>
                 <CardDescription className="text-xs md:text-sm">
@@ -368,7 +369,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-7">
-            <Card className="lg:col-span-4 border-0 shadow-md">
+            <Card className="lg:col-span-4 rounded-2xl border-stone-200 bg-white shadow-sm">
               <CardHeader className="space-y-1 p-4 md:p-6">
                 <CardTitle className="text-lg md:text-xl font-semibold">Recetas Más Rentables</CardTitle>
                 <CardDescription className="text-xs md:text-sm">
@@ -379,7 +380,7 @@ export default function DashboardPage() {
                 <RecetasRentablesTable recetas={recetas} moneda={configuracion.moneda} />
               </CardContent>
             </Card>
-            <Card className="lg:col-span-3 border-0 shadow-md">
+            <Card className="lg:col-span-3 rounded-2xl border-stone-200 bg-white shadow-sm">
               <CardHeader className="space-y-1 p-4 md:p-6">
                 <CardTitle className="text-lg md:text-xl font-semibold">Acciones Rápidas</CardTitle>
                 <CardDescription className="text-xs md:text-sm">
@@ -388,9 +389,9 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent className="grid gap-2 md:gap-3 p-4 md:p-6">
                 <Link href="/productos/nuevo" className="block">
-                  <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl border-0 bg-gradient-to-br from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/15 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md">
-                    <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-all duration-300 group-hover:scale-110">
-                      <Plus className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+                  <div className="group flex cursor-pointer items-center gap-3 rounded-2xl border border-amber-200 bg-amber-50/70 p-3 transition-all duration-200 hover:-translate-y-0.5 hover:bg-amber-100/70 md:gap-4 md:p-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400 text-stone-950 transition-transform duration-200 group-hover:scale-105 md:h-12 md:w-12">
+                      <Plus className="h-5 w-5 md:h-6 md:w-6" />
                     </div>
                     <div className="flex-1">
                       <p className="text-xs md:text-sm font-semibold text-foreground">Nuevo Producto</p>
@@ -401,9 +402,9 @@ export default function DashboardPage() {
                 </Link>
 
                 <Link href="/recetas/nueva" className="block">
-                  <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl border-0 bg-gradient-to-br from-violet-500/5 to-violet-500/10 hover:from-violet-500/10 hover:to-violet-500/15 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md">
-                    <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-xl bg-violet-500/10 group-hover:bg-violet-500/20 transition-all duration-300 group-hover:scale-110">
-                      <FileText className="h-5 w-5 md:h-6 md:w-6 text-violet-600" />
+                  <div className="group flex cursor-pointer items-center gap-3 rounded-2xl border border-stone-200 bg-stone-50 p-3 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white md:gap-4 md:p-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#17202d] text-amber-300 transition-transform duration-200 group-hover:scale-105 md:h-12 md:w-12">
+                      <FileText className="h-5 w-5 md:h-6 md:w-6" />
                     </div>
                     <div className="flex-1">
                       <p className="text-xs md:text-sm font-semibold text-foreground">Nueva Receta</p>
@@ -449,7 +450,7 @@ export default function DashboardPage() {
 
         <TabsContent value="analytics" className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
-            <Card className="border-0 shadow-md">
+            <Card className="rounded-2xl border-stone-200 bg-white shadow-sm">
               <CardHeader className="space-y-1">
                 <CardTitle className="text-xl font-semibold">Análisis de Costos</CardTitle>
                 <CardDescription className="text-sm">
@@ -460,7 +461,7 @@ export default function DashboardPage() {
                 <CostosChart recetas={recetas} moneda={configuracion.moneda} />
               </CardContent>
             </Card>
-            <Card className="border-0 shadow-md">
+            <Card className="rounded-2xl border-stone-200 bg-white shadow-sm">
               <CardHeader className="space-y-1">
                 <CardTitle className="text-xl font-semibold">Distribución de Productos</CardTitle>
                 <CardDescription className="text-sm">
@@ -476,7 +477,7 @@ export default function DashboardPage() {
 
         {tieneVentas && (
           <TabsContent value="sales" className="space-y-6">
-            <Card className="border-0 shadow-md">
+            <Card className="rounded-2xl border-stone-200 bg-white shadow-sm">
               <CardHeader className="space-y-1">
                 <CardTitle className="text-xl font-semibold">Ventas Recientes</CardTitle>
                 <CardDescription className="text-sm">

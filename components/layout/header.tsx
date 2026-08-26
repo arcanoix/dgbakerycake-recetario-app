@@ -30,7 +30,7 @@ export function Header({ isCollapsed, setIsCollapsed }: HeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-40 w-full border-b border-stone-200 bg-[#f8f6f1]/95 backdrop-blur supports-[backdrop-filter]:bg-[#f8f6f1]/75">
       <div className="flex h-16 items-center px-4 md:px-6 lg:px-8">
         {/* Menú móvil */}
         <Sheet open={open} onOpenChange={setOpen}>

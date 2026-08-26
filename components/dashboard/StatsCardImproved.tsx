@@ -28,9 +28,9 @@ const variantStyles = {
     iconColor: "text-slate-600 dark:text-slate-400",
   },
   primary: {
-    gradient: "from-blue-50 to-transparent dark:from-blue-950/50",
-    iconBg: "bg-blue-100 dark:bg-blue-900/50",
-    iconColor: "text-blue-600 dark:text-blue-400",
+    gradient: "from-amber-50 to-transparent dark:from-amber-950/50",
+    iconBg: "bg-amber-100 dark:bg-amber-900/50",
+    iconColor: "text-amber-700 dark:text-amber-300",
   },
   success: {
     gradient: "from-emerald-50 to-transparent dark:from-emerald-950/50",
@@ -119,7 +119,7 @@ export const StatsCard = ({
       }}
       className={className}
     >
-      <Card className="group relative overflow-hidden border shadow-lg hover:shadow-2xl transition-all duration-500 backdrop-blur-sm bg-card/95">
+      <Card className="group relative overflow-hidden rounded-2xl border-stone-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg">
         {/* Animated Gradient Background */}
         <div
           className={cn(
@@ -221,7 +221,7 @@ export const StatsCard = ({
         <div className={cn(
           "absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-500",
           variant === "success" && "from-emerald-400 to-emerald-600",
-          variant === "primary" && "from-blue-400 to-blue-600",
+          variant === "primary" && "from-amber-400 to-amber-600",
           variant === "warning" && "from-amber-400 to-amber-600",
           variant === "danger" && "from-red-400 to-red-600",
           variant === "default" && "from-slate-400 to-slate-600"

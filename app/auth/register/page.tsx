@@ -119,64 +119,64 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="landing-surface min-h-dvh bg-[#f8f6f1] text-[#17202d] lg:flex">
       {/* Left Side - Hero Section */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary via-violet-600 to-fuchsia-600 p-12 flex-col justify-between relative overflow-hidden">
+      <div className="relative hidden overflow-hidden bg-[#111722] p-12 lg:flex lg:w-[48%] lg:flex-col lg:justify-between">
         {/* Decorative Elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+        <div className="absolute right-0 top-0 h-96 w-96 translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-400/20 blur-3xl" />
+        <div className="absolute bottom-0 left-0 h-96 w-96 -translate-x-1/2 translate-y-1/2 rounded-full bg-emerald-400/10 blur-3xl" />
         
         <div className="relative z-10">
           <LogoFull size="lg" className="text-white [&_path]:fill-white [&_stop]:stop-color-white" />
         </div>
 
         <div className="relative z-10 space-y-6">
-          <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full mb-4">
-            <p className="text-sm font-black text-white uppercase tracking-wider">
-              🍰 Sistema de Gestión para Gastronomía
+          <div className="mb-4 inline-block rounded-full border border-amber-400/25 bg-amber-400/10 px-4 py-2 backdrop-blur-sm">
+            <p className="text-xs font-bold uppercase tracking-[.16em] text-amber-300">
+              Tu cocina, con números claros
             </p>
           </div>
-          <h1 className="text-5xl font-black text-white leading-tight">
+          <h1 className="max-w-xl text-5xl font-extrabold leading-[.98] tracking-[-.055em] text-white">
             Profesionaliza tu negocio gastronómico hoy
           </h1>
-          <p className="text-xl text-white/90 font-medium leading-relaxed">
+          <p className="max-w-xl text-lg font-medium leading-8 text-slate-300">
             Calcula costos reales, controla inventario, gestiona ventas y toma decisiones basadas en datos. Todo en una sola plataforma.
           </p>
           
           {/* Benefits */}
           <div className="space-y-4 pt-4">
             {[
-              '✅ Costeo preciso de recetas por porción',
-              '✅ Control completo de inventario',
-              '✅ Gestión de ventas y cotizaciones',
-              '✅ Análisis de rentabilidad en tiempo real'
+              'Costeo preciso de recetas por porción',
+              'Control completo de inventario',
+              'Gestión de ventas y cotizaciones',
+              'Análisis de rentabilidad en tiempo real'
             ].map((benefit, i) => (
               <div key={i} className="flex items-center gap-3">
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                  <Check className="w-4 h-4 text-white" />
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-400/15">
+                  <Check className="h-4 w-4 text-emerald-300" />
                 </div>
-                <span className="text-white/90 font-medium">{benefit}</span>
+                <span className="font-medium text-slate-300">{benefit}</span>
               </div>
             ))}
           </div>
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 rounded-full backdrop-blur-sm border border-emerald-400/30 mt-4">
+          <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-4 py-2 backdrop-blur-sm">
             <Sparkles className="w-4 h-4 text-emerald-200" />
             <span className="text-sm font-bold text-emerald-100">Prueba gratis por 14 días • Sin tarjeta</span>
           </div>
         </div>
 
-        <div className="relative z-10 flex items-center gap-3 text-white/60 text-xs font-semibold">
-          <ShieldCheck className="w-4 h-4" />
+        <div className="relative z-10 flex items-center gap-3 text-xs font-semibold text-slate-400">
+          <ShieldCheck className="h-4 w-4 text-emerald-400" />
           <span>Datos protegidos con encriptación de nivel bancario</span>
         </div>
       </div>
 
       {/* Right Side - Form */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-background">
-        <div className="w-full max-w-md space-y-8">
+      <div className="flex flex-1 items-center justify-center p-5 sm:p-8 lg:p-12">
+        <div className="w-full max-w-md space-y-7 rounded-[28px] border border-stone-200 bg-white p-6 shadow-[0_24px_60px_-35px_rgba(15,23,42,.45)] sm:p-9">
           {/* Mobile Logo */}
           <div className="lg:hidden flex justify-center mb-8">
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-primary/10 via-violet-500/10 to-fuchsia-500/10 border-2 border-primary/20">
+            <div className="rounded-2xl border border-amber-300 bg-amber-50 p-4">
               <LogoFull size="lg" />
             </div>
           </div>
@@ -191,7 +191,7 @@ export default function RegisterPage() {
                 <Users className="w-10 h-10 text-amber-600" />
               </div>
               <div className="space-y-2">
-                <h2 className="text-2xl font-black">Registro Temporalmente Cerrado</h2>
+                <h2 className="text-2xl font-extrabold tracking-[-.04em]">Registro Temporalmente Cerrado</h2>
                 <p className="text-muted-foreground font-medium">
                   Hemos alcanzado el límite de usuarios permitidos en este momento.
                 </p>
@@ -215,7 +215,7 @@ export default function RegisterPage() {
                 <Check className="w-10 h-10 text-emerald-600" />
               </div>
               <div className="space-y-2">
-                <h2 className="text-3xl font-black">¡Cuenta Creada!</h2>
+                <h2 className="text-3xl font-extrabold tracking-[-.04em]">¡Cuenta Creada!</h2>
                 <p className="text-muted-foreground font-medium">
                   Revisa tu correo <span className="font-bold text-foreground">{email}</span> para confirmar tu cuenta.
                 </p>
@@ -227,10 +227,10 @@ export default function RegisterPage() {
           ) : (
             <>
               <div className="space-y-2">
-                <h2 className="text-3xl font-black tracking-tight">
+                <h2 className="text-3xl font-extrabold tracking-[-.045em] text-[#17202d]">
                   Comienza gratis hoy
                 </h2>
-                <p className="text-muted-foreground font-medium">
+                <p className="font-medium leading-6 text-stone-500">
                   Gestiona costos, inventario y ventas de tu negocio gastronómico
                 </p>
               </div>
@@ -239,7 +239,7 @@ export default function RegisterPage() {
                 <Button 
                   variant="outline" 
                   type="button" 
-                  className="w-full h-14 font-semibold text-sm flex items-center justify-center gap-3 border-2 hover:bg-muted/50 transition-all rounded-xl"
+                  className="h-14 w-full rounded-xl border-stone-300 bg-white text-sm font-semibold shadow-sm transition hover:border-amber-400 hover:bg-amber-50"
                   onClick={handleGoogleSignIn}
                   disabled={loading}
                 >
@@ -276,7 +276,7 @@ export default function RegisterPage() {
                         onChange={(e) => setNombre(e.target.value)}
                         placeholder="Ej: Dulce Pasión"
                         disabled={loading}
-                        className="h-14 pl-12 text-base rounded-xl border-2 focus-visible:ring-2 focus-visible:ring-primary/20"
+                        className="h-14 rounded-xl border-stone-300 bg-stone-50 pl-12 text-base focus-visible:border-amber-500 focus-visible:ring-amber-200"
                       />
                       <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     </div>
@@ -295,7 +295,7 @@ export default function RegisterPage() {
                         placeholder="tu@email.com"
                         required
                         disabled={loading}
-                        className="h-14 pl-12 text-base rounded-xl border-2 focus-visible:ring-2 focus-visible:ring-primary/20"
+                        className="h-14 rounded-xl border-stone-300 bg-stone-50 pl-12 text-base focus-visible:border-amber-500 focus-visible:ring-amber-200"
                       />
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     </div>
@@ -314,7 +314,7 @@ export default function RegisterPage() {
                         placeholder="Mínimo 6 caracteres"
                         required
                         disabled={loading}
-                        className="h-14 pl-12 text-base rounded-xl border-2 focus-visible:ring-2 focus-visible:ring-primary/20"
+                        className="h-14 rounded-xl border-stone-300 bg-stone-50 pl-12 text-base focus-visible:border-amber-500 focus-visible:ring-amber-200"
                       />
                       <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     </div>
@@ -333,7 +333,7 @@ export default function RegisterPage() {
                         placeholder="Repite tu contraseña"
                         required
                         disabled={loading}
-                        className="h-14 pl-12 text-base rounded-xl border-2 focus-visible:ring-2 focus-visible:ring-primary/20"
+                        className="h-14 rounded-xl border-stone-300 bg-stone-50 pl-12 text-base focus-visible:border-amber-500 focus-visible:ring-amber-200"
                       />
                       <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     </div>
@@ -341,7 +341,7 @@ export default function RegisterPage() {
 
                   <Button 
                     type="submit" 
-                    className="w-full h-14 font-bold text-base rounded-xl shadow-lg hover:shadow-xl transition-all" 
+                    className="h-14 w-full rounded-xl bg-[#17202d] text-base font-bold text-white shadow-lg shadow-stone-900/15 transition hover:-translate-y-0.5 hover:bg-black"
                     disabled={loading}
                   >
                     {loading ? <RefreshCw className="w-5 h-5 animate-spin" /> : (
@@ -356,7 +356,7 @@ export default function RegisterPage() {
                 <div className="text-center pt-4">
                   <p className="text-sm text-muted-foreground">
                     ¿Ya tienes cuenta?{' '}
-                    <Link href="/auth/login" className="text-primary font-bold hover:underline">
+                    <Link href="/auth/login" className="font-bold text-amber-700 hover:text-amber-800 hover:underline">
                       Inicia sesión
                     </Link>
                   </p>

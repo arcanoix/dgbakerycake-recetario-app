@@ -41,7 +41,7 @@ export function Sidebar({ className, isCollapsed, setIsCollapsed, onLinkClick }:
   return (
     <aside
       className={cn(
-        `fixed left-0 top-0 z-50 h-screen w-64 border-r bg-background transition-[width] duration-300 md:sticky flex flex-col`,
+        `fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-stone-200 bg-[#fbfaf7] transition-[width] duration-300 md:sticky`,
         isCollapsed ? "md:w-16" : "md:w-64",
         navOpened ? "translate-x-0" : "-translate-x-full md:translate-x-0",
         className

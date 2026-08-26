@@ -2,6 +2,8 @@ export interface UserData {
   id: string;
   email: string;
   nombre?: string;
+  /** URL pública de la foto de perfil almacenada en los metadatos de Supabase Auth. */
+  avatar_url?: string;
   created_at?: string;
   last_sign_in_at?: string;
   role?: string;

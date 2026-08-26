@@ -343,6 +343,7 @@ export const obtenerTodosLosUsuarios = async () => {
       return {
         id: usuario.user_id,
         email: usuario.email,
+        avatar_url: usuario.avatar_url || undefined,
         role: usuario.role,
         plan_name: usuario.plan_name,
         plan_display_name: usuario.plan_display_name,

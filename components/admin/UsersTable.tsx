@@ -14,7 +14,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit, Ban, Play, UserCog, ShieldAlert, Trash2, CreditCard } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Edit, Ban, Play, UserCog, ShieldAlert, Trash2, CreditCard, UserRound } from "lucide-react";
 import { suspenderUsuario, reactivarUsuario, cambiarRolUsuario, eliminarUsuario, obtenerPlanPorNombre } from "@/lib/subscriptionStorage";
 import { EditUserModal } from "@/components/admin/EditUserModal";
 import { ChangePlanDialog } from "@/components/admin/ChangePlanDialog";
@@ -180,7 +181,7 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Email</TableHead>
+                <TableHead>Usuario</TableHead>
                 <TableHead>Rol</TableHead>
                 <TableHead>Plan</TableHead>
                 <TableHead>Estado</TableHead>
@@ -202,8 +203,17 @@ export const UsersTable = ({ usuarios, onUpdate }: UsersTableProps) => {
               ) : (
                 usuariosFiltrados.map((usuario) => (
                   <TableRow key={usuario.id}>
-                    <TableCell className="font-medium">
-                      {usuario.email}
+                    <TableCell className="min-w-[220px] font-medium">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-9 w-9 border border-stone-200 bg-stone-50 shadow-sm">
+                          {usuario.avatar_url ? <AvatarImage src={usuario.avatar_url} alt={`Foto de perfil de ${usuario.email}`} /> : null}
+                          <AvatarFallback className="bg-stone-100 text-slate-500">
+                            <UserRound aria-hidden="true" className="h-4 w-4" />
+                            <span className="sr-only">Usuario sin foto de perfil</span>
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="truncate">{usuario.email}</span>
+                      </div>
                     </TableCell>
                     <TableCell>{getRoleBadge(usuario.role)}</TableCell>
                     <TableCell>

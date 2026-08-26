@@ -8,6 +8,7 @@ import { UsersTable } from "@/components/admin/UsersTable";
 import { ActivityLogsTable } from "@/components/admin/ActivityLogsTable";
 import { AdminCharts } from "@/components/admin/AdminCharts";
 import { SystemSettingsPanel } from "@/components/admin/SystemSettingsPanel";
+import { StatsCard } from "@/components/dashboard/StatsCardImproved";
 import { useRole } from "@/hooks/useRole";
 import { PaymentRequest } from "@/types/subscription";
 import { UserData, ActivityLog } from "@/types/user";
@@ -18,7 +19,6 @@ import {
   obtenerEstadisticasUsuarios,
   obtenerActividadesAdmin,
 } from "@/lib/subscriptionStorage";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loading } from "@/components/ui/loading";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -28,42 +28,6 @@ import {
   Clock, CheckCircle, XCircle, TrendingUp, UserPlus, 
   Crown, AlertCircle, Settings
 } from "lucide-react";
-
-interface StatCardProps {
-  title: string;
-  value: number | string;
-  icon: React.ReactNode;
-  color: string;
-  gradient: string;
-  subtitle?: string;
-}
-
-const StatCard = ({ title, value, icon, color, gradient, subtitle }: StatCardProps) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    whileHover={{ scale: 1.02 }}
-    transition={{ duration: 0.2 }}
-  >
-    <Card className="border-0 shadow-lg overflow-hidden relative">
-      <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${gradient}`} />
-      <CardContent className="pt-6">
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">{title}</p>
-            <p className="text-3xl font-bold mt-1">{value}</p>
-            {subtitle && (
-              <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
-            )}
-          </div>
-          <div className={`w-12 h-12 rounded-xl ${color} flex items-center justify-center`}>
-            {icon}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  </motion.div>
-);
 
 export default function AdminPage() {
   const router = useRouter();
@@ -213,37 +177,33 @@ export default function AdminPage() {
             transition={{ delay: 0.15 }}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <StatCard
+              <StatsCard
                 title="Pendientes"
                 value={estadisticas.solicitudesPendientes}
-                icon={<Clock className="w-6 h-6 text-yellow-600" />}
-                color="bg-yellow-100/50"
-                gradient="from-yellow-500 to-orange-500"
-                subtitle={`${pendingCount} solicitudes esperan`}
+                icon={Clock}
+                variant="warning"
+                description={`${pendingCount} solicitudes esperan`}
               />
-              <StatCard
+              <StatsCard
                 title="Aprobadas"
                 value={estadisticas.solicitudesAprobadas}
-                icon={<CheckCircle className="w-6 h-6 text-green-600" />}
-                color="bg-green-100/50"
-                gradient="from-green-500 to-emerald-500"
-                subtitle={`${approvedCount} aprobadas`}
+                icon={CheckCircle}
+                variant="success"
+                description={`${approvedCount} aprobadas`}
               />
-              <StatCard
+              <StatsCard
                 title="Total Usuarios"
                 value={estadisticas.totalUsuarios}
-                icon={<Users className="w-6 h-6 text-blue-600" />}
-                color="bg-blue-100/50"
-                gradient="from-blue-500 to-cyan-500"
-                subtitle="usuarios registrados"
+                icon={Users}
+                variant="default"
+                description="Usuarios registrados"
               />
-              <StatCard
+              <StatsCard
                 title="Suscripciones"
                 value={estadisticas.suscripcionesActivas}
-                icon={<Crown className="w-6 h-6 text-violet-600" />}
-                color="bg-violet-100/50"
-                gradient="from-violet-500 to-fuchsia-500"
-                subtitle="planes activos"
+                icon={Crown}
+                variant="primary"
+                description="Planes activos"
               />
             </div>
 
@@ -297,34 +257,33 @@ export default function AdminPage() {
             transition={{ delay: 0.15 }}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <StatCard
+              <StatsCard
                 title="Total Usuarios"
                 value={estadisticasUsuarios.totalUsuarios}
-                icon={<Users className="w-6 h-6 text-blue-600" />}
-                color="bg-blue-100/50"
-                gradient="from-blue-500 to-cyan-500"
+                icon={Users}
+                variant="default"
+                description="Usuarios registrados"
               />
-              <StatCard
+              <StatsCard
                 title="Usuarios Activos"
                 value={estadisticasUsuarios.usuariosActivos}
-                icon={<TrendingUp className="w-6 h-6 text-green-600" />}
-                color="bg-green-100/50"
-                gradient="from-green-500 to-emerald-500"
+                icon={TrendingUp}
+                variant="success"
+                description="Con acceso activo"
               />
-              <StatCard
+              <StatsCard
                 title="Con Plan de Pago"
                 value={estadisticasUsuarios.usuariosConPlanPago}
-                icon={<Crown className="w-6 h-6 text-violet-600" />}
-                color="bg-violet-100/50"
-                gradient="from-violet-500 to-fuchsia-500"
+                icon={Crown}
+                variant="primary"
+                description="Suscripciones de pago"
               />
-              <StatCard
+              <StatsCard
                 title="Nuevos Este Mes"
                 value={estadisticasUsuarios.usuariosNuevosEsteMes}
-                icon={<UserPlus className="w-6 h-6 text-amber-600" />}
-                color="bg-amber-100/50"
-                gradient="from-amber-500 to-orange-500"
-                subtitle="registros este mes"
+                icon={UserPlus}
+                variant="primary"
+                description="Registros este mes"
               />
             </div>
 
@@ -339,26 +298,26 @@ export default function AdminPage() {
             transition={{ delay: 0.15 }}
           >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <StatCard
+              <StatsCard
                 title="Total Actividades"
                 value={activityLogs.length}
-                icon={<Activity className="w-6 h-6 text-blue-600" />}
-                color="bg-blue-100/50"
-                gradient="from-blue-500 to-cyan-500"
+                icon={Activity}
+                variant="default"
+                description="Eventos registrados"
               />
-              <StatCard
+              <StatsCard
                 title="Creaciones"
                 value={activityLogs.filter((l) => l.action === "create").length}
-                icon={<CheckCircle className="w-6 h-6 text-green-600" />}
-                color="bg-green-100/50"
-                gradient="from-green-500 to-emerald-500"
+                icon={CheckCircle}
+                variant="success"
+                description="Registros creados"
               />
-              <StatCard
+              <StatsCard
                 title="Eliminaciones"
                 value={activityLogs.filter((l) => l.action === "delete").length}
-                icon={<XCircle className="w-6 h-6 text-red-600" />}
-                color="bg-red-100/50"
-                gradient="from-red-500 to-rose-500"
+                icon={XCircle}
+                variant="danger"
+                description="Registros eliminados"
               />
             </div>
 
@@ -373,33 +332,30 @@ export default function AdminPage() {
             transition={{ delay: 0.15 }}
           >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <StatCard
+              <StatsCard
                 title="Errores del sistema"
                 value={systemLogs.length}
-                icon={<AlertCircle className="w-6 h-6 text-red-600" />}
-                color="bg-red-100/50"
-                gradient="from-red-500 to-rose-500"
-                subtitle="eventos capturados"
+                icon={AlertCircle}
+                variant="danger"
+                description="Eventos capturados"
               />
-              <StatCard
+              <StatsCard
                 title="Hoy"
                 value={systemLogs.filter((log) => {
                   const logDate = new Date(log.created_at);
                   const today = new Date();
                   return logDate.toDateString() === today.toDateString();
                 }).length}
-                icon={<Clock className="w-6 h-6 text-orange-600" />}
-                color="bg-orange-100/50"
-                gradient="from-orange-500 to-amber-500"
-                subtitle="errores de hoy"
+                icon={Clock}
+                variant="warning"
+                description="Errores de hoy"
               />
-              <StatCard
+              <StatsCard
                 title="Módulo"
                 value={Array.from(new Set(systemLogs.map((log) => log.module))).length}
-                icon={<Activity className="w-6 h-6 text-slate-600" />}
-                color="bg-slate-100/50"
-                gradient="from-slate-500 to-gray-500"
-                subtitle="módulos con errores"
+                icon={Activity}
+                variant="default"
+                description="Módulos con errores"
               />
             </div>
 

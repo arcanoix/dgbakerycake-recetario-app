@@ -19,6 +19,7 @@ export const usePerfil = () => {
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mensaje, setMensaje] = useState<string | null>(null);
+  const [subiendoAvatar, setSubiendoAvatar] = useState(false);
 
   const limpiarMensajes = () => {
     setError(null);
@@ -118,6 +119,43 @@ export const usePerfil = () => {
     [user, loadingAuth]
   );
 
+  const subirAvatar = useCallback(async (archivo: File): Promise<string | null> => {
+    if (!user) return null;
+
+    limpiarMensajes();
+    setSubiendoAvatar(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", archivo);
+
+      const response = await fetch("/api/profile/avatar", {
+        method: "POST",
+        body: formData,
+      });
+      const payload = await response.json() as { url?: string; error?: string };
+
+      if (!response.ok || !payload.url) {
+        setError(payload.error || "No se pudo subir la foto de perfil");
+        return null;
+      }
+
+      const resultado = await actualizarPerfil({ avatarUrl: payload.url });
+      if (!resultado.success) {
+        setError(resultado.error || "La foto se subió, pero no se pudo guardar en tu perfil");
+        return null;
+      }
+
+      setMensaje("Foto de perfil actualizada");
+      return payload.url;
+    } catch {
+      setError("Error inesperado al subir la foto de perfil");
+      return null;
+    } finally {
+      setSubiendoAvatar(false);
+    }
+  }, [user]);
+
   return {
     user,
     guardando,
@@ -126,5 +164,7 @@ export const usePerfil = () => {
     limpiarMensajes,
     actualizarDatos,
     cambiarPassword,
+    subirAvatar,
+    subiendoAvatar,
   };
 };

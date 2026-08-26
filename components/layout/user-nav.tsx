@@ -29,13 +29,14 @@ export function UserNav() {
 
   const initials = user.email?.charAt(0).toUpperCase() || "U";
   const username = user.email?.split("@")[0] || "Usuario";
+  const avatarUrl = user.user_metadata?.avatar_url as string | undefined;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-9 w-9 rounded-full border shadow-sm">
           <Avatar className="h-9 w-9">
-            <AvatarImage src="" alt={username} />
+            <AvatarImage src={avatarUrl} alt={`Foto de perfil de ${username}`} />
             <AvatarFallback className="bg-primary/10 text-primary font-semibold">{initials}</AvatarFallback>
           </Avatar>
         </Button>

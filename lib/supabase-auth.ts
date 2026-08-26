@@ -131,13 +131,23 @@ export const updatePassword = async (newPassword: string) => {
 export interface ActualizarPerfilData {
   nombre?: string;
   email?: string;
+  avatarUrl?: string;
 }
 
 export const actualizarPerfil = async (datos: ActualizarPerfilData) => {
   const updates: Parameters<typeof supabaseAuth.auth.updateUser>[0] = {};
 
+  const metadata: Record<string, string> = {};
   if (datos.nombre !== undefined) {
-    updates.data = { nombre: datos.nombre };
+    metadata.nombre = datos.nombre;
+  }
+
+  if (datos.avatarUrl !== undefined) {
+    metadata.avatar_url = datos.avatarUrl;
+  }
+
+  if (Object.keys(metadata).length > 0) {
+    updates.data = metadata;
   }
 
   if (datos.email !== undefined) {

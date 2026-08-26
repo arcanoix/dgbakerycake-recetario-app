@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { usePerfil, PerfilFormData, CambiarPasswordData } from "@/hooks/usePerfil";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,13 +22,14 @@ import {
   Shield,
   LogOut,
   Fingerprint,
-  RefreshCw
+  RefreshCw,
+  Camera,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 
 export const PerfilForm = () => {
-  const { user, guardando, error, mensaje, limpiarMensajes, actualizarDatos, cambiarPassword } =
+  const { user, guardando, error, mensaje, limpiarMensajes, actualizarDatos, cambiarPassword, subirAvatar, subiendoAvatar } =
     usePerfil();
 
   const [datosForm, setDatosForm] = useState<PerfilFormData>({
@@ -49,6 +50,8 @@ export const PerfilForm = () => {
   const [accionActiva, setAccionActiva] = useState<"perfil" | "password" | null>(null);
   const [guardadoPerfil, setGuardadoPerfil] = useState(false);
   const [guardadoPassword, setGuardadoPassword] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (user) {
@@ -56,6 +59,7 @@ export const PerfilForm = () => {
         nombre: (user.user_metadata?.nombre as string) || "",
         email: user.email || "",
       });
+      setAvatarUrl((user.user_metadata?.avatar_url as string) || null);
     }
   }, [user]);
 
@@ -69,6 +73,15 @@ export const PerfilForm = () => {
     const { name, value } = e.target;
     setPasswordForm((prev) => ({ ...prev, [name]: value }));
     limpiarMensajes();
+  };
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    const url = await subirAvatar(file);
+    if (url) setAvatarUrl(url);
   };
 
   const handleDatosSubmit = async (e: React.FormEvent) => {
@@ -108,8 +121,14 @@ export const PerfilForm = () => {
     <div className="space-y-8">
       {/* Perfil Overview */}
       <div className="flex flex-col md:flex-row items-center gap-6 p-8 bg-gradient-to-br from-primary/5 via-primary/10 to-violet-500/5 rounded-3xl border shadow-sm">
-        <div className="h-24 w-24 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-4xl font-black shadow-xl ring-4 ring-white">
-          {initials}
+        <div className="relative">
+          <div className="h-24 w-24 overflow-hidden rounded-full bg-primary text-primary-foreground flex items-center justify-center text-4xl font-black shadow-xl ring-4 ring-white">
+            {avatarUrl ? <img src={avatarUrl} alt="Foto de perfil" className="h-full w-full object-cover" onError={() => setAvatarUrl(null)} /> : initials}
+          </div>
+          <button type="button" onClick={() => avatarInputRef.current?.click()} disabled={subiendoAvatar} aria-label="Cambiar foto de perfil" className="absolute -bottom-1 -right-1 grid h-10 w-10 place-items-center rounded-full border-4 border-white bg-[#17202d] text-amber-300 shadow-md transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-60">
+            {subiendoAvatar ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+          </button>
+          <input ref={avatarInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleAvatarChange} className="sr-only" />
         </div>
         <div className="flex-1 text-center md:text-left space-y-1">
           <h3 className="text-2xl font-black tracking-tight">{datosForm.nombre || "Usuario"}</h3>
@@ -123,6 +142,7 @@ export const PerfilForm = () => {
               Desde {fechaRegistro}
             </Badge>
           </div>
+          <p className="mt-3 text-xs text-muted-foreground">JPG, PNG o WebP · máximo 2 MB</p>
         </div>
       </div>
 

@@ -23,7 +23,7 @@ import { motion } from "framer-motion";
 import { Users, Calendar, Activity, Zap, TrendingUp, Package, BookOpen, Settings } from "lucide-react";
 
 const COLORS = [
-  "#8b5cf6", // violet
+  "#d97706", // amber
   "#06b6d4", // cyan
   "#f59e0b", // amber
   "#10b981", // emerald
@@ -32,7 +32,7 @@ const COLORS = [
 ];
 
 const MODULE_CONFIG: Record<string, { color: string; icon: React.ReactNode }> = {
-  recetas: { color: "#8b5cf6", icon: <BookOpen className="w-4 h-4" /> },
+  recetas: { color: "#d97706", icon: <BookOpen className="w-4 h-4" /> },
   productos: { color: "#06b6d4", icon: <Package className="w-4 h-4" /> },
   auth: { color: "#f59e0b", icon: <Users className="w-4 h-4" /> },
   configuracion: { color: "#10b981", icon: <Settings className="w-4 h-4" /> },
@@ -45,7 +45,7 @@ const ACTION_COLORS: Record<string, string> = {
   create: "#10b981",
   update: "#3b82f6",
   delete: "#ef4444",
-  login: "#8b5cf6",
+  login: "#d97706",
   logout: "#6b7280",
   view: "#f59e0b",
 };

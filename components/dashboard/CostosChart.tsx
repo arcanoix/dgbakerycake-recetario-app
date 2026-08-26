@@ -29,10 +29,10 @@ export const CostosChart = ({ recetas, moneda }: CostosChartProps) => {
         <div className="bg-card p-4 rounded-lg shadow-lg border">
           <p className="font-semibold text-foreground mb-2">{label}</p>
           <div className="space-y-1">
-            <p className="text-sm text-violet-600">
+            <p className="text-sm text-amber-700">
               <span className="font-medium">Materiales:</span> {formatearMoneda(payload[0]?.value || 0, moneda, tasaCambio)}
             </p>
-            <p className="text-sm text-fuchsia-600">
+            <p className="text-sm text-emerald-700">
               <span className="font-medium">Mano de obra:</span> {formatearMoneda(payload[1]?.value || 0, moneda, tasaCambio)}
             </p>
             <div className="border-t pt-1 mt-1">
@@ -52,11 +52,11 @@ export const CostosChart = ({ recetas, moneda }: CostosChartProps) => {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-violet-500"></div>
+            <div className="w-3 h-3 rounded-full bg-amber-500"></div>
             <span className="text-xs text-muted-foreground">Materiales</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-fuchsia-500"></div>
+            <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
             <span className="text-xs text-muted-foreground">Mano de obra</span>
           </div>
         </div>
@@ -83,14 +83,14 @@ export const CostosChart = ({ recetas, moneda }: CostosChartProps) => {
           <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))' }} />
           <Bar 
             dataKey="materiales" 
-            fill="#8b5cf6" 
+            fill="#d97706"
             name="Materiales"
             radius={[4, 4, 0, 0]} 
             barSize={16}
           />
           <Bar 
             dataKey="manoObra" 
-            fill="#d946ef" 
+            fill="#059669"
             name="Mano de obra"
             radius={[4, 4, 0, 0]} 
             barSize={16}

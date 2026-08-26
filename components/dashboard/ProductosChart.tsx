@@ -6,7 +6,7 @@ interface ProductosChartProps {
   productos: { categoria: string; cantidad: number }[];
 }
 
-const COLORS = ['#8b5cf6', '#d946ef', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#ec4899'];
+const COLORS = ['#d97706', '#059669', '#0f766e', '#92400e', '#475569', '#c2410c', '#14b8a6', '#a16207'];
 
 export const ProductosChart = ({ productos }: ProductosChartProps) => {
   const total = productos.reduce((sum, p) => sum + p.cantidad, 0);

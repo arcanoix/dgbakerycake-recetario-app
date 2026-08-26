@@ -38,35 +38,58 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+
+  /* Compatibilidad visual: las rutas heredadas aún usan utilidades violet/purple.
+     Se reasignan a la paleta gourmet mientras se migran a tokens semánticos. */
+  --color-violet-50: #fffbeb;
+  --color-violet-100: #fef3c7;
+  --color-violet-200: #fde68a;
+  --color-violet-300: #fcd34d;
+  --color-violet-400: #fbbf24;
+  --color-violet-500: #f59e0b;
+  --color-violet-600: #b45309;
+  --color-violet-700: #92400e;
+  --color-violet-800: #78350f;
+  --color-violet-900: #451a03;
+  --color-purple-50: #fffbeb;
+  --color-purple-100: #fef3c7;
+  --color-purple-500: #c2410c;
+  --color-purple-600: #9a3412;
+  --color-purple-700: #7c2d12;
+  --color-fuchsia-50: #fff7ed;
+  --color-fuchsia-100: #ffedd5;
+  --color-fuchsia-500: #d97706;
+  --color-fuchsia-600: #b45309;
+  --color-fuchsia-700: #92400e;
 }
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 45 22% 96%;
+    --foreground: 215 27% 13%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 215 27% 13%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 263 70% 50%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 270 65% 55%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 270 30% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 270 65% 55%;
-    --accent-foreground: 210 40% 98%;
+    --popover-foreground: 215 27% 13%;
+    --primary: 31 77% 36%;
+    --primary-foreground: 40 100% 98%;
+    --secondary: 38 32% 92%;
+    --secondary-foreground: 215 27% 13%;
+    --muted: 40 20% 93%;
+    --muted-foreground: 215 15% 42%;
+    --accent: 42 75% 92%;
+    --accent-foreground: 215 27% 13%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 270 20% 90%;
-    --input: 270 20% 90%;
-    --ring: 263 70% 50%;
-    --radius: 0.5rem;
-    --chart-1: 263 70% 50%;
-    --chart-2: 270 65% 55%;
-    --chart-3: 280 65% 60%;
-    --chart-4: 300 65% 55%;
-    --chart-5: 320 75% 55%;
+    --border: 30 14% 86%;
+    --input: 30 14% 86%;
+    --ring: 31 77% 36%;
+    --radius: 0.75rem;
+    --chart-1: 31 77% 42%;
+    --chart-2: 160 84% 39%;
+    --chart-3: 31 77% 42%;
+    --chart-4: 190 75% 34%;
+    --chart-5: 215 15% 42%;
   }
 
   .dark {
@@ -76,24 +99,24 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 8%;
     --popover-foreground: 210 40% 98%;
-    --primary: 263 70% 60%;
-    --primary-foreground: 222.2 47% 11%;
-    --secondary: 270 65% 60%;
+    --primary: 38 92% 55%;
+    --primary-foreground: 215 27% 13%;
+    --secondary: 215 20% 18%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 270 65% 60%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 38 42% 18%;
+    --accent-foreground: 38 92% 55%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 263 70% 60%;
-    --chart-1: 263 70% 50%;
-    --chart-2: 270 65% 55%;
-    --chart-3: 280 65% 60%;
-    --chart-4: 300 65% 55%;
-    --chart-5: 320 75% 55%;
+    --ring: 38 92% 55%;
+    --chart-1: 38 92% 55%;
+    --chart-2: 160 70% 45%;
+    --chart-3: 31 77% 50%;
+    --chart-4: 190 65% 50%;
+    --chart-5: 215 15% 60%;
   }
 
   * {
@@ -103,6 +126,7 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
+    font-family: var(--font-inter), sans-serif;
   }
 
   /* Driver.js Customization */

@@ -54,10 +54,12 @@ export function StatsCard({ title, value, icon: Icon, description, trend, varian
   const styles = variantStyles[variant];
   const hasSparkline = Boolean(sparklineData && sparklineData.length > 1);
   const TrendIcon = trend?.isPositive === false ? TrendingDown : TrendingUp;
+  const valueLines = typeof value === "string" ? value.split("\n") : [value];
+  const isDualCurrency = valueLines.length > 1;
 
   return (
     <motion.div animate={{ opacity: 1, y: 0 }} className={cn("h-full", className)} initial={{ opacity: 0, y: 12 }} transition={{ duration: 0.35, ease: "easeOut" }} whileHover={{ y: -2 }}>
-      <Card className="group relative flex h-full min-h-[264px] flex-col overflow-hidden rounded-2xl border-stone-200/90 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition-shadow duration-200 hover:shadow-[0_16px_32px_rgba(15,23,42,0.09)]">
+      <Card className="group relative flex h-full min-h-[232px] flex-col overflow-hidden rounded-2xl border-stone-200/90 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition-shadow duration-200 hover:shadow-[0_16px_32px_rgba(15,23,42,0.09)]">
         <div aria-hidden="true" className={cn("pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-br", styles.gradient)} />
 
         <CardHeader className="relative flex flex-row items-center justify-between space-y-0 p-5 pb-0">
@@ -66,18 +68,28 @@ export function StatsCard({ title, value, icon: Icon, description, trend, varian
         </CardHeader>
 
         <CardContent className="relative flex flex-1 flex-col p-5 pt-4">
-          <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
-            <p className="max-w-full font-mono text-[clamp(1.7rem,2.1vw,2.35rem)] font-bold leading-[1.05] tracking-[-0.06em] text-slate-950 tabular-nums">{value}</p>
+          <div className="flex items-start justify-between gap-3">
+            <p className="min-w-0 font-mono text-[clamp(1.65rem,1.8vw,2.1rem)] font-bold leading-[1.08] tracking-[-0.05em] text-slate-950 tabular-nums">
+              {valueLines.map((line, index) => (
+                <span key={index} className={cn("block whitespace-nowrap", isDualCurrency && index > 0 && "mt-1 text-[0.67em] tracking-[-0.035em] text-slate-600")}>
+                  {line}
+                </span>
+              ))}
+            </p>
             {trend ? <span className={cn("mt-1 inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px] font-semibold tabular-nums", trend.isPositive === false ? "border-rose-100 bg-rose-50 text-rose-600" : "border-emerald-100 bg-emerald-50 text-emerald-700")}><TrendIcon aria-hidden="true" className="h-3 w-3" />{trend.isPositive === false ? "−" : "+"}{trend.value}%</span> : null}
           </div>
           {description ? <p className="mt-3 text-sm leading-5 text-slate-500">{description}</p> : null}
 
-          <div className="mt-auto pt-4">
-            <p className="min-h-4 text-[10px] font-medium uppercase tracking-[0.07em] text-slate-400">{trend?.label ?? "Indicador actual"}</p>
-            <div className="mt-2 h-12 border-t border-stone-100 pt-2">
-              {hasSparkline ? <Sparkline colorClass={styles.sparkline} data={sparklineData!} /> : <div aria-hidden="true" className="mt-4 h-px w-full bg-stone-100" />}
+          {(trend?.label || hasSparkline) ? (
+            <div className="mt-auto pt-4">
+              {trend?.label ? <p className="text-[10px] font-medium uppercase tracking-[0.07em] text-slate-400">{trend.label}</p> : null}
+              {hasSparkline ? (
+                <div className="mt-2 h-12 border-t border-stone-100 pt-2">
+                  <Sparkline colorClass={styles.sparkline} data={sparklineData!} />
+                </div>
+              ) : null}
             </div>
-          </div>
+          ) : null}
         </CardContent>
       </Card>
     </motion.div>

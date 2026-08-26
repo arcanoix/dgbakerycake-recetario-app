@@ -194,16 +194,30 @@ export default function DashboardPage() {
   const tieneVentas = canAccess("menu_ventas");
   const tieneClientes = canAccess("menu_clientes");
 
-  const totalVentas = ordenes
-    .filter((o) => o.estado !== "cancelada")
-    .reduce((acc, o) => acc + o.total, 0);
   const ordenesPendientes = ordenes.filter((o) => o.estado === "cotizacion").length;
   const ordenesConfirmadas = ordenes.filter((o) => o.estado === "confirmada").length;
-  const ordenesEntregadas = ordenes.filter((o) => o.estado === "entregada").length;
+  const hoy = new Date();
+  const inicioMesActual = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+  const inicioProximoMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 1);
+  const inicioMesAnterior = new Date(hoy.getFullYear(), hoy.getMonth() - 1, 1);
+  const estaEntreFechas = (fecha: Date, inicio: Date, fin: Date) => fecha >= inicio && fecha < fin;
+  const ventasEntregadasMesActual = ordenes.filter((orden) =>
+    orden.estado === "entregada" && estaEntreFechas(new Date(orden.fechaCreacion), inicioMesActual, inicioProximoMes)
+  );
+  const ventasEntregadasMesAnterior = ordenes.filter((orden) =>
+    orden.estado === "entregada" && estaEntreFechas(new Date(orden.fechaCreacion), inicioMesAnterior, inicioMesActual)
+  );
+  const totalVentasMesActual = ventasEntregadasMesActual.reduce((total, orden) => total + orden.total, 0);
+  const totalVentasMesAnterior = ventasEntregadasMesAnterior.reduce((total, orden) => total + orden.total, 0);
+  const variacionVentas = totalVentasMesAnterior > 0
+    ? Number((((totalVentasMesActual - totalVentasMesAnterior) / totalVentasMesAnterior) * 100).toFixed(1))
+    : undefined;
+  const recetasCreadasMesActual = recetas.filter((receta) =>
+    estaEntreFechas(new Date(receta.fechaCreacion), inicioMesActual, inicioProximoMes)
+  ).length;
   const ventasRecientes = [...ordenes]
     .sort((a, b) => new Date(b.fechaCreacion || 0).getTime() - new Date(a.fechaCreacion || 0).getTime())
     .slice(0, 5);
-  const hoy = new Date();
   const anioActual = hoy.getFullYear();
   const mesActual = hoy.getMonth();
   const meses = new Intl.DateTimeFormat("es-VE", { month: "short" });
@@ -290,41 +304,29 @@ export default function DashboardPage() {
           icon={DollarSign}
           description="Inversión total en productos"
           variant="success"
-          trend={{
-            value: 12.5,
-            isPositive: true,
-            label: "vs mes anterior"
-          }}
-          sparklineData={[45, 52, 48, 61, 58, 65, 70]}
         />
 
         <StatsCard
           title="Total Recetas"
           value={estadisticas.totalRecetas}
           icon={Package}
-          description="Recetas creadas"
+          description={recetasCreadasMesActual > 0 ? `${recetasCreadasMesActual} creadas este mes` : "Recetas creadas"}
           variant="primary"
-          trend={{
-            value: 8.2,
-            isPositive: true,
-            label: "nuevas este mes"
-          }}
         />
 
         {tieneVentas ? (
           <>
             <StatsCard
-              title="Ventas Totales"
-              value={formatearDualMonedaCompacto(totalVentas, configuracion.tasaCambioUSD || 50, configuracion.moneda === "USD")}
+              title="Ventas del mes"
+              value={formatearDualMonedaCompacto(totalVentasMesActual, configuracion.tasaCambioUSD || 50, configuracion.moneda === "USD")}
               icon={CreditCard}
-              description={`+${ordenesEntregadas} órdenes entregadas`}
+              description={`${ventasEntregadasMesActual.length} órdenes entregadas este mes`}
               variant="success"
-              trend={{
-                value: 15.3,
-                isPositive: true,
-                label: "vs mes anterior"
+              trend={variacionVentas === undefined ? undefined : {
+                value: Math.abs(variacionVentas),
+                isPositive: variacionVentas >= 0,
+                label: "vs mes anterior",
               }}
-              sparklineData={[30, 40, 35, 50, 49, 60, 70]}
             />
 
             <StatsCard
@@ -333,11 +335,6 @@ export default function DashboardPage() {
               icon={Activity}
               description={`${ordenesPendientes} cotizaciones pendientes`}
               variant="warning"
-              trend={{
-                value: 5.1,
-                isPositive: false,
-                label: "vs semana anterior"
-              }}
             />
           </>
         ) : (

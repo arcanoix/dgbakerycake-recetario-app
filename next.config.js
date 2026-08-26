@@ -114,7 +114,9 @@ const nextConfig = {
   },
   
   // Excluye motion del bundle SSR — necesario para Next.js 16 + React 19
-  serverExternalPackages: ['motion'],
+  // El SDK de Blob usa dependencias de Node/OIDC que Turbopack no debe incluir
+  // dentro del bundle de las route handlers.
+  serverExternalPackages: ['motion', '@vercel/blob'],
   
   // Turbopack vacío silencia el warning de "no turbopack config"
   turbopack: {},

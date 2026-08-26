@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { signIn, signInWithGoogle } from '@/lib/supabase-auth';
 import { useAuth } from '@/contexts/AuthContext';
-import { ArrowRight, Chrome, RefreshCw, KeyRound, Mail, ShieldCheck, Wrench } from 'lucide-react';
+import { ArrowRight, Globe, RefreshCw, KeyRound, Mail, ShieldCheck, Wrench } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { LogoFull } from '@/components/ui/logo';
 import { obtenerConfiguracionSistema, verificarModoMantenimiento } from '@/lib/systemSettings';
@@ -181,7 +181,7 @@ export default function LoginPage() {
               onClick={handleGoogleSignIn}
               disabled={loading}
             >
-              <Chrome className="w-5 h-5" />
+              <Globe className="w-5 h-5" />
               Continuar con Google
             </Button>
 

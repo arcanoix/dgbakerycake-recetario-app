@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { signUp, signInWithGoogle } from '@/lib/supabase-auth';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
-import { ArrowRight, Chrome, Check, RefreshCw, User, Mail, Lock, ShieldCheck, Sparkles, Users } from 'lucide-react';
+import { ArrowRight, Globe, Check, RefreshCw, User, Mail, Lock, ShieldCheck, Sparkles, Users } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { LogoFull } from '@/components/ui/logo';
 import { verificarLimiteRegistro, verificarModoMantenimiento } from '@/lib/systemSettings';
@@ -243,7 +243,7 @@ export default function RegisterPage() {
                   onClick={handleGoogleSignIn}
                   disabled={loading}
                 >
-                  <Chrome className="w-5 h-5" />
+                  <Globe className="w-5 h-5" />
                   Continuar con Google
                 </Button>
 

@@ -34,10 +34,6 @@ export function Sidebar({ className, isCollapsed, setIsCollapsed, onLinkClick }:
     (item) => !item.requiredFeature || canAccess(item.requiredFeature as any)
   );
 
-  const visibleAdminItems = sidebarData.adminItems.filter(
-    (item) => !item.requiredFeature || canAccess(item.requiredFeature as any)
-  );
-
   return (
     <aside
       className={cn(
@@ -77,7 +73,7 @@ export function Sidebar({ className, isCollapsed, setIsCollapsed, onLinkClick }:
           onLinkClick={onLinkClick}
         />
         
-        {(isAdmin || visibleAdminItems.length > 0) && (
+        {isAdmin && (
           <>
             <div className={cn("px-4 py-2 mt-2 transition-opacity duration-300", isCollapsed ? "opacity-0 hidden" : "opacity-100")}>
               <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
@@ -85,7 +81,7 @@ export function Sidebar({ className, isCollapsed, setIsCollapsed, onLinkClick }:
               </p>
             </div>
             <Nav
-              items={isAdmin ? sidebarData.adminItems : visibleAdminItems}
+              items={sidebarData.adminItems}
               isCollapsed={isCollapsed}
               label="Admin"
               onLinkClick={onLinkClick}

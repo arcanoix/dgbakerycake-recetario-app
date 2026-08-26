@@ -10,6 +10,7 @@ import dynamic from "next/dynamic";
 import { StatsCard } from "@/components/dashboard/StatsCardImproved";
 import { RecetasRentablesTable } from "@/components/dashboard/RecetasRentablesTable";
 import { RecentSales } from "@/components/dashboard/RecentSales";
+import type { VentaMensual } from "@/components/dashboard/VentasMensualesChart";
 
 // Recharts es ~300 KB — se carga de forma lazy para no bloquear el bundle inicial
 const CostosChart = dynamic(
@@ -43,6 +44,14 @@ const ProductosChart = dynamic(
         </div>
       </div>
     ),
+  }
+);
+
+const VentasMensualesChart = dynamic(
+  () => import("@/components/dashboard/VentasMensualesChart").then((m) => ({ default: m.VentasMensualesChart })),
+  {
+    ssr: false,
+    loading: () => <div className="h-[360px] animate-pulse rounded-2xl bg-stone-50" />,
   }
 );
 
@@ -194,6 +203,34 @@ export default function DashboardPage() {
   const ventasRecientes = [...ordenes]
     .sort((a, b) => new Date(b.fechaCreacion || 0).getTime() - new Date(a.fechaCreacion || 0).getTime())
     .slice(0, 5);
+  const hoy = new Date();
+  const anioActual = hoy.getFullYear();
+  const mesActual = hoy.getMonth();
+  const meses = new Intl.DateTimeFormat("es-VE", { month: "short" });
+  const gananciasPorMes: VentaMensual[] = Array.from({ length: 12 }, (_, mes) => ({
+    mes: meses.format(new Date(anioActual, mes, 1)).replace(".", ""),
+    ventas: 0,
+    ganancia: 0,
+    ordenes: 0,
+  }));
+  const recetasPorId = new Map(recetas.map((receta) => [receta.id, receta]));
+
+  ordenes.forEach((orden) => {
+    const fecha = new Date(orden.fechaCreacion);
+    if (orden.estado !== "entregada" || fecha.getFullYear() !== anioActual) return;
+
+    const costoEstimado = orden.items.reduce((total, item) => {
+      const receta = item.recetaId ? recetasPorId.get(item.recetaId) : undefined;
+      return total + (receta?.costoTotal ?? 0) * item.cantidad;
+    }, 0);
+    const datosMes = gananciasPorMes[fecha.getMonth()];
+    datosMes.ventas += orden.total;
+    datosMes.ganancia += orden.total - costoEstimado;
+    datosMes.ordenes += 1;
+  });
+
+  const ventasMesActual = gananciasPorMes[mesActual]?.ventas ?? 0;
+  const ordenesMesActual = gananciasPorMes[mesActual]?.ordenes ?? 0;
 
   return (
     <div className="landing-surface flex-1 space-y-5 rounded-[28px] border border-stone-200/80 bg-white/65 p-3 shadow-[0_20px_60px_-45px_rgba(15,23,42,.45)] md:space-y-6 md:p-6 lg:p-8">
@@ -477,6 +514,23 @@ export default function DashboardPage() {
 
         {tieneVentas && (
           <TabsContent value="sales" className="space-y-6">
+            <Card className="rounded-2xl border-stone-200 bg-white shadow-sm">
+              <CardHeader className="space-y-1 p-5 md:p-6">
+                <CardTitle className="text-xl font-semibold text-slate-900">Ganancia mensual</CardTitle>
+                <CardDescription className="text-sm">Rendimiento de tus órdenes entregadas durante {anioActual}</CardDescription>
+              </CardHeader>
+              <CardContent className="px-5 pb-5 md:px-6 md:pb-6">
+                <VentasMensualesChart
+                  anio={anioActual}
+                  data={gananciasPorMes}
+                  moneda={configuracion.moneda}
+                  ordenesMesActual={ordenesMesActual}
+                  tasaCambio={configuracion.tasaCambioUSD || 50}
+                  totalMesActual={ventasMesActual}
+                />
+              </CardContent>
+            </Card>
+
             <Card className="rounded-2xl border-stone-200 bg-white shadow-sm">
               <CardHeader className="space-y-1">
                 <CardTitle className="text-xl font-semibold">Ventas Recientes</CardTitle>

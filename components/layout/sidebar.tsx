@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronLeft, Menu, X } from "lucide-react";
+import { ChevronLeft, MessageCircle } from "lucide-react";
 import { Nav } from "./nav";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -104,11 +104,12 @@ export function Sidebar({ className, isCollapsed, setIsCollapsed, onLinkClick }:
 
       {/* Versión del sistema */}
       <div className={cn(
-        "mt-auto border-t p-4 transition-all duration-300",
+        "mt-auto border-t border-stone-200 p-4 transition-all duration-300",
         isCollapsed ? "px-2 text-center" : "px-4"
       )}>
-        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">
-          {isCollapsed ? getAppVersion().split('-')[1] || 'v' : `Versión: ${getAppVersion()}`}
+        {!isCollapsed && <a href="https://chat.whatsapp.com/JzQG89bgWuc8cB7OOwZYsa" target="_blank" rel="noopener noreferrer" className="mb-3 flex min-h-11 items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 text-xs font-bold text-emerald-800 transition hover:bg-emerald-100"><MessageCircle className="h-4 w-4" />Soporte por WhatsApp</a>}
+        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+          {isCollapsed ? getAppVersion().split('-')[1] || 'v' : `Versión ${getAppVersion()}`}
         </p>
       </div>
     </aside>

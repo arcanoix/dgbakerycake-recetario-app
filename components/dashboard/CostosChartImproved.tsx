@@ -31,19 +31,19 @@ export const CostosChart = ({ recetas, moneda }: CostosChartProps) => {
           <div className="space-y-2">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-violet-500 to-violet-600" />
+                <div className="h-2.5 w-2.5 rounded-full bg-amber-500" />
                 <span className="text-xs text-muted-foreground">Materiales</span>
               </div>
-              <span className="text-xs font-semibold text-violet-600">
+              <span className="text-xs font-semibold text-amber-700">
                 {formatearMoneda(payload[0]?.value || 0, moneda, tasaCambio)}
               </span>
             </div>
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-fuchsia-500 to-fuchsia-600" />
+                <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
                 <span className="text-xs text-muted-foreground">Mano de obra</span>
               </div>
-              <span className="text-xs font-semibold text-fuchsia-600">
+              <span className="text-xs font-semibold text-emerald-700">
                 {formatearMoneda(payload[1]?.value || 0, moneda, tasaCambio)}
               </span>
             </div>
@@ -67,11 +67,11 @@ export const CostosChart = ({ recetas, moneda }: CostosChartProps) => {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-gradient-to-r from-violet-500 to-violet-600 shadow-sm" />
+            <div className="h-3 w-3 rounded-full bg-amber-500 shadow-sm" />
             <span className="text-xs font-medium text-muted-foreground">Materiales</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-gradient-to-r from-fuchsia-500 to-fuchsia-600 shadow-sm" />
+            <div className="h-3 w-3 rounded-full bg-emerald-500 shadow-sm" />
             <span className="text-xs font-medium text-muted-foreground">Mano de obra</span>
           </div>
         </div>
@@ -81,12 +81,12 @@ export const CostosChart = ({ recetas, moneda }: CostosChartProps) => {
         <BarChart data={data} barGap={8}>
           <defs>
             <linearGradient id="materialesGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.9} />
-              <stop offset="100%" stopColor="#7c3aed" stopOpacity={0.7} />
+              <stop offset="0%" stopColor="#F59E0B" stopOpacity={0.95} />
+              <stop offset="100%" stopColor="#D97706" stopOpacity={0.72} />
             </linearGradient>
             <linearGradient id="manoObraGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#d946ef" stopOpacity={0.9} />
-              <stop offset="100%" stopColor="#c026d3" stopOpacity={0.7} />
+              <stop offset="0%" stopColor="#10B981" stopOpacity={0.92} />
+              <stop offset="100%" stopColor="#059669" stopOpacity={0.72} />
             </linearGradient>
           </defs>
           <CartesianGrid 

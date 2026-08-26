@@ -59,8 +59,8 @@ const LogoIcon = ({ size = 32, className }: { size?: number; className?: string 
         <stop offset="1" stopColor="#F3F4F6" />
       </linearGradient>
       <linearGradient id="gradient3" x1="10" y1="20" x2="38" y2="23" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#8B5CF6" />
-        <stop offset="1" stopColor="#A855F7" />
+      <stop stopColor="#F59E0B" />
+      <stop offset="1" stopColor="#D97706" />
       </linearGradient>
     </defs>
   </svg>
@@ -75,7 +75,7 @@ const LogoFull = ({ size = "md", className }: { size?: "sm" | "md" | "lg"; class
       <LogoIcon size={icon} />
       <div className="flex flex-col">
         <span className={cn("font-black tracking-tight uppercase leading-none", text)}>
-          <span className="bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-amber-500 to-amber-700 bg-clip-text text-transparent">
             DGcost
           </span>
         </span>

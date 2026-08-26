@@ -45,8 +45,8 @@ export function Nav({ items, isCollapsed, label, onLinkClick }: NavProps) {
                     onClick={onLinkClick}
                     className={cn(
                       buttonVariants({ variant: isActive ? "default" : "ghost", size: "icon" }),
-                      "h-10 w-10",
-                      isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground shadow-sm"
+                      "h-11 w-11 rounded-xl text-slate-500 transition-all duration-200 hover:bg-amber-50 hover:text-amber-800",
+                      isActive && "bg-[#17202d] text-amber-300 hover:bg-[#17202d] hover:text-amber-300 shadow-sm"
                     )}
                   >
                     <link.icon className="h-5 w-5" />
@@ -64,13 +64,13 @@ export function Nav({ items, isCollapsed, label, onLinkClick }: NavProps) {
                 onClick={onLinkClick}
                 className={cn(
                   buttonVariants({ variant: isActive ? "default" : "ghost", size: "sm" }),
-                  "justify-start h-10 px-3",
-                  isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground shadow-sm",
-                  !isActive && "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  "h-11 justify-start rounded-xl px-3 text-sm transition-all duration-200",
+                  isActive && "bg-[#17202d] text-white hover:bg-[#17202d] hover:text-white shadow-sm",
+                  !isActive && "text-slate-500 hover:bg-amber-50 hover:text-[#17202d]"
                 )}
               >
-                <link.icon className={cn("mr-3 h-4 w-4", isActive ? "text-primary-foreground" : "text-muted-foreground")} />
-                <span className="font-medium">{link.title}</span>
+                <link.icon className={cn("mr-3 h-4 w-4", isActive ? "text-amber-300" : "text-slate-400")} />
+                <span className="font-semibold">{link.title}</span>
               </Link>
             );
           })}

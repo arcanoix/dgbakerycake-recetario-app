@@ -49,7 +49,7 @@ const variantStyles = {
   },
 };
 
-const Sparkline = ({ data }: { data: number[] }) => {
+const Sparkline = ({ data, colorClass }: { data: number[]; colorClass: string }) => {
   if (!data || data.length === 0) return null;
 
   const max = Math.max(...data);
@@ -80,14 +80,14 @@ const Sparkline = ({ data }: { data: number[] }) => {
         <polyline
           points={`0,100 ${points} 100,100`}
           fill="url(#sparklineGradient)"
-          className="text-primary/20"
+          className={cn(colorClass, "opacity-20")}
         />
         <polyline
           points={points}
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
-          className="text-primary"
+          className={colorClass}
           vectorEffect="non-scaling-stroke"
         />
       </svg>
@@ -106,6 +106,7 @@ export const StatsCard = ({
   className,
 }: StatsCardProps) => {
   const styles = variantStyles[variant];
+  const sparklineColor = variant === "success" ? "text-emerald-500" : variant === "warning" || variant === "primary" ? "text-amber-500" : variant === "danger" ? "text-red-500" : "text-slate-500";
 
   return (
     <motion.div
@@ -212,7 +213,7 @@ export const StatsCard = ({
               animate={{ opacity: 1, scaleY: 1 }}
               transition={{ delay: 0.3, duration: 0.5 }}
             >
-              <Sparkline data={sparklineData} />
+              <Sparkline data={sparklineData} colorClass={sparklineColor} />
             </motion.div>
           )}
         </CardContent>

@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
-import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
 
 // Lazy load Sidebar and Header para reducir bundle inicial
@@ -83,9 +82,6 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
           </div>
         </main>
       </div>
-
-      {/* WhatsApp Button - Flotante */}
-      <WhatsAppButton />
 
       {/* Tour de bienvenida */}
       <OnboardingTour />

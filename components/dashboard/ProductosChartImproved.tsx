@@ -8,14 +8,14 @@ interface ProductosChartProps {
 }
 
 const COLORS = [
-  { start: '#8b5cf6', end: '#7c3aed' }, // violet
-  { start: '#d946ef', end: '#c026d3' }, // fuchsia
-  { start: '#06b6d4', end: '#0891b2' }, // cyan
-  { start: '#10b981', end: '#059669' }, // emerald
-  { start: '#f59e0b', end: '#d97706' }, // amber
-  { start: '#ef4444', end: '#dc2626' }, // red
-  { start: '#6366f1', end: '#4f46e5' }, // indigo
-  { start: '#ec4899', end: '#db2777' }, // pink
+  { start: '#F59E0B', end: '#D97706' }, // amber
+  { start: '#10B981', end: '#059669' }, // emerald
+  { start: '#0F766E', end: '#115E59' }, // teal
+  { start: '#B45309', end: '#92400E' }, // caramel
+  { start: '#64748B', end: '#475569' }, // slate
+  { start: '#F97316', end: '#C2410C' }, // orange
+  { start: '#14B8A6', end: '#0F766E' }, // aqua
+  { start: '#A16207', end: '#854D0E' }, // ochre
 ];
 
 const renderActiveShape = (props: any) => {
@@ -53,7 +53,7 @@ export const ProductosChart = ({ productos }: ProductosChartProps) => {
             </div>
             <div className="flex items-center justify-between gap-4">
               <span className="text-xs text-muted-foreground">Porcentaje</span>
-              <span className="text-sm font-semibold text-primary">{percentage}%</span>
+              <span className="text-sm font-semibold text-amber-700">{percentage}%</span>
             </div>
           </div>
         </div>

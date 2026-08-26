@@ -18,13 +18,24 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#8b5cf6",
+  themeColor: "#111722",
 };
 
 export const metadata: Metadata = {
-  title: "DGcost - Gestión de Costos",
-  description: "Sistema de gestión de costos de recetas de repostería y pastelería",
+  title: {
+    default: "DGcost — Costos, inventario y ventas para gastronomía",
+    template: "%s | DGcost",
+  },
+  description: "Calcula el costo real de tus recetas, incorpora mermas, controla inventario y protege el margen de tu negocio gastronómico.",
   metadataBase: new URL("https://www.dgcost.online"),
+  openGraph: {
+    title: "DGcost — Convierte cada receta en un negocio rentable",
+    description: "Costeo gastronómico, inventario y ventas en una sola plataforma.",
+    url: "https://www.dgcost.online",
+    siteName: "DGcost",
+    locale: "es_LA",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

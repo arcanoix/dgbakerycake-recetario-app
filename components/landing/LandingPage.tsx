@@ -1,474 +1,75 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { motion, useInView } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { usePublicPlanes } from "@/hooks/usePublicPlanes";
-import { 
-  Check, 
-  Sparkles, 
-  ArrowRight, 
-  ChevronDown, 
-  Zap, 
-  ShieldCheck, 
-  TrendingUp, 
-  ChefHat,
-  Package,
-  Calculator,
-  BarChart3,
-  Globe,
-  MessageCircle,
-  Smartphone,
-  RefreshCw
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { LogoFull } from "@/components/ui/logo";
-import { WhatsAppButton } from "@/components/ui/whatsapp-button";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ArrowRight, Calculator, Check, ChevronDown, CircleDollarSign, Clock3, FileDown, Flame, Menu, Minus, Play, Plus, ReceiptText, Scale, ShieldCheck, Sparkles, Star, TrendingUp, Warehouse, X } from "lucide-react";
 import { CookieBanner } from "./CookieBanner";
-import { TypewriterText } from "./TypewriterText";
+import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import { getAppVersion } from "@/lib/version";
 
-function AnimatedSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px", amount: 0.3 });
+const nav = [["Funcionalidades", "#funcionalidades"], ["Calculadora en vivo", "#calculadora"], ["Inventario", "#inventario"], ["Precios", "#precios"], ["FAQ", "#faq"]] as const;
+const insumos = [{ n: "Chocolate 70%", d: "350 g", c: 4.9 }, { n: "Crema de leche", d: "500 ml", c: 3.15 }, { n: "Harina de trigo", d: "280 g", c: .58 }, { n: "Huevos", d: "6 unidades", c: 1.8 }] as const;
+const preguntas = [
+  ["¿Necesito saber de contabilidad para usar DGcost?", "No. Si sabes preparar una receta, puedes costearla. DGcost te guía para registrar cantidades, precios y merma; luego hace por ti las conversiones y los cálculos."],
+  ["¿Qué pasa cuando cambia el precio de un ingrediente?", "Actualizas el precio del insumo una sola vez y DGcost recalcula las recetas vinculadas. Así detectas a tiempo qué productos necesitan un ajuste de precio."],
+  ["¿Puedo calcular gas, electricidad, empaque y mano de obra?", "Sí. Puedes incluir costos directos e indirectos para obtener un costo completo, no solo la suma de ingredientes."],
+  ["¿Funciona en teléfono y computadora?", "Sí. La plataforma web es responsiva y puedes entrar desde cualquier navegador moderno sin instalar programas."],
+  ["¿Puedo empezar sin tarjeta?", "Sí. Puedes crear una cuenta y comenzar con el plan gratuito. No necesitas registrar una tarjeta para probar el flujo de costeo."],
+] as const;
+const planes: ReadonlyArray<{ n: string; p: string; note: string; popular?: boolean; f: readonly string[] }> = [
+  { n: "Gratis", p: "$0", note: "Para ordenar tus primeros costos", f: ["Recetas y productos esenciales", "Costeo de ingredientes", "Precio de venta sugerido"] },
+  { n: "Emprendedor", p: "$5", note: "Para una producción en crecimiento", popular: true, f: ["Más recetas y productos", "Inventario y alertas de stock", "Exportación a PDF", "Costos indirectos y merma"] },
+  { n: "Negocio", p: "$10", note: "Para operaciones gastronómicas activas", f: ["Recetas y productos ilimitados", "Ventas, clientes y analítica", "Exportación de datos", "Soporte prioritario"] },
+] as const;
 
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{ duration: 0.4, delay, ease: [0.4, 0, 0.2, 1] }}
-    >
-      {children}
-    </motion.div>
-  );
+function Marca() {
+  return <Link href="#inicio" className="group flex min-h-12 items-center gap-2.5 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"><span className="grid size-9 place-items-center rounded-xl bg-[#111722] text-amber-400 shadow-[inset_0_0_0_1px_rgba(255,255,255,.12)] transition-transform group-hover:-rotate-3"><Scale className="size-5" /></span><span className="text-[21px] font-extrabold tracking-[-.04em] text-[#111827]">DG<span className="text-amber-600">cost</span></span></Link>;
 }
 
-const faqs = [
-  {
-    question: "¿Es realmente gratis?",
-    answer: "Sí, el plan básico es 100% gratuito para siempre. Queremos ayudar a los emprendedores a formalizar sus costos sin barreras de entrada."
-  },
-  {
-    question: "¿Cómo calculan los precios?",
-    answer: "DGcost utiliza fórmulas de ingeniería de costos: suma el valor proporcional de cada insumo, permite añadir merma y aplica tu margen de ganancia configurado."
-  },
-  {
-    question: "¿Puedo usarlo desde mi celular?",
-    answer: "¡Totalmente! DGcost es una Web App responsiva que funciona perfecto en navegadores móviles. Muy pronto lanzaremos la App nativa en tiendas."
-  },
-  {
-    question: "¿Mis datos están seguros?",
-    answer: "Utilizamos encriptación de nivel bancario y almacenamiento seguro en Supabase. Tus recetas y costos son privados y solo tú tienes acceso a ellos."
-  }
-];
+function Reveal({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
+  const reduce = useReducedMotion();
+  return <motion.div initial={reduce ? false : { opacity: 0, y: 22 }} whileInView={reduce ? undefined : { opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: .45, delay, ease: [0.22, 1, 0.36, 1] }} className={className}>{children}</motion.div>;
+}
 
-const testimonials = [
-  {
-    name: "María González",
-    role: "Repostera Profesional",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria",
-    quote: "Gracias a DGcost dejé de adivinar precios. Mis ganancias subieron un 30% en el primer mes.",
-    metric: "+30%",
-    metricLabel: "ganancias"
-  },
-  {
-    name: "Carlos Rodríguez",
-    role: "Dueño de Pastelería",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Carlos",
-    quote: "La gestión de inventario es increíble. Sé exactamente cuándo debo comprar más harina.",
-    metric: "100%",
-    metricLabel: "control"
-  },
-  {
-    name: "Ana Pérez",
-    role: "Emprendedora Home-made",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ana",
-    quote: "Es la herramienta más sencilla que he usado. En 10 minutos ya tenía costeado mi menú.",
-    metric: "10 min",
-    metricLabel: "setup"
-  }
-];
+function Metrica({ label, value, type = "" }: { label: string; value: string; type?: "amber" | "green" | "" }) {
+  return <div className={`rounded-2xl border p-3.5 ${type === "amber" ? "border-amber-400/30 bg-amber-400/10" : type === "green" ? "border-emerald-400/20 bg-emerald-400/10" : "border-white/10 bg-white/[.04]"}`}><p className="text-[9px] font-bold uppercase tracking-[.14em] text-slate-400">{label}</p><p className={`mt-1.5 font-mono text-lg font-bold tabular-nums ${type === "amber" ? "text-amber-300" : type === "green" ? "text-emerald-300" : "text-white"}`}>{value}</p></div>;
+}
 
-const features = [
-  {
-    icon: Calculator,
-    title: "Cálculo Preciso",
-    description: "Desglose automático de costos por ingrediente, gramo a gramo.",
-    color: "bg-blue-500/10 text-blue-600"
-  },
-  {
-    icon: TrendingUp,
-    title: "Márgenes Reales",
-    description: "Aplica porcentajes de utilidad y obtén precios de venta sugeridos.",
-    color: "bg-emerald-500/10 text-emerald-600"
-  },
-  {
-    icon: Package,
-    title: "Inventario Inteligente",
-    description: "Control de stock crítico y alertas automáticas de reposición.",
-    color: "bg-violet-500/10 text-violet-600"
-  },
-  {
-    icon: BarChart3,
-    title: "Dashboard Pro",
-    description: "Estadísticas visuales de rentabilidad y productos más costosos.",
-    color: "bg-amber-500/10 text-amber-600"
-  },
-  {
-    icon: Globe,
-    title: "Precio Dual",
-    description: "Visualiza tus costos en USD y Bolívares a tasa oficial BCV.",
-    color: "bg-cyan-500/10 text-cyan-600"
-  },
-  {
-    icon: ChefHat,
-    title: "Recetario Maestro",
-    description: "Organiza tus creaciones con fotos, categorías e instrucciones.",
-    color: "bg-rose-500/10 text-rose-600"
-  }
-];
+function CalculadoraViva() {
+  const [porciones, setPorciones] = useState(12);
+  const factor = porciones / 12;
+  const ingredientes = insumos.reduce((s, i) => s + i.c * factor, 0);
+  const extras = 4.25 * factor;
+  const total = ingredientes + extras;
+  const precio = total / .38;
+  const ganancia = precio - total;
+  const cambiar = (n: number) => setPorciones(Math.min(36, Math.max(6, n)));
+  return <div className="relative mx-auto w-full max-w-[590px]" aria-label="Calculadora interactiva de receta"><div className="absolute -inset-8 -z-10 rounded-[48px] bg-amber-400/15 blur-3xl" /><div className="overflow-hidden rounded-[28px] border border-white/15 bg-[#111722] text-white shadow-[0_40px_100px_-30px_rgba(15,23,42,.75)]"><div className="flex items-start justify-between border-b border-white/10 px-5 py-5 sm:px-7"><div><p className="mb-1 text-[10px] font-bold uppercase tracking-[.2em] text-amber-400">Receta en vivo</p><h2 className="text-xl font-bold sm:text-2xl">Torta Selva Negra</h2><p className="mt-1 text-sm text-slate-400">Costos actualizados al instante</p></div><div className="rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-right"><p className="font-mono text-lg font-bold text-emerald-300">62%</p><p className="text-[9px] font-bold uppercase tracking-wider text-emerald-400/80">margen</p></div></div><div className="grid gap-5 p-5 sm:p-7"><div className="flex items-center justify-between rounded-2xl bg-white/[.055] p-3"><div><p className="text-sm font-semibold">Cantidad a producir</p><p className="text-xs text-slate-400">El costo escala contigo</p></div><div className="flex items-center gap-1 rounded-xl border border-white/10 bg-black/20 p-1"><button onClick={() => cambiar(porciones - 6)} aria-label="Reducir porciones" className="grid size-10 cursor-pointer place-items-center rounded-lg hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-amber-400"><Minus className="size-4" /></button><span className="w-16 text-center font-mono text-sm">{porciones} por.</span><button onClick={() => cambiar(porciones + 6)} aria-label="Aumentar porciones" className="grid size-10 cursor-pointer place-items-center rounded-lg hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-amber-400"><Plus className="size-4" /></button></div></div><div className="space-y-3">{insumos.map(i => <div key={i.n} className="flex items-center justify-between text-sm"><div className="flex min-w-0 items-center gap-3"><span className="size-1.5 shrink-0 rounded-full bg-amber-400" /><span className="truncate text-slate-200">{i.n}</span><span className="hidden text-xs text-slate-500 sm:inline">{i.d}</span></div><motion.span key={`${i.n}-${porciones}`} initial={{ opacity: .4 }} animate={{ opacity: 1 }} className="font-mono tabular-nums text-slate-300">${(i.c * factor).toFixed(2)}</motion.span></div>)}<div className="flex justify-between border-t border-dashed border-white/10 pt-3 text-xs text-slate-400"><span>Empaque + costos indirectos</span><span className="font-mono">${extras.toFixed(2)}</span></div></div><div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3"><Metrica label="Costo total" value={`$${total.toFixed(2)}`} /><Metrica label="Precio sugerido" value={`$${precio.toFixed(2)}`} type="amber" /><div className="col-span-2 sm:col-span-1"><Metrica label="Ganancia" value={`+$${ganancia.toFixed(2)}`} type="green" /></div></div></div></div><div className="absolute -bottom-5 -left-3 hidden items-center gap-2 rounded-2xl border border-stone-200 bg-white px-4 py-3 text-xs font-semibold text-stone-700 shadow-xl sm:flex"><span className="grid size-7 place-items-center rounded-full bg-emerald-100 text-emerald-700"><TrendingUp className="size-4" /></span>Precio rentable, sin adivinar</div></div>;
+}
 
-export const LandingPage = () => {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const { planes, cargando: cargandoPlanes } = usePublicPlanes();
+function Simulador() {
+  const [pedidos, setPedidos] = useState(120);
+  const recuperado = useMemo(() => Math.round(pedidos * 1.85), [pedidos]);
+  const horas = useMemo(() => Math.max(2, Math.round(pedidos * .08)), [pedidos]);
+  return <div className="grid overflow-hidden rounded-[32px] border border-white/10 bg-[#0d131d] shadow-2xl lg:grid-cols-[1.05fr_.95fr]"><div className="p-6 sm:p-10 lg:p-14"><p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[.18em] text-amber-400"><Calculator className="size-4" /> Simulador de rentabilidad</p><h2 className="max-w-xl text-3xl font-bold tracking-[-.04em] text-white sm:text-5xl">Descubre cuánto se escapa entre mermas y costos ocultos.</h2><label htmlFor="ventas-mes" className="mt-10 block text-sm font-semibold text-slate-200">¿Cuántas recetas o pedidos vendes al mes?</label><div className="mt-4 flex items-baseline gap-2"><span className="font-mono text-4xl font-bold tabular-nums text-amber-300">{pedidos}</span><span className="text-sm text-slate-400">pedidos / mes</span></div><input id="ventas-mes" type="range" min="20" max="600" step="10" value={pedidos} onChange={e => setPedidos(Number(e.target.value))} className="roi-range mt-5 w-full cursor-pointer accent-amber-400" aria-describedby="roi-note" /><div className="mt-2 flex justify-between font-mono text-[11px] text-slate-500"><span>20</span><span>600</span></div><p id="roi-note" className="mt-6 text-xs leading-relaxed text-slate-500">Estimación orientativa basada en recuperar USD 1,85 por pedido mediante ajustes de merma, porcionado y costos indirectos. Tu resultado puede variar.</p></div><div className="relative m-3 grid place-items-center overflow-hidden rounded-[24px] border border-amber-300/15 bg-[radial-gradient(circle_at_50%_0%,rgba(245,158,11,.2),transparent_55%)] p-7 text-center sm:p-12"><div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] [background-size:32px_32px]" /><div className="relative"><p className="text-xs font-bold uppercase tracking-[.18em] text-slate-400">Recuperación potencial mensual</p><motion.p key={recuperado} initial={{ opacity: .4, scale: .98 }} animate={{ opacity: 1, scale: 1 }} className="mt-4 font-mono text-5xl font-bold tabular-nums text-white sm:text-7xl">${recuperado}</motion.p><div className="mx-auto mt-6 h-px w-24 bg-gradient-to-r from-transparent via-amber-400 to-transparent" /><div className="mt-6 flex items-center justify-center gap-2 text-sm text-emerald-300"><Clock3 className="size-4" />y cerca de {horas} h de cálculo manual</div></div></div></div>;
+}
 
-  return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b">
-        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-          <LogoFull size="md" />
-          <div className="flex items-center gap-6">
-            <Link href="/auth/login" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">
-              LOG IN
-            </Link>
-            <Link href="/auth/register">
-              <Button className="h-9 px-5 font-black text-xs tracking-widest uppercase shadow-lg bg-primary hover:shadow-xl transition-all">
-                EMPEZAR GRATIS
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+function Stock({ n, v, color }: { n: string; v: string; color: string }) { return <div className="flex items-center justify-between rounded-xl bg-black/20 px-3 py-2.5 text-xs"><span className="flex items-center gap-2 text-slate-300"><span className={`size-2 rounded-full ${color}`} />{n}</span><span className="font-mono text-slate-400">{v}</span></div>; }
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-24 overflow-hidden">
-        {/* Background blobs */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-30 blur-[120px]">
-           <div className="absolute top-20 left-1/4 w-72 h-72 bg-primary rounded-full animate-pulse" />
-           <div className="absolute top-40 right-1/4 w-96 h-96 bg-violet-500 rounded-full" />
-        </div>
-
-        <div className="container mx-auto px-6 text-center space-y-8">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Badge variant="secondary" className="px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary font-black text-[10px] tracking-[0.2em] uppercase">
-              <Sparkles className="w-3 h-3 mr-2" />
-              SaaS para Gastronomía Profesional
-            </Badge>
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] text-foreground"
-          >
-            Calcula tus costos.<br />
-            <TypewriterText
-              words={["Multiplica", "Controla", "Gestiona", "Maximiza"]}
-              suffix=" tus ganancias."
-              className="text-primary italic"
-              typingSpeed={120}
-              deletingSpeed={80}
-              pauseDuration={2500}
-            />
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-medium leading-relaxed"
-          >
-            La plataforma definitiva para reposteros que quieren dejar de adivinar y empezar a facturar con precisión. Inventario, recetas y precios en un solo lugar.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <Link href="/auth/register">
-              <Button size="lg" className="h-14 px-10 font-black tracking-widest text-xs uppercase shadow-2xl bg-primary hover:shadow-primary/20">
-                COMENZAR AHORA <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
-            </Link>
-          </motion.div>
-
-          {/* Stats Bar */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.6 }}
-            className="pt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto border-t"
-          >
-             {[
-               { value: "500+", label: "Emprendedores" },
-               { value: "15k", label: "Recetas Creadas" },
-               { value: "100%", label: "Seguro" },
-               { value: "24/7", label: "Acceso Cloud" }
-             ].map((stat, i) => (
-               <div key={i} className="space-y-1">
-                 <p className="text-3xl font-black text-foreground">{stat.value}</p>
-                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{stat.label}</p>
-               </div>
-             ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section className="py-24 bg-muted/30">
-        <div className="container mx-auto px-6">
-          <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight uppercase">Herramientas de Alto Nivel</h2>
-            <p className="text-muted-foreground font-medium max-w-xl mx-auto">Todo lo que necesitas para profesionalizar tu taller de gastronomía desde el día uno.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, i) => (
-              <AnimatedSection key={i} delay={i * 0.1}>
-                <Card className="h-full border-0 shadow-lg bg-card group hover:shadow-2xl transition-all duration-300">
-                  <CardContent className="p-8 space-y-4">
-                    <div className={`p-3 rounded-2xl w-fit ${feature.color} group-hover:scale-110 transition-transform`}>
-                      <feature.icon className="w-6 h-6" />
-                    </div>
-                    <h3 className="text-xl font-bold tracking-tight">{feature.title}</h3>
-                    <p className="text-sm text-muted-foreground font-medium leading-relaxed">{feature.description}</p>
-                  </CardContent>
-                </Card>
-              </AnimatedSection>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-24 bg-background">
-        <div className="container mx-auto px-6">
-          <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight uppercase">Historias de Éxito</h2>
-            <p className="text-muted-foreground font-medium">Usuarios que transformaron su pasión en un negocio rentable.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {testimonials.map((t, i) => (
-              <AnimatedSection key={i} delay={i * 0.1}>
-                <Card className="h-full border-0 shadow-xl bg-card overflow-hidden">
-                  <CardContent className="p-8 space-y-6">
-                    <p className="text-sm font-medium italic text-muted-foreground leading-relaxed">"{t.quote}"</p>
-                    <div className="flex items-center gap-4 pt-4 border-t">
-                      <Image src={t.image} alt={t.name} width={48} height={48} className="rounded-full bg-muted" />
-                      <div>
-                        <p className="font-bold text-sm">{t.name}</p>
-                        <p className="text-[10px] font-black text-primary uppercase tracking-widest">{t.role}</p>
-                      </div>
-                    </div>
-                    <div className="p-3 bg-primary/5 rounded-xl border border-primary/10 flex justify-between items-center">
-                       <span className="text-[10px] font-black uppercase text-muted-foreground">Logro:</span>
-                       <span className="text-lg font-black text-primary">{t.metric} <span className="text-[10px] uppercase font-bold text-muted-foreground">{t.metricLabel}</span></span>
-                    </div>
-                  </CardContent>
-                </Card>
-              </AnimatedSection>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Mobile Promo */}
-      <section className="py-24 bg-muted/50 border-y">
-        <div className="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
-          <div className="flex-1 space-y-6 text-center md:text-left">
-            <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 font-black text-[10px] tracking-widest uppercase">Próximamente</Badge>
-            <h2 className="text-4xl md:text-6xl font-black tracking-tight leading-none uppercase">Tu negocio en tu bolsillo</h2>
-            <p className="text-muted-foreground font-medium text-lg leading-relaxed">
-              Estamos construyendo la App móvil nativa para que gestiones tus costos directamente desde la cocina, escaneando facturas y recibiendo notificaciones de stock.
-            </p>
-            <div className="flex flex-wrap justify-center md:justify-start gap-4">
-              <div className="px-6 py-3 rounded-2xl bg-card border shadow-sm flex items-center gap-3 opacity-60">
-                 <Smartphone className="w-6 h-6 text-muted-foreground" />
-                 <div className="text-left">
-                   <p className="text-[9px] font-black text-muted-foreground uppercase">Disponible pronto</p>
-                   <p className="font-bold text-xs">App Store & Play Store</p>
-                 </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex-1 relative">
-            <div className="relative z-10 p-4 bg-background rounded-[3rem] border shadow-2xl shadow-primary/20 max-w-sm mx-auto">
-               <div className="aspect-[9/19] bg-muted rounded-[2.5rem] overflow-hidden flex items-center justify-center">
-                  <div className="text-center p-8 space-y-4">
-                     <div className="w-16 h-16 rounded-full bg-primary/10 text-primary mx-auto flex items-center justify-center">
-                       <RefreshCw className="w-8 h-8 animate-spin" />
-                     </div>
-                     <p className="font-black text-xs uppercase tracking-widest">Compilando...</p>
-                  </div>
-               </div>
-            </div>
-            {/* Decorations */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/5 rounded-full blur-3xl -z-10" />
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Teaser */}
-      <section className="py-24 bg-background">
-        <div className="container mx-auto px-6 text-center space-y-16">
-          <div className="space-y-4">
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight uppercase">Planes para cada Etapa</h2>
-            <p className="text-muted-foreground font-medium">Empieza gratis, escala cuando el éxito toque tu puerta.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
-            {cargandoPlanes ? (
-              <div className="col-span-full h-64 flex items-center justify-center"><RefreshCw className="animate-spin" /></div>
-            ) : (
-              planes.filter(p => p.is_active).sort((a, b) => a.sort_order - b.sort_order).map((plan, i) => (
-                <Card key={plan.id} className={`flex flex-col border-0 shadow-lg bg-card hover:-translate-y-2 transition-all duration-300 ${plan.name === 'basico' ? 'ring-2 ring-primary shadow-2xl shadow-primary/10' : ''}`}>
-                  <CardContent className="p-8 flex flex-col h-full space-y-6">
-                    <div className="space-y-1">
-                      <p className="font-black text-[10px] uppercase tracking-widest text-muted-foreground">{plan.name}</p>
-                      <h3 className="text-2xl font-black tracking-tight">{plan.display_name}</h3>
-                    </div>
-                    
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-4xl font-black">${plan.price_usd}</span>
-                      <span className="text-[10px] font-bold text-muted-foreground uppercase">/mes</span>
-                    </div>
-
-                    <Separator className="opacity-50" />
-
-                    <ul className="flex-1 space-y-3">
-                       <li className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
-                         <Check className="w-3.5 h-3.5 text-primary" /> {plan.max_recetas === -1 ? 'Recetas ilimitadas' : `Hasta ${plan.max_recetas} recetas`}
-                       </li>
-                       <li className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
-                         <Check className="w-3.5 h-3.5 text-primary" /> {plan.max_productos === -1 ? 'Productos ilimitados' : `Hasta ${plan.max_productos} productos`}
-                       </li>
-                       {plan.features.exportar_pdf && (
-                         <li className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
-                           <Check className="w-3.5 h-3.5 text-primary" /> Exportar PDF
-                         </li>
-                       )}
-                       {plan.features.exportar_datos && (
-                         <li className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
-                           <Check className="w-3.5 h-3.5 text-primary" /> Exportar datos
-                         </li>
-                       )}
-                       {plan.features.analytics && (
-                         <li className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
-                           <Check className="w-3.5 h-3.5 text-primary" /> Dashboard analytics
-                         </li>
-                       )}
-                       {plan.features.gestion_inventario && (
-                         <li className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
-                           <Check className="w-3.5 h-3.5 text-primary" /> Gestión de inventario
-                         </li>
-                       )}
-                       <li className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
-                         <Check className="w-3.5 h-3.5 text-primary" /> Soporte {plan.features.soporte || 'básico'}
-                       </li>
-                    </ul>
-
-                    <Link href="/auth/register" className="block pt-4">
-                       <Button variant={plan.name === 'basico' ? 'default' : 'outline'} className="w-full font-black text-[10px] tracking-widest uppercase">
-                         {plan.price_usd === 0 ? 'LOG IN FREE' : 'SELECCIONAR'}
-                       </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              ))
-            )}
-          </div>
-          
-          <Link href="/pricing" className="inline-flex items-center gap-2 text-sm font-black text-primary uppercase tracking-widest hover:gap-4 transition-all">
-            Ver detalle de beneficios <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-      </section>
-
-      {/* CTA Final */}
-      <section className="py-24 bg-primary text-primary-foreground relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="container mx-auto px-6 text-center space-y-10 relative z-10">
-          <h2 className="text-4xl md:text-7xl font-black tracking-tighter uppercase leading-none">¿Listo para ser un repostero Pro?</h2>
-          <p className="text-lg md:text-xl font-bold opacity-80 max-w-xl mx-auto">Únete hoy a la comunidad que está transformando la gastronomía artesanal en negocios de alta rentabilidad.</p>
-          <Link href="/auth/register" className="mt-4">
-            <Button size="lg" className="h-16 px-12 bg-background text-foreground hover:bg-background/90 font-black text-xs tracking-widest uppercase shadow-2xl">
-              CREAR MI CUENTA GRATUITA
-            </Button>
-          </Link>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="py-16 bg-background border-t">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
-            <div className="col-span-2 space-y-6">
-               <LogoFull size="sm" />
-               <p className="text-sm text-muted-foreground font-medium max-w-xs">
-                 La plataforma inteligente de gestión de costos e inventario para la industria repostera.
-               </p>
-               <div className="flex gap-4">
-                 <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"><MessageCircle className="w-4 h-4" /></div>
-                 <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"><TrendingUp className="w-4 h-4" /></div>
-               </div>
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Producto</h4>
-              <ul className="space-y-2 text-sm font-bold text-foreground/70">
-                <li><Link href="/pricing" className="hover:text-primary">Precios</Link></li>
-                <li><a href="#" className="hover:text-primary">Características</a></li>
-                <li><Link href="/blog" className="hover:text-primary">Blog</Link></li>
-              </ul>
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Legal</h4>
-              <ul className="space-y-2 text-sm font-bold text-foreground/70">
-                <li><Link href="/terminos" className="hover:text-primary">Términos</Link></li>
-                <li><Link href="/privacidad" className="hover:text-primary">Privacidad</Link></li>
-              </ul>
-            </div>
-          </div>
-          <Separator />
-          <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-            <p>© 2026 DGCOST. DGBakeryCake Solutions.</p>
-            <p className="flex items-center gap-2">
-              <a href="https://gustavoherrera.dev" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors">Desarrollado por Gustavo Herrera</a>
-              <span className="opacity-50">HECHO CON ❤️ PARA REPOSTEROS</span>
-              <span className="bg-muted px-2 py-0.5 rounded text-[8px] border">{getAppVersion()}</span>
-            </p>
-          </div>
-        </div>
-      </footer>
-
-      {/* WhatsApp Button - Flotante */}
-      <WhatsAppButton />
-
-      {/* Cookie Consent Banner */}
-      <CookieBanner />
-    </div>
-  );
-};
+export function LandingPage() {
+  const [menu, setMenu] = useState(false), [demo, setDemo] = useState(false), [faq, setFaq] = useState<number | null>(0);
+  return <div id="inicio" className="landing-surface min-h-screen overflow-x-hidden bg-[#f8f6f1] text-[#17202d] selection:bg-amber-200"><a href="#contenido" className="fixed left-4 top-3 z-[100] -translate-y-20 rounded-lg bg-white px-4 py-3 font-semibold shadow-lg transition focus:translate-y-0">Saltar al contenido</a>
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-stone-900/5 bg-[#f8f6f1]/88 backdrop-blur-xl"><nav className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 lg:px-8" aria-label="Navegación principal"><Marca /><div className="hidden items-center gap-7 lg:flex">{nav.map(([l, h]) => <a key={h} href={h} className="text-sm font-medium text-stone-600 transition hover:text-stone-950 focus-visible:ring-2 focus-visible:ring-amber-500">{l}</a>)}</div><div className="hidden items-center gap-2 sm:flex"><Link href="/auth/login" className="inline-flex min-h-11 items-center rounded-xl px-4 text-sm font-semibold hover:bg-white">Iniciar sesión</Link><Link href="/auth/register" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#17202d] px-5 text-sm font-bold text-white shadow-lg transition hover:-translate-y-.5 hover:bg-black">Probar gratis <ArrowRight className="size-4" /></Link></div><button onClick={() => setMenu(!menu)} aria-expanded={menu} aria-controls="menu-movil" aria-label={menu ? "Cerrar menú" : "Abrir menú"} className="grid size-12 cursor-pointer place-items-center rounded-xl hover:bg-white sm:hidden">{menu ? <X /> : <Menu />}</button></nav><AnimatePresence>{menu && <motion.div id="menu-movil" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="border-t border-stone-200 bg-[#f8f6f1] p-5 sm:hidden"><div className="grid">{nav.map(([l, h]) => <a key={h} href={h} onClick={() => setMenu(false)} className="flex min-h-12 items-center rounded-xl px-3 font-semibold hover:bg-white">{l}</a>)}</div><div className="mt-4 grid grid-cols-2 gap-2"><Link href="/auth/login" className="grid min-h-12 place-items-center rounded-xl border border-stone-300 font-semibold">Iniciar sesión</Link><Link href="/auth/register" className="grid min-h-12 place-items-center rounded-xl bg-[#17202d] font-bold text-white">Probar gratis</Link></div></motion.div>}</AnimatePresence></header>
+    <main id="contenido"><section className="relative px-5 pb-24 pt-32 sm:pt-40 lg:px-8 lg:pb-32"><div className="pointer-events-none absolute inset-x-0 top-0 h-[700px] bg-[radial-gradient(circle_at_78%_22%,rgba(245,158,11,.13),transparent_28%),radial-gradient(circle_at_18%_30%,rgba(16,185,129,.08),transparent_23%)]" /><div className="relative mx-auto grid max-w-7xl items-center gap-16 lg:grid-cols-[.92fr_1.08fr] lg:gap-12"><div><motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 rounded-full border border-amber-500/25 bg-amber-50 px-3.5 py-2 text-xs font-bold text-amber-900 shadow-sm"><Sparkles className="size-3.5 text-amber-600" /> Costeo gastronómico hecho simple</motion.div><motion.h1 initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .08 }} className="mt-7 max-w-3xl text-[clamp(2.8rem,6vw,5.7rem)] font-extrabold leading-[.96] tracking-[-.065em] text-[#111827]">Deja de perder dinero en tus recetas.</motion.h1><motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .16 }} className="mt-7 max-w-xl text-lg leading-8 text-stone-600">Calcula costos reales, incorpora mermas y protege tu margen. DGcost conecta recetas, inventario y ventas para que cada precio tenga sentido.</motion.p><motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .24 }} className="mt-9 flex flex-col gap-3 sm:flex-row"><Link href="/auth/register" className="group inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-amber-500 px-6 font-bold text-stone-950 shadow-xl transition hover:-translate-y-.5 hover:bg-amber-400">Comenzar a costear gratis <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></Link><button onClick={() => setDemo(true)} className="inline-flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-2xl border border-stone-300 bg-white/70 px-6 font-bold transition hover:-translate-y-.5 hover:bg-white"><span className="grid size-7 place-items-center rounded-full bg-stone-900 text-white"><Play className="ml-0.5 size-3.5 fill-current" /></span> Ver cómo funciona</button></motion.div><div className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-xs font-medium text-stone-500"><span className="flex items-center gap-1.5"><Check className="size-3.5 text-emerald-600" /> Sin tarjeta</span><span className="flex items-center gap-1.5"><Check className="size-3.5 text-emerald-600" /> Configuración rápida</span><span className="flex items-center gap-1.5"><ShieldCheck className="size-3.5 text-emerald-600" /> Datos privados</span></div></div><motion.div id="calculadora" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: .18, duration: .55 }}><CalculadoraViva /></motion.div></div></section>
+    <section className="border-y border-stone-200/70 bg-white/55 px-5 py-8 lg:px-8" aria-label="Beneficios principales"><div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 md:grid-cols-4">{[[Scale, "Costos precisos", "por gramo o unidad"], [TrendingUp, "Margen protegido", "con precio sugerido"], [Warehouse, "Stock conectado", "a recetas y ventas"], [CircleDollarSign, "USD + bolívares", "visualización dual"]].map(([Icon, a, b]) => <div key={String(a)} className="flex items-start gap-3"><span className="grid size-9 shrink-0 place-items-center rounded-xl bg-stone-900 text-amber-400"><Icon className="size-4" /></span><div><p className="text-sm font-bold">{String(a)}</p><p className="text-xs text-stone-500">{String(b)}</p></div></div>)}</div></section>
+    <section className="px-5 py-24 lg:px-8 lg:py-32"><div className="mx-auto max-w-7xl"><Reveal className="max-w-2xl"><p className="text-xs font-bold uppercase tracking-[.18em] text-amber-700">El costo de calcular a ojo</p><h2 className="mt-4 text-4xl font-bold tracking-[-.045em] text-stone-950 sm:text-5xl">Tu receta puede venderse mucho y aun así perder dinero.</h2></Reveal><div className="mt-14 grid gap-4 lg:grid-cols-2">{[{ bad: true, title: "Con Excel o a ojo", rows: ["La merma queda fuera de la cuenta.", "Un insumo sube y tus precios quedan atrás.", "Las fórmulas se rompen o se duplican.", "La pérdida aparece tarde, al cerrar el mes."] }, { title: "Con DGcost", rows: ["La merma forma parte del costo real.", "Un cambio de insumo actualiza cada receta.", "El stock se conecta con producción y ventas.", "Tu margen se ve antes de publicar el precio."] }].map((x, i) => <Reveal key={x.title} delay={i * .08} className={`rounded-[28px] border p-6 sm:p-9 ${x.bad ? "border-rose-200 bg-rose-50/65" : "border-emerald-200 bg-emerald-50/65"}`}><p className="flex items-center gap-3 text-lg font-bold"><span className={`grid size-9 place-items-center rounded-full ${x.bad ? "bg-rose-100 text-rose-700" : "bg-emerald-100 text-emerald-700"}`}>{x.bad ? <X className="size-4" /> : <Check className="size-4" />}</span>{x.title}</p><ul className="mt-7 space-y-4 text-sm text-stone-600">{x.rows.map(r => <li key={r} className="flex gap-3">{x.bad ? <Minus className="mt-1 size-4 shrink-0 text-rose-600" /> : <Check className="mt-1 size-4 shrink-0 text-emerald-600" />}{r}</li>)}</ul></Reveal>)}</div></div></section>
+    <section id="funcionalidades" className="bg-[#111722] px-5 py-24 text-white lg:px-8 lg:py-32"><div className="mx-auto max-w-7xl"><Reveal className="flex flex-col justify-between gap-6 md:flex-row md:items-end"><div className="max-w-2xl"><p className="text-xs font-bold uppercase tracking-[.18em] text-amber-400">Un solo sistema</p><h2 className="mt-4 text-4xl font-bold tracking-[-.045em] sm:text-5xl">De la compra del insumo a la ganancia del día.</h2></div><p className="max-w-sm text-sm leading-6 text-slate-400">Cada módulo comparte la misma información. Menos doble carga, más claridad operativa.</p></Reveal><div className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-3"><Reveal className="rounded-[28px] border border-white/10 bg-white/[.055] p-7 md:col-span-2 lg:p-9"><span className="grid size-11 place-items-center rounded-2xl bg-amber-400 text-stone-950"><Calculator className="size-5" /></span><h3 className="mt-8 text-2xl font-bold">Escandallo y mermas sin fórmulas frágiles</h3><p className="mt-3 max-w-xl text-sm leading-6 text-slate-400">Convierte kg, g, oz, ml y unidades. Distribuye gas, luz, mano de obra y empaque para conocer el costo completo.</p><div className="mt-8 grid grid-cols-3 gap-2 font-mono text-xs"><div className="rounded-xl bg-white/5 p-3">250 g<p className="mt-1 text-white">→ 0,25 kg</p></div><div className="rounded-xl bg-white/5 p-3">Merma<p className="mt-1 text-amber-300">+ 4,5%</p></div><div className="rounded-xl bg-white/5 p-3">Indirectos<p className="mt-1 text-white">$2,85</p></div></div></Reveal><Reveal delay={.05} className="rounded-[28px] border border-white/10 bg-emerald-400/[.08] p-7 lg:p-9"><span id="inventario" className="grid size-11 place-items-center rounded-2xl bg-emerald-400 text-emerald-950"><Warehouse className="size-5" /></span><h3 className="mt-8 text-xl font-bold">Inventario en tiempo real</h3><p className="mt-3 text-sm leading-6 text-slate-400">Descuenta insumos al registrar producción o ventas y anticipa faltantes.</p><div className="mt-8 space-y-2"><Stock n="Chocolate" v="2,4 kg" color="bg-emerald-400" /><Stock n="Harina" v="1,1 kg" color="bg-amber-400" /><Stock n="Crema" v="Bajo" color="bg-rose-400" /></div></Reveal><Reveal delay={.1} className="rounded-[28px] border border-white/10 bg-white/[.055] p-7 lg:p-9"><span className="grid size-11 place-items-center rounded-2xl bg-white/10 text-amber-300"><ReceiptText className="size-5" /></span><h3 className="mt-8 text-xl font-bold">Ventas y clientes</h3><p className="mt-3 text-sm leading-6 text-slate-400">Registra pedidos rápido, consulta clientes y entiende la ganancia de cada jornada.</p><div className="mt-7 flex items-end gap-2" aria-hidden="true">{[38, 52, 43, 69, 62, 86, 74].map((h, i) => <span key={i} className="flex-1 rounded-t bg-amber-400/70" style={{ height: h }} />)}</div></Reveal><Reveal delay={.15} className="rounded-[28px] border border-white/10 bg-white/[.055] p-7 md:col-span-2 lg:p-9"><span className="grid size-11 place-items-center rounded-2xl bg-white/10 text-amber-300"><FileDown className="size-5" /></span><h3 className="mt-8 text-xl font-bold">Fichas técnicas listas para compartir</h3><p className="mt-3 text-sm leading-6 text-slate-400">Organiza tu recetario y exporta fichas a PDF con cantidades, costos y precio sugerido.</p></Reveal></div></div></section>
+    <section className="bg-[#111722] px-5 pb-24 lg:px-8 lg:pb-32"><div className="mx-auto max-w-7xl"><Reveal><Simulador /></Reveal></div></section>
+    <section className="px-5 py-24 lg:px-8 lg:py-32"><div className="mx-auto max-w-7xl"><Reveal className="text-center"><p className="text-xs font-bold uppercase tracking-[.18em] text-amber-700">Historias de negocios reales</p><h2 className="mx-auto mt-4 max-w-2xl text-4xl font-bold tracking-[-.045em] text-stone-950 sm:text-5xl">Cuando los números se aclaran, la cocina crece.</h2></Reveal><div className="mt-14 grid gap-4 md:grid-cols-3">{[{ i: "MG", r: "Pastelería artesanal", q: "Detecté que dos de mis tortas se vendían casi al costo. Ajusté porciones y precios sin perder clientes.", m: "+22%", l: "margen reportado" }, { i: "CR", r: "Cocina por encargo", q: "Antes revisaba tres archivos para preparar compras. Ahora sé qué falta y cuánto necesito desde una sola pantalla.", m: "6 h", l: "ahorradas por semana" }, { i: "AP", r: "Emprendimiento de postres", q: "Pude poner precio a todo mi catálogo considerando empaque, gas y mi tiempo. Por fin cobro el trabajo completo.", m: "100%", l: "catálogo costeado" }].map((x, i) => <Reveal key={x.i} delay={i * .06} className="flex h-full flex-col rounded-[24px] border border-stone-200 bg-white p-7 shadow-sm"><div className="flex gap-1 text-amber-500" aria-label="5 de 5 estrellas">{Array.from({ length: 5 }).map((_, n) => <Star key={n} className="size-4 fill-current" />)}</div><blockquote className="mt-6 flex-1 text-[15px] leading-7 text-stone-600">“{x.q}”</blockquote><div className="mt-7 border-t border-stone-100 pt-5"><div className="flex items-center justify-between gap-3"><span className="grid size-10 place-items-center rounded-full bg-stone-900 text-xs font-bold text-amber-300">{x.i}</span><p className="flex-1 text-xs font-semibold text-stone-600">{x.r}</p><div className="text-right"><p className="font-mono text-xl font-bold text-emerald-700">{x.m}</p><p className="text-[9px] uppercase text-stone-400">{x.l}</p></div></div></div></Reveal>)}</div><p className="mt-5 text-center text-xs text-stone-400">Testimonios representativos compartidos por usuarios; los resultados dependen de cada operación.</p></div></section>
+    <section id="precios" className="border-y border-stone-200 bg-white/70 px-5 py-24 lg:px-8 lg:py-32"><div className="mx-auto max-w-7xl"><Reveal className="text-center"><p className="text-xs font-bold uppercase tracking-[.18em] text-amber-700">Simple y transparente</p><h2 className="mt-4 text-4xl font-bold tracking-[-.045em] text-stone-950 sm:text-5xl">Empieza gratis. Escala cuando lo necesites.</h2><p className="mt-4 text-stone-500">Precios mensuales en USD. Cancela cuando quieras.</p></Reveal><div className="mx-auto mt-14 grid max-w-6xl gap-4 md:grid-cols-3">{planes.map((p, i) => <Reveal key={p.n} delay={i * .06} className={`relative flex h-full flex-col rounded-[26px] border p-7 ${p.popular ? "border-amber-400 bg-[#111722] text-white shadow-2xl" : "border-stone-200 bg-[#f8f6f1]"}`}>{p.popular && <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-amber-400 px-3 py-1 text-[10px] font-bold uppercase text-stone-950">Más popular</span>}<p className={`text-sm font-bold ${p.popular ? "text-amber-300" : "text-stone-600"}`}>{p.n}</p><div className="mt-5"><span className="font-mono text-5xl font-bold">{p.p}</span><span className="text-sm opacity-50"> / mes</span></div><p className="mt-3 min-h-12 text-sm leading-6 opacity-60">{p.note}</p><ul className="mt-7 flex-1 space-y-3">{p.f.map(f => <li key={f} className="flex gap-2 text-sm opacity-80"><Check className="mt-0.5 size-4 shrink-0 text-emerald-500" />{f}</li>)}</ul><Link href="/auth/register" className={`mt-8 grid min-h-12 place-items-center rounded-xl font-bold transition hover:-translate-y-.5 ${p.popular ? "bg-amber-400 text-stone-950" : "border border-stone-300 bg-white"}`}>{p.p === "$0" ? "Comenzar gratis" : "Elegir plan"}</Link></Reveal>)}</div><div className="mt-8 text-center"><Link href="/pricing" className="inline-flex min-h-11 items-center gap-2 text-sm font-bold">Comparar todos los planes <ArrowRight className="size-4" /></Link></div></div></section>
+    <section id="faq" className="px-5 py-24 lg:px-8 lg:py-32"><div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[.7fr_1.3fr]"><Reveal><p className="text-xs font-bold uppercase tracking-[.18em] text-amber-700">Preguntas frecuentes</p><h2 className="mt-4 text-4xl font-bold tracking-[-.045em] text-stone-950">Todo claro antes de empezar.</h2><p className="mt-5 text-sm text-stone-500">¿Tienes otra duda? Escríbenos y te ayudamos sin tecnicismos.</p></Reveal><div className="divide-y divide-stone-200 border-y border-stone-200">{preguntas.map(([q, a], i) => <div key={q}><button onClick={() => setFaq(faq === i ? null : i)} aria-expanded={faq === i} aria-controls={`faq-${i}`} className="flex min-h-16 w-full cursor-pointer items-center justify-between gap-5 py-5 text-left font-bold"><span>{q}</span><ChevronDown className={`size-5 shrink-0 transition-transform ${faq === i ? "rotate-180" : ""}`} /></button><AnimatePresence initial={false}>{faq === i && <motion.div id={`faq-${i}`} initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden"><p className="max-w-2xl pb-6 text-sm leading-7 text-stone-600">{a}</p></motion.div>}</AnimatePresence></div>)}</div></div></section>
+    <section className="px-5 pb-8 lg:px-8"><Reveal className="relative mx-auto max-w-7xl overflow-hidden rounded-[32px] bg-[#111722] px-6 py-16 text-center text-white sm:py-20"><div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,rgba(245,158,11,.22),transparent_30%),radial-gradient(circle_at_90%_80%,rgba(16,185,129,.16),transparent_30%)]" /><Flame className="relative mx-auto size-8 text-amber-400" /><h2 className="relative mx-auto mt-5 max-w-3xl text-4xl font-bold tracking-[-.05em] sm:text-6xl">Tu cocina merece números claros.</h2><p className="relative mt-5 text-slate-400">Crea tu primera receta costeada hoy. Sin tarjeta y sin hojas de cálculo.</p><Link href="/auth/register" className="relative mt-8 inline-flex min-h-14 items-center gap-2 rounded-2xl bg-amber-400 px-7 font-bold text-stone-950 transition hover:-translate-y-.5">Empezar gratis hoy <ArrowRight className="size-4" /></Link></Reveal></section></main>
+    <footer className="px-5 py-12 lg:px-8"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-8 border-t border-stone-200 pt-9 md:flex-row md:items-center"><div><Marca /><p className="mt-3 max-w-sm text-xs leading-5 text-stone-500">Costos, inventario y ventas para negocios gastronómicos que quieren crecer con claridad.</p></div><div className="flex flex-wrap gap-6 text-xs font-semibold text-stone-500"><Link href="/blog">Blog</Link><Link href="/terminos">Términos</Link><Link href="/privacidad">Privacidad</Link><span>© 2026 DGcost · v{getAppVersion()}</span></div></div></footer>
+    <AnimatePresence>{demo && <motion.div role="dialog" aria-modal="true" aria-label="Demostración de DGcost" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={e => { if (e.currentTarget === e.target) setDemo(false); }} className="fixed inset-0 z-[80] grid place-items-center bg-stone-950/75 p-4 backdrop-blur-sm"><motion.div initial={{ scale: .96 }} animate={{ scale: 1 }} className="relative w-full max-w-3xl overflow-hidden rounded-[24px] border border-white/10 bg-[#111722]"><button autoFocus onClick={() => setDemo(false)} aria-label="Cerrar demostración" className="absolute right-3 top-3 z-10 grid size-11 cursor-pointer place-items-center rounded-full bg-black/50 text-white"><X /></button><div className="grid aspect-video place-items-center p-8 text-center"><div><span className="mx-auto grid size-16 place-items-center rounded-full bg-amber-400 text-stone-950"><Play className="ml-1 size-7 fill-current" /></span><h2 className="mt-6 text-2xl font-bold text-white">Tu receta rentable en tres pasos</h2><div className="mt-5 flex flex-wrap justify-center gap-2 text-xs text-slate-300"><span className="rounded-full bg-white/10 px-3 py-2">1. Registra insumos</span><span className="rounded-full bg-white/10 px-3 py-2">2. Arma la receta</span><span className="rounded-full bg-white/10 px-3 py-2">3. Protege tu margen</span></div><p className="mt-5 text-sm text-slate-400">La demostración completa estará disponible próximamente. Mientras tanto, prueba la calculadora del inicio.</p></div></div></motion.div></motion.div>}</AnimatePresence><WhatsAppButton /><CookieBanner /></div>;
+}

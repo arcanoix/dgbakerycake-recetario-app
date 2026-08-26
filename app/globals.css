@@ -165,6 +165,19 @@
   }
 }
 
+html { scroll-behavior: smooth; }
+.landing-surface { font-family: var(--font-inter), sans-serif; }
+.roi-range { height: 28px; background: transparent; }
+.roi-range::-webkit-slider-runnable-track { height: 5px; border-radius: 999px; background: linear-gradient(90deg, #f59e0b, #475569); }
+.roi-range::-webkit-slider-thumb { width: 24px; height: 24px; margin-top: -9.5px; appearance: none; border: 4px solid #111722; border-radius: 999px; background: #fbbf24; box-shadow: 0 0 0 2px #fbbf24; }
+.roi-range::-moz-range-track { height: 5px; border-radius: 999px; background: linear-gradient(90deg, #f59e0b, #475569); }
+.roi-range::-moz-range-thumb { width: 18px; height: 18px; border: 4px solid #111722; border-radius: 999px; background: #fbbf24; box-shadow: 0 0 0 2px #fbbf24; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
 @keyframes gradient {
   0%, 100% {
     background-position: 0% center;

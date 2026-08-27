@@ -40,7 +40,7 @@
     "dompurify": "^3.3.3",
     "driver.js": "^1.4.0",
     "jspdf": "^4.2.1",
-    "jspdf-autotable": "^5.0.7",
+    "jspdf-autotable": "^5.0.8",
     "lucide-react": "^1.31.0",
     "marked": "^15.0.12",
     "motion": "^12.38.0",

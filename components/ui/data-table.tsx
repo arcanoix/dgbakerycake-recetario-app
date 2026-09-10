@@ -2,17 +2,20 @@
 
 import * as React from "react";
 import {
-  ColumnDef,
   ColumnFiltersState,
+  ColumnVisibilityState,
+  RowData,
   SortingState,
-  VisibilityState,
   flexRender,
+} from "@tanstack/react-table";
+import {
+  LegacyColumnDef as ColumnDef,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+  useLegacyTable,
+} from "@tanstack/react-table/legacy";
 
 import {
   Table,
@@ -33,25 +36,25 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChevronLeft, ChevronRight, Settings2 } from "lucide-react";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+interface DataTableProps<TData extends RowData> {
+  columns: ColumnDef<TData>[];
   data: TData[];
   searchKey?: string;
   placeholder?: string;
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends RowData>({
   columns,
   data,
   searchKey,
   placeholder = "Filtrar...",
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = React.useState<ColumnVisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-  const table = useReactTable({
+  const table = useLegacyTable({
     data,
     columns,
     onSortingChange: setSorting,

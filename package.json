@@ -48,7 +48,7 @@
     "papaparse": "^5.5.3",
     "react": "^19.2.8",
     "react-dom": "^19.2.5",
-    "read-excel-file": "^9.0.9",
+    "read-excel-file": "^9.3.10",
     "recharts": "^3.8.1",
     "tailwind-merge": "^3.5.0",
     "zod": "^4.3.6"

@@ -104,6 +104,11 @@ export function Sidebar({ className, isCollapsed, setIsCollapsed, onLinkClick }:
         isCollapsed ? "px-2 text-center" : "px-4"
       )}>
         {!isCollapsed && <a href="https://chat.whatsapp.com/JzQG89bgWuc8cB7OOwZYsa" target="_blank" rel="noopener noreferrer" className="mb-3 flex min-h-11 items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 text-xs font-bold text-emerald-800 transition hover:bg-emerald-100"><MessageCircle className="h-4 w-4" />Soporte por WhatsApp</a>}
+        {!isCollapsed && (
+          <span className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[10px] font-bold tracking-wider text-amber-800">
+            BETA · ACCESO ANTICIPADO
+          </span>
+        )}
         <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
           {isCollapsed ? getAppVersion().split('-')[1] || 'v' : `Versión ${getAppVersion()}`}
         </p>

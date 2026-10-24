@@ -1,5 +1,30 @@
 import jsPDF from "jspdf";
 
+export const LOGO_STORAGE_KEY = "dgcost_config_logo_url";
+
+export function guardarLogoLocal(logoUrl?: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    if (logoUrl && logoUrl.trim()) {
+      window.localStorage.setItem(LOGO_STORAGE_KEY, logoUrl.trim());
+    } else {
+      window.localStorage.removeItem(LOGO_STORAGE_KEY);
+    }
+  } catch {
+    // Ignore storage quota or SSR errors
+  }
+}
+
+export function obtenerLogoLocal(): string | undefined {
+  if (typeof window === "undefined") return undefined;
+  try {
+    const val = window.localStorage.getItem(LOGO_STORAGE_KEY);
+    return val && val.trim() ? val.trim() : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export interface PdfLogoOptions {
   x?: number;
   y?: number;
@@ -31,11 +56,82 @@ function resolveImageFormat(mimeOrDataUrl: string): "PNG" | "JPEG" | "WEBP" {
   return "PNG";
 }
 
+/**
+ * In browser environments, normalizes any image (including WebP or remote URLs)
+ * into a standard PNG DataURL via an offscreen canvas so jsPDF can always embed it
+ * without WebP decoder failures or connect-src CSP restrictions.
+ */
+function normalizeLogoViaCanvas(
+  src: string
+): Promise<{ dataUrl: string; format: "PNG"; width: number; height: number } | null> {
+  if (
+    typeof window === "undefined" ||
+    typeof document === "undefined" ||
+    typeof Image === "undefined" ||
+    (typeof navigator !== "undefined" && /jsdom/i.test(navigator.userAgent || ""))
+  ) {
+    return Promise.resolve(null);
+  }
+
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+
+    const timeoutId = setTimeout(() => {
+      resolve(null);
+    }, 5000);
+
+    img.onload = () => {
+      clearTimeout(timeoutId);
+      try {
+        const naturalW = img.naturalWidth || img.width || 200;
+        const naturalH = img.naturalHeight || img.height || 100;
+        const maxDim = 600;
+        const scale = Math.min(1, maxDim / Math.max(naturalW, naturalH));
+        const targetW = Math.max(1, Math.round(naturalW * scale));
+        const targetH = Math.max(1, Math.round(naturalH * scale));
+
+        const canvas = document.createElement("canvas");
+        canvas.width = targetW;
+        canvas.height = targetH;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          resolve(null);
+          return;
+        }
+        ctx.drawImage(img, 0, 0, targetW, targetH);
+        const pngDataUrl = canvas.toDataURL("image/png");
+        resolve({
+          dataUrl: pngDataUrl,
+          format: "PNG",
+          width: targetW,
+          height: targetH,
+        });
+      } catch {
+        resolve(null);
+      }
+    };
+
+    img.onerror = () => {
+      clearTimeout(timeoutId);
+      resolve(null);
+    };
+
+    img.src = src;
+  });
+}
+
 async function resolveLogoDataUrl(
   logoUrl: string
-): Promise<{ dataUrl: string; format: "PNG" | "JPEG" | "WEBP" } | null> {
+): Promise<{ dataUrl: string; format: "PNG" | "JPEG" | "WEBP"; width?: number; height?: number } | null> {
   const trimmed = logoUrl.trim();
   if (!trimmed) return null;
+
+  // Try canvas normalization first in real browser (handles WebP, PNG, JPG, and remote URLs via img-src)
+  const canvasNormalized = await normalizeLogoViaCanvas(trimmed);
+  if (canvasNormalized) {
+    return canvasNormalized;
+  }
 
   if (trimmed.startsWith("data:image/")) {
     return {
@@ -64,8 +160,14 @@ async function resolveLogoDataUrl(
         ? "image/webp"
         : "image/png";
 
+  const dataUrl = `data:${mime};base64,${base64}`;
+  const canvasFromFetched = await normalizeLogoViaCanvas(dataUrl);
+  if (canvasFromFetched) {
+    return canvasFromFetched;
+  }
+
   return {
-    dataUrl: `data:${mime};base64,${base64}`,
+    dataUrl,
     format,
   };
 }
@@ -79,14 +181,15 @@ export async function agregarLogoPDF(
   logoUrl?: string,
   options: PdfLogoOptions = {}
 ): Promise<boolean> {
-  if (!logoUrl || !logoUrl.trim()) {
+  const effectiveLogoUrl = (logoUrl && logoUrl.trim()) || obtenerLogoLocal();
+  if (!effectiveLogoUrl) {
     return false;
   }
 
   const { x = 166, y = 10, maxWidth = 30, maxHeight = 16 } = options;
 
   try {
-    const resolved = await resolveLogoDataUrl(logoUrl);
+    const resolved = await resolveLogoDataUrl(effectiveLogoUrl);
     if (!resolved) {
       return false;
     }
@@ -94,20 +197,26 @@ export async function agregarLogoPDF(
     let renderWidth = maxWidth;
     let renderHeight = maxHeight;
 
-    try {
-      if (typeof doc.getImageProperties === "function") {
-        const props = doc.getImageProperties(resolved.dataUrl);
-        if (props?.width > 0 && props?.height > 0) {
-          const ratio = Math.min(
-            maxWidth / props.width,
-            maxHeight / props.height
-          );
-          renderWidth = props.width * ratio;
-          renderHeight = props.height * ratio;
+    if (resolved.width && resolved.height && resolved.width > 0 && resolved.height > 0) {
+      const ratio = Math.min(maxWidth / resolved.width, maxHeight / resolved.height);
+      renderWidth = resolved.width * ratio;
+      renderHeight = resolved.height * ratio;
+    } else {
+      try {
+        if (typeof doc.getImageProperties === "function") {
+          const props = doc.getImageProperties(resolved.dataUrl);
+          if (props?.width > 0 && props?.height > 0) {
+            const ratio = Math.min(
+              maxWidth / props.width,
+              maxHeight / props.height
+            );
+            renderWidth = props.width * ratio;
+            renderHeight = props.height * ratio;
+          }
         }
+      } catch {
+        // Fallback to bounding box dimensions if image properties cannot be inspected
       }
-    } catch {
-      // Fallback to bounding box dimensions if image properties cannot be inspected
     }
 
     const drawX = x + (maxWidth - renderWidth);

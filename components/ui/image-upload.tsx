@@ -73,7 +73,7 @@ export const ImageUpload = ({
     }
 
     const data = await response.json();
-    return data.url;
+    return data.dataUrl || data.url;
   };
 
   const processFile = async (file: File) => {

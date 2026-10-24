@@ -70,23 +70,27 @@ export async function POST(request: Request) {
       );
     }
 
-    // Fallback to DataURL in local environments without BLOB_READ_WRITE_TOKEN configured
+    const arrayBuffer = await readBlobBuffer(file);
+    const base64 = Buffer.from(arrayBuffer).toString("base64");
+    const dataUrl = `data:${file.type};base64,${base64}`;
+
     if (!process.env.BLOB_READ_WRITE_TOKEN) {
-      const arrayBuffer = await readBlobBuffer(file);
-      const base64 = Buffer.from(arrayBuffer).toString("base64");
-      return NextResponse.json({
-        url: `data:${file.type};base64,${base64}`,
-      });
+      return NextResponse.json({ url: dataUrl, dataUrl });
     }
 
-    const blob = await put(`logos/${user.id}/logo.${imageType.extension}`, file, {
-      access: "public",
-      addRandomSuffix: true,
-      contentType: file.type,
-      cacheControlMaxAge: 60 * 60 * 24 * 365,
-    });
+    try {
+      const blob = await put(`logos/${user.id}/logo.${imageType.extension}`, file, {
+        access: "public",
+        addRandomSuffix: true,
+        contentType: file.type,
+        cacheControlMaxAge: 60 * 60 * 24 * 365,
+      });
 
-    return NextResponse.json({ url: blob.url });
+      return NextResponse.json({ url: blob.url, dataUrl });
+    } catch {
+      // If Vercel Blob fails or token is invalid in dev, fall back to DataURL seamlessly
+      return NextResponse.json({ url: dataUrl, dataUrl });
+    }
   } catch (error) {
     console.error("Error al subir logo:", error);
     return NextResponse.json(

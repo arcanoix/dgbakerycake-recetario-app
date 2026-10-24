@@ -4,6 +4,9 @@ import { Orden } from "@/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
+import { obtenerLogoLocal } from "@/lib/pdfLogo";
+import { exportarCotizacionPDF } from "@/lib/pdfCotizacion";
+import { Button } from "@/components/ui/button";
 import { PrecioDual } from "@/components/ui/precio-dual";
 import { formatearNumero } from "@/lib/constants";
 import { 
@@ -11,6 +14,7 @@ import {
   DollarSign, 
   Calendar,
   FileText,
+  Download,
   User,
   Phone,
   MapPin,
@@ -43,6 +47,7 @@ export const OrdenDetailModal = ({ orden, open, onOpenChange }: OrdenDetailModal
 
   if (!orden) return null;
 
+  const logoUrl = configuracion?.logoUrl || obtenerLogoLocal();
   const estadoBadge = getEstadoBadge(orden.estado);
   const EstadoIcon = estadoBadge.icon;
 
@@ -50,7 +55,7 @@ export const OrdenDetailModal = ({ orden, open, onOpenChange }: OrdenDetailModal
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start justify-between gap-4 pr-6">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <DialogTitle className="text-2xl font-black">Orden #{orden.numeroOrden}</DialogTitle>
@@ -63,7 +68,27 @@ export const OrdenDetailModal = ({ orden, open, onOpenChange }: OrdenDetailModal
                 <p className="text-sm text-muted-foreground">Cliente: {orden.clienteNombre}</p>
               )}
             </div>
-            <ShoppingCart className="w-8 h-8 text-primary" />
+            <div className="flex items-center gap-3">
+              {logoUrl ? (
+                <img
+                  src={logoUrl}
+                  alt="Logo del negocio"
+                  className="h-12 max-w-[120px] object-contain rounded-md border bg-white p-1"
+                />
+              ) : (
+                <ShoppingCart className="w-8 h-8 text-primary" />
+              )}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="gap-2"
+                onClick={() => exportarCotizacionPDF(orden, configuracion)}
+              >
+                <Download className="w-4 h-4" />
+                Exportar PDF
+              </Button>
+            </div>
           </div>
         </DialogHeader>
 

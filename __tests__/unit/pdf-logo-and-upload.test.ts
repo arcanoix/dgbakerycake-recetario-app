@@ -106,9 +106,12 @@ describe("POST /api/configuracion/logo", () => {
     const response = await POST(requestWithFile(file));
 
     expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toEqual({
-      url: "https://example.public.blob.vercel-storage.com/logos/user-123/logo.png",
-    });
+    await expect(response.json()).resolves.toEqual(
+      expect.objectContaining({
+        url: "https://example.public.blob.vercel-storage.com/logos/user-123/logo.png",
+        dataUrl: expect.stringMatching(/^data:image\/png;base64,/),
+      })
+    );
     expect(mockPut).toHaveBeenCalledWith(
       "logos/user-123/logo.png",
       file,
@@ -230,6 +233,18 @@ describe("agregarLogoPDF y exportación de reportes PDF con logo", () => {
 
     expect(mockAddImage).toHaveBeenCalledTimes(1);
     expect(mockSave).toHaveBeenCalledWith("Cotizacion-ORD-0001.pdf");
+  });
+
+  it("estampa el logo en el PDF de cotización usando el fallback local aunque configuracion sea null", async () => {
+    window.localStorage.setItem("dgcost_config_logo_url", sampleDataUrl);
+    try {
+      await exportarCotizacionPDF(sampleOrden, null);
+
+      expect(mockAddImage).toHaveBeenCalledTimes(1);
+      expect(mockSave).toHaveBeenCalledWith("Cotizacion-ORD-0001.pdf");
+    } finally {
+      window.localStorage.removeItem("dgcost_config_logo_url");
+    }
   });
 
   it("continúa generando el PDF sin fallar si la carga remota del logo falla", async () => {

@@ -10,6 +10,7 @@ import {
   GastoFijoFormSchema,
 } from './validators';
 import { sanitizeStringFields } from './sanitize';
+import { guardarLogoLocal, obtenerLogoLocal } from './pdfLogo';
 
 // ============================================
 // PRODUCTOS
@@ -395,6 +396,7 @@ export const obtenerConfiguracion = async (): Promise<ConfiguracionGlobal | null
 
 export const guardarConfiguracion = async (config: ConfiguracionGlobal) => {
   // Validate user-supplied fields before writing to Supabase
+  guardarLogoLocal(config.logoUrl);
   const sanitized = sanitizeStringFields({ moneda: config.moneda, logoUrl: config.logoUrl });
 
   const parsed = ConfiguracionFormSchema.safeParse({
@@ -430,6 +432,9 @@ export const guardarConfiguracion = async (config: ConfiguracionGlobal) => {
       .eq('id', existing.id);
 
     if (error) {
+      const { logo_url: _omit, ...fallbackData } = configData;
+      const retry = await supabase.from('configuracion').update(fallbackData).eq('id', existing.id);
+      if (!retry.error) return { exitoso: true };
       registrarErrorSistema(`Error al actualizar configuración: ${String(error)}`).catch(() => {});
       return { exitoso: false, error: error.message };
     }
@@ -547,7 +552,7 @@ function mapConfiguracionFromDB(data: any): ConfiguracionGlobal {
     margenGananciaDefecto: parseFloat(data.margen_ganancia_defecto),
     tasaCambioUSD: data.tasa_cambio_usd ? parseFloat(data.tasa_cambio_usd) : undefined,
     porcentajeGastosFijos: data.porcentaje_gastos_fijos ? parseFloat(data.porcentaje_gastos_fijos) : undefined,
-    logoUrl: data.logo_url || undefined,
+    logoUrl: data.logo_url || obtenerLogoLocal() || undefined,
     ultimaActualizacion: new Date(data.updated_at),
   };
 }

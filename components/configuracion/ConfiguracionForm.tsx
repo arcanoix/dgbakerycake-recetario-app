@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { OPCIONES_MONEDA } from "@/lib/constants";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { guardarLogoLocal, obtenerLogoLocal } from "@/lib/pdfLogo";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Globe, 
@@ -58,7 +59,7 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
         margenGananciaDefecto: configuracion.margenGananciaDefecto || 0,
         tasaCambioUSD: configuracion.tasaCambioUSD || 0,
         porcentajeGastosFijos: configuracion.porcentajeGastosFijos || 0,
-        logoUrl: configuracion.logoUrl || "",
+        logoUrl: configuracion.logoUrl || obtenerLogoLocal() || "",
       });
     }
   }, [configuracion]);
@@ -312,15 +313,25 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
                   </Label>
                   <ImageUpload
                     value={formData.logoUrl}
-                    onChange={(url) => handleValueChange("logoUrl", url)}
-                    onRemove={() => handleValueChange("logoUrl", "")}
+                    onChange={async (url) => {
+                      guardarLogoLocal(url);
+                      const nextData = { ...formData, logoUrl: url };
+                      setFormData(nextData);
+                      await onSubmit(nextData);
+                    }}
+                    onRemove={async () => {
+                      guardarLogoLocal("");
+                      const nextData = { ...formData, logoUrl: "" };
+                      setFormData(nextData);
+                      await onSubmit(nextData);
+                    }}
                     uploadEndpoint="/api/configuracion/logo"
                     maxSize={2}
                     accept="image/png,image/jpeg,image/webp"
                     imageFit="contain"
                   />
                   <p className="text-[11px] text-muted-foreground leading-relaxed px-1">
-                    Formatos recomendados: PNG con fondo transparente, JPG o WebP (máx. 2 MB). Recuerda hacer clic en <strong>Guardar Cambios</strong> luego de actualizar tu logo.
+                    Formatos recomendados: PNG con fondo transparente, JPG o WebP (máx. 2 MB). Tu logo se guarda automáticamente al subirlo.
                   </p>
                 </div>
               </CardContent>

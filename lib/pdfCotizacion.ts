@@ -3,15 +3,28 @@ import autoTable from "jspdf-autotable";
 import { Orden, ConfiguracionGlobal } from "@/types";
 import { formatearNumero } from "./constants";
 import { convertirUSDaBS, formatearUSD, formatearBS } from "./currency";
-import { agregarLogoPDF } from "./pdfLogo";
+import { agregarLogoPDF, obtenerLogoLocal } from "./pdfLogo";
 
 export const exportarCotizacionPDF = async (
   orden: Orden,
   configuracion: ConfiguracionGlobal | null
 ) => {
+  let configEfectiva = configuracion;
+  if (!configEfectiva?.logoUrl && !obtenerLogoLocal()) {
+    try {
+      const { obtenerConfiguracion } = await import("./storageSupabase");
+      const remota = await obtenerConfiguracion();
+      if (remota) {
+        configEfectiva = remota;
+      }
+    } catch {
+      // Ignorar error de red y continuar con la configuración disponible
+    }
+  }
+
   const doc = new jsPDF();
-  const moneda = configuracion?.moneda || "VES";
-  const tasaCambio = configuracion?.tasaCambioUSD || 1;
+  const moneda = configEfectiva?.moneda || "VES";
+  const tasaCambio = configEfectiva?.tasaCambioUSD || 1;
 
   // Colors (matching existing pdfExport.ts palette)
   const textDark = [9, 9, 11];
@@ -22,16 +35,15 @@ export const exportarCotizacionPDF = async (
   const accentColor = [124, 58, 237]; // violet-600
 
   // ---- HEADER ----
-  const hasLogo = configuracion?.logoUrl
-    ? await agregarLogoPDF(doc, configuracion.logoUrl, {
-        x: 166,
-        y: 10,
-        maxWidth: 30,
-        maxHeight: 14,
-      })
-    : false;
+  const hasLogo = await agregarLogoPDF(doc, configEfectiva?.logoUrl, {
+    x: 162,
+    y: 10,
+    maxWidth: 34,
+    maxHeight: 16,
+  });
+
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(22);
+  doc.setFontSize(hasLogo ? 18 : 22);
   doc.setTextColor(accentColor[0], accentColor[1], accentColor[2]);
   doc.text("PRESUPUESTO / FACTURA PROFORMA", 14, 22);
 
@@ -49,14 +61,14 @@ export const exportarCotizacionPDF = async (
   };
   doc.setFont("helvetica", "bold");
   doc.setFontSize(9);
-  doc.text(estadoLabel[orden.estado] || orden.estado.toUpperCase(), 196, hasLogo ? 30 : 30, { align: "right" });
+  doc.text(estadoLabel[orden.estado] || orden.estado.toUpperCase(), 196, 31, { align: "right" });
 
   // Separator
   doc.setDrawColor(lineColor[0], lineColor[1], lineColor[2]);
-  doc.line(14, 34, 196, 34);
+  doc.line(14, 35, 196, 35);
 
   // ---- CLIENT INFO ----
-  let y = 42;
+  let y = 43;
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
   doc.setTextColor(textDark[0], textDark[1], textDark[2]);

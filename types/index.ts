@@ -196,6 +196,7 @@ export interface ConfiguracionGlobal {
   margenGananciaDefecto?: number;
   tasaCambioUSD?: number;
   porcentajeGastosFijos?: number;
+  logoUrl?: string;
   ultimaActualizacion: Date;
 }
 
@@ -205,6 +206,7 @@ export interface ConfiguracionFormData {
   margenGananciaDefecto?: number;
   tasaCambioUSD?: number;
   porcentajeGastosFijos?: number;
+  logoUrl?: string;
 }
 
 // ============================================

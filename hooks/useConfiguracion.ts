@@ -63,6 +63,7 @@ export const useConfiguracion = () => {
         margenGananciaDefecto: datos.margenGananciaDefecto,
         tasaCambioUSD: datos.tasaCambioUSD,
         porcentajeGastosFijos: datos.porcentajeGastosFijos,
+        logoUrl: datos.logoUrl,
       };
 
       const respuesta = await guardarConfiguracion(configActualizada);

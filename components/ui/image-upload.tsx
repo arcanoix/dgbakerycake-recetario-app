@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, X, Image as ImageIcon, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -13,6 +13,8 @@ interface ImageUploadProps {
   maxSize?: number; // in MB
   accept?: string;
   className?: string;
+  uploadEndpoint?: string;
+  imageFit?: "cover" | "contain";
 }
 
 export const ImageUpload = ({
@@ -22,12 +24,18 @@ export const ImageUpload = ({
   maxSize = 5,
   accept = "image/*",
   className,
+  uploadEndpoint = "/api/upload",
+  imageFit = "cover",
 }: ImageUploadProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(value || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setPreview(value || null);
+  }, [value]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -54,7 +62,7 @@ export const ImageUpload = ({
     formData.append("file", file);
     
     // Llamar a tu API route que maneja la subida a Vercel Blob
-    const response = await fetch("/api/upload", {
+    const response = await fetch(uploadEndpoint, {
       method: "POST",
       body: formData,
     });
@@ -152,7 +160,10 @@ export const ImageUpload = ({
               <img
                 src={preview}
                 alt="Preview"
-                className="w-full h-full object-cover"
+                className={cn(
+                  "w-full h-full",
+                  imageFit === "contain" ? "object-contain p-4 bg-white" : "object-cover"
+                )}
               />
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
                 <Button

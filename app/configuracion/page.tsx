@@ -60,7 +60,7 @@ export default function ConfiguracionPage() {
               Ajustes del Sistema
             </h2>
             <p className="text-sm text-muted-foreground">
-              Personaliza la moneda, tasas y márgenes de ganancia globales
+              Personaliza la moneda, tasas, márgenes de ganancia y el logo para tus reportes PDF
             </p>
           </div>
         </div>

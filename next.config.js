@@ -37,6 +37,7 @@ const securityHeaders = [
         'wss://*.supabase.co',
         'https://vitals.vercel-insights.com',
         'https://va.vercel-scripts.com',
+        'https://*.public.blob.vercel-storage.com',
       ].join(' '),
       "frame-ancestors 'self'",
       "object-src 'none'",

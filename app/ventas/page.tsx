@@ -88,8 +88,8 @@ export default function VentasPage() {
     setMostrarFormulario(false);
   };
 
-  const handleExportarPDF = (orden: Orden) => {
-    exportarCotizacionPDF(orden, configuracion);
+  const handleExportarPDF = async (orden: Orden) => {
+    await exportarCotizacionPDF(orden, configuracion);
   };
 
   const handleCompartirWhatsApp = (orden: Orden) => {

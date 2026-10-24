@@ -247,6 +247,13 @@ export const ConfiguracionFormSchema = z.object({
     .min(0, 'El porcentaje de gastos fijos no puede ser negativo')
     .max(100, 'El porcentaje de gastos fijos no puede superar 100%')
     .optional(),
+  logoUrl: z
+    .union([
+      z.string().url('La URL del logo no es válida').max(2000, 'La URL del logo no puede superar 2000 caracteres'),
+      z.string().regex(/^data:image\/(png|jpeg|jpg|webp|gif);base64,[A-Za-z0-9+/=]+$/i, 'Formato de imagen inválido'),
+      z.literal(''),
+    ])
+    .optional(),
 });
 
 export type ConfiguracionFormSchemaType = z.infer<typeof ConfiguracionFormSchema>;

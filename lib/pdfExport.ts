@@ -3,8 +3,9 @@ import autoTable from "jspdf-autotable";
 import { Receta, ConfiguracionGlobal } from "@/types";
 import { formatearNumero } from "./constants";
 import { convertirUSDaBS, formatearUSD, formatearBS } from "./currency";
+import { agregarLogoPDF } from "./pdfLogo";
 
-export const exportarRecetaPDF = (
+export const exportarRecetaPDF = async (
   receta: Receta,
   configuracion: ConfiguracionGlobal | null
 ) => {
@@ -20,6 +21,15 @@ export const exportarRecetaPDF = (
   const lineColor = [228, 228, 231];   // Zinc-200
   
   // Header
+  if (configuracion?.logoUrl) {
+    await agregarLogoPDF(doc, configuracion.logoUrl, {
+      x: 166,
+      y: 12,
+      maxWidth: 30,
+      maxHeight: 16,
+    });
+  }
+
   // App primary is usually dark, so let's make the main title bold and dark
   doc.setFont("helvetica", "bold");
   doc.setFontSize(24);

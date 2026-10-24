@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { OPCIONES_MONEDA } from "@/lib/constants";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Globe, 
@@ -19,7 +20,8 @@ import {
   Coins,
   Scale,
   RefreshCw,
-  Info
+  Info,
+  Image as ImageIcon,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -42,6 +44,7 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
     margenGananciaDefecto: 0,
     tasaCambioUSD: 0,
     porcentajeGastosFijos: 0,
+    logoUrl: "",
   });
 
   const [guardado, setGuardado] = useState(false);
@@ -55,6 +58,7 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
         margenGananciaDefecto: configuracion.margenGananciaDefecto || 0,
         tasaCambioUSD: configuracion.tasaCambioUSD || 0,
         porcentajeGastosFijos: configuracion.porcentajeGastosFijos || 0,
+        logoUrl: configuracion.logoUrl || "",
       });
     }
   }, [configuracion]);
@@ -86,6 +90,10 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
           <TabsTrigger value="precios" className="gap-2 h-9 px-4 font-bold data-[state=active]:shadow-sm">
             <TrendingUp className="w-4 h-4" />
             Precios y Ganancia
+          </TabsTrigger>
+          <TabsTrigger value="reportes" className="gap-2 h-9 px-4 font-bold data-[state=active]:shadow-sm">
+            <ImageIcon className="w-4 h-4" />
+            Logo y Reportes
           </TabsTrigger>
         </TabsList>
 
@@ -270,6 +278,50 @@ export const ConfiguracionForm = ({ configuracion, onSubmit }: ConfiguracionForm
                       Porcentaje del costo total a asignar como gastos fijos.
                     </p>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </TabsContent>
+        <TabsContent value="reportes" className="m-0 space-y-6">
+          <motion.div
+            key="reportes-tab"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Card className="border-0 shadow-lg bg-card">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                    <ImageIcon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl font-bold">Logo para Reportes PDF</CardTitle>
+                    <CardDescription>
+                      Sube el logo de tu negocio para incluirlo automáticamente en el encabezado de tus recetas y cotizaciones en PDF.
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="max-w-md space-y-3">
+                  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Imagen del Logo
+                  </Label>
+                  <ImageUpload
+                    value={formData.logoUrl}
+                    onChange={(url) => handleValueChange("logoUrl", url)}
+                    onRemove={() => handleValueChange("logoUrl", "")}
+                    uploadEndpoint="/api/configuracion/logo"
+                    maxSize={2}
+                    accept="image/png,image/jpeg,image/webp"
+                    imageFit="contain"
+                  />
+                  <p className="text-[11px] text-muted-foreground leading-relaxed px-1">
+                    Formatos recomendados: PNG con fondo transparente, JPG o WebP (máx. 2 MB). Recuerda hacer clic en <strong>Guardar Cambios</strong> luego de actualizar tu logo.
+                  </p>
                 </div>
               </CardContent>
             </Card>

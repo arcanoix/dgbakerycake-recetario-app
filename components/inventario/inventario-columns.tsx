@@ -1,6 +1,6 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
+import { LegacyColumnDef as ColumnDef } from "@tanstack/react-table/legacy";
 import { StockProducto, MovimientoInventario } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

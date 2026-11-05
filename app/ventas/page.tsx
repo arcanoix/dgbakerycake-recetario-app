@@ -35,7 +35,7 @@ import { formatearUSD } from "@/lib/currency";
 
 export default function VentasPage() {
   const { ordenes, cargando, error, errorCarga, crear, actualizar, cambiarEstado, eliminar, cargarOrdenes } = useOrdenes();
-  const { clientes, errorCarga: errorCargaClientes, cargarClientes } = useClientes();
+  const { clientes, errorCarga: errorCargaClientes, cargarClientes, crearClienteRapido } = useClientes();
   const { recetas, errorCarga: errorCargaRecetas, cargarRecetas } = useRecetas();
   const { configuracion } = useConfiguracion();
   const { canAccess, getPlanDisplayName, getPlanName, cargando: cargandoPlan } = usePlanAccess();
@@ -88,8 +88,8 @@ export default function VentasPage() {
     setMostrarFormulario(false);
   };
 
-  const handleExportarPDF = (orden: Orden) => {
-    exportarCotizacionPDF(orden, configuracion);
+  const handleExportarPDF = async (orden: Orden) => {
+    await exportarCotizacionPDF(orden, configuracion);
   };
 
   const handleCompartirWhatsApp = (orden: Orden) => {
@@ -261,6 +261,7 @@ export default function VentasPage() {
               <OrdenForm
                 orden={ordenEditando}
                 clientes={clientes}
+                onCrearCliente={crearClienteRapido}
                 recetas={recetas}
                 onGuardar={handleGuardar}
                 onCancelar={handleCancelar}

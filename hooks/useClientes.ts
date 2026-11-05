@@ -67,6 +67,19 @@ export const useClientes = () => {
     }
   };
 
+  const crearClienteRapido = async (datos: ClienteFormData): Promise<{ id?: string; error?: string }> => {
+    try {
+      const respuesta = await guardarCliente(datos);
+      if (respuesta.exitoso && respuesta.id) {
+        await cargarClientes();
+        return { id: respuesta.id };
+      }
+      return { error: respuesta.error || "Error al crear el cliente" };
+    } catch (err) {
+      return { error: "Error al crear el cliente" };
+    }
+  };
+
   const actualizarCliente = async (id: string, datos: ClienteFormData): Promise<boolean> => {
     try {
       const respuesta = await guardarCliente({ ...datos, id });
@@ -116,6 +129,7 @@ export const useClientes = () => {
     cargarClientes,
     obtenerCliente,
     crearCliente,
+    crearClienteRapido,
     actualizarCliente,
     eliminar,
     buscarClientes,

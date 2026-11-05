@@ -355,6 +355,10 @@ describe('ConfiguracionFormSchema', () => {
   });
 
   it('acepta tasa de cambio positiva', () => {
+    expect(ConfiguracionFormSchema.safeParse({ ...base, logoUrl: 'https://example.public.blob.vercel-storage.com/logos/u1/logo.png' }).success).toBe(true);
+    expect(ConfiguracionFormSchema.safeParse({ ...base, logoUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=' }).success).toBe(true);
+    expect(ConfiguracionFormSchema.safeParse({ ...base, logoUrl: '' }).success).toBe(true);
+    expect(ConfiguracionFormSchema.safeParse({ ...base, logoUrl: 'no-es-una-url' }).success).toBe(false);
     const result = ConfiguracionFormSchema.safeParse({ ...base, tasaCambioUSD: 50 });
     expect(result.success).toBe(true);
   });

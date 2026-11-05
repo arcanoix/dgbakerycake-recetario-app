@@ -10,6 +10,7 @@ import {
   GastoFijoFormSchema,
 } from './validators';
 import { sanitizeStringFields } from './sanitize';
+import { guardarLogoLocal, obtenerLogoLocal } from './pdfLogo';
 
 // ============================================
 // PRODUCTOS
@@ -395,13 +396,16 @@ export const obtenerConfiguracion = async (): Promise<ConfiguracionGlobal | null
 
 export const guardarConfiguracion = async (config: ConfiguracionGlobal) => {
   // Validate user-supplied fields before writing to Supabase
-  const sanitized = sanitizeStringFields({ moneda: config.moneda });
+  guardarLogoLocal(config.logoUrl);
+  const sanitized = sanitizeStringFields({ moneda: config.moneda, logoUrl: config.logoUrl });
 
   const parsed = ConfiguracionFormSchema.safeParse({
     moneda: sanitized.moneda,
     costoPorHoraDefecto: config.costoPorHoraDefecto,
     margenGananciaDefecto: config.margenGananciaDefecto,
     tasaCambioUSD: config.tasaCambioUSD,
+    porcentajeGastosFijos: config.porcentajeGastosFijos,
+    logoUrl: sanitized.logoUrl,
   });
   if (!parsed.success) {
     const msg = parsed.error.issues[0]?.message ?? 'Datos de configuración inválidos';
@@ -428,6 +432,9 @@ export const guardarConfiguracion = async (config: ConfiguracionGlobal) => {
       .eq('id', existing.id);
 
     if (error) {
+      const { logo_url: _omit, ...fallbackData } = configData;
+      const retry = await supabase.from('configuracion').update(fallbackData).eq('id', existing.id);
+      if (!retry.error) return { exitoso: true };
       registrarErrorSistema(`Error al actualizar configuración: ${String(error)}`).catch(() => {});
       return { exitoso: false, error: error.message };
     }
@@ -545,6 +552,7 @@ function mapConfiguracionFromDB(data: any): ConfiguracionGlobal {
     margenGananciaDefecto: parseFloat(data.margen_ganancia_defecto),
     tasaCambioUSD: data.tasa_cambio_usd ? parseFloat(data.tasa_cambio_usd) : undefined,
     porcentajeGastosFijos: data.porcentaje_gastos_fijos ? parseFloat(data.porcentaje_gastos_fijos) : undefined,
+    logoUrl: data.logo_url || obtenerLogoLocal() || undefined,
     ultimaActualizacion: new Date(data.updated_at),
   };
 }
@@ -556,6 +564,7 @@ function mapConfiguracionToDB(config: ConfiguracionGlobal) {
     margen_ganancia_defecto: config.margenGananciaDefecto,
     tasa_cambio_usd: config.tasaCambioUSD || null,
     porcentaje_gastos_fijos: config.porcentajeGastosFijos || null,
+    logo_url: config.logoUrl || null,
   };
 }
 

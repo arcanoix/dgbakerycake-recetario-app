@@ -11,10 +11,13 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { X, Plus, Trash2 } from "lucide-react";
 import { formatearUSD } from "@/lib/currency";
+import { ClienteRapidoDialog } from "@/components/ventas/ClienteRapidoDialog";
+import { ClienteRapidoDialog } from "@/components/ventas/ClienteRapidoDialog";
 
 interface OrdenFormProps {
   orden?: Orden;
   clientes: Cliente[];
+  onCrearCliente?: (datos: { nombre: string; telefono?: string }) => Promise<{ id?: string; error?: string }>;
   recetas: Receta[];
   onGuardar: (datos: OrdenFormData) => Promise<boolean>;
   onCancelar: () => void;
@@ -37,8 +40,9 @@ const formatDateTimeLocal = (date: Date) => {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
 
-export const OrdenForm = ({ orden, clientes, recetas, onGuardar, onCancelar }: OrdenFormProps) => {
+export const OrdenForm = ({ orden, clientes, onCrearCliente, recetas, onGuardar, onCancelar }: OrdenFormProps) => {
   const [clienteId, setClienteId] = useState(orden?.clienteId || "");
+  const [dialogoClienteAbierto, setDialogoClienteAbierto] = useState(false);
   const [estado, setEstado] = useState<EstadoOrden>(orden?.estado || "cotizacion");
   const [descuentoPorcentaje, setDescuentoPorcentaje] = useState(orden?.descuentoPorcentaje || 0);
   const [pagoAdelantado, setPagoAdelantado] = useState(orden?.pagoAdelantado || 0);
@@ -152,19 +156,42 @@ export const OrdenForm = ({ orden, clientes, recetas, onGuardar, onCancelar }: O
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
               <Label htmlFor="clienteId">Cliente *</Label>
-              <Select
-                value={clienteId}
-                onValueChange={(value) => setClienteId(value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecciona un cliente..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {clientes.map(c => (
-                    <SelectItem key={c.id} value={c.id}>{c.nombre}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex gap-2">
+                <Select
+                  value={clienteId}
+                  onValueChange={(value) => setClienteId(value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona un cliente..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {clientes.map(c => (
+                      <SelectItem key={c.id} value={c.id}>{c.nombre}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {onCrearCliente && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="shrink-0"
+                    onClick={() => setDialogoClienteAbierto(true)}
+                    title="Nuevo cliente"
+                    aria-label="Nuevo cliente"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+              {onCrearCliente && (
+                <ClienteRapidoDialog
+                  abierto={dialogoClienteAbierto}
+                  onCerrar={() => setDialogoClienteAbierto(false)}
+                  onCrear={onCrearCliente}
+                  onCreado={(id) => setClienteId(id)}
+                />
+              )}
               {errores.clienteId && <p className="text-sm text-red-500">{errores.clienteId}</p>}
             </div>
 

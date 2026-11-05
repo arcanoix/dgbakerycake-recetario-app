@@ -45,7 +45,7 @@
     "marked": "^18.0.10",
     "motion": "^13.2.0",
     "next": "^16.3.4",
-    "papaparse": "^5.5.3",
+    "papaparse": "^5.7.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.5",
     "read-excel-file": "^9.3.10",

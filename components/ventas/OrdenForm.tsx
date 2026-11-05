@@ -12,7 +12,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { X, Plus, Trash2 } from "lucide-react";
 import { formatearUSD } from "@/lib/currency";
 import { ClienteRapidoDialog } from "@/components/ventas/ClienteRapidoDialog";
-import { ClienteRapidoDialog } from "@/components/ventas/ClienteRapidoDialog";
 
 interface OrdenFormProps {
   orden?: Orden;

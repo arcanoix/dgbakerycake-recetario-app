@@ -16,7 +16,7 @@ import { ClienteRapidoDialog } from "@/components/ventas/ClienteRapidoDialog";
 interface OrdenFormProps {
   orden?: Orden;
   clientes: Cliente[];
-  onCrearCliente?: (datos: { nombre: string; telefono?: string }) => Promise<{ id?: string; error?: string }>;
+  onCrearCliente?: (datos: { nombre: string; direccion?: string }) => Promise<{ id?: string; error?: string }>;
   recetas: Receta[];
   onGuardar: (datos: OrdenFormData) => Promise<boolean>;
   onCancelar: () => void;

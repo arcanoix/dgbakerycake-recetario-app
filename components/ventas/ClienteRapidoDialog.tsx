@@ -16,19 +16,19 @@ import {
 interface ClienteRapidoDialogProps {
   abierto: boolean;
   onCerrar: () => void;
-  onCrear: (datos: { nombre: string; telefono?: string }) => Promise<{ id?: string; error?: string }>;
+  onCrear: (datos: { nombre: string; direccion?: string }) => Promise<{ id?: string; error?: string }>;
   onCreado: (id: string) => void;
 }
 
 export const ClienteRapidoDialog = ({ abierto, onCerrar, onCrear, onCreado }: ClienteRapidoDialogProps) => {
   const [nombre, setNombre] = useState("");
-  const [telefono, setTelefono] = useState("");
+  const [direccion, setDireccion] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [guardando, setGuardando] = useState(false);
 
   const reiniciar = () => {
     setNombre("");
-    setTelefono("");
+    setDireccion("");
     setError(null);
   };
 
@@ -50,7 +50,7 @@ export const ClienteRapidoDialog = ({ abierto, onCerrar, onCrear, onCreado }: Cl
     setGuardando(true);
     const resultado = await onCrear({
       nombre: nombre.trim(),
-      telefono: telefono.trim() || undefined,
+      direccion: direccion.trim() || undefined,
     });
     setGuardando(false);
 
@@ -82,12 +82,11 @@ export const ClienteRapidoDialog = ({ abierto, onCerrar, onCrear, onCreado }: Cl
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="clienteRapidoTelefono">Teléfono</Label>
+            <Label htmlFor="clienteRapidoDireccion">Dirección</Label>
             <Input
-              id="clienteRapidoTelefono"
-              type="tel"
-              value={telefono}
-              onChange={(e) => setTelefono(e.target.value)}
+              id="clienteRapidoDireccion"
+              value={direccion}
+              onChange={(e) => setDireccion(e.target.value)}
             />
           </div>
           {error && <p className="text-sm text-red-500">{error}</p>}

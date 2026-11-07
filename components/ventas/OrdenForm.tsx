@@ -156,19 +156,15 @@ export const OrdenForm = ({ orden, clientes, onCrearCliente, recetas, onGuardar,
             <div className="space-y-1">
               <Label htmlFor="clienteId">Cliente *</Label>
               <div className="flex gap-2">
-                <Select
+                <SearchableSelect
+                  className="flex-1"
+                  options={clientes.map(c => ({ value: c.id, label: c.nombre }))}
                   value={clienteId}
-                  onValueChange={(value) => setClienteId(value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona un cliente..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {clientes.map(c => (
-                      <SelectItem key={c.id} value={c.id}>{c.nombre}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  onChange={(value) => setClienteId(value ?? "")}
+                  placeholder="Selecciona un cliente..."
+                  searchPlaceholder="Buscar cliente..."
+                  emptyMessage="No se encontraron clientes"
+                />
                 {onCrearCliente && (
                   <Button
                     type="button"

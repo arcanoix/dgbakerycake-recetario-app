@@ -11,6 +11,7 @@ import { StatsCard } from "@/components/dashboard/StatsCardImproved";
 import { RecetasRentablesTable } from "@/components/dashboard/RecetasRentablesTable";
 import { RecentSales } from "@/components/dashboard/RecentSales";
 import type { VentaMensual } from "@/components/dashboard/VentasMensualesChart";
+import { calcularRankingClientes, calcularVentasPorMes } from "@/lib/ventasStats";
 
 // Recharts es ~300 KB — se carga de forma lazy para no bloquear el bundle inicial
 const CostosChart = dynamic(
@@ -47,6 +48,10 @@ const ProductosChart = dynamic(
   }
 );
 
+const VentasClientesResumen = dynamic(
+  () => import("@/components/dashboard/VentasClientesResumen").then((m) => ({ default: m.VentasClientesResumen })),
+  { ssr: false }
+);
 const VentasMensualesChart = dynamic(
   () => import("@/components/dashboard/VentasMensualesChart").then((m) => ({ default: m.VentasMensualesChart })),
   {
@@ -228,6 +233,10 @@ export default function DashboardPage() {
     ordenes: 0,
   }));
   const recetasPorId = new Map(recetas.map((receta) => [receta.id, receta]));
+  const nombresClientes = new Map(clientes.map((cliente) => [cliente.id, cliente.nombre]));
+  const ventasPorMesYCliente = calcularVentasPorMes(ordenes, anioActual, nombresClientes);
+  const rankingClientes = calcularRankingClientes(ordenes, anioActual, 5, nombresClientes);
+  const nombresMeses = Array.from({ length: 12 }, (_, mes) => meses.format(new Date(anioActual, mes, 1)).replace(".", ""));
 
   ordenes.forEach((orden) => {
     const fecha = new Date(orden.fechaCreacion);
@@ -524,6 +533,23 @@ export default function DashboardPage() {
                   ordenesMesActual={ordenesMesActual}
                   tasaCambio={configuracion.tasaCambioUSD || 50}
                   totalMesActual={ventasMesActual}
+                />
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-2xl border-stone-200 bg-white shadow-sm">
+              <CardHeader className="space-y-1 p-5 md:p-6">
+                <CardTitle className="text-xl font-semibold text-slate-900">Ventas totales y clientes</CardTitle>
+                <CardDescription className="text-sm">Total vendido por mes y clientes que más compran durante {anioActual}</CardDescription>
+              </CardHeader>
+              <CardContent className="px-5 pb-5 md:px-6 md:pb-6">
+                <VentasClientesResumen
+                  anio={anioActual}
+                  meses={ventasPorMesYCliente}
+                  moneda={configuracion.moneda}
+                  nombresMeses={nombresMeses}
+                  ranking={rankingClientes}
+                  tasaCambio={configuracion.tasaCambioUSD || 50}
                 />
               </CardContent>
             </Card>

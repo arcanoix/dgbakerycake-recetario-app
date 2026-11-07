@@ -4,6 +4,11 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.6.0] - 2026-11-06
+
+### Added
+- Dashboard sales tab: total sold per month chart, top client of the year with a top-5 ranking, and a monthly table with the total and best client of each month.
+
 ## [1.5.0] - 2026-11-06
 
 ### Added
